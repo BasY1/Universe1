@@ -120,20 +120,15 @@ struct Vec3
     inline Vec3<T> projected(const Vec3<T> &projDirection) const;
     inline Vec3<T> projectedOnPlane(const Vec3<T> &planeNormal) const;
 
-    static T cosAngle(const Vec3<T> &v1, const Vec3<T> &v2);
-    static T cosAnglePow2(const Vec3<T> &v1, const Vec3<T> &v2);
-
     inline T cosAngle(const Vec3<T> &v) const;
     inline T cosAnglePow2(const Vec3<T> &v) const;
 
     inline T sinAngle(const Vec3<T> &v) const;
     inline T sinAnglePow2(const Vec3<T> &v) const;
 
-    static T angleRad(const Vec3<T> &v1, const Vec3<T> &v2);
     inline T angleRad(const Vec3<T> &v) const;
     inline T angleDeg(const Vec3<T> &v) const;
 
-    static T angleNormRad(const Vec3<T> &v1, const Vec3<T> &v2, const Vec3<T> &normal);
     inline T angleNormRad(const Vec3<T> &v, const Vec3<T> &normal) const;
     inline T angleNormDeg(const Vec3<T> &v, const Vec3<T> &normal) const;
 
@@ -696,43 +691,6 @@ inline Vec3<T> Vec3<T>::projectedOnPlane(const Vec3<T> &planeNormal) const
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
- * \brief Co-sinus of angle between two 3D vectors
- * \tparam T Template floating point type
- * \param v1 First vector
- * \param v2 Second vector
- * \returns Co-sinus of angle between two 3D vectors
- */
-template <typename T>
-T Vec3<T>::cosAngle(const Vec3<T> &v1, const Vec3<T> &v2)
-{
-    const T lenSq = v1.lengthSquared() * v2.lengthSquared();
-    if (TypeIsNull<T>(lenSq))
-        return T_0<T>();
-    if (TypeIsNormal<T>(lenSq))
-        return dot(v1, v2);
-    return dot(v1, v2) / std::sqrt(lenSq);
-}
-
-/*!
- * \brief Co-sinus of angle between two 3D vectors - <b>power 2</b>
- * \tparam T Template floating point type
- * \param v1 First vector
- * \param v2 Second vector
- * \returns <b>Power 2</b> of co-sinus angle between two 3D vectors
- */
-template <typename T>
-T Vec3<T>::cosAnglePow2(const Vec3<T> &v1, const Vec3<T> &v2)
-{
-    const T lenSq = v1.lengthSquared() * v2.lengthSquared();
-    if (TypeIsNull<T>(lenSq))
-        return T_0<T>();
-    const T result = dot(v1, v2);
-    if (TypeIsNormal<T>(lenSq))
-        return result * result;
-    return result * result / lenSq;
-}
-
-/*!
  * \brief Co-sinus of angle between this and other 3D vector
  * \tparam T Template floating point type
  * \param other Other vector
@@ -741,7 +699,12 @@ T Vec3<T>::cosAnglePow2(const Vec3<T> &v1, const Vec3<T> &v2)
 template <typename T>
 inline T Vec3<T>::cosAngle(const Vec3<T> &other) const
 {
-    return Vec3<T>::cosAngle(*this, other);
+    const T lenSq = lengthSquared() * other.lengthSquared();
+    if (TypeIsNull<T>(lenSq))
+        return T_0<T>();
+    if (TypeIsNormal<T>(lenSq))
+        return dot(*this, other);
+    return dot(*this, other) / std::sqrt(lenSq);
 }
 
 /*!
@@ -753,7 +716,13 @@ inline T Vec3<T>::cosAngle(const Vec3<T> &other) const
 template <typename T>
 inline T Vec3<T>::cosAnglePow2(const Vec3<T> &other) const
 {
-    return Vec3<T>::cosAnglePow2(*this, other);
+    const T lenSq = lengthSquared() * other.lengthSquared();
+    if (TypeIsNull<T>(lenSq))
+        return T_0<T>();
+    const T result = dot(*this, other);
+    if (TypeIsNormal<T>(lenSq))
+        return result * result;
+    return result * result / lenSq;
 }
 
 /*!
@@ -785,79 +754,50 @@ inline T Vec3<T>::sinAnglePow2(const Vec3<T> &other) const
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
- * \brief Angle between two 3D vectors in radians
+ * \brief Angle between this and other 3D vector in radians
  * \tparam T Template floating point type
- * \param v1 First vector
- * \param v2 Second vector
- * \returns Angle between two 3D vectors in radians
+ * \param other Other vector
+ * \returns Angle between this and other 3D vector in radians
  * \note Result angle range: \f$\langle 0, \pi \rangle\f$
  */
 template <typename T>
-T Vec3<T>::angleRad(const Vec3<T> &v1, const Vec3<T> &v2)
+inline T Vec3<T>::angleRad(const Vec3<T> &other) const
 {
-    const T lenSq = v1.lengthSquared() * v2.lengthSquared();
+    const T lenSq = lengthSquared() * other.lengthSquared();
     if (TypeIsNull<T>(lenSq))
         return T_0<T>();
-    T result = dot(v1, v2);
+    T result = dot(*this, other);
     if (!TypeIsNormal<T>(lenSq))
         result /= std::sqrt(lenSq);
     return std::acos(std::min(T_1<T>(), std::max(-T_1<T>(), result)));
 }
 
 /*!
- * \brief Angle between this and other 3D vector in radians
- * \tparam T Template floating point type
- * \param v Other vector
- * \returns Angle between this and other 3D vector in radians
- * \note Result angle range: \f$\langle 0, \pi \rangle\f$
- */
-template <typename T>
-inline T Vec3<T>::angleRad(const Vec3<T> &v) const
-{
-    return Vec3<T>::angleRad(*this, v);
-}
-
-/*!
  * \brief Angle between this and other 3D vector in degrees
  * \tparam T Template floating point type
- * \param v Other vector
+ * \param other Other vector
  * \returns Angle between this and other 3D vector in degrees
  * \note Result angle range: \f$\langle 0, 180 \rangle\f$ degrees
  */
 template <typename T>
-inline T Vec3<T>::angleDeg(const Vec3<T> &v) const
+inline T Vec3<T>::angleDeg(const Vec3<T> &other) const
 {
-    return ToDeg<T>(Vec3<T>::angleRad(*this, v));
-}
-
-/*!
- * \brief Angle between two 3D vectors in radians by normal
- * \tparam T Template floating point type
- * \param v1 First vector
- * \param v2 Second vector
- * \param normal Normal vector
- * \returns Angle between this and other 3D vector in degrees
- * \note Result angle range: \f$( -\pi, \pi \rangle\f$
- */
-template <typename T>
-T Vec3<T>::angleNormRad(const Vec3<T> &v1, const Vec3<T> &v2, const Vec3<T> &normal)
-{
-    const T result = Vec3<T>::angleRad(v1, v2);
-    return Vec3<T>::dot(normal, Vec3<T>::cross(v1, v2)) < T_0<T>() ? -result : result;
+    return ToDeg<T>(angleRad(other));
 }
 
 /*!
  * \brief Angle between this and other 3D vector in radians
  * \tparam T Template floating point type
- * \param v Other vector
+ * \param other Other vector
  * \param normal Normal vector
  * \returns Angle between this and other 3D vector in radians
  * \note Returned angle is in range \f$( -\pi, pi \rangle\f$
  */
 template <typename T>
-inline T Vec3<T>::angleNormRad(const Vec3<T> &v, const Vec3<T> &normal) const
+inline T Vec3<T>::angleNormRad(const Vec3<T> &other, const Vec3<T> &normal) const
 {
-    return Vec3<T>::angleNormRad(*this, v, normal);
+    const T result = angleRad(other);
+    return Vec3<T>::dot(normal, Vec3<T>::cross(*this, other)) < T_0<T>() ? -result : result;
 }
 
 /*!
@@ -871,7 +811,7 @@ inline T Vec3<T>::angleNormRad(const Vec3<T> &v, const Vec3<T> &normal) const
 template <typename T>
 inline T Vec3<T>::angleNormDeg(const Vec3<T> &v, const Vec3<T> &normal) const
 {
-    return ToDeg<T>(Vec3<T>::angleNormRad(*this, v, normal));
+    return ToDeg<T>(angleNormRad(v, normal));
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

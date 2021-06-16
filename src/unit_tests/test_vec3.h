@@ -17,29 +17,8 @@ class Test_Vec3 : public QObject
 
  private:
     template <typename T>
-    void testCompare();
-
-    template <typename T>
     void testMath();
 };
-
-template <typename T>
-void Test_Vec3::testCompare()
-{
-    Vec3<T> v1(2, 3, 4);
-    Vec3<T> v2(2, 3, 4);
-    Vec3<T> v3(2, 3, 5);
-    Vec3<T> v4(0, 0, 0);
-
-    QVERIFY(v1.equals(v2));
-    QVERIFY(v1 == v2);
-    QVERIFY(v1 != v3);
-
-    QVERIFY(!v1.isNull());
-    QVERIFY(!v2.isNull());
-    QVERIFY(!v3.isNull());
-    QVERIFY(v4.isNull());
-}
 
 template <typename T>
 void Test_Vec3::testMath()
@@ -124,6 +103,27 @@ void Test_Vec3::testMath()
     QVERIFY(Vec3<T>(-1, 0, 0).perpendicularNormal() == Vec3<T>(0, 0, -1));
     QVERIFY(Vec3<T>(0, -1, 0).perpendicularNormal() == Vec3<T>(0, 0, 1));
     QVERIFY(Vec3<T>(0, 0, -1).perpendicularNormal() == Vec3<T>(0, -1, 0));
+
+    bool tmp;
+
+    QVERIFY(Vec3<T>(1, 0, 0).isSameDir(Vec3<T>(10, 0, 0)));
+    QVERIFY(!Vec3<T>(1, 0, 0).isSameDir(Vec3<T>(-1, 0, 0)));
+
+    QVERIFY(Vec3<T>(1, 0, 0).isParallel(Vec3<T>(10, 0, 0)));
+    QVERIFY(Vec3<T>(1, 0, 0).isParallel(Vec3<T>(-10, 0, 0)));
+
+    QVERIFY(Vec3<T>(1, 0, 0).isParallelInDir(Vec3<T>(10, 0, 0), tmp));
+    QVERIFY(tmp);
+    QVERIFY(Vec3<T>(1, 0, 0).isParallelInDir(Vec3<T>(-10, 0, 0), tmp));
+    QVERIFY(!tmp);
+
+    QVERIFY(Vec3<T>(1, 0, 0).rotated(Vec3<T>(0, 0, 1), T_PI_2<T>()) == Vec3<T>(0, 1, 0));
+
+    QVERIFY(TypeEquals<T>(Vec3<T>(1, 0, 0).angleRad(Vec3<T>(0, 0, 1)), T_PI_2<T>()));
+    QVERIFY(TypeEquals<T>(Vec3<T>(1, 0, 0).angleRad(Vec3<T>(0, 0, -1)), T_PI_2<T>()));
+
+    QVERIFY(TypeEquals<T>(Vec3<T>(1, 0, 0).angleNormRad(Vec3<T>(0, 0, 1), Vec3<T>(0, -1, 0)), T_PI_2<T>()));
+    QVERIFY(TypeEquals<T>(Vec3<T>(1, 0, 0).angleNormRad(Vec3<T>(0, 0, -1), Vec3<T>(0, -1, 0)), -T_PI_2<T>()));
 }
 
 #endif  // TEST_VEC3_H
