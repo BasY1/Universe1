@@ -26,7 +26,7 @@
  * floating point type this epsilon value is multiplied by factor:
  * | Type              | Value |
  * | :---------------- | :---- |
- * | \c float          | 10	   |
+ * | \c float          | 10    |
  * | \c double         | 100   |
  * | \c long \c double | 1000  |
  *
@@ -43,22 +43,22 @@ template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::val
 #ifndef DOXYGEN_SKIP
 template <> inline float TypeEps()
 {
-	static const float _EPS = 10.0F * std::numeric_limits<float>::epsilon();
-	return _EPS;
+    static const float _EPS = 10.0F * std::numeric_limits<float>::epsilon();
+    return _EPS;
 }
 
 template <> inline double TypeEps()
 {
-	static const double _EPS = 100.0 * std::numeric_limits<double>::epsilon();
-	return _EPS;
+    static const double _EPS = 100.0 * std::numeric_limits<double>::epsilon();
+    return _EPS;
 }
 
 template <> inline long double TypeEps()
 {
-	static const long double _EPS = 1000.0L * std::numeric_limits<long double>::epsilon();
-	return _EPS;
+    static const long double _EPS = 1000.0L * std::numeric_limits<long double>::epsilon();
+    return _EPS;
 }
-#endif	// DOXYGEN_SKIP
+#endif  // DOXYGEN_SKIP
 
 /*! \} */  // End of group: TypeEpsilon
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ template <> inline long double TypeEps()
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline bool TypeIsNull(const T value)
 {
-	return -TypeEps<T>() < value && TypeEps<T>() > value;
+    return -TypeEps<T>() < value && TypeEps<T>() > value;
 }
 
 /*!
@@ -92,7 +92,7 @@ inline bool TypeIsNull(const T value)
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline bool TypeIsPositive(const T value)
 {
-	return TypeEps<T>() < value;
+    return TypeEps<T>() < value;
 }
 
 /*!
@@ -105,7 +105,7 @@ inline bool TypeIsPositive(const T value)
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline bool TypeEquals(const T value1, const T value2)
 {
-	return TypeIsNull<T>(value1 - value2);
+    return TypeIsNull<T>(value1 - value2);
 }
 
 /*!
@@ -119,9 +119,9 @@ inline bool TypeEquals(const T value1, const T value2)
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline bool TypeEquals(const T value1, const T value2, const T value3)
 {
-	return								  //
-		TypeEquals<T>(value1, value2) &&  //
-		TypeEquals<T>(value1, value3);	  // && TypeEquals<T>(value2, value3);
+    return                                //
+        TypeEquals<T>(value1, value2) &&  //
+        TypeEquals<T>(value1, value3);    // && TypeEquals<T>(value2, value3);
 }
 
 /*!
@@ -133,8 +133,8 @@ inline bool TypeEquals(const T value1, const T value2, const T value3)
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline bool TypeIsNormal(const T value)
 {
-	static const T tmp = 1;
-	return TypeEquals<T>(value, tmp);
+    static const T tmp = 1;
+    return TypeEquals<T>(value, tmp);
 }
 
 /*! \} */  // End of group: TypeCompare
@@ -155,8 +155,8 @@ inline bool TypeIsNormal(const T value)
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline T T_0()
 {
-	static const T tmp = 0;
-	return tmp;
+    static const T tmp = 0;
+    return tmp;
 }
 
 /*!
@@ -167,8 +167,8 @@ inline T T_0()
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline T T_1()
 {
-	static const T tmp = 1;
-	return tmp;
+    static const T tmp = 1;
+    return tmp;
 }
 
 /*!
@@ -179,8 +179,8 @@ inline T T_1()
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline T T_01()
 {
-	static const T tmp = 0.1l;
-	return tmp;
+    static const T tmp = 0.1l;
+    return tmp;
 }
 
 /*!
@@ -191,8 +191,8 @@ inline T T_01()
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline T T_05()
 {
-	static const T tmp = 0.5l;
-	return tmp;
+    static const T tmp = 0.5l;
+    return tmp;
 }
 
 /*!
@@ -203,8 +203,8 @@ inline T T_05()
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline T T_2()
 {
-	static const T tmp = 2;
-	return tmp;
+    static const T tmp = 2;
+    return tmp;
 }
 
 /*!
@@ -215,8 +215,8 @@ inline T T_2()
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline T T_3()
 {
-	static const T tmp = 3;
-	return tmp;
+    static const T tmp = 3;
+    return tmp;
 }
 
 /*!
@@ -227,8 +227,8 @@ inline T T_3()
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline T T_4()
 {
-	static const T tmp = 4;
-	return tmp;
+    static const T tmp = 4;
+    return tmp;
 }
 
 /*!
@@ -239,8 +239,8 @@ inline T T_4()
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline T T_10()
 {
-	static const T tmp = 10;
-	return tmp;
+    static const T tmp = 10;
+    return tmp;
 }
 
 /*!
@@ -251,8 +251,8 @@ inline T T_10()
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline T T_100()
 {
-	static const T tmp = 100;
-	return tmp;
+    static const T tmp = 100;
+    return tmp;
 }
 
 /*!
@@ -263,8 +263,8 @@ inline T T_100()
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline T T_PI()
 {
-	static const T tmp = static_cast<T>(M_PIl);
-	return tmp;
+    static const T tmp = static_cast<T>(M_PIl);
+    return tmp;
 }
 
 /*!
@@ -275,8 +275,8 @@ inline T T_PI()
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline T T_2PI()
 {
-	static const T tmp = static_cast<T>(2.0l * M_PIl);
-	return tmp;
+    static const T tmp = static_cast<T>(2.0l * M_PIl);
+    return tmp;
 }
 
 /*!
@@ -287,8 +287,8 @@ inline T T_2PI()
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline T T_4PI()
 {
-	static const T tmp = static_cast<T>(4.0l * M_PIl);
-	return tmp;
+    static const T tmp = static_cast<T>(4.0l * M_PIl);
+    return tmp;
 }
 
 /*!
@@ -299,8 +299,8 @@ inline T T_4PI()
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline T T_PI_2()
 {
-	static const T tmp = static_cast<T>(M_PI_2l);
-	return tmp;
+    static const T tmp = static_cast<T>(M_PI_2l);
+    return tmp;
 }
 
 /*!
@@ -311,8 +311,8 @@ inline T T_PI_2()
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline T T_PI_3()
 {
-	static const T tmp = static_cast<T>(M_PIl / 3.0l);
-	return tmp;
+    static const T tmp = static_cast<T>(M_PIl / 3.0l);
+    return tmp;
 }
 
 /*!
@@ -323,8 +323,8 @@ inline T T_PI_3()
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline T T_2PI_3()
 {
-	static const T tmp = static_cast<T>((2.0l * M_PIl) / 3.0l);
-	return tmp;
+    static const T tmp = static_cast<T>((2.0l * M_PIl) / 3.0l);
+    return tmp;
 }
 
 /*!
@@ -335,8 +335,8 @@ inline T T_2PI_3()
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline T T_4PI_3()
 {
-	static const T tmp = static_cast<T>((4.0l * M_PIl) / 3.0l);
-	return tmp;
+    static const T tmp = static_cast<T>((4.0l * M_PIl) / 3.0l);
+    return tmp;
 }
 
 /*!
@@ -347,8 +347,8 @@ inline T T_4PI_3()
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline T T_SQRT2()
 {
-	static const T tmp = static_cast<T>(M_SQRT2l);
-	return tmp;
+    static const T tmp = static_cast<T>(M_SQRT2l);
+    return tmp;
 }
 
 /*!
@@ -359,8 +359,8 @@ inline T T_SQRT2()
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline T T_1_SQRT2()
 {
-	static const T tmp = static_cast<T>(M_SQRT1_2l);
-	return tmp;
+    static const T tmp = static_cast<T>(M_SQRT1_2l);
+    return tmp;
 }
 
 /*!
@@ -371,8 +371,8 @@ inline T T_1_SQRT2()
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline T T_SQRT3()
 {
-	static const T tmp = std::sqrt(3.0L);
-	return tmp;
+    static const T tmp = std::sqrt(3.0L);
+    return tmp;
 }
 
 /*!
@@ -383,8 +383,8 @@ inline T T_SQRT3()
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline T T_SQRT3_2()
 {
-	static const T tmp = std::sqrt(3.0L) / 2.0L;
-	return tmp;
+    static const T tmp = std::sqrt(3.0L) / 2.0L;
+    return tmp;
 }
 
 /*!
@@ -395,8 +395,8 @@ inline T T_SQRT3_2()
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline T T_SQRT3_3()
 {
-	static const T tmp = std::sqrt(3.0L) / 3.0L;
-	return tmp;
+    static const T tmp = std::sqrt(3.0L) / 3.0L;
+    return tmp;
 }
 /*!
  * \brief Getter for type specific value: \f$\frac{4\pi}{3}\f$
@@ -406,8 +406,8 @@ inline T T_SQRT3_3()
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline T T_RadInDeg()
 {
-	static const T tmp = static_cast<T>(180.0l / M_PIl);
-	return tmp;
+    static const T tmp = static_cast<T>(180.0l / M_PIl);
+    return tmp;
 }
 
 /*! \} */  // End of group: TypeConstants
@@ -429,7 +429,7 @@ inline T T_RadInDeg()
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline T ToRad(const T degValue)
 {
-	return degValue / T_RadInDeg<T>();
+    return degValue / T_RadInDeg<T>();
 }
 
 /*!
@@ -441,7 +441,7 @@ inline T ToRad(const T degValue)
 template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
 inline T ToDeg(const T radValue)
 {
-	return radValue * T_RadInDeg<T>();
+    return radValue * T_RadInDeg<T>();
 }
 
 /*! \} */  // End of group: TypeAngles
@@ -465,8 +465,8 @@ inline T ToDeg(const T radValue)
  * Default values for number of digits after the decimal point by floating point values:
  * | Type              | Precision |
  * | :---------------- | :-------- |
- * | \c float          | 7	       |
- * | \c double         | 14	       |
+ * | \c float          | 7         |
+ * | \c double         | 14        |
  * | \c long \c double | 18        |
  *
  */
@@ -494,9 +494,9 @@ inline void TypeSetDefaultPrecision<long double>(std::ostream &os)
     os.precision(18);
     os << std::fixed;
 }
-#endif	// DOXYGEN_SKIP
+#endif  // DOXYGEN_SKIP
 
 /*! \} */  // End of group: TypeString
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#endif	// TYPE_H
+#endif  // TYPE_H
