@@ -4,9 +4,11 @@
 QT      += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-QT      += testlib
 #QT      += multimedia
 #QT      += texttospeech
+
+QT      += testlib
+CONFIG += testcase
 
 #CONFIG += c++11
 CONFIG += c++17
@@ -25,14 +27,20 @@ SOURCES += \
 
 HEADERS += \
     src/math/type.h \
-    src/math/vec3.h 
+    src/math/vec3.h \
+    \
+    src/math/singularity/singularityobjectdata.h \
+    src/math/singularity/singularityobject.h \
+    src/math/singularity/singularitysimulation.h
 
 
 SOURCES += \
-    src/unit_tests/test_vec3.cpp
+    src/unit_tests/test_vec3.cpp \
+    src/unit_tests/test_singularity.cpp
 
 HEADERS += \
-    src/unit_tests/test_vec3.h
+    src/unit_tests/test_vec3.h \
+    src/unit_tests/test_singularity.h
 
 
 #TRANSLATIONS += \

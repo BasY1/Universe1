@@ -8,7 +8,7 @@
 
 /*!
  * \brief Run unit tests
- * \return \c true if all unit tests success
+ * \returns \c true if all unit tests success
  */
 bool runTests();
 
@@ -16,7 +16,7 @@ bool runTests();
  * \brief The main application method
  * \param argc Argument count
  * \param argv Arguments array
- * \return Application execution result ( \c EXIT_SUCCESS or \c EXIT_FAILURE )
+ * \returns Application execution result ( \c EXIT_SUCCESS or \c EXIT_FAILURE )
  */
 int main(int argc, char *argv[])
 {
@@ -29,11 +29,12 @@ int main(int argc, char *argv[])
     // return app.exec();
 }
 
+#include "unit_tests/test_singularity.h"
 #include "unit_tests/test_vec3.h"
 
 bool runTests()
 {
-    static const std::vector<QObject *> tests = {new Test_Vec3()};
+    static const std::vector<QObject *> tests = {new Test_Vec3(), new Test_Singularity()};
 
     bool result = true;
 

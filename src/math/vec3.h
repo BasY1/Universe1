@@ -1,5 +1,5 @@
 /*!
- * \file vec3.h
+ * \file math/vec3.h
  * \author Michal Steller
  * \brief 3D vector template implementation
  */
@@ -867,7 +867,6 @@ inline Vec3<T> Vec3<T>::rotated(const Vec3<T> &normal, const T angleRad) const
  * \param os Output text stream
  * \param v Vector
  * \returns Output text stream
- * \sa Vec3<T>::toString() const
  */
 template <typename T>
 inline std::ostream &operator<<(std::ostream &os, const Vec3<T> &v)

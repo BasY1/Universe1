@@ -1,5 +1,5 @@
 /*!
- * \file type.h
+ * \file math/type.h
  * \author Michal Steller
  * \brief Floating point value tools and templates
  */

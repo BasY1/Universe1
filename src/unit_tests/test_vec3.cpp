@@ -1,5 +1,10 @@
 #include "test_vec3.h"
 
+Test_Vec3::Test_Vec3(QObject *parent)
+    : QObject(parent)
+{
+}
+
 void Test_Vec3::initTestCase()
 {
     Vec3<float> vf(2.0f / 3.0f, 2.0f, 3.0f);

@@ -8,6 +8,9 @@
 class Test_Vec3 : public QObject
 {
     Q_OBJECT
+ public:
+    Test_Vec3(QObject *parent = nullptr);
+
  private slots:
     void initTestCase();
 
