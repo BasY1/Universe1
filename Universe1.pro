@@ -26,21 +26,27 @@ SOURCES += \
     src/main.cpp
 
 HEADERS += \
+    src/math/typeconst.h \
     src/math/type.h \
+    src/math/texttools.h \
     src/math/vec3.h \
     \
-    src/math/singularity/singularityobjectdata.h \
-    src/math/singularity/singularityobject.h \
-    src/math/singularity/singularitysimulation.h
+    src/simulation/timestamp.h \
+    src/simulation/objecthistory.h \
+    src/simulation/gravitynewton.h \
+    \
+    #src/math/singularity/singularityobjectdata.h \
+    #src/math/singularity/singularityobject.h \
+    #src/math/singularity/singularitysimulation.h
 
 
 SOURCES += \
     src/unit_tests/test_vec3.cpp \
-    src/unit_tests/test_singularity.cpp
+    #src/unit_tests/test_singularity.cpp
 
 HEADERS += \
     src/unit_tests/test_vec3.h \
-    src/unit_tests/test_singularity.h
+    #src/unit_tests/test_singularity.h
 
 
 #TRANSLATIONS += \

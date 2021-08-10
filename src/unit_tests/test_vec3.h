@@ -26,6 +26,11 @@ class Test_Vec3 : public QObject
 template <typename T>
 void Test_Vec3::testMath()
 {
+    using namespace Universe1;
+    using namespace Universe1::Math;
+    using namespace Universe1::Type;
+    using namespace Universe1::Const;
+
     Vec3<T> v0(2, 3, 4);
     Vec3<T> v1(2, 3, 4);
     Vec3<T> v2(5, 9, 7);
@@ -73,7 +78,7 @@ void Test_Vec3::testMath()
     QVERIFY(Vec3<T>::crossLeftHand(Vec3<T>(0, 0, 1), Vec3<T>(0, 1, 0)) == Vec3<T>(1, 0, 0));
     QVERIFY(Vec3<T>::crossLeftHand(Vec3<T>(1, 0, 0), Vec3<T>(0, 0, 1)) == Vec3<T>(0, 1, 0));
 
-    QVERIFY(TypeEquals<T>(Vec3<T>::dot(Vec3<T>(1, 2, 3), Vec3<T>(6, 5, 4)), T(28)));
+    QVERIFY(equals<T>(Vec3<T>::dot(Vec3<T>(1, 2, 3), Vec3<T>(6, 5, 4)), T(28)));
 
     QVERIFY(Vec3<T>(1, 0, 0).isNormalized());
     QVERIFY(Vec3<T>(0, 1, 0).isNormalized());
@@ -122,11 +127,11 @@ void Test_Vec3::testMath()
 
     QVERIFY(Vec3<T>(1, 0, 0).rotated(Vec3<T>(0, 0, 1), T_PI_2<T>()) == Vec3<T>(0, 1, 0));
 
-    QVERIFY(TypeEquals<T>(Vec3<T>(1, 0, 0).angleRad(Vec3<T>(0, 0, 1)), T_PI_2<T>()));
-    QVERIFY(TypeEquals<T>(Vec3<T>(1, 0, 0).angleRad(Vec3<T>(0, 0, -1)), T_PI_2<T>()));
+    QVERIFY(equals<T>(Vec3<T>(1, 0, 0).angleRad(Vec3<T>(0, 0, 1)), T_PI_2<T>()));
+    QVERIFY(equals<T>(Vec3<T>(1, 0, 0).angleRad(Vec3<T>(0, 0, -1)), T_PI_2<T>()));
 
-    QVERIFY(TypeEquals<T>(Vec3<T>(1, 0, 0).angleNormRad(Vec3<T>(0, 0, 1), Vec3<T>(0, -1, 0)), T_PI_2<T>()));
-    QVERIFY(TypeEquals<T>(Vec3<T>(1, 0, 0).angleNormRad(Vec3<T>(0, 0, -1), Vec3<T>(0, -1, 0)), -T_PI_2<T>()));
+    QVERIFY(equals<T>(Vec3<T>(1, 0, 0).angleNormRad(Vec3<T>(0, 0, 1), Vec3<T>(0, -1, 0)), T_PI_2<T>()));
+    QVERIFY(equals<T>(Vec3<T>(1, 0, 0).angleNormRad(Vec3<T>(0, 0, -1), Vec3<T>(0, -1, 0)), -T_PI_2<T>()));
 }
 
 #endif  // TEST_VEC3_H

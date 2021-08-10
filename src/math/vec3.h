@@ -7,7 +7,41 @@
 #ifndef VEC3_H
 #define VEC3_H
 
+#include "texttools.h"
 #include "type.h"
+
+namespace Universe1 {
+namespace Math {
+
+/*!
+ * \defgroup TypeAngles Angle tools
+ * \brief Angle conversion tools
+ * \{
+ */
+
+/*!
+ * \brief Convert degrees to radians
+ * \tparam T Template floating point type
+ * \param degValue Value to convert
+ * \returns Angle in radians
+ */
+template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
+inline T toRad(const T degValue)
+{
+    return degValue / Const::T_RadInDeg<T>();
+}
+
+/*!
+ * \brief Convert degrees to radians
+ * \tparam T Template floating point type
+ * \param radValue Value to convert
+ * \returns Angle in radians
+ */
+template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
+inline T toDeg(const T radValue)
+{
+    return radValue * Const::T_RadInDeg<T>();
+}
 
 /*!
  * \brief 3D vector template for various floating point types
@@ -42,18 +76,18 @@ struct Vec3
     /*!
      * \brief Default constructor
      */
-    template <typename = std::enable_if_t<std::is_floating_point<T>::value>>
+    template <typename = std::enable_if<std::is_floating_point<T>::value>>
     inline Vec3()
-        : x(T_0<T>())
-        , y(T_0<T>())
-        , z(T_0<T>())
+        : x(Const::T_0<T>())
+        , y(Const::T_0<T>())
+        , z(Const::T_0<T>())
     {
     }
 
     /*!
      * \brief Constructor with vector components
      */
-    template <typename = std::enable_if_t<std::is_floating_point<T>::value>>
+    template <typename = std::enable_if<std::is_floating_point<T>::value>>
     inline Vec3(const T _x,  //!< X component
                 const T _y,  //!< Y component
                 const T _z)  //!< Z component
@@ -67,7 +101,7 @@ struct Vec3
      * \brief Constructor from other vector
      * \param other Other vector
      */
-    template <typename = std::enable_if_t<std::is_floating_point<T>::value>>
+    template <typename = std::enable_if<std::is_floating_point<T>::value>>
     inline Vec3(const Vec3<T> &other)
         : x(other.x)
         , y(other.y)
@@ -148,7 +182,7 @@ struct Vec3
 template <typename T>
 inline bool Vec3<T>::isNull() const
 {
-    return TypeIsNull<T>(x) && TypeIsNull<T>(y) && TypeIsNull<T>(z);
+    return Type::isNull<T>(x) && Type::isNull<T>(y) && Type::isNull<T>(z);
 }
 
 /*!
@@ -161,7 +195,7 @@ inline bool Vec3<T>::isNull() const
 template <typename T>
 inline bool Vec3<T>::equals(const Vec3<T> &other) const
 {
-    return TypeEquals<T>(x, other.x) && TypeEquals<T>(y, other.y) && TypeEquals<T>(z, other.z);
+    return Type::equals<T>(x, other.x) && Type::equals<T>(y, other.y) && Type::equals<T>(z, other.z);
 }
 
 /*!
@@ -197,9 +231,9 @@ inline bool Vec3<T>::operator!=(const Vec3<T> &other) const
 template <typename T>
 inline void Vec3<T>::clear()
 {
-    x = T_0<T>();
-    y = T_0<T>();
-    z = T_0<T>();
+    x = Const::T_0<T>();
+    y = Const::T_0<T>();
+    z = Const::T_0<T>();
 }
 
 /*!
@@ -387,7 +421,7 @@ inline void Vec3<T>::invert()
 template <typename T>
 inline bool Vec3<T>::isNormalized() const
 {
-    return TypeIsNormal<T>(lengthSquared());
+    return Type::isUnit<T>(lengthSquared());
 }
 
 /*!
@@ -399,7 +433,7 @@ template <typename T>
 inline Vec3<T> Vec3<T>::normalized() const
 {
     const T lenSq = lengthSquared();
-    if (TypeIsNull<T>(lenSq) || TypeIsNormal<T>(lenSq))
+    if (Type::isNull<T>(lenSq) || Type::isUnit<T>(lenSq))
         return Vec3<T>(x, y, z);
     return *this / std::sqrt(lenSq);
 }
@@ -412,7 +446,7 @@ template <typename T>
 inline void Vec3<T>::normalize()
 {
     const T lenSq = lengthSquared();
-    if (!TypeIsNull<T>(lenSq) && !TypeIsNormal<T>(lenSq))
+    if (!Type::isNull<T>(lenSq) && !Type::isUnit<T>(lenSq))
         *this /= std::sqrt(lenSq);
 }
 
@@ -425,7 +459,7 @@ inline void Vec3<T>::normalize()
 template <typename T>
 inline bool Vec3<T>::isPerpendicular(const Vec3<T> &other) const
 {
-    return TypeIsNull<T>(Vec3<T>::dot(*this, other));
+    return Type::isNull<T>(Vec3<T>::dot(*this, other));
 }
 
 /*!
@@ -436,9 +470,8 @@ inline bool Vec3<T>::isPerpendicular(const Vec3<T> &other) const
 template <typename T>
 inline Vec3<T> Vec3<T>::perpendicularNormal() const
 {
-    // static const Vec3<T> n1(T_0<T>(), T_0<T>(), T_1<T>());
-    static const Vec3<T> n1(T_1<T>(), T_0<T>(), T_0<T>());
-    static const Vec3<T> n2(T_0<T>(), T_1<T>(), T_0<T>());
+    static const Vec3<T> n1(Const::T_1<T>(), Const::T_0<T>(), Const::T_0<T>());
+    static const Vec3<T> n2(Const::T_0<T>(), Const::T_1<T>(), Const::T_0<T>());
     return (isParallel(n1) ? Vec3<T>::cross(*this, n2).normalized() : Vec3<T>::cross(*this, n1).normalized());
 }
 
@@ -616,10 +649,10 @@ template <typename T>
 inline T Vec3<T>::distanceToLine(const Vec3<T> &linePoint, const Vec3<T> &lineNormal) const
 {
     const T lenSq = lineNormal.lengthSquared();
-    if (TypeIsNull<T>(lenSq))
-        return T_0<T>();  // distanceToPoint(linePoint);
+    if (Type::isNull<T>(lenSq))
+        return Const::T_0<T>();  // distanceToPoint(linePoint);
     const T tmp = cross(*this - linePoint, *this - linePoint - lineNormal).length();
-    return TypeIsNormal<T>(lenSq) ? tmp : (tmp / std::sqrt(lenSq));
+    return Type::isUnit<T>(lenSq) ? tmp : (tmp / std::sqrt(lenSq));
 }
 
 /*!
@@ -633,9 +666,9 @@ template <typename T>
 inline T Vec3<T>::distanceToPlane(const Vec3<T> &planePoint, const Vec3<T> &planeNormal) const
 {
     const T lenSq = planeNormal.lengthSquared();
-    if (TypeIsNull<T>(lenSq))
-        return T_0<T>();
-    if (TypeIsNormal<T>(lenSq))
+    if (Type::isNull<T>(lenSq))
+        return Const::T_0<T>();
+    if (Type::isUnit<T>(lenSq))
         return dot(*this - planePoint, planeNormal);
     return dot(*this - planePoint, planeNormal) / std::sqrt(lenSq);
 }
@@ -651,9 +684,9 @@ template <typename T>
 inline T Vec3<T>::projectedLength(const Vec3<T> &projDirection) const
 {
     const T lenSq = projDirection.lengthSquared();
-    if (TypeIsNull<T>(lenSq))
-        return T_0<T>();
-    if (TypeIsNormal<T>(lenSq))
+    if (Type::isNull<T>(lenSq))
+        return Const::T_0<T>();
+    if (Type::isUnit<T>(lenSq))
         return dot(*this, projDirection);
     return dot(*this, projDirection) / std::sqrt(lenSq);
 }
@@ -668,9 +701,9 @@ template <typename T>
 inline Vec3<T> Vec3<T>::projected(const Vec3<T> &projDirection) const
 {
     const T lenSq = projDirection.lengthSquared();
-    if (TypeIsNull<T>(lenSq))
+    if (Type::isNull<T>(lenSq))
         return Vec3<T>();
-    if (TypeIsNormal<T>(lenSq))
+    if (Type::isUnit<T>(lenSq))
         return projDirection * dot(*this, projDirection);
     return projDirection * (dot(*this, projDirection) / std::sqrt(lenSq));
 }
@@ -700,9 +733,9 @@ template <typename T>
 inline T Vec3<T>::cosAngle(const Vec3<T> &other) const
 {
     const T lenSq = lengthSquared() * other.lengthSquared();
-    if (TypeIsNull<T>(lenSq))
-        return T_0<T>();
-    if (TypeIsNormal<T>(lenSq))
+    if (Type::isNull<T>(lenSq))
+        return Const::T_0<T>();
+    if (Type::isUnit<T>(lenSq))
         return dot(*this, other);
     return dot(*this, other) / std::sqrt(lenSq);
 }
@@ -717,10 +750,10 @@ template <typename T>
 inline T Vec3<T>::cosAnglePow2(const Vec3<T> &other) const
 {
     const T lenSq = lengthSquared() * other.lengthSquared();
-    if (TypeIsNull<T>(lenSq))
-        return T_0<T>();
+    if (Type::isNull<T>(lenSq))
+        return Const::T_0<T>();
     const T result = dot(*this, other);
-    if (TypeIsNormal<T>(lenSq))
+    if (Type::isUnit<T>(lenSq))
         return result * result;
     return result * result / lenSq;
 }
@@ -746,7 +779,7 @@ inline T Vec3<T>::sinAngle(const Vec3<T> &other) const
 template <typename T>
 inline T Vec3<T>::sinAnglePow2(const Vec3<T> &other) const
 {
-    return T_1<T>() - cosAnglePow2(other);
+    return Const::T_1<T>() - cosAnglePow2(other);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -764,12 +797,12 @@ template <typename T>
 inline T Vec3<T>::angleRad(const Vec3<T> &other) const
 {
     const T lenSq = lengthSquared() * other.lengthSquared();
-    if (TypeIsNull<T>(lenSq))
-        return T_0<T>();
+    if (Type::isNull<T>(lenSq))
+        return Const::T_0<T>();
     T result = dot(*this, other);
-    if (!TypeIsNormal<T>(lenSq))
+    if (!Type::isUnit<T>(lenSq))
         result /= std::sqrt(lenSq);
-    return std::acos(std::min(T_1<T>(), std::max(-T_1<T>(), result)));
+    return std::acos(std::min(Const::T_1<T>(), std::max(-Const::T_1<T>(), result)));
 }
 
 /*!
@@ -782,7 +815,7 @@ inline T Vec3<T>::angleRad(const Vec3<T> &other) const
 template <typename T>
 inline T Vec3<T>::angleDeg(const Vec3<T> &other) const
 {
-    return ToDeg<T>(angleRad(other));
+    return toDeg<T>(angleRad(other));
 }
 
 /*!
@@ -797,7 +830,7 @@ template <typename T>
 inline T Vec3<T>::angleNormRad(const Vec3<T> &other, const Vec3<T> &normal) const
 {
     const T result = angleRad(other);
-    return Vec3<T>::dot(normal, Vec3<T>::cross(*this, other)) < T_0<T>() ? -result : result;
+    return Vec3<T>::dot(normal, Vec3<T>::cross(*this, other)) < Const::T_0<T>() ? -result : result;
 }
 
 /*!
@@ -811,7 +844,7 @@ inline T Vec3<T>::angleNormRad(const Vec3<T> &other, const Vec3<T> &normal) cons
 template <typename T>
 inline T Vec3<T>::angleNormDeg(const Vec3<T> &v, const Vec3<T> &normal) const
 {
-    return ToDeg<T>(angleNormRad(v, normal));
+    return toDeg<T>(angleNormRad(v, normal));
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -830,12 +863,12 @@ template <typename T>
 Vec3<T> Vec3<T>::rotate(const Vec3<T> &point, const Vec3<T> &normal, const T angleRad)
 {
     const T lenSq = normal.lengthSquared();
-    if (TypeIsNull<T>(lenSq))
+    if (Type::isNull<T>(lenSq))
         return Vec3<T>(point);
 
     const T sa = std::sin(angleRad);
     const T ca = std::cos(angleRad);
-    const Vec3<T> n = TypeIsNormal<T>(lenSq) ? normal : (normal / std::sqrt(lenSq));
+    const Vec3<T> n = Type::isUnit<T>(lenSq) ? normal : (normal / std::sqrt(lenSq));
     const Vec3<T> u = n.x * point;
     const Vec3<T> v = n.y * point;
     const Vec3<T> w = n.z * point;
@@ -873,5 +906,8 @@ inline std::ostream &operator<<(std::ostream &os, const Vec3<T> &v)
 {
     return os << '[' << v.x << '|' << v.y << '|' << v.z << ']';
 }
+
+}  // namespace Math
+}  // namespace Universe1
 
 #endif  // VEC3_H
