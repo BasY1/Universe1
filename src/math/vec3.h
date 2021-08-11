@@ -728,6 +728,8 @@ inline Vec3<T> Vec3<T>::projectedOnPlane(const Vec3<T> &planeNormal) const
  * \tparam T Template floating point type
  * \param other Other vector
  * \returns Co-sinus of angle between this and other 3D vector
+ * \details Used equation:
+ * \f$\frac{\vec{V_1}\cdot\vec{V_2}}{\sqrt{|\vec{V_1}|^2 |\vec{V_2}|^2}}\f$
  */
 template <typename T>
 inline T Vec3<T>::cosAngle(const Vec3<T> &other) const
@@ -741,10 +743,10 @@ inline T Vec3<T>::cosAngle(const Vec3<T> &other) const
 }
 
 /*!
- * \brief <b>Power 2</b> of co-sinus angle between this and other 3D vector
+ * \brief <b>Power 2</b> of cosinus angle between this and other 3D vector
  * \tparam T Template floating point type
  * \param other Other vector
- * \returns <b>Power 2</b> of co-sinus angle between this and other 3D vector
+ * \returns <b>Power 2</b> of cosinus angle between this and other 3D vector
  */
 template <typename T>
 inline T Vec3<T>::cosAnglePow2(const Vec3<T> &other) const
@@ -792,6 +794,8 @@ inline T Vec3<T>::sinAnglePow2(const Vec3<T> &other) const
  * \param other Other vector
  * \returns Angle between this and other 3D vector in radians
  * \note Result angle range: \f$\langle 0, \pi \rangle\f$
+ * \details Used equation:
+ * \f$acos(\frac{\vec{V_1}\cdot\vec{V_2}}{\sqrt{|\vec{V_1}|^2 |\vec{V_2}|^2}})\f$
  */
 template <typename T>
 inline T Vec3<T>::angleRad(const Vec3<T> &other) const
@@ -904,7 +908,7 @@ inline Vec3<T> Vec3<T>::rotated(const Vec3<T> &normal, const T angleRad) const
 template <typename T>
 inline std::ostream &operator<<(std::ostream &os, const Vec3<T> &v)
 {
-    return os << '[' << v.x << '|' << v.y << '|' << v.z << ']';
+    return os << '[' << v.x << 'x' << v.y << 'x' << v.z << ']';
 }
 
 }  // namespace Math

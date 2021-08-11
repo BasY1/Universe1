@@ -1,0 +1,307 @@
+/*!
+ * \file simulation/newton/newtontimestamp.h
+ * \author Michal Steller
+ * \brief Newton based time-stamp template implementation
+ */
+
+#ifndef NEWTONTIMESTAMP_H
+#define NEWTONTIMESTAMP_H
+
+#include "../timestamp.h"
+
+namespace Universe1 {
+namespace Simulation {
+namespace GravityNewton {
+
+/*!
+ * \brief Time-stamp extension for newton based simulations
+ * \tparam T Template floating point type
+ */
+template <typename T>
+struct NewtonTimeStamp : public TimeStamp<T>
+{
+    Math::Vec3<T> moveVelocity;  //!< Object velocity     [m/s]
+    Math::Vec3<T> moveAccel;     //!< Object acceleration [m/s^2]
+
+    /*!
+     * \brief Default constructor
+     */
+    template <typename = std::enable_if_t<std::is_floating_point<T>::value>>
+    inline NewtonTimeStamp()
+        : TimeStamp<T>()
+        , moveVelocity()
+        , moveAccel()
+    {
+    }
+
+    /*!
+     * \brief Constructor with object components
+     * \param _timeStamp    Time-stamp value    [s]
+     * \param _position     Object position     [m]
+     * \param _moveVelocity Object velocity     [m/s]
+     * \param _moveAccel    Object acceleration [m/s^2]
+     */
+    template <typename = std::enable_if_t<std::is_floating_point<T>::value>>
+    inline NewtonTimeStamp(const T _timeStamp,
+                           const Math::Vec3<T> &_position,
+                           const Math::Vec3<T> &_moveVelocity,
+                           const Math::Vec3<T> &_moveAccel)
+        : TimeStamp<T>(_timeStamp, _position)
+        , moveVelocity(_moveVelocity)
+        , moveAccel(_moveAccel)
+    {
+    }
+
+    inline NewtonTimeStamp moved(const T timeDelta) const;
+
+    inline T curvingAngleRad(const T timeDelta) const;
+
+    inline T curvingTimeDuration(const T angleRad) const;
+
+    NewtonTimeStamp
+    movedToEventSource(const T universeVelocity, const T eventTimeStamp, const Math::Vec3<T> &eventPosition) const;
+};
+
+/*!
+ * \brief Returns angle between current move direction and direction after given time duration
+ * \tparam T Template floating point type
+ * \param timeDelta Time duration of move
+ * \returns Angle between current move direction and direction after given time duration
+ * \details
+ * New move velocity after time duration:
+ * \f$\vec{V}_{t_\Delta} = \vec{V}_{t_N} + \vec{A}_{t_N} \Delta t\f$
+ *
+ * Returned value is angle (in radians) in between \f$\vec{V}_{t_N}\f$ and \f$\vec{V}_{t_\Delta}\f$
+ */
+template <typename T>
+inline T NewtonTimeStamp<T>::curvingAngleRad(const T timeDelta) const
+{
+    return moveVelocity.angleRad(moveVelocity + moveAccel * timeDelta);
+}
+
+/*!
+ * \brief Returns time duration that is needed to curve move direction by given angle
+ * \param angleRad Curving angle on radians
+ * \returns Time duration that is needed to curve move direction by given angle
+ * \note Returns <tt><b>-1</b></tt> when object is not curving (move velocity and acceleration are parallel or at least
+ * one has zero length)
+ * \details
+ * Vector property substitutions:
+ * \f{eqnarray*}{
+ * \vec{V}_{t_N} &-&\mbox {Current velocity}\\
+ * A &=& \vec{V}_{t_N} \left( X \right) \\
+ * B &=& \vec{V}_{t_N} \left( Y \right) \\
+ * C &=& \vec{V}_{t_N} \left( Z \right) \\
+ * \\
+ * \vec{A}_{t_N} &-&\mbox {Current acceleration}\\
+ * D &=& \vec{A}_{t_N} \left( X \right) \\
+ * E &=& \vec{A}_{t_N} \left( Y \right) \\
+ * F &=& \vec{A}_{t_N} \left( Z \right) \\
+ * \\
+ * t_X &-& \mbox {Time duration we are looking for} \\
+ * \vec{V}_{t_X} &-&\mbox {Velocity after time duration}\\
+ * \vec{V}_{t_X} &=& \vec{V}_{t_N} + \vec{A}_{t_N} \cdot t_X \\
+ * I &=& \vec{V}_{t_X} \left( X \right) = A + D \cdot t_X \\
+ * J &=& \vec{V}_{t_X} \left( Y \right) = B + E \cdot t_X \\
+ * K &=& \vec{V}_{t_X} \left( Z \right) = C + F \cdot t_X \\
+ * \f}
+ *
+ * Given angle \f$ \alpha \f$ is angle between \f$\vec{V}_{t_N}\f$ and \f$\vec{V}_{t_X}\f$. We can use cosinus formula:
+ * \f{eqnarray*}{
+ * cos(\alpha) &=& \frac{\vec{V}_{t_N}\cdot\vec{V}_{t_X}}{\sqrt{|\vec{V}_{t_N}|^2 |\vec{V}_{t_X}|^2}}
+ *  = \frac{\vec{V}_{t_N}\cdot\vec{V}_{t_X}}{\sqrt{(\vec{V}_{t_N}\cdot\vec{V}_{t_N}) \cdot
+ * (\vec{V}_{t_X}\cdot\vec{V}_{t_X})}}
+ * \\
+ *             &=& \frac{A \cdot I + B \cdot J + C \cdot K}{
+ *                  \sqrt{ (A \cdot A + B \cdot B + C \cdot C) \cdot (I \cdot I + J \cdot J + K \cdot K) }}
+ * \\
+ * \\
+ *             &=& \frac{A \cdot (A + D \cdot t_X) + B \cdot (B + E \cdot t_X) + C \cdot (C + F \cdot t_X)}{
+ *                  \sqrt{ (A^2 + B^2 + C^2) \cdot [(A + D \cdot t_X)^2 + (B + E \cdot t_X)^2 + (C + F \cdot t_X)^2] }}
+ * \\
+ * cos(\alpha)^2 \cdot (A^2 + B^2 + C^2) \cdot [(A + D \cdot t_X)^2 + (B + E \cdot t_X)^2 + (C + F \cdot t_X)^2]
+ *             &=& [A \cdot (A + D \cdot t_X) + B \cdot (B + E \cdot t_X) + C \cdot (C + F \cdot t_X)]^2 && |
+ * G = cos(\alpha)^2 \cdot (A^2 + B^2 + C^2)
+ * \\
+ * G \cdot [(A + D \cdot t_X)^2 + (B + E \cdot t_X)^2 + (C + F \cdot t_X)^2]
+ *             &=& [A \cdot (A + D \cdot t_X) + B \cdot (B + E \cdot t_X) + C \cdot (C + F \cdot t_X)]^2
+ * \\
+ * G \cdot [A^2 + 2 \cdot A \cdot D \cdot t_X + D^2 \cdot t_{X}^2 +
+ *          B^2 + 2 \cdot B \cdot E \cdot t_X + E^2 \cdot t_{X}^2 +
+ *          C^2 + 2 \cdot C \cdot F \cdot t_X + F^2 \cdot t_{X}^2 ]
+ *             &=& [ A^2 + A \cdot D \cdot t_X + B^2 + B \cdot E \cdot t_X + C^2 + C \cdot F \cdot t_X ]^2
+ *                 && | H = A^2 + B^2 + C^2
+ * \\
+ * G \cdot [H + 2 \cdot A \cdot D \cdot t_X + D^2 \cdot t_{X}^2
+ *            + 2 \cdot B \cdot E \cdot t_X + E^2 \cdot t_{X}^2
+ *            + 2 \cdot C \cdot F \cdot t_X + F^2 \cdot t_{X}^2 ]
+ *             &=& [ H + A \cdot D \cdot t_X + B \cdot E \cdot t_X + C \cdot F \cdot t_X ]^2
+ * \\
+ * G \cdot [H + 2 \cdot (A \cdot D + B \cdot E + C \cdot F) \cdot t_X + (D^2 + E^2 + F^2) \cdot t_{X}^2 ]
+ *             &=& [ H + ( A \cdot D + B \cdot E + C \cdot F ) \cdot t_X ]^2
+ *                 && | L = A \cdot D + B \cdot E + C \cdot F
+ * \\
+ *             & & && | M = D^2 + E^2 + F^2
+ * \\
+ * G \cdot [H + 2 \cdot L \cdot t_X + M \cdot t_{X}^2 ] &=& [ H + L \cdot t_X ]^2
+ * \\
+ * G \cdot H + 2 \cdot G \cdot L \cdot t_X + G \cdot M \cdot t_{X}^2
+ *             &=& H^2 + 2 \cdot H \cdot L \cdot t_X + L^2 \cdot t_{X}^2
+ * \\
+ * t_{X}^2 \cdot [ G \cdot M - L^2 ] + t_X \cdot [ 2 \cdot L \cdot ( G - H ) ] + [G \cdot H - H^2] &=& 0
+ * \\
+ * t_{X}^2 + t_X \cdot \frac{2 \cdot L \cdot ( G - H )}{G \cdot M - L^2} + \frac{G \cdot H - H^2}{G \cdot M - L^2}
+ *             &=& 0
+ *                 && | b = \frac{2 \cdot L \cdot ( G - H )}{G \cdot M - L^2}
+ * \\
+ *             & & && | c = \frac{G \cdot H - H^2}{G \cdot M - L^2}
+ * \\
+ * t_X &=& \frac{- b \pm \sqrt{ b^2 - 4 \cdot c }}{2}
+ * \\
+ * t_X &=& \frac{- \frac{2 \cdot L \cdot ( G - H )}{G \cdot M - L^2} \pm
+ * \sqrt{ \frac{4 \cdot L^2 \cdot ( G - H )^2}{(G \cdot M - L^2)^2} - 4 \cdot \frac{G \cdot H - H^2}{G \cdot M - L^2}
+ * }}{2}
+ * \\
+ * t_X &=& - \frac{L \cdot ( G - H )}{G \cdot M - L^2} \pm
+ * \sqrt{ \frac{L^2 \cdot ( G - H )^2}{(G \cdot M - L^2)^2} - \frac{G \cdot H - H^2}{G \cdot M - L^2}}
+ * \\
+ * t_X &=& - \frac{L \cdot ( G - H ) \pm \sqrt{ L^2 \cdot ( G - H )^2 - (G \cdot H - H^2) \cdot ( G \cdot M - L^2 )} }
+ *                {G \cdot M - L^2}
+ * \\
+ * t_X &=& - \frac{L \cdot ( G - H ) \pm \sqrt{
+ *  ( L^2 \cdot G^2 - 2 \cdot L^2 \cdot G \cdot H + L^2 \cdot H^2 )
+ * - (G^2 \cdot H \cdot M - G \cdot H \cdot L^2 - H^2 \cdot G \cdot M + H^2 \cdot L^2)
+ * } }{G \cdot M - L^2}
+ * \\
+ * t_X &=& \frac{L \cdot ( H - G ) \pm \sqrt{
+ *   L^2 \cdot G^2 - L^2 \cdot G \cdot H - G^2 \cdot H \cdot M + H^2 \cdot G \cdot M
+ * } }{G \cdot M - L^2}
+ * \\
+ * t_X &=& \frac{L \cdot ( H - G ) \pm \sqrt{
+ *   L^2 \cdot G \cdot ( G - H) - G \cdot H \cdot M \cdot ( G - H)
+ * } }{G \cdot M - L^2}
+ * \\
+ * t_X &=& \frac{L \cdot ( H - G ) \pm \sqrt{ G \cdot ( G - H)  \cdot (L^2 - H \cdot M) } }{G \cdot M - L^2}
+ * \\
+ * \f}
+ */
+template <typename T>
+inline T NewtonTimeStamp<T>::curvingTimeDuration(const T angleRad) const
+{
+    if (moveVelocity.isNull() || moveAccel.isNull() || moveVelocity.isParallel(moveAccel))
+        return -Const::T_1<T>();
+
+    const T ca = std::cos(angleRad);
+
+    const T H = moveVelocity.lengthSquared();
+    const T G = H * ca * ca;
+    const T L = Math::Vec3<T>::dot(moveVelocity, moveAccel);
+    const T M = moveAccel.lengthSquared();
+
+    const T GMLL = G * M - L * L;
+    if (Type::isNull(GMLL))
+        return -Const::T_1<T>();
+
+    // const T DS = L * L * G * G - L * L * G * H - G * G * H * M + H * H * G * M;
+    const T DS = G * (G - H) * (L * L - H * M);
+    const T LHG = L * (H - G);
+    if (Type::isNull(DS))
+        return LHG / GMLL;
+
+    if (DS < Const::T_0<T>())
+        return -Const::T_1<T>();
+
+    const T DS2 = std::sqrt(DS);
+
+    return std::max((LHG + DS2) / GMLL, (LHG - DS2) / GMLL);
+}
+
+/*!
+ * \brief Returns this object moved in time
+ * \tparam T Template floating point type
+ * \param timeDelta Time duration of move
+ * \returns This object moved in time
+ * \details
+ *
+ * | Property        | Calculation                                                                         |
+ * | :-------------- | :---------------------------------------------------------------------------------- |
+ * | \a timeStamp    | \f$t_N + \Delta t\f$                                                                |
+ * | \a position     | \f$\vec{P}_{t_N} + \vec{V}_{t_N} \Delta t + \frac{1}{2} \vec{A}_{t_N} \Delta t^2\f$ |
+ * | \a moveVelocity | \f$\vec{V}_{t_N} + \vec{A}_{t_N} \Delta t\f$                                        |
+ * | \a moveAccel    | \f$[0,0,0]\f$                                                                       |
+ */
+template <typename T>
+inline NewtonTimeStamp<T> NewtonTimeStamp<T>::moved(const T timeDelta) const
+{
+    return NewtonTimeStamp<T>(TimeStamp<T>::timeStamp + timeDelta,
+                              TimeStamp<T>::position + moveVelocity * timeDelta +
+                                  moveAccel * (timeDelta * timeDelta * Const::T_05<T>()),
+                              moveVelocity + moveAccel * timeDelta,
+                              Math::Vec3<T>());
+}
+
+/*!
+ * \brief Returns this object moved in time to position from where gravitation wave hits event
+ * \tparam T Template floating point type
+ * \param universeVelocity Speed of the Universe
+ * \param eventTimeStamp Time-stamp of event
+ * \param eventPosition Event location
+ * \returns This object moved in time to position from where gravitation wave hits event
+ */
+template <typename T>
+NewtonTimeStamp<T> NewtonTimeStamp<T>::movedToEventSource(const T universeVelocity,
+                                                          const T eventTimeStamp,
+                                                          const Math::Vec3<T> &eventPosition) const
+{
+    T time1Add = Const::T_0<T>();
+    T timeHit = getTimeWhenWaveHitEvent(universeVelocity, eventPosition);
+    if (Type::equals<T>(timeHit, eventTimeStamp))
+        return NewtonTimeStamp<T>(TimeStamp<T>::timeStamp, TimeStamp<T>::position, moveVelocity, Math::Vec3<T>());
+
+    T time1Diff = eventTimeStamp - timeHit;
+
+    T time2Add = time1Diff;
+    NewtonTimeStamp<T> tmpObject = moved(time2Add);
+    timeHit = tmpObject.getTimeWhenWaveHitEvent(universeVelocity, eventPosition);
+
+    if (Type::equals<T>(timeHit, eventTimeStamp))
+        return tmpObject;
+
+    T time2Diff = eventTimeStamp - timeHit;
+
+    for (int step = 3; step < 20; ++step)
+    {
+        const T time3Add = time1Add - (time1Add - time2Add) * time1Diff / (time1Diff - time2Diff);
+
+        tmpObject = moved(time3Add);
+        timeHit = tmpObject.getTimeWhenWaveHitEvent(universeVelocity, eventPosition);
+
+        if (Type::equals<T>(timeHit, eventTimeStamp))
+            return tmpObject;
+
+        time1Add = time2Add;
+        time2Add = time3Add;
+        time1Diff = time2Diff;
+        time2Diff = (eventTimeStamp - timeHit);
+    }
+    return NewtonTimeStamp<T>();
+}
+
+/*!
+ * \brief Fill output text stream
+ * \tparam T Template floating point type
+ * \param os Output text stream
+ * \param v Vector
+ * \returns Output text stream
+ */
+template <typename T>
+inline std::ostream &operator<<(std::ostream &os, const NewtonTimeStamp<T> &v)
+{
+    return os << '[' << v.timeStamp << '|' << v.position << '|' << v.moveVelocity << '|' << v.moveAccel << ']';
+}
+
+}  // namespace GravityNewton
+}  // namespace Simulation
+}  // namespace Universe1
+
+#endif  // NEWTONTIMESTAMP_H

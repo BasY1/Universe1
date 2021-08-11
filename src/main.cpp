@@ -29,24 +29,12 @@ int main(int argc, char *argv[])
     // return app.exec();
 }
 
-//#include "unit_tests/test_singularity.h"
+#include "unit_tests/test_newton.h"
 #include "unit_tests/test_vec3.h"
-
-#include "math/timestepdata.h"
-template <typename T>
-struct TimeStamp2 : public Universe1::Simulation::TimeStamp<T>
-{
-};
 
 bool runTests()
 {
-    Universe1::Simulation::ObjectHistoryVector<float, TimeStamp2<float>> hist;
-    Universe1::Simulation::ObjectHistoryVector<double, TimeStamp2<double>> hist2;
-
-    hist.eventSource(1, 1, Universe1::Math::Vec3<float>(1, 1, 1));
-    hist2.eventSource(1, 1, Universe1::Math::Vec3<double>(1, 1, 1));
-
-    static const std::vector<QObject *> tests = {new Test_Vec3()};  //{new Test_Vec3(), new Test_Singularity()};
+    static const std::vector<QObject *> tests = {new Test_Vec3(), new Test_Newton()};
 
     bool result = true;
 

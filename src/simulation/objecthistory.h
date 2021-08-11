@@ -1,5 +1,5 @@
 /*!
- * \file math/objecthistory.h
+ * \file simulation/objecthistory.h
  * \author Michal Steller
  * \brief Object history base template implementation
  */
@@ -75,6 +75,18 @@ struct ObjectHistory
 
  public:
     /*!
+     * \brief Getter for history filled / looping enabled flag
+     * \returns History filled / looping enabled flag
+     */
+    inline bool filled() const;
+
+    /*!
+     * \brief Getter for index of current object data in history buffer
+     * \returns Index of current object data in history buffer
+     */
+    inline size_t currentIdx() const;
+
+    /*!
      * \brief Getter for history buffer
      * \returns History buffer
      */
@@ -93,13 +105,28 @@ struct ObjectHistory
     inline TimeStampClass *current();
 
     void initHistory(const size_t _size);
-
- protected:
     void addToHistory(const TimeStampClass &newData);
 
+ protected:
     std::pair<EventSourceResult, const TimeStampClass *>
     eventSource(const T universeVelocity, const T eventTimeStamp, const Math::Vec3<T> &eventPosition) const;
 };
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template <typename T, typename TimeStampClass>
+inline bool ObjectHistory<T, TimeStampClass>::filled() const
+{
+    return m_filled;
+}
+
+template <typename T, typename TimeStampClass>
+inline size_t ObjectHistory<T, TimeStampClass>::currentIdx() const
+{
+    return m_currentIdx;
+}
 
 template <typename T, typename TimeStampClass>
 inline const std::vector<TimeStampClass> &ObjectHistory<T, TimeStampClass>::history() const
@@ -191,7 +218,7 @@ void ObjectHistory<T, TimeStampClass>::addToHistory(const TimeStampClass &newDat
  * \param universeVelocity Speed of the Universe
  * \param eventTimeStamp Time-stamp of event
  * \param eventPosition Event location
- * \return Pair of result type + closest time-stamp
+ * \returns Pair of result type + closest time-stamp
  */
 template <typename T, typename TimeStampClass>
 std::pair<EventSourceResult, const TimeStampClass *> ObjectHistory<T, TimeStampClass>::eventSource(

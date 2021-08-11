@@ -33,21 +33,18 @@ HEADERS += \
     \
     src/simulation/timestamp.h \
     src/simulation/objecthistory.h \
-    src/simulation/gravitynewton.h \
     \
-    #src/math/singularity/singularityobjectdata.h \
-    #src/math/singularity/singularityobject.h \
-    #src/math/singularity/singularitysimulation.h
+    src/simulation/newton/newtontimestamp.h \
+    src/simulation/newton/newtonobject.h \
 
 
 SOURCES += \
     src/unit_tests/test_vec3.cpp \
-    #src/unit_tests/test_singularity.cpp
+    src/unit_tests/test_newton.cpp
 
 HEADERS += \
     src/unit_tests/test_vec3.h \
-    #src/unit_tests/test_singularity.h
-
+    src/unit_tests/test_newton.h
 
 #TRANSLATIONS += \
 #    Test_en_US.ts
