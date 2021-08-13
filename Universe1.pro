@@ -25,6 +25,8 @@ TEMPLATE = app
 SOURCES += \
     src/main.cpp
 
+########################################################################################################################
+
 HEADERS += \
     src/math/typeconst.h \
     src/math/type.h \
@@ -39,7 +41,20 @@ HEADERS += \
     \
     src/simulation/newton/newtontimestamp.h \
     src/simulation/newton/newtonobject.h \
+    src/simulation/newton/newtonobjectcurrent.h \
+    src/simulation/newton/newtonobjectbywave.h \
+    src/simulation/newton/newtonsimulation.h \
 
+########################################################################################################################
+
+SOURCES += \
+    src/qt/qsimulation.cpp \
+
+HEADERS += \
+    src/qt/qsimulation.h \
+
+
+########################################################################################################################
 
 SOURCES += \
     src/unit_tests/test_vec3.cpp \
@@ -48,6 +63,8 @@ SOURCES += \
 HEADERS += \
     src/unit_tests/test_vec3.h \
     src/unit_tests/test_newton.h
+
+########################################################################################################################
 
 #TRANSLATIONS += \
 #    Test_en_US.ts
