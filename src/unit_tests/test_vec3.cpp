@@ -22,6 +22,26 @@ void Test_Vec3::initTestCase()
     std::cout << "Default double:       " << vd << std::endl;
     TextTools::setDefaultPrecision<long double>(std::cout);
     std::cout << "Default long double:  " << vl << std::endl;
+
+    class A
+    {
+    };
+
+    class B : A
+    {
+    };
+
+    class C : B
+    {
+    };
+
+    std::cout << std::boolalpha;
+    std::cout << "a2b: " << std::is_base_of<A, B>::value << '\n';
+    std::cout << "a2c: " << std::is_base_of<A, C>::value << '\n';
+    std::cout << "b2c: " << std::is_base_of<B, C>::value << '\n';
+    std::cout << "b2a: " << std::is_base_of<B, A>::value << '\n';
+    std::cout << "c2a: " << std::is_base_of<C, A>::value << '\n';
+    std::cout << "c2b: " << std::is_base_of<C, B>::value << '\n';
 }
 
 void Test_Vec3::testMathFloat()

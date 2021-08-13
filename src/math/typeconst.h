@@ -35,6 +35,13 @@ inline T T_01()
 }
 
 template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
+inline T T_001()
+{
+    static const T tmp = 0.01l;
+    return tmp;
+}
+
+template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
 inline T T_05()
 {
     static const T tmp = 0.5l;
@@ -196,6 +203,13 @@ inline T T_RadInDeg()
  * \brief Getter for type specific value: 0.1
  * \tparam T Template floating point type
  * \returns 0.1 in specific floating point type
+ */
+
+/*!
+ * \fn Universe1::Const::T_001()
+ * \brief Getter for type specific value: 0.01
+ * \tparam T Template floating point type
+ * \returns 0.01 in specific floating point type
  */
 
 /*!

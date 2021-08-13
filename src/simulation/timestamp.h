@@ -47,13 +47,13 @@ struct TimeStamp
 
     /*!
      * \brief Returns time when wave from current time-stamp hits event at specific position
-     * \param universeVelocity Speed of the Universe
-     * \param eventPosition Event location
+     * \param _universeVelocity Speed of the Universe
+     * \param _eventPosition Event location
      * \returns Time when wave from current time-stamp hits event at specific position
      */
-    inline T getTimeWhenWaveHitEvent(const T universeVelocity, const Math::Vec3<T> &eventPosition) const
+    inline T getTimeWhenWaveHitEvent(const T _universeVelocity, const Math::Vec3<T> &_eventPosition) const
     {
-        return timeStamp + position.distanceToPoint(eventPosition) / universeVelocity;
+        return timeStamp + position.distanceToPoint(_eventPosition) / _universeVelocity;
     }
 };
 

@@ -31,8 +31,11 @@ HEADERS += \
     src/math/texttools.h \
     src/math/vec3.h \
     \
+    src/simulation/constants.h \
     src/simulation/timestamp.h \
     src/simulation/objecthistory.h \
+    src/simulation/simulationproperty.h \
+    src/simulation/simulation.h \
     \
     src/simulation/newton/newtontimestamp.h \
     src/simulation/newton/newtonobject.h \

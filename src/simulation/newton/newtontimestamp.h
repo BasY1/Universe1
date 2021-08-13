@@ -20,6 +20,15 @@ namespace GravityNewton {
 template <typename T>
 struct NewtonTimeStamp : public TimeStamp<T>
 {
+    /*!
+     * \brief Compare previous and moved object
+     * \param _previous First object
+     * \param _next Second object
+     * \returns \c true when time-stamp, position and velocity are equal
+     * \note Acceleration \a moveAccel is ignored
+     */
+    static bool compareMoved(const NewtonTimeStamp<T> &_previous, const NewtonTimeStamp<T> &_next);
+
     Math::Vec3<T> moveVelocity;  //!< Object velocity     [m/s]
     Math::Vec3<T> moveAccel;     //!< Object acceleration [m/s^2]
 
@@ -52,20 +61,20 @@ struct NewtonTimeStamp : public TimeStamp<T>
     {
     }
 
-    inline NewtonTimeStamp moved(const T timeDelta) const;
+    inline NewtonTimeStamp moved(const T _timeDelta) const;
 
-    inline T curvingAngleRad(const T timeDelta) const;
+    inline T curvingAngleRad(const T _timeDelta) const;
 
-    inline T curvingTimeDuration(const T angleRad) const;
+    inline T curvingTimeDuration(const T _angleRad) const;
 
     NewtonTimeStamp
-    movedToEventSource(const T universeVelocity, const T eventTimeStamp, const Math::Vec3<T> &eventPosition) const;
+    movedToEventSource(const T _universeVelocity, const T _eventTimeStamp, const Math::Vec3<T> &_eventPosition) const;
 };
 
 /*!
  * \brief Returns angle between current move direction and direction after given time duration
  * \tparam T Template floating point type
- * \param timeDelta Time duration of move
+ * \param _timeDelta Time duration of move
  * \returns Angle between current move direction and direction after given time duration
  * \details
  * New move velocity after time duration:
@@ -74,14 +83,15 @@ struct NewtonTimeStamp : public TimeStamp<T>
  * Returned value is angle (in radians) in between \f$\vec{V}_{t_N}\f$ and \f$\vec{V}_{t_\Delta}\f$
  */
 template <typename T>
-inline T NewtonTimeStamp<T>::curvingAngleRad(const T timeDelta) const
+inline T NewtonTimeStamp<T>::curvingAngleRad(const T _timeDelta) const
 {
-    return moveVelocity.angleRad(moveVelocity + moveAccel * timeDelta);
+    return moveVelocity.angleRad(moveVelocity + moveAccel * _timeDelta);
 }
 
 /*!
- * \brief Returns time duration that is needed to curve move direction by given angle
- * \param angleRad Curving angle on radians
+ * \brief Returns time duration that is needed to curve (turn) move direction by given angle
+ * \tparam T Template floating point type
+ * \param _angleRad Curving angle on radians
  * \returns Time duration that is needed to curve move direction by given angle
  * \note Returns <tt><b>-1</b></tt> when object is not curving (move velocity and acceleration are parallel or at least
  * one has zero length)
@@ -118,7 +128,9 @@ inline T NewtonTimeStamp<T>::curvingAngleRad(const T timeDelta) const
  * \\
  *             &=& \frac{A \cdot (A + D \cdot t_X) + B \cdot (B + E \cdot t_X) + C \cdot (C + F \cdot t_X)}{
  *                  \sqrt{ (A^2 + B^2 + C^2) \cdot [(A + D \cdot t_X)^2 + (B + E \cdot t_X)^2 + (C + F \cdot t_X)^2] }}
- * \\
+ * \f}
+ * Solve equation:
+ * \f{eqnarray*}{
  * cos(\alpha)^2 \cdot (A^2 + B^2 + C^2) \cdot [(A + D \cdot t_X)^2 + (B + E \cdot t_X)^2 + (C + F \cdot t_X)^2]
  *             &=& [A \cdot (A + D \cdot t_X) + B \cdot (B + E \cdot t_X) + C \cdot (C + F \cdot t_X)]^2 && |
  * G = cos(\alpha)^2 \cdot (A^2 + B^2 + C^2)
@@ -155,7 +167,9 @@ inline T NewtonTimeStamp<T>::curvingAngleRad(const T timeDelta) const
  *                 && | b = \frac{2 \cdot L \cdot ( G - H )}{G \cdot M - L^2}
  * \\
  *             & & && | c = \frac{G \cdot H - H^2}{G \cdot M - L^2}
- * \\
+ * \f}
+ * Simplify result:
+ * \f{eqnarray*}{
  * t_X &=& \frac{- b \pm \sqrt{ b^2 - 4 \cdot c }}{2}
  * \\
  * t_X &=& \frac{- \frac{2 \cdot L \cdot ( G - H )}{G \cdot M - L^2} \pm
@@ -186,12 +200,12 @@ inline T NewtonTimeStamp<T>::curvingAngleRad(const T timeDelta) const
  * \f}
  */
 template <typename T>
-inline T NewtonTimeStamp<T>::curvingTimeDuration(const T angleRad) const
+inline T NewtonTimeStamp<T>::curvingTimeDuration(const T _angleRad) const
 {
     if (moveVelocity.isNull() || moveAccel.isNull() || moveVelocity.isParallel(moveAccel))
         return -Const::T_1<T>();
 
-    const T ca = std::cos(angleRad);
+    const T ca = std::cos(_angleRad);
 
     const T H = moveVelocity.lengthSquared();
     const T G = H * ca * ca;
@@ -216,10 +230,19 @@ inline T NewtonTimeStamp<T>::curvingTimeDuration(const T angleRad) const
     return std::max((LHG + DS2) / GMLL, (LHG - DS2) / GMLL);
 }
 
+template <typename T>
+bool NewtonTimeStamp<T>::compareMoved(const NewtonTimeStamp<T> &_previous, const NewtonTimeStamp<T> &_next)
+{
+    const T stepDuration = _next.timeStamp - _previous.timeStamp;
+    const NewtonTimeStamp<T> movedObject = _previous.moved(stepDuration);
+    return Type::equals(_next.timeStamp, movedObject.timeStamp) && _next.position == movedObject.position &&
+        _next.moveVelocity == movedObject.moveVelocity;
+}
+
 /*!
  * \brief Returns this object moved in time
  * \tparam T Template floating point type
- * \param timeDelta Time duration of move
+ * \param _timeDelta Time duration of move \f$\Delta t\f$
  * \returns This object moved in time
  * \details
  *
@@ -231,58 +254,58 @@ inline T NewtonTimeStamp<T>::curvingTimeDuration(const T angleRad) const
  * | \a moveAccel    | \f$[0,0,0]\f$                                                                       |
  */
 template <typename T>
-inline NewtonTimeStamp<T> NewtonTimeStamp<T>::moved(const T timeDelta) const
+inline NewtonTimeStamp<T> NewtonTimeStamp<T>::moved(const T _timeDelta) const
 {
-    return NewtonTimeStamp<T>(TimeStamp<T>::timeStamp + timeDelta,
-                              TimeStamp<T>::position + moveVelocity * timeDelta +
-                                  moveAccel * (timeDelta * timeDelta * Const::T_05<T>()),
-                              moveVelocity + moveAccel * timeDelta,
+    return NewtonTimeStamp<T>(TimeStamp<T>::timeStamp + _timeDelta,
+                              TimeStamp<T>::position + moveVelocity * _timeDelta +
+                                  moveAccel * (_timeDelta * _timeDelta * Const::T_05<T>()),
+                              moveVelocity + moveAccel * _timeDelta,
                               Math::Vec3<T>());
 }
 
 /*!
  * \brief Returns this object moved in time to position from where gravitation wave hits event
  * \tparam T Template floating point type
- * \param universeVelocity Speed of the Universe
- * \param eventTimeStamp Time-stamp of event
- * \param eventPosition Event location
+ * \param _universeVelocity Speed of the Universe
+ * \param _eventTimeStamp Time-stamp of event
+ * \param _eventPosition Event location
  * \returns This object moved in time to position from where gravitation wave hits event
  */
 template <typename T>
-NewtonTimeStamp<T> NewtonTimeStamp<T>::movedToEventSource(const T universeVelocity,
-                                                          const T eventTimeStamp,
-                                                          const Math::Vec3<T> &eventPosition) const
+NewtonTimeStamp<T> NewtonTimeStamp<T>::movedToEventSource(const T _universeVelocity,
+                                                          const T _eventTimeStamp,
+                                                          const Math::Vec3<T> &_eventPosition) const
 {
     T time1Add = Const::T_0<T>();
-    T timeHit = getTimeWhenWaveHitEvent(universeVelocity, eventPosition);
-    if (Type::equals<T>(timeHit, eventTimeStamp))
+    T timeHit = TimeStamp<T>::getTimeWhenWaveHitEvent(_universeVelocity, _eventPosition);
+    if (Type::equals<T>(timeHit, _eventTimeStamp))
         return NewtonTimeStamp<T>(TimeStamp<T>::timeStamp, TimeStamp<T>::position, moveVelocity, Math::Vec3<T>());
 
-    T time1Diff = eventTimeStamp - timeHit;
+    T time1Diff = _eventTimeStamp - timeHit;
 
     T time2Add = time1Diff;
     NewtonTimeStamp<T> tmpObject = moved(time2Add);
-    timeHit = tmpObject.getTimeWhenWaveHitEvent(universeVelocity, eventPosition);
+    timeHit = tmpObject.getTimeWhenWaveHitEvent(_universeVelocity, _eventPosition);
 
-    if (Type::equals<T>(timeHit, eventTimeStamp))
+    if (Type::equals<T>(timeHit, _eventTimeStamp))
         return tmpObject;
 
-    T time2Diff = eventTimeStamp - timeHit;
+    T time2Diff = _eventTimeStamp - timeHit;
 
     for (int step = 3; step < 20; ++step)
     {
         const T time3Add = time1Add - (time1Add - time2Add) * time1Diff / (time1Diff - time2Diff);
 
         tmpObject = moved(time3Add);
-        timeHit = tmpObject.getTimeWhenWaveHitEvent(universeVelocity, eventPosition);
+        timeHit = tmpObject.getTimeWhenWaveHitEvent(_universeVelocity, _eventPosition);
 
-        if (Type::equals<T>(timeHit, eventTimeStamp))
+        if (Type::equals<T>(timeHit, _eventTimeStamp))
             return tmpObject;
 
         time1Add = time2Add;
         time2Add = time3Add;
         time1Diff = time2Diff;
-        time2Diff = (eventTimeStamp - timeHit);
+        time2Diff = (_eventTimeStamp - timeHit);
     }
     return NewtonTimeStamp<T>();
 }
@@ -290,14 +313,14 @@ NewtonTimeStamp<T> NewtonTimeStamp<T>::movedToEventSource(const T universeVeloci
 /*!
  * \brief Fill output text stream
  * \tparam T Template floating point type
- * \param os Output text stream
- * \param v Vector
+ * \param _os Output text stream
+ * \param _v Vector
  * \returns Output text stream
  */
 template <typename T>
-inline std::ostream &operator<<(std::ostream &os, const NewtonTimeStamp<T> &v)
+inline std::ostream &operator<<(std::ostream &_os, const NewtonTimeStamp<T> &_v)
 {
-    return os << '[' << v.timeStamp << '|' << v.position << '|' << v.moveVelocity << '|' << v.moveAccel << ']';
+    return _os << '[' << _v.timeStamp << '|' << _v.position << '|' << _v.moveVelocity << '|' << _v.moveAccel << ']';
 }
 
 }  // namespace GravityNewton

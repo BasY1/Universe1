@@ -4,6 +4,7 @@
 #include <QTest>
 
 #include "../simulation/newton/newtonobject.h"
+#include "../simulation/simulation.h"
 
 class Test_Newton : public QObject
 {
@@ -34,9 +35,74 @@ void Test_Newton::testObjectData()
 
     std::cout.precision(4);
     std::cout << std::fixed;
+    // static const T angle = toRad<T>(5);
+    static const int loops = 7;
 
-    const T angle = toRad<T>(5);
+    //#define __CLAZZ__ NewtonObjectCurrent
+#define __CLAZZ__ NewtonObjectByWave
 
+    Universe1::Simulation::Simulation<T, __CLAZZ__<T>, NewtonTimeStamp<T>> simCur;
+
+    simCur.initObjects().push_back(__CLAZZ__<T>(0, 5, 5));
+    simCur.initObjects().back().current()->moveVelocity = Vec3<T>(0.1, 0, 0);
+
+    for (int i = 0; i < loops; ++i)
+        simCur.initObjects().back().addStep(1);
+
+    simCur.initObjects().push_back(__CLAZZ__<T>(1, 5, 5));
+    simCur.initObjects().back().current()->position = Vec3<T>(2.5, -1, 0);
+    simCur.initObjects().back().current()->moveVelocity = Vec3<T>(0, 0.1, 0);
+
+    for (int i = 0; i < loops; ++i)
+        simCur.initObjects().back().addStep(1);
+
+    for (size_t j = 0; j < simCur.initObjects().front().history().size(); ++j)
+        std::cout << "* " << j << " " << (simCur.initObjects().front().history().at(j)) << std::endl;
+
+    for (size_t j = 0; j < simCur.initObjects().back().history().size(); ++j)
+        std::cout << "+ " << j << " " << (simCur.initObjects().back().history().at(j)) << std::endl;
+    const uint32_t res = simCur.testStart();
+    std::cout << res << ":" << strSimulationProperties(res) << std::endl;
+
+    std::list<std::pair<size_t, size_t>> invalid;
+    simCur.testHistoryVisibility(&invalid);
+    for (const std::pair<size_t, size_t> &p : invalid)
+        std::cout << "  > " << p.first << " " << p.second << std::endl;
+
+    simCur.initialize(10U);
+    std::cout << "------------------------------------------------------------" << std::endl;
+
+    for (const __CLAZZ__<T> &o : simCur.objects())
+    {
+        std::cout << o.ID() << std::endl;
+        std::cout << o.currentIdx() << std::endl;
+        size_t ii = 0U;
+        for (const NewtonTimeStamp<T> &ts : o.history())
+            std::cout << ii++ << " : " << ts << std::endl;
+        std::cout << "------------------------------" << std::endl;
+    }
+
+    const __CLAZZ__<T> &o0 = simCur.objects().at(0U);
+    const __CLAZZ__<T> &o1 = simCur.objects().at(1U);
+
+    std::cout
+        << " aaaa: "
+        << (*o1.eventSource(simCur.physics().universeVelocity, o0.current()->timeStamp, o0.current()->position).second)
+        << std::endl;
+
+    std::cout << " bbbb: "
+              << (o1.eventSource(simCur.physics().universeVelocity, o0.current()->timeStamp, o0.current()->position)
+                      .second->movedToEventSource(
+                          simCur.physics().universeVelocity, o0.current()->timeStamp, o0.current()->position))
+              << std::endl;
+
+    std::cout << "Add: " << (simCur.addStep() ? "OK" : "FAIL") << std::endl;
+
+    // Universe1::Simulation::Simulation<T, NewtonObjectByWave<T>, NewtonTimeStamp<T>> simWave;
+}
+
+#endif  // TEST_NEWTON_H
+/*
     if (true)
     {
         NewtonObject<T> obj1(1, T_1<T>(), 5U);
@@ -81,6 +147,4 @@ void Test_Newton::testObjectData()
             std::cout << std::endl;
         }
     }
-}
-
-#endif  // TEST_NEWTON_H
+*/
