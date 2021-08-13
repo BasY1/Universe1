@@ -4,8 +4,8 @@
  * \brief SimulationProperty enumeration and tools implementation
  */
 
-#ifndef SIMULATIONPROPERTY_H
-#define SIMULATIONPROPERTY_H
+#ifndef UNIVERSE1_SIMULATION_SIMULATIONPROPERTY_H
+#define UNIVERSE1_SIMULATION_SIMULATIONPROPERTY_H
 
 #include "../math/texttools.h"
 #include "constants.h"
@@ -22,7 +22,8 @@ enum SimulationProperty : uint32_t
 {
     Property_UniverseVelocity = Const_UniverseVelocity,  //!< Name for speed of the Universe constant
     Property_GravityConstant = Const_GravityConstant,    //!< Name for gravitational constant
-    _Property_PhysicsLast = Property_GravityConstant,    //!< Name for last physics constant
+    Property_ElementRadius = Const_ElementRadius,        //!< Name for element radius
+    _Property_PhysicsLast = Property_ElementRadius,      //!< Name for last physics constant
 
     Property_MaximumStepTime = (uint32_t(_Property_PhysicsLast) << 1U),  //!< Name for maximum step time duration
 
@@ -115,4 +116,4 @@ inline std::string strSimulationProperties(const uint32_t flags)
 }  // namespace Simulation
 }  // namespace Universe1
 
-#endif  // SIMULATIONPROPERTY_H
+#endif  // UNIVERSE1_SIMULATION_SIMULATIONPROPERTY_H

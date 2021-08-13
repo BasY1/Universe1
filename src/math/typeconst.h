@@ -4,8 +4,8 @@
  * \brief Floating point value constants
  */
 
-#ifndef TYPECONST_H
-#define TYPECONST_H
+#ifndef UNIVERSE1_CONST_TYPECONST_H
+#define UNIVERSE1_CONST_TYPECONST_H
 
 #include <cmath>
 #include <type_traits>
@@ -351,4 +351,4 @@ inline T T_RadInDeg()
 
 }  // namespace Universe1
 
-#endif  // TYPECONST_H
+#endif  // UNIVERSE1_CONST_TYPECONST_H

@@ -4,8 +4,8 @@
  * \brief Newton based time-stamp template implementation
  */
 
-#ifndef NEWTONTIMESTAMP_H
-#define NEWTONTIMESTAMP_H
+#ifndef UNIVERSE1_SIMULATION_GRAVITYNEWTON_NEWTONTIMESTAMP_H
+#define UNIVERSE1_SIMULATION_GRAVITYNEWTON_NEWTONTIMESTAMP_H
 
 #include "../timestamp.h"
 
@@ -327,4 +327,4 @@ inline std::ostream &operator<<(std::ostream &_os, const NewtonTimeStamp<T> &_v)
 }  // namespace Simulation
 }  // namespace Universe1
 
-#endif  // NEWTONTIMESTAMP_H
+#endif  // UNIVERSE1_SIMULATION_GRAVITYNEWTON_NEWTONTIMESTAMP_H

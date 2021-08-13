@@ -4,8 +4,8 @@
  * \brief Object history base template implementation
  */
 
-#ifndef OBJECTHISTORY_H
-#define OBJECTHISTORY_H
+#ifndef UNIVERSE1_SIMULATION_OBJECTHISTORY_H
+#define UNIVERSE1_SIMULATION_OBJECTHISTORY_H
 
 #include "constants.h"
 #include "timestamp.h"
@@ -450,4 +450,4 @@ void ObjectHistory<T, TimeStampClass>::cloneHistory(ObjectHistory<T, TimeStampCl
 }  // namespace Simulation
 }  // namespace Universe1
 
-#endif  // OBJECTHISTORY_H
+#endif  // UNIVERSE1_SIMULATION_OBJECTHISTORY_H

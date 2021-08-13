@@ -4,8 +4,8 @@
  * \brief 3D vector template implementation
  */
 
-#ifndef VEC3_H
-#define VEC3_H
+#ifndef MATH_VEC3_H
+#define MATH_VEC3_H
 
 #include "texttools.h"
 #include "type.h"
@@ -914,4 +914,4 @@ inline std::ostream &operator<<(std::ostream &os, const Vec3<T> &v)
 }  // namespace Math
 }  // namespace Universe1
 
-#endif  // VEC3_H
+#endif  // MATH_VEC3_H

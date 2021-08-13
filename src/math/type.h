@@ -4,8 +4,8 @@
  * \brief Floating point value tools and templates
  */
 
-#ifndef TYPE_H
-#define TYPE_H
+#ifndef UNIVERSE1_TYPE_TYPE_H
+#define UNIVERSE1_TYPE_TYPE_H
 
 #include "typeconst.h"
 
@@ -146,4 +146,4 @@ inline bool isUnit(const T value)
 }  // namespace Type
 }  // namespace Universe1
 
-#endif  // TYPE_H
+#endif  // UNIVERSE1_TYPE_TYPE_H

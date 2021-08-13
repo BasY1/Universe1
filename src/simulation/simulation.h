@@ -4,8 +4,8 @@
  * \brief Simulation base class template implementation
  */
 
-#ifndef SIMULATION_H
-#define SIMULATION_H
+#ifndef UNIVERSE1_SIMULATION_SIMULATION_H
+#define UNIVERSE1_SIMULATION_SIMULATION_H
 
 #include "objecthistory.h"
 #include "simulationproperty.h"
@@ -465,4 +465,4 @@ bool Simulation<T, ObjectClass, TimeStampClass>::addStep(const size_t _stepCount
 }  // namespace Simulation
 }  // namespace Universe1
 
-#endif  // SIMULATION_H
+#endif  // UNIVERSE1_SIMULATION_SIMULATION_H

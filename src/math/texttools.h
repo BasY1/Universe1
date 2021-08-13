@@ -4,8 +4,8 @@
  * \brief Floating point value string and standard output tools
  */
 
-#ifndef TOOLSTEXT_H
-#define TOOLSTEXT_H
+#ifndef UNIVERSE1_TEXTTOOLS_TOOLSTEXT_H
+#define UNIVERSE1_TEXTTOOLS_TOOLSTEXT_H
 
 #include <cstring>
 #include <iostream>
@@ -72,4 +72,4 @@ inline void setDefaultPrecision<long double>(std::ostream &os)
 
 }  // namespace Universe1
 
-#endif  // TYPE_H
+#endif  // UNIVERSE1_TEXTTOOLS_TOOLSTEXT_H

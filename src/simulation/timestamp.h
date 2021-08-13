@@ -4,8 +4,8 @@
  * \brief Timestamp data template implementation
  */
 
-#ifndef TIMESTAMP_H
-#define TIMESTAMP_H
+#ifndef UNIVERSE1_SIMULATION_TIMESTAMP_H
+#define UNIVERSE1_SIMULATION_TIMESTAMP_H
 
 #include "../math/vec3.h"
 
@@ -60,4 +60,4 @@ struct TimeStamp
 }  // namespace Simulation
 }  // namespace Universe1
 
-#endif  // TIMESTAMP_H
+#endif  // UNIVERSE1_SIMULATION_TIMESTAMP_H
