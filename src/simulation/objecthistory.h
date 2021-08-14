@@ -115,6 +115,12 @@ struct ObjectHistory
     inline const std::vector<TimeStampClass> &history() const;
 
     /*!
+     * \brief Getter for history buffer
+     * \returns History buffer
+     */
+    inline std::vector<TimeStampClass> &history();
+
+    /*!
      * \brief Getter for current time-stamp data
      * \returns Current time-stamp data
      */
@@ -153,6 +159,14 @@ struct ObjectHistory
      * \param _size New history buffer size
      */
     void initHistory(const size_t _size);
+
+    /*!
+     * \brief Initialize history buffer
+     * \param _filled  History filled / looping enabled flag
+     * \param _currentIdx New current history index
+     * \param _historySize New history buffer size
+     */
+    void initHistory(const bool _filled, const size_t _currentIdx, const size_t _historySize);
 
     /*!
      * \brief Append new time-stamp data into history buffer
@@ -232,6 +246,12 @@ inline const std::vector<TimeStampClass> &ObjectHistory<T, TimeStampClass>::hist
 }
 
 template <typename T, typename TimeStampClass>
+inline std::vector<TimeStampClass> &ObjectHistory<T, TimeStampClass>::history()
+{
+    return m_history;
+}
+
+template <typename T, typename TimeStampClass>
 inline const TimeStampClass *ObjectHistory<T, TimeStampClass>::current() const
 {
     return m_history.empty() ? nullptr : &m_history.at(m_currentIdx);
@@ -292,6 +312,16 @@ void ObjectHistory<T, TimeStampClass>::initHistory(const size_t _size)
     m_filled = false;
     m_currentIdx = 0U;
     m_history.resize(_size < minimumHistorySize ? 0U : _size);
+}
+
+template <typename T, typename TimeStampClass>
+void ObjectHistory<T, TimeStampClass>::initHistory(const bool _filled,
+                                                   const size_t _currentIdx,
+                                                   const size_t _historySize)
+{
+    m_filled = _filled;
+    m_currentIdx = _currentIdx;
+    m_history.resize(_historySize < minimumHistorySize ? 0U : _historySize);
 }
 
 template <typename T, typename TimeStampClass>

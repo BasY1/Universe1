@@ -62,6 +62,34 @@ struct NewtonObjectCurrent : public NewtonObject<T>
         ObjectHistory<T, NewtonTimeStamp<T>>::cloneHistory(result);
         return result;
     }
+
+    /*!
+     * \brief Create copy of this object in different precision
+     * \tparam T2  Other simulation template floating point type
+     * \returns Copy of this object in different precision
+     */
+    template <typename T2, typename = std::enable_if<std::is_floating_point<T2>::value>>
+    NewtonObjectCurrent<T2> createCopy() const
+    {
+        NewtonObjectCurrent<T2> result(ObjectHistory<T, NewtonTimeStamp<T>>::m_objectID, NewtonObject<T>::m_mass);
+        result.initHistory(ObjectHistory<T, NewtonTimeStamp<T>>::m_filled,
+                           ObjectHistory<T, NewtonTimeStamp<T>>::m_currentIdx,
+                           ObjectHistory<T, NewtonTimeStamp<T>>::m_history.size());
+        for (size_t i = 0; i < result.history().size(); ++i)
+        {
+            result.history()[i].timeStamp = ObjectHistory<T, NewtonTimeStamp<T>>::m_history[i].timeStamp;
+            result.history()[i].position.x = ObjectHistory<T, NewtonTimeStamp<T>>::m_history[i].position.x;
+            result.history()[i].position.y = ObjectHistory<T, NewtonTimeStamp<T>>::m_history[i].position.y;
+            result.history()[i].position.z = ObjectHistory<T, NewtonTimeStamp<T>>::m_history[i].position.z;
+            result.history()[i].moveVelocity.x = ObjectHistory<T, NewtonTimeStamp<T>>::m_history[i].moveVelocity.x;
+            result.history()[i].moveVelocity.y = ObjectHistory<T, NewtonTimeStamp<T>>::m_history[i].moveVelocity.y;
+            result.history()[i].moveVelocity.z = ObjectHistory<T, NewtonTimeStamp<T>>::m_history[i].moveVelocity.z;
+            result.history()[i].moveAccel.x = ObjectHistory<T, NewtonTimeStamp<T>>::m_history[i].moveAccel.x;
+            result.history()[i].moveAccel.y = ObjectHistory<T, NewtonTimeStamp<T>>::m_history[i].moveAccel.y;
+            result.history()[i].moveAccel.z = ObjectHistory<T, NewtonTimeStamp<T>>::m_history[i].moveAccel.z;
+        }
+        return result;
+    }
 };
 
 /*!

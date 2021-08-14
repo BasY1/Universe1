@@ -205,7 +205,53 @@ void QSimulationNewtonCurrent::setPrecision(Precision _precision)
     if (m_precision == _precision)
         return;
 
-    // TODO copy current m_sim<F|D|L> to new precision
+    switch (m_precision)
+    {
+    case PrecisionFloat:
+        switch (_precision)
+        {
+        case PrecisionFloat: break;
+        case PrecisionDouble:
+            m_simD.fromType(m_simF);
+            m_simF.clear();
+            break;
+        case PrecisionLongDouble:
+            m_simL.fromType(m_simF);
+            m_simF.clear();
+            break;
+        }
+        break;
+
+    case PrecisionDouble:
+        switch (_precision)
+        {
+        case PrecisionFloat:
+            m_simF.fromType(m_simD);
+            m_simD.clear();
+            break;
+        case PrecisionDouble: break;
+        case PrecisionLongDouble:
+            m_simL.fromType(m_simD);
+            m_simD.clear();
+            break;
+        }
+        break;
+
+    case PrecisionLongDouble:
+        switch (_precision)
+        {
+        case PrecisionFloat:
+            m_simF.fromType(m_simL);
+            m_simL.clear();
+            break;
+        case PrecisionDouble:
+            m_simD.fromType(m_simL);
+            m_simL.clear();
+            break;
+        case PrecisionLongDouble: break;
+        }
+        break;
+    }
 
     m_precision = _precision;
 

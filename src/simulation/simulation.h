@@ -247,6 +247,53 @@ struct Simulation
      *          (as \c QVector3D)
      */
     std::pair<bool, QVector3D> loadCalcPosition(const size_t _objectID, const double _timeStamp) const;
+
+    /*!
+     * \brief Copy simulation with different precision
+     * \tparam T2  Other simulation template floating point type
+     * \tparam ObjectClass2 Other simulation \c ObjectHistory class extension
+     * \tparam TimeStampClass2 Other simulation \c TimeStamp class extension
+     * \param _other Other simulation with different precision
+     */
+    template <typename T2,
+              typename ObjectClass2,
+              typename TimeStampClass2,
+              typename = std::enable_if<std::is_floating_point<T2>::value &&
+                                        std::is_base_of<TimeStamp<T2>, TimeStampClass2>::value &&
+                                        std::is_base_of<ObjectHistory<T2, TimeStampClass2>, ObjectClass2>::value>>
+    void fromType(const Simulation<T2, ObjectClass2, TimeStampClass2> &_other)
+    {
+        m_physics.universeVelocity = _other.physics().universeVelocity;
+        m_physics.gravityConstant = _other.physics().gravityConstant;
+        m_physics.elementRadius = _other.physics().elementRadius;
+        m_maximumStepTime = _other.maximumStepTime();
+        m_maximumCurveAngleRad = _other.maximumCurveAngleRad();
+        m_startTime = _other.startTime();
+        m_calculatedSteps = _other.calculatedSteps();
+
+        m_initObjects.clear();
+        for (const ObjectClass2 &o2 : _other.initObjects())
+            m_initObjects.push_back(o2.template createCopy<T>());
+
+        m_objects.clear();
+        if (!_other.objects().empty())
+        {
+            m_objects.reserve(_other.objects().size());
+            for (const ObjectClass2 &o2 : _other.objects())
+                m_objects.push_back(o2.template createCopy<T>());
+        }
+    }
+
+    /*!
+     * \brief Clear all simulation data
+     */
+    void clear()
+    {
+        m_initObjects.clear();
+        m_objects.clear();
+        m_startTime = Const::T_0<T>();
+        m_calculatedSteps = 0U;
+    }
 };
 
 template <typename T, typename ObjectClass, typename TimeStampClass>

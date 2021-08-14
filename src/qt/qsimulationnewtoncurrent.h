@@ -132,12 +132,6 @@ class QSimulationNewtonCurrent : public QSimulation
     bool createSimulation(int _stepCount);
 
  public slots:
-
-    // /* !
-    //  *  \ brief Calculate simulation, filling all object's histories
-    //  * /
-    //  virtual void calculate() = 0;
-
     /*!
      * \brief Setter for simulation precision
      * \param _precision New simulation precision
