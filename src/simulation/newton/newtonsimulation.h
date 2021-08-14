@@ -127,6 +127,10 @@ std::pair<bool, QVector3D> SimulationNewton<T, ObjectClass>::loadCalcAccel(const
     return Simulation<T, ObjectClass, NewtonTimeStamp<T>>::m_objects.at(_objectID).loadAccel(_timeStamp);
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /*!
  * \brief Simulation processor for \n classic newton based simulations
  * \tparam T Template floating point type
@@ -141,7 +145,38 @@ struct SimulationNewtonCurrent : public SimulationNewton<T, NewtonObjectCurrent<
         : SimulationNewton<T, NewtonObjectCurrent<T>>()
     {
     }
+
+    /*!
+     * \brief Prepare initialization object list \a m_initObjects from given collection
+     * \param _objects Objects start time-stamp data (Tuple of \b mass scalar, \b position and \b velocity vectors)
+     * \note Initialized objects will have minimum history size
+     * \sa Universe1::Simulation::ObjectHistory::minimumHistorySize
+     */
+    void initializeObjects(std::vector<std::tuple<T, Math::Vec3<T>, Math::Vec3<T>>> &_objects);
 };
+
+template <typename T>
+void SimulationNewtonCurrent<T>::initializeObjects(std::vector<std::tuple<T, Math::Vec3<T>, Math::Vec3<T>>> &_objects)
+{
+    Universe1::Simulation::Simulation<T, NewtonObjectCurrent<T>, NewtonTimeStamp<T>>::clear();
+    size_t idx = 0U;
+
+    for (const std::tuple<T, Math::Vec3<T>, Math::Vec3<T>> obj : _objects)
+    {
+        Universe1::Simulation::Simulation<T, NewtonObjectCurrent<T>, NewtonTimeStamp<T>>::m_initObjects.push_back(
+            NewtonObjectCurrent<T>(idx++, std::get<0>(obj), 3U));
+
+        NewtonTimeStamp<T> *cur =
+            Universe1::Simulation::Simulation<T, NewtonObjectCurrent<T>, NewtonTimeStamp<T>>::m_initObjects.back()
+                .current();
+        cur->position = std::get<1>(obj);
+        cur->moveVelocity = std::get<2>(obj);
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
  * \brief Simulation processor for \n newton based simulations with gravitational waves at speed of the universe

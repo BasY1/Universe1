@@ -200,6 +200,38 @@ bool QSimulationNewtonCurrent::createSimulation(int _stepCount)
     return result;
 }
 
+/*!
+ * \brief Helper template function, process job for QSimulationNewtonCurrent::initializeFromObjects
+ * \param _objects Collection of starting object's properties
+ * \param _sim The simulation
+ */
+template <typename T>
+void initObj(const std::vector<QSimulationNewtonCurrent::InitObject> &_objects,
+             Universe1::Simulation::GravityNewton::SimulationNewtonCurrent<T> &_sim)
+{
+    std::vector<std::tuple<T, Universe1::Math::Vec3<T>, Universe1::Math::Vec3<T>>> tmp(_objects.size());
+    size_t idx = 0;
+    for (const QSimulationNewtonCurrent::InitObject &io : _objects)
+    {
+        std::get<0>(tmp.at(idx)) = io.mass;
+        std::get<1>(tmp.at(idx)) = io.position.converted<T>();
+        std::get<2>(tmp.at(idx)) = io.velocity.converted<T>();
+        ++idx;
+    }
+    _sim.initializeObjects(tmp);
+}
+
+void QSimulationNewtonCurrent::initializeFromObjects(const std::vector<InitObject> &_objects)
+{
+    switch (m_precision)
+    {
+    case PrecisionFloat: initObj(_objects, m_simF); break;
+    case PrecisionDouble: initObj(_objects, m_simD); break;
+    case PrecisionLongDouble: initObj(_objects, m_simL); break;
+    }
+    emit dataChanged();
+}
+
 void QSimulationNewtonCurrent::setPrecision(Precision _precision)
 {
     if (m_precision == _precision)

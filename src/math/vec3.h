@@ -172,6 +172,17 @@ struct Vec3
     inline Vec3<T> rotated(const Vec3<T> &normal, const T angleRad) const;
 
     inline QVector3D toQVector3D() const;
+
+    /*!
+     * \brief Conversion to different precision
+     * \tparam T2 Output template floating point type
+     * \returns Vector in different precision
+     */
+    template <typename T2, typename = std::enable_if<std::is_floating_point<T2>::value>>
+    inline Vec3<T2> converted() const
+    {
+        return Vec3<T2>(x, y, z);
+    }
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

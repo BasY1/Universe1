@@ -131,6 +131,22 @@ class QSimulationNewtonCurrent : public QSimulation
      */
     bool createSimulation(int _stepCount);
 
+    /*!
+     * \brief Helper structure, holds object's starting properties in \c long \c double precision
+     */
+    struct InitObject
+    {
+        long double mass;                             //!< Object's mass
+        Universe1::Math::Vec3<long double> position;  //!< Object's starting position
+        Universe1::Math::Vec3<long double> velocity;  //!< Object's starting velocity
+    };
+
+    /*!
+     * \brief Initialize objects from given collection
+     * \param _objects Collection of starting object's properties
+     */
+    void initializeFromObjects(const std::vector<InitObject> &_objects);
+
  public slots:
     /*!
      * \brief Setter for simulation precision
@@ -147,6 +163,8 @@ class QSimulationNewtonCurrent : public QSimulation
         m_simD;  //!< \c double \b 64bit precision simulation
     Universe1::Simulation::GravityNewton::SimulationNewtonCurrent<long double>
         m_simL;  //!< \c long \c double \b 128bit precision simulation
+
+    std::vector<InitObject> m_currentInitObjects;  //!< Collection of starting object's properties
 };
 
 #endif  // UNIVERSE1_QSIMULATIONNEWTONCURRENT_H
