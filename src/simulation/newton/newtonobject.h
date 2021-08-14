@@ -65,6 +65,20 @@ struct NewtonObject : public ObjectHistory<T, NewtonTimeStamp<T>>
      */
     inline T currentCurvingTimeDuration(const T _angleRad) const;
 
+    /*!
+     * \brief Getter for object's velocity
+     * \param _timeStamp Time-stamp of required position
+     * \returns Pair, where \c first item is success flag, and \c second item is object's velocity (as \c QVector3D)
+     */
+    std::pair<bool, QVector3D> loadVelocity(const T _timeStamp) const;
+
+    /*!
+     * \brief Getter for object's acceleration
+     * \param _timeStamp Time-stamp of required position
+     * \returns Pair, where \c first item is success flag, and \c second item is object's acceleration (as \c QVector3D)
+     */
+    std::pair<bool, QVector3D> loadAccel(const T _timeStamp) const;
+
  protected:
     /*!
      * \brief Calculate acceleration using Newton gravitational law
@@ -72,7 +86,7 @@ struct NewtonObject : public ObjectHistory<T, NewtonTimeStamp<T>>
      * \param _other Source object position
      * \param _otherMass Source object position
      * \param _gravityConstant Gravitational constant
-     * \return Calculated acceleration using Newton gravitational law
+     * \returns Calculated acceleration using Newton gravitational law
      */
     static Math::Vec3<T>
     getAccel(const Math::Vec3<T> &_current, const Math::Vec3<T> &_other, const T _otherMass, const T _gravityConstant);
@@ -91,6 +105,34 @@ inline T NewtonObject<T>::currentCurvingTimeDuration(const T _angleRad) const
         ? -Const::T_1<T>()
         : ObjectHistory<T, NewtonTimeStamp<T>>::m_history.at(ObjectHistory<T, NewtonTimeStamp<T>>::m_currentIdx)
               .curvingTimeDuration(_angleRad);
+}
+
+template <typename T>
+std::pair<bool, QVector3D> NewtonObject<T>::loadVelocity(const T _timeStamp) const
+{
+    const NewtonTimeStamp<T> *result = ObjectHistory<T, NewtonTimeStamp<T>>::dataAtTime(_timeStamp);
+    if (result == nullptr)
+        return {false, QVector3D()};
+
+    const T timeDelta = _timeStamp - result->timeStamp;
+    if (Type::isNull(timeDelta))
+        return {true, result->moveVelocity.toQVector3D()};
+
+    return {true, result->moved(timeDelta).moveVelocity.toQVector3D()};
+}
+
+template <typename T>
+std::pair<bool, QVector3D> NewtonObject<T>::loadAccel(const T _timeStamp) const
+{
+    const NewtonTimeStamp<T> *result = ObjectHistory<T, NewtonTimeStamp<T>>::dataAtTime(_timeStamp);
+    if (result == nullptr)
+        return {false, QVector3D()};
+
+    const T timeDelta = _timeStamp - result->timeStamp;
+    if (Type::isNull(timeDelta))
+        return {true, result->moveAccel.toQVector3D()};
+
+    return {true, result->moved(timeDelta).moveAccel.toQVector3D()};
 }
 
 template <typename T>

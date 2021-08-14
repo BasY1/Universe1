@@ -49,9 +49,11 @@ HEADERS += \
 
 SOURCES += \
     src/qt/qsimulation.cpp \
+    src/qt/qsimulationnewtoncurrent.cpp \
 
 HEADERS += \
     src/qt/qsimulation.h \
+    src/qt/qsimulationnewtoncurrent.h \
 
 
 ########################################################################################################################

@@ -48,7 +48,7 @@ enum SimulationProperty : uint32_t
 /*!
  * \brief Helper function creates list of literals from flags buffer
  * \param flags Flags buffer
- * \return List of \a SimulationProperty literals that are set
+ * \returns List of \a SimulationProperty literals that are set
  */
 inline std::list<SimulationProperty> readSimulationProperty(const uint32_t flags)
 {
@@ -75,7 +75,7 @@ inline std::list<SimulationProperty> readSimulationProperty(const uint32_t flags
 /*!
  * \brief To \c string tool function for \a SimulationProperty enumeration
  * \param _prop Property to convert
- * \return \a SimulationProperty as \c string
+ * \returns \a SimulationProperty as \c string
  */
 inline std::string strSimulationProperty(const SimulationProperty _prop)
 {
@@ -83,6 +83,7 @@ inline std::string strSimulationProperty(const SimulationProperty _prop)
     {
     case Property_UniverseVelocity: return "UniverseVelocity"; break;
     case Property_GravityConstant: return "GravityConstant"; break;
+    case Property_ElementRadius: return "ElementRadius"; break;
     case Property_MaximumStepTime: return "MaximumStepTime"; break;
     case Validity_SameCurrentTime: return "SameCurrentTime"; break;
     case Validity_ObjectsInitialized: return "ObjectsInitialized"; break;
@@ -96,7 +97,7 @@ inline std::string strSimulationProperty(const SimulationProperty _prop)
 /*!
  * \brief To \c string tool function for \a SimulationProperty flags buffer
  * \param flags Flags buffer
- * \return Empty string if no flag is set or connected flag names
+ * \returns Empty string if no flag is set or connected flag names
  */
 inline std::string strSimulationProperties(const uint32_t flags)
 {

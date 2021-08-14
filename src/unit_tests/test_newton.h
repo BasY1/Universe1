@@ -3,8 +3,7 @@
 
 #include <QTest>
 
-#include "../simulation/newton/newtonobject.h"
-#include "../simulation/simulation.h"
+#include "../simulation/newton/newtonsimulation.h"
 
 class Test_Newton : public QObject
 {

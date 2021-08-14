@@ -171,6 +171,30 @@ struct ObjectHistory
      * \param other Other object to setup history
      */
     void cloneHistory(ObjectHistory<T, TimeStampClass> &other) const;
+
+ public:
+    /*!
+     * \brief Fill output vector with object time-stamps and positions
+     * \param _out Output vector
+     * \returns \c true if success
+     */
+    bool loadPath(std::vector<std::pair<double, QVector3D>> &_out) const;
+
+    /*!
+     * \brief Getter for time-stamp data that is exactly at given time-stamp or before (needs to move forward time)
+     * \param _timeStamp Time-stamp of required data
+     * \returns Time-stamp data before or exactly at given \a _timeStamp
+     * \note If given time-stamp is before oldest stored time-stamp, then oldest stored item is returned (needs
+     *        to move backwards in time)
+     */
+    const TimeStampClass *dataAtTime(const T _timeStamp) const;
+
+    /*!
+     * \brief Getter for object's position
+     * \param _timeStamp Time-stamp of required position
+     * \returns Pair, where \c first item is success flag, and \c second item is object's position (as \c QVector3D)
+     */
+    std::pair<bool, QVector3D> loadPosition(const T _timeStamp) const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -445,6 +469,121 @@ void ObjectHistory<T, TimeStampClass>::cloneHistory(ObjectHistory<T, TimeStampCl
         else
             --curIdx;
     }
+}
+
+template <typename T, typename TimeStampClass>
+bool ObjectHistory<T, TimeStampClass>::loadPath(std::vector<std::pair<double, QVector3D>> &_out) const
+{
+    if (m_history.empty())
+        return false;
+
+    if (m_filled)
+    {
+        _out.reserve(m_history.size());
+
+        for (size_t i = m_currentIdx + 1U; i < m_history.size(); ++i)
+            _out.push_back({m_history[i].timeStamp, m_history[i].position.toQVector3D()});
+
+        for (size_t i = 0; i <= m_currentIdx; ++i)
+            _out.push_back({m_history[i].timeStamp, m_history[i].position.toQVector3D()});
+    }
+    else
+    {
+        _out.reserve(m_currentIdx + 1U);
+        for (size_t i = 0; i <= m_currentIdx; ++i)
+            _out.push_back({m_history[i].timeStamp, m_history[i].position.toQVector3D()});
+    }
+    return true;
+}
+
+template <typename T, typename TimeStampClass>
+const TimeStampClass *ObjectHistory<T, TimeStampClass>::dataAtTime(const T _timeStamp) const
+{
+    if (m_history.empty())
+        return nullptr;
+
+    if (Type::equals<T>(m_history[m_currentIdx].timeStamp, _timeStamp) ||
+        m_history[m_currentIdx].timeStamp < _timeStamp || (!m_filled && m_currentIdx == 0U))
+        return &m_history[m_currentIdx];
+
+    const size_t idxLastHist = m_history.size() - 1U;
+    size_t idxAfter;
+    size_t idxBefore;
+    if (m_filled && m_currentIdx != idxLastHist)
+    {
+        if (m_currentIdx == 0U)
+        {
+            idxAfter = 1U;
+            idxBefore = idxLastHist;
+            if (Type::equals<T>(m_history[idxBefore].timeStamp, _timeStamp) ||
+                m_history[idxBefore].timeStamp < _timeStamp)
+                return &m_history[idxBefore];
+        }
+        else
+        {
+            if (Type::equals<T>(m_history[0U].timeStamp, _timeStamp))
+                return &m_history[0U];
+
+            if (m_history[0U].timeStamp < _timeStamp)
+            {
+                idxAfter = 0U;
+                idxBefore = m_currentIdx;
+            }
+            else
+            {
+                idxAfter = m_currentIdx + 1U;
+                idxBefore = idxLastHist;
+                if (Type::equals<T>(m_history[idxBefore].timeStamp, _timeStamp) ||
+                    m_history[idxBefore].timeStamp < _timeStamp)
+                    return &m_history[idxBefore];
+            }
+        }
+    }
+    else
+    {
+        idxAfter = 0U;
+        idxBefore = m_currentIdx;
+    }
+
+    if (Type::equals<T>(m_history[idxAfter].timeStamp, _timeStamp) || m_history[idxAfter].timeStamp > _timeStamp)
+        return &m_history[idxAfter];
+
+    size_t idxRange = idxBefore - idxAfter;
+
+    while (idxRange > 1U)
+    {
+        const T timeDeltaBefore = m_history[idxBefore].timeStamp - _timeStamp;
+        const T timeDeltaAfter = _timeStamp - m_history[idxAfter].timeStamp;
+        const T timeDeltaSum = timeDeltaBefore + timeDeltaAfter;
+        const T timeRatio = timeDeltaAfter / timeDeltaSum;
+        const size_t idxRatio = static_cast<size_t>(static_cast<T>(idxRange) * timeRatio);
+        const size_t idxMiddle = idxAfter + std::max(size_t(1U), idxRatio);
+
+        const T timeMiddle = m_history[idxMiddle].timeStamp - _timeStamp;
+        if (Type::isNull<T>(timeMiddle))
+            return &m_history[idxMiddle];
+
+        if (timeMiddle > Const::T_0<T>())
+            idxBefore = idxMiddle;
+        else
+            idxAfter = idxMiddle;
+        idxRange = idxBefore - idxAfter;
+    }
+    return &m_history[idxAfter];
+}
+
+template <typename T, typename TimeStampClass>
+std::pair<bool, QVector3D> ObjectHistory<T, TimeStampClass>::loadPosition(const T _timeStamp) const
+{
+    const TimeStampClass *result = dataAtTime(_timeStamp);
+    if (result == nullptr)
+        return {false, QVector3D()};
+
+    const T timeDelta = _timeStamp - result->timeStamp;
+    if (Type::isNull(timeDelta))
+        return {true, result->position.toQVector3D()};
+
+    return {true, result->moved(timeDelta).position.toQVector3D()};
 }
 
 }  // namespace Simulation

@@ -10,6 +10,8 @@
 #include "texttools.h"
 #include "type.h"
 
+#include <QVector3D>
+
 namespace Universe1 {
 namespace Math {
 
@@ -168,6 +170,8 @@ struct Vec3
 
     static Vec3<T> rotate(const Vec3<T> &point, const Vec3<T> &normal, const T angleRad);
     inline Vec3<T> rotated(const Vec3<T> &normal, const T angleRad) const;
+
+    inline QVector3D toQVector3D() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -892,6 +896,16 @@ template <typename T>
 inline Vec3<T> Vec3<T>::rotated(const Vec3<T> &normal, const T angleRad) const
 {
     return Vec3<T>::rotate(*this, normal, angleRad);
+}
+
+/*!
+ * \brief Conversion to \c QVector3D
+ * \returns This 3D vector as \c QVector3D
+ */
+template <typename T>
+inline QVector3D Vec3<T>::toQVector3D() const
+{
+    return QVector3D(x, y, z);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

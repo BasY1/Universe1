@@ -74,66 +74,119 @@ class QSimulation : public QObject
 
     /*!
      * \brief Getter for simulation type
-     * \return The simulation type
+     * \returns The simulation type
      */
     virtual SimulationType simulationType() const = 0;
 
     /*!
      * \brief Getter for simulation precision
-     * \return The simulation precision
+     * \returns The simulation precision
      */
     virtual Precision precision() const = 0;
 
     /*!
      * \brief Getter for using history flag (Simulation uses objects history position for forces calculations)
-     * \return Using history flag
+     * \returns Using history flag
      */
     virtual bool usesHistory() const = 0;
 
     /*!
      * \brief Getter for using element radius flag (\c true - Elements are spheres with radius,
      *        or \c false - Elements are singularities)
-     * \return Using element radius flag
+     * \returns Using element radius flag
      */
     virtual bool usesRadius() const = 0;
 
     /*!
      * \brief Getter for collection of supported/required physics constants
-     * \return Supported physics constants
+     * \returns Supported physics constants
      */
     virtual const std::vector<Universe1::Simulation::ConstantName> &supportedPhysicsConstants() const = 0;
 
     /*!
      * \brief Getter for collection of supported element properties
-     * \return Supported element properties
+     * \returns Supported element properties
      */
     virtual const std::vector<ElementProperty> &supportedElementProperties() const = 0;
 
     /*!
-     * \brief Universal getter for object property
+     * \brief Getter for count of object under calculation
+     * \returns Count of object under calculation
+     */
+    virtual size_t objectCountCalc() const = 0;
+
+    /*!
+     * \brief Returns object ID that is last in initialization list
+     * \returns Last initialization object ID
+     */
+    virtual size_t lastInitObjectID() const = 0;
+
+    /*!
+     * \brief Fill output vector with collection of object IDs under initialization
+     * \param _out Output vector
+     * \returns
+     */
+    virtual void loadInitObjectIDs(std::vector<size_t> &_out) const = 0;
+
+    /*!
+     * \brief Fill output vector with initialization object time-stamps and positions
+     * \param _out Output vector
+     * \param _objectID Object's index
+     * \returns \c true if success
+     */
+    virtual bool loadInitPath(std::vector<std::pair<double, QVector3D>> &_out, const size_t _objectID) const = 0;
+
+    /*!
+     * \brief Fill output vector with calculation object time-stamps and positions
+     * \param _out Output vector
+     * \param _objectID Object's index
+     * \returns \c true if success
+     */
+    virtual bool loadCalcPath(std::vector<std::pair<double, QVector3D>> &_out, const size_t _objectID) const = 0;
+
+    /*!
+     * \brief Universal getter for initialization object property
      * \param _property Property to load
      * \param _objectID Object's index
      * \param _timeStamp Time-stamp of required value
-     * \return Pair, where \c first item is success flag, and \c second item is property value (as \c QVector3D)
+     * \returns Pair, where \c first item is success flag, and \c second item is property value (as \c QVector3D)
      */
     virtual std::pair<bool, QVector3D>
-    getObjectProperty(const ElementProperty _property, const size_t _objectID, const double _timeStamp) const = 0;
+    loadInitProperty(const ElementProperty _property, const size_t _objectID, const double _timeStamp) const = 0;
+
+    /*!
+     * \brief Universal getter for calculation object property
+     * \param _property Property to load
+     * \param _objectID Object's index
+     * \param _timeStamp Time-stamp of required value
+     * \returns Pair, where \c first item is success flag, and \c second item is property value (as \c QVector3D)
+     */
+    virtual std::pair<bool, QVector3D>
+    loadCalcProperty(const ElementProperty _property, const size_t _objectID, const double _timeStamp) const = 0;
+
+    /*!
+     * \brief Calculate simulation, filling all object's histories
+     * \param _stepCount Step count to calculate
+     * \returns Success flag
+     * \sa Universe1::Simulation::Simulation::createSimulation(const size_t)
+     */
+    virtual bool createSimulation(int _stepCount) = 0;
 
     /*!
      * \brief Getter simulation ID
-     * \return Simulation ID
+     * \returns Simulation ID
      */
     const QString &ID() const;
 
     /*!
      * \brief Getter simulation name
-     * \return Simulation name
+     * \returns Simulation name
      */
     QString name() const;
 
     /*!
      * \brief Getter simulation description
-     * \return Simulation description
+     * \returns Simulation description
      */
     QString description() const;
 
@@ -151,9 +204,13 @@ class QSimulation : public QObject
     void setDescription(const QString &_description);
 
     /*!
-     * \brief Calculate simulation, filling all object's histories
+     * \brief Setter for simulation precision
+     * \param _precision New simulation precision
      */
-    virtual void calculate() = 0;
+    virtual void setPrecision(Precision _precision) = 0;
+
+ signals:
+    void dataChanged();  //!< Simulation data was changed
 
  protected:
     const QString m_ID;     //!< Simulation ID
@@ -164,7 +221,7 @@ class QSimulation : public QObject
 /*!
  * \brief Tool template function for detecting QSimulation::Precision literal from template parameter
  * \tparam T Template floating point type
- * \return Detected precision enumeration literal
+ * \returns Detected precision enumeration literal
  */
 template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
 inline QSimulation::Precision detectPrecision();

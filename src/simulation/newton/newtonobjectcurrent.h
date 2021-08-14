@@ -52,7 +52,7 @@ struct NewtonObjectCurrent : public NewtonObject<T>
      * \brief Create clone of this object with new ID and history size
      * \param _objectID New object ID
      * \param _size New object history size (if equals zero object keeps history size)
-     * \return Clone of this object
+     * \returns Clone of this object
      */
     inline NewtonObjectCurrent<T> clone(const size_t _objectID, const size_t _size) const
     {

@@ -178,7 +178,7 @@ struct Simulation
      * \brief Initialize calculation
      * \param _objectHistorySize History size of calculation object
      *                           (if equals zero object keeps initialization history size)
-     * \return \c true if initialization success \details Initialize vector of calculation objects \a m_objects
+     * \returns \c true if initialization success \details Initialize vector of calculation objects \a m_objects
      * from initialization object list \a m_initObjects
      */
     bool initialize(const size_t _objectHistorySize = 0U);
@@ -186,9 +186,67 @@ struct Simulation
     /*!
      * \brief Calculate next steps
      * \param _stepCount Step count
-     * \return \c true if calculation success
+     * \returns \c true if calculation success
      */
     bool addStep(const size_t _stepCount = 1U);
+
+    /*!
+     * \brief Calculate new simulation
+     * \param _stepCount Step count
+     * \returns \c true if calculation success
+     * \details
+     * Initialize new calculation where all object history size equals given step count \b plus
+     * maximum history size within initialization objects.
+     *
+     * After initialization required step count is calculated.
+     */
+    bool createSimulation(const size_t _stepCount);
+
+    /*!
+     * \brief Fill output vector with initialization object time-stamps and positions
+     * \param _out Output vector
+     * \param _objectID Object ID
+     * \returns \c true if success
+     */
+    bool loadInitPath(std::vector<std::pair<double, QVector3D>> &_out, const size_t _objectID) const;
+
+    /*!
+     * \brief Fill output vector with calculation object time-stamps and positions
+     * \param _out Output vector
+     * \param _objectID Object ID
+     * \returns \c true if success
+     */
+    inline bool loadCalcPath(std::vector<std::pair<double, QVector3D>> &_out, const size_t _objectID) const;
+
+    /*!
+     * \brief Fill output vector with initialization object IDs
+     * \param _out Output vector
+     */
+    void loadInitObjectIDs(std::vector<size_t> &_out) const;
+
+    /*!
+     * \brief Returns initialization object ID that is last in \a m_initObjects list
+     * \returns Last initialization object ID
+     */
+    inline size_t lastInitObjectID() const;
+
+    /*!
+     * \brief Getter for initialization object's position
+     * \param _objectID Object's index
+     * \param _timeStamp Time-stamp of required value
+     * \returns Pair, where \c first item is success flag, and \c second item is initialization object's position
+     *          (as \c QVector3D)
+     */
+    std::pair<bool, QVector3D> loadInitPosition(const size_t _objectID, const double _timeStamp) const;
+
+    /*!
+     * \brief Getter for calculation object's position
+     * \param _objectID Object's index
+     * \param _timeStamp Time-stamp of required value
+     * \returns Pair, where \c first item is success flag, and \c second item is calculation object's position
+     *          (as \c QVector3D)
+     */
+    std::pair<bool, QVector3D> loadCalcPosition(const size_t _objectID, const double _timeStamp) const;
 };
 
 template <typename T, typename ObjectClass, typename TimeStampClass>
@@ -416,7 +474,7 @@ bool Simulation<T, ObjectClass, TimeStampClass>::initialize(const size_t _object
     if (m_initObjects.empty() || testStart() != 0U)
         return false;
 
-    size_t idx = 1U;
+    size_t idx = 0U;
     m_objects.clear();
     m_objects.reserve(m_initObjects.size());
     for (const ObjectClass &initObj : m_initObjects)
@@ -460,6 +518,93 @@ bool Simulation<T, ObjectClass, TimeStampClass>::addStep(const size_t _stepCount
             obj.addStep(stepDuration);
     }
     return true;
+}
+
+template <typename T, typename ObjectClass, typename TimeStampClass>
+bool Simulation<T, ObjectClass, TimeStampClass>::createSimulation(const size_t _stepCount)
+{
+    if (m_initObjects.empty() || testStart() != 0U)
+        return false;
+
+    size_t max = 0U;
+    for (const ObjectClass &obj : m_initObjects)
+    {
+        if (max < obj.history().size())
+            max = obj.history().size();
+    }
+
+    return initialize(_stepCount + max + 1U) && addStep(_stepCount);
+}
+
+template <typename T, typename ObjectClass, typename TimeStampClass>
+bool Simulation<T, ObjectClass, TimeStampClass>::loadInitPath(std::vector<std::pair<double, QVector3D>> &_out,
+                                                              const size_t _objectID) const
+{
+    const ObjectClass *foundObj = nullptr;
+    for (const ObjectClass &obj : m_initObjects)
+    {
+        if (obj.ID() == _objectID)
+        {
+            if (foundObj == nullptr)
+                foundObj = &obj;
+            else
+                return false;
+        }
+    }
+    return foundObj != nullptr && foundObj->loadPath(_out);
+}
+
+template <typename T, typename ObjectClass, typename TimeStampClass>
+inline bool Simulation<T, ObjectClass, TimeStampClass>::loadCalcPath(std::vector<std::pair<double, QVector3D>> &_out,
+                                                                     const size_t _objectID) const
+{
+    return _objectID < m_objects.size() && m_objects.at(_objectID).loadPath(_out);
+}
+
+template <typename T, typename ObjectClass, typename TimeStampClass>
+void Simulation<T, ObjectClass, TimeStampClass>::loadInitObjectIDs(std::vector<size_t> &_out) const
+{
+    _out.clear();
+    if (m_initObjects.empty())
+        return;
+    _out.reserve(m_initObjects.size());
+    for (const ObjectClass &obj : m_initObjects)
+        _out.push_back(obj.ID());
+}
+
+template <typename T, typename ObjectClass, typename TimeStampClass>
+inline size_t Simulation<T, ObjectClass, TimeStampClass>::lastInitObjectID() const
+{
+    return m_initObjects.empty() ? 0U : m_initObjects.back().ID();
+}
+
+template <typename T, typename ObjectClass, typename TimeStampClass>
+std::pair<bool, QVector3D> Simulation<T, ObjectClass, TimeStampClass>::loadInitPosition(const size_t _objectID,
+                                                                                        const double _timeStamp) const
+{
+    const ObjectClass *foundObj = nullptr;
+    for (const ObjectClass &obj : m_initObjects)
+    {
+        if (obj.ID() == _objectID)
+        {
+            if (foundObj == nullptr)
+                foundObj = &obj;
+            else
+                return {false, QVector3D()};
+        }
+    }
+    if (foundObj == nullptr)
+        return {false, QVector3D()};
+    return foundObj->loadPosition(_timeStamp);
+}
+
+template <typename T, typename ObjectClass, typename TimeStampClass>
+std::pair<bool, QVector3D> Simulation<T, ObjectClass, TimeStampClass>::loadCalcPosition(const size_t _objectID,
+                                                                                        const double _timeStamp) const
+{
+    if (_objectID < m_objects.size())
+        return {false, QVector3D()};
+    return m_objects.at(_objectID).loadPosition(_timeStamp);
 }
 
 }  // namespace Simulation

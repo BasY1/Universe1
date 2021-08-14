@@ -1,0 +1,213 @@
+/*!
+ * \file qt/qsimulationnewtoncurrent.cpp
+ * \author Michal Steller
+ * \brief Class implementation - QT Simulation for newton \b current physics
+ */
+
+#include "qsimulationnewtoncurrent.h"
+
+QSimulationNewtonCurrent::QSimulationNewtonCurrent(const QString &ID, QObject *parent)
+    : QSimulation(ID, parent)
+    , m_precision(PrecisionFloat)
+{
+}
+
+QSimulation::SimulationType QSimulationNewtonCurrent::simulationType() const
+{
+    return QSimulation::SimulationNewtonCurrent;
+}
+
+QSimulation::Precision QSimulationNewtonCurrent::precision() const
+{
+    return m_precision;
+}
+
+bool QSimulationNewtonCurrent::usesHistory() const
+{
+    return false;
+}
+
+bool QSimulationNewtonCurrent::usesRadius() const
+{
+    return false;
+}
+
+const std::vector<Universe1::Simulation::ConstantName> &QSimulationNewtonCurrent::supportedPhysicsConstants() const
+{
+    static const std::vector<Universe1::Simulation::ConstantName> supported = {
+        Universe1::Simulation::Const_GravityConstant};
+    return supported;
+}
+
+const std::vector<QSimulation::ElementProperty> &QSimulationNewtonCurrent::supportedElementProperties() const
+{
+    static const std::vector<ElementProperty> supported = {PropertyPosition, PropertyVelocity, PropertyForce};
+    return supported;
+}
+
+size_t QSimulationNewtonCurrent::objectCountCalc() const
+{
+    switch (m_precision)
+    {
+    case PrecisionFloat: return m_simF.objects().size();
+    case PrecisionDouble: return m_simD.objects().size();
+    case PrecisionLongDouble: return m_simL.objects().size();
+    }
+    return 0U;
+}
+
+size_t QSimulationNewtonCurrent::lastInitObjectID() const
+{
+    switch (m_precision)
+    {
+    case PrecisionFloat: return m_simF.lastInitObjectID();
+    case PrecisionDouble: return m_simD.lastInitObjectID();
+    case PrecisionLongDouble: return m_simL.lastInitObjectID();
+    }
+    return 0U;
+}
+
+void QSimulationNewtonCurrent::loadInitObjectIDs(std::vector<size_t> &_out) const
+{
+    switch (m_precision)
+    {
+    case PrecisionFloat: m_simF.loadInitObjectIDs(_out); break;
+    case PrecisionDouble: m_simD.loadInitObjectIDs(_out); break;
+    case PrecisionLongDouble: m_simL.loadInitObjectIDs(_out); break;
+    }
+}
+
+bool QSimulationNewtonCurrent::loadInitPath(std::vector<std::pair<double, QVector3D>> &_out,
+                                            const size_t _objectID) const
+{
+    switch (m_precision)
+    {
+    case PrecisionFloat: return m_simF.loadInitPath(_out, _objectID);
+    case PrecisionDouble: return m_simD.loadInitPath(_out, _objectID);
+    case PrecisionLongDouble: return m_simL.loadInitPath(_out, _objectID);
+    }
+    return false;
+}
+
+bool QSimulationNewtonCurrent::loadCalcPath(std::vector<std::pair<double, QVector3D>> &_out,
+                                            const size_t _objectID) const
+{
+    switch (m_precision)
+    {
+    case PrecisionFloat: return m_simF.loadCalcPath(_out, _objectID);
+    case PrecisionDouble: return m_simD.loadCalcPath(_out, _objectID);
+    case PrecisionLongDouble: return m_simL.loadCalcPath(_out, _objectID);
+    }
+    return false;
+}
+
+std::pair<bool, QVector3D> QSimulationNewtonCurrent::loadInitProperty(const ElementProperty _property,
+                                                                      const size_t _objectID,
+                                                                      const double _timeStamp) const
+{
+    switch (_property)
+    {
+    case QSimulation::PropertyPosition:
+        switch (m_precision)
+        {
+        case PrecisionFloat: return m_simF.loadInitPosition(_objectID, _timeStamp);
+        case PrecisionDouble: return m_simD.loadInitPosition(_objectID, _timeStamp);
+        case PrecisionLongDouble: return m_simL.loadInitPosition(_objectID, _timeStamp);
+        }
+        break;
+    case QSimulation::PropertyVelocity:
+        switch (m_precision)
+        {
+        case PrecisionFloat: return m_simF.loadInitVelocity(_objectID, _timeStamp);
+        case PrecisionDouble: return m_simD.loadInitVelocity(_objectID, _timeStamp);
+        case PrecisionLongDouble: return m_simL.loadInitVelocity(_objectID, _timeStamp);
+        }
+        break;
+    case QSimulation::PropertyForce:
+        switch (m_precision)
+        {
+        case PrecisionFloat: return m_simF.loadInitAccel(_objectID, _timeStamp);
+        case PrecisionDouble: return m_simD.loadInitAccel(_objectID, _timeStamp);
+        case PrecisionLongDouble: return m_simL.loadInitAccel(_objectID, _timeStamp);
+        }
+        break;
+
+    case QSimulation::PropertySpin:
+    case QSimulation::PropertySpinRed:
+    case QSimulation::PropertySpinGreen:
+    case QSimulation::PropertySpinBlue:
+    case QSimulation::PropertyForceRed:
+    case QSimulation::PropertyForceGreen:
+    case QSimulation::PropertyForceBlue: break;
+    }
+    return {false, QVector3D()};
+}
+
+std::pair<bool, QVector3D> QSimulationNewtonCurrent::loadCalcProperty(const ElementProperty _property,
+                                                                      const size_t _objectID,
+                                                                      const double _timeStamp) const
+{
+    switch (_property)
+    {
+    case QSimulation::PropertyPosition:
+        switch (m_precision)
+        {
+        case PrecisionFloat: return m_simF.loadCalcPosition(_objectID, _timeStamp);
+        case PrecisionDouble: return m_simD.loadCalcPosition(_objectID, _timeStamp);
+        case PrecisionLongDouble: return m_simL.loadCalcPosition(_objectID, _timeStamp);
+        }
+        break;
+    case QSimulation::PropertyVelocity:
+        switch (m_precision)
+        {
+        case PrecisionFloat: return m_simF.loadCalcVelocity(_objectID, _timeStamp);
+        case PrecisionDouble: return m_simD.loadCalcVelocity(_objectID, _timeStamp);
+        case PrecisionLongDouble: return m_simL.loadCalcVelocity(_objectID, _timeStamp);
+        }
+        break;
+    case QSimulation::PropertyForce:
+        switch (m_precision)
+        {
+        case PrecisionFloat: return m_simF.loadCalcAccel(_objectID, _timeStamp);
+        case PrecisionDouble: return m_simD.loadCalcAccel(_objectID, _timeStamp);
+        case PrecisionLongDouble: return m_simL.loadCalcAccel(_objectID, _timeStamp);
+        }
+        break;
+
+    case QSimulation::PropertySpin:
+    case QSimulation::PropertySpinRed:
+    case QSimulation::PropertySpinGreen:
+    case QSimulation::PropertySpinBlue:
+    case QSimulation::PropertyForceRed:
+    case QSimulation::PropertyForceGreen:
+    case QSimulation::PropertyForceBlue: break;
+    }
+    return {false, QVector3D()};
+}
+
+bool QSimulationNewtonCurrent::createSimulation(int _stepCount)
+{
+    if (_stepCount < 1)
+        return false;
+    bool result = false;
+    switch (m_precision)
+    {
+    case PrecisionFloat: result = m_simF.createSimulation(_stepCount); break;
+    case PrecisionDouble: result = m_simD.createSimulation(_stepCount); break;
+    case PrecisionLongDouble: result = m_simL.createSimulation(_stepCount); break;
+    }
+    emit dataChanged();
+    return result;
+}
+
+void QSimulationNewtonCurrent::setPrecision(Precision _precision)
+{
+    if (m_precision == _precision)
+        return;
+
+    // TODO copy current m_sim<F|D|L> to new precision
+
+    m_precision = _precision;
+
+    emit dataChanged();
+}
