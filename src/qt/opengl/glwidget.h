@@ -21,6 +21,18 @@ class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
 {
     Q_OBJECT
  public:
+    /*!
+     * \brief Open GL cull-face mode
+     */
+    enum CullFaceMode
+    {
+        CullDisabled,      //!< Cull-face disabled
+        CullFront,         //!< Cull-face cull front
+        CullBack,          //!< Cull-face cull back
+        CullFrontAndBack,  //!< Cull-face cull front and back
+    };
+    Q_ENUM(CullFaceMode)
+
     GLWidget(QWidget *parent = nullptr);
     ~GLWidget();
 
@@ -29,6 +41,8 @@ class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
     inline bool emitContextPainted() const;
     inline bool blending() const;
     inline bool antialiasing() const;
+    inline bool cullFaceCcw() const;
+    inline CullFaceMode cullFaceMode() const;
     inline float pointSize() const;
     inline float lineWidth() const;
 
@@ -70,6 +84,8 @@ class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
     void setEmitContextPainted(const bool _value);
     void setAntialiasing(const bool _value);
     void setBlending(const bool _value);
+    void setCullFaceCcw(const bool _value);
+    void setCullFaceMode(const CullFaceMode _value);
     void setPointSize(const float _value);
     void setLineWidth(const float _value);
 
@@ -90,9 +106,11 @@ class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
     void contextPainted(QOpenGLContext *_context);
 
  protected:
-    bool m_emitContextPainted;  //!< Enable flag for emitting context painted signal
-    bool m_antialiasing;        //!< Antialiasing enabled flag
-    bool m_blending;            //!< Blending enabled flag
+    bool m_emitContextPainted;    //!< Enable flag for emitting context painted signal
+    bool m_antialiasing;          //!< Antialiasing enabled flag
+    bool m_blending;              //!< Blending enabled flag
+    bool m_cullFaceCcw;           //!< Counter clock wise flag for front face definition
+    CullFaceMode m_cullFaceMode;  //!< Cull-face mode
 
     GLclampf m_bgColorRed;    //!< Background color \b red property
     GLclampf m_bgColorGreen;  //!< Background color \b green property
@@ -132,6 +150,24 @@ inline bool GLWidget::emitContextPainted() const
 inline bool GLWidget::antialiasing() const
 {
     return m_antialiasing;
+}
+
+/*!
+ * \brief Getter for counter clock wise flag
+ * \returns Counter clock wise flag
+ */
+inline bool GLWidget::cullFaceCcw() const
+{
+    return m_cullFaceCcw;
+}
+
+/*!
+ * \brief Getter for cull-face mode
+ * \returns Cull-face mode
+ */
+inline GLWidget::CullFaceMode GLWidget::cullFaceMode() const
+{
+    return m_cullFaceMode;
 }
 
 /*!

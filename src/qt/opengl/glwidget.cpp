@@ -15,6 +15,8 @@ Universe1::OpenGL::GLWidget::GLWidget(QWidget *_parent)
     , m_emitContextPainted(false)
     , m_antialiasing(false)
     , m_blending(false)
+    , m_cullFaceCcw(false)
+    , m_cullFaceMode(CullDisabled)
     , m_bgColorRed(0.0F)
     , m_bgColorGreen(0.0F)
     , m_bgColorBlue(0.0F)
@@ -182,6 +184,26 @@ void Universe1::OpenGL::GLWidget::paintGL()
         glDisable(GL_LINE_SMOOTH);
     }
 
+    switch (m_cullFaceMode)
+    {
+    case CullDisabled: glDisable(GL_CULL_FACE); break;
+    case CullFront:
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT);
+        glFrontFace(m_cullFaceCcw ? GL_CCW : GL_CW);
+        break;
+    case CullBack:
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+        glFrontFace(m_cullFaceCcw ? GL_CCW : GL_CW);
+        break;
+    case CullFrontAndBack:
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT_AND_BACK);
+        glFrontFace(m_cullFaceCcw ? GL_CCW : GL_CW);
+        break;
+    }
+
     m_program->bind();
     m_program->setupCamera(m_camera);
 
@@ -227,6 +249,26 @@ void Universe1::OpenGL::GLWidget::setAntialiasing(const bool _value)
 void Universe1::OpenGL::GLWidget::setBlending(const bool _value)
 {
     m_blending = _value;
+    update();
+}
+
+/*!
+ * \brief Setter for counter clock wise flag
+ * \param _value New counter clock wise flag value
+ */
+void Universe1::OpenGL::GLWidget::setCullFaceCcw(const bool _value)
+{
+    m_cullFaceCcw = _value;
+    update();
+}
+
+/*!
+ * \brief Setter for cull-face mode
+ * \param _value New cull-face mode value
+ */
+void Universe1::OpenGL::GLWidget::setCullFaceMode(const CullFaceMode _value)
+{
+    m_cullFaceMode = _value;
     update();
 }
 
