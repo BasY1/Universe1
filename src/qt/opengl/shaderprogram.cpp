@@ -1,7 +1,7 @@
 /*!
  * \file qt/opengl/shaderprogram.cpp
  * \author Michal Steller
- * \brief The QT Open GL camera class implementation
+ * \brief The QT Open GL shader program class implementation
  */
 
 #include "shaderprogram.h"
@@ -20,17 +20,19 @@ Universe1::OpenGL::ShaderProgram::ShaderProgram(QObject *_parent)
     , m_attrMaterialAmbient(-1)
     , m_attrMaterialDiffuse(-1)
     , m_attrMaterialSpecular(-1)
+    , m_attrDirectionLightMode(-1)
     , m_attrDirectionLightDirection(-1)
     , m_attrDirectionLightAmbient(-1)
     , m_attrDirectionLightDiffuse(-1)
     , m_attrDirectionLightSpecular(-1)
-    , m_attrPointLightCount(-1)
 {
     for (int i = 0; i < pointLightsCount; ++i)
     {
+        m_attrPointLightMode[i] = -1;
         m_attrPointLightPosition[i] = -1;
         m_attrPointLightConstant[i] = -1;
         m_attrPointLightLinear[i] = -1;
+        m_attrPointLightQuadratic[i] = -1;
         m_attrPointLightAmbient[i] = -1;
         m_attrPointLightDiffuse[i] = -1;
         m_attrPointLightSpecular[i] = -1;
@@ -63,78 +65,105 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
                             "}                                                      \n");
 
     addShaderFromSourceCode(QOpenGLShader::Fragment,
-                            ("#version 330 core                                                       \n"
-                             "                                                                        \n"
-                             "struct Material {                                                       \n"
-                             "    float shininess;                                                    \n"
-                             "                                                                        \n"
-                             "    vec3 ambient;                                                       \n"
-                             "    vec3 diffuse;                                                       \n"
-                             "    vec3 specular;                                                      \n"
-                             "};                                                                      \n"
-                             "                                                                        \n"
-                             "struct DirectionLight {                                                 \n"
-                             "    vec3 direction;                                                     \n"
-                             "                                                                        \n"
-                             "    vec3 ambient;                                                       \n"
-                             "    vec3 diffuse;                                                       \n"
-                             "    vec3 specular;                                                      \n"
-                             "};                                                                      \n"
-                             "                                                                        \n"
-                             "struct PointLight {                                                     \n"
-                             "    vec3 position;                                                      \n"
-                             "                                                                        \n"
-                             "    float constant;                                                     \n"
-                             "    float linear;                                                       \n"
-                             "                                                                        \n"
-                             "    vec3 ambient;                                                       \n"
-                             "    vec3 diffuse;                                                       \n"
-                             "    vec3 specular;                                                      \n"
-                             "};                                                                      \n"
-                             "                                                                        \n"
-                             "#define NR_POINT_LIGHTS " +
+                            ("#version 330 core                                                          \n"
+                             "                                                                           \n"
+                             "struct Material {                                                          \n"
+                             "    float shininess;                                                       \n"
+                             "                                                                           \n"
+                             "    vec3 ambient;                                                          \n"
+                             "    vec3 diffuse;                                                          \n"
+                             "    vec3 specular;                                                         \n"
+                             "};                                                                         \n"
+                             "                                                                           \n"
+                             "struct DirectionLight {                                                    \n"
+                             "    int mode;                                                              \n"
+                             "    vec3 direction;                                                        \n"
+                             "                                                                           \n"
+                             "    vec3 ambient;                                                          \n"
+                             "    vec3 diffuse;                                                          \n"
+                             "    vec3 specular;                                                         \n"
+                             "};                                                                         \n"
+                             "                                                                           \n"
+                             "struct PointLight {                                                        \n"
+                             "    int mode;                                                              \n"
+                             "    vec3 position;                                                         \n"
+                             "                                                                           \n"
+                             "    float constant;                                                        \n"
+                             "    float linear;                                                          \n"
+                             "    float quadratic;                                                       \n"
+                             "                                                                           \n"
+                             "    vec3 ambient;                                                          \n"
+                             "    vec3 diffuse;                                                          \n"
+                             "    vec3 specular;                                                         \n"
+                             "};                                                                         \n"
+                             "                                                                           \n"
+                             "#define POINT_LIGHT_COUNT " +
                              QString::number(pointLightsCount) +
-                             "                                               \n"
-                             "                                                                        \n"
-                             "uniform vec3 cameraPosition;                                            \n"
-                             "uniform Material material;                                              \n"
-                             "uniform DirectionLight dirLight;                                        \n"
-                             "uniform PointLight pointLight[NR_POINT_LIGHTS];                         \n"
-                             "uniform int pointLightCount;                                            \n"
-                             "                                                                        \n"
-                             "in vec3 vertOut;                                                        \n"
-                             "in vec3 normOut;                                                        \n"
-                             "                                                                        \n"
-                             "void main(void)                                                         \n"
-                             "{                                                                       \n"
-                             "    vec3 norm = normalize(normOut);                                     \n"
-                             "    vec3 viewDir = normalize(cameraPosition - vertOut);                 \n"
-                             "    vec3 lightDir = normalize(-dirLight.direction);                     \n"
-                             "    vec3 reflectDir = reflect(-lightDir, norm);                         \n"
-                             "                                                                        \n"
-                             "    float d = max(dot(norm, lightDir), 0.0);                            \n"
-                             "    float s = pow(max(dot(viewDir, reflectDir), 0.0),                   \n"
-                             "                  material.shininess);                                  \n"
-                             "                                                                        \n"
-                             "    vec3 out = dirLight.ambient * material.ambient;                     \n"
-                             "    out += d * dirLight.diffuse * material.diffuse;                     \n"
-                             "    out += s * dirLight.specular * material.specular;                   \n"
-                             "                                                                        \n"
-                             "    for (int i = 0 ; i < pointLightCount ; ++i)                         \n"
-                             "    {                                                                   \n"
-                             "        lightDir = normalize(pointLight[i].position - vertOut);         \n"
-                             "        d = max(dot(norm, lightDir), 0.0);                              \n"
-                             "        s = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);\n"
-                             "        float dist = length(pointLight[i].position - vertOut);          \n"
-                             "        float a = 1.0 / (light.constant + light.linear * dist);         \n"
-                             "                                                                        \n"
-                             "        out += a * pointLight[i].ambient * material.ambient;            \n"
-                             "        out += a * d * pointLight[i].diffuse * material.diffuse;        \n"
-                             "        out += a * s *  pointLight[i].specular * material.specular;     \n"
-                             "    }                                                                   \n"
-                             "                                                                        \n"
-                             "    gl_FragColor = vec4(out, 1.0);                                      \n"
-                             "}                                                                       \n"));
+                             "\n"
+                             "                                                                           \n"
+                             "uniform vec3 cameraPosition;                                               \n"
+                             "uniform Material material;                                                 \n"
+                             "uniform DirectionLight directionLight;                                     \n"
+                             "uniform PointLight pointLight[NR_POINT_LIGHTS];                            \n"
+                             "                                                                           \n"
+                             "in vec3 vertOut;                                                           \n"
+                             "in vec3 normOut;                                                           \n"
+                             "                                                                           \n"
+                             "void main(void)                                                            \n"
+                             "{                                                                          \n"
+                             "    vec3 out;                                                              \n"
+                             "    vec3 norm = normalize(normOut);                                        \n"
+                             "    vec3 viewDir = normalize(cameraPosition - vertOut);                    \n"
+                             "    if (directionLight.mode != 0)                                          \n"
+                             "    {                                                                      \n"
+                             "        vec3 lightDir = normalize(-directionLight.direction);              \n"
+                             "        vec3 reflDir = reflect(-lightDir, norm);                           \n"
+                             "                                                                           \n"
+                             "        float d = max(dot(norm, lightDir), 0.0);                           \n"
+                             "        float s = pow(max(dot(viewDir, reflDir), 0.0), material.shininess);\n"
+                             "                                                                           \n"
+                             "        out += directionLight.ambient * material.ambient;                  \n"
+                             "        out += d * directionLight.diffuse * material.diffuse;              \n"
+                             "        out += s * directionLight.specular * material.specular;            \n"
+                             "    }                                                                      \n"
+                             "                                                                           \n"
+                             "    for (int i = 0 ; i < POINT_LIGHT_COUNT ; ++i)                          \n"
+                             "    {                                                                      \n"
+                             "        if (pointLight[i].mode == 0)                                       \n"
+                             "            continue;                                                      \n"
+                             "                                                                           \n"
+                             "        vec3 lightDir = normalize(pointLight[i].position - vertOut);       \n"
+                             "        vec3 reflDir = reflect(-lightDir, norm);                           \n"
+                             "                                                                           \n"
+                             "        float d = max(dot(norm, lightDir), 0.0);                           \n"
+                             "        float s = pow(max(dot(viewDir, reflDir), 0.0), material.shininess);\n"
+                             "                                                                           \n"
+                             "        float dist = length(pointLight[i].position - vertOut);             \n"
+                             "        float a = 1.0;                                                     \n"
+                             "        switch (pointLight[i].mode)                                        \n"
+                             "        {                                                                  \n"
+                             "        case 2: a = 1.0 / pointLight[i].constant;                          \n"
+                             "                break;                                                     \n"
+                             "                                                                           \n"
+                             "        case 3: a = 1.0 / (pointLight[i].constant +                        \n"
+                             "                           pointLight[i].linear * dist);                   \n"
+                             "                break;                                                     \n"
+                             "                                                                           \n"
+                             "        case 4: a = 1.0 / (pointLight[i].constant +                        \n"
+                             "                           pointLight[i].linear * dist +                   \n"
+                             "                           pointLight[i].quadratic * dist * dist);         \n"
+                             "                break;                                                     \n"
+                             "                                                                           \n"
+                             "        default: break;                                                    \n"
+                             "        }                                                                  \n"
+                             "                                                                           \n"
+                             "        out += a * pointLight[i].ambient * material.ambient;               \n"
+                             "        out += a * d * pointLight[i].diffuse * material.diffuse;           \n"
+                             "        out += a * s *  pointLight[i].specular * material.specular;        \n"
+                             "    }                                                                      \n"
+                             "                                                                           \n"
+                             "    gl_FragColor = vec4(out, 1.0);                                         \n"
+                             "}                                                                          \n"));
 
     if (!link())
     {
@@ -176,10 +205,11 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
     if (m_attrMaterialSpecular < 0)
         result = false;
 
-    m_attrDirectionLightDirection = uniformLocation("dirLight.direction");
-    m_attrDirectionLightAmbient = uniformLocation("dirLight.ambient");
-    m_attrDirectionLightDiffuse = uniformLocation("dirLight.diffuse");
-    m_attrDirectionLightSpecular = uniformLocation("dirLight.specular");
+    m_attrDirectionLightMode = uniformLocation("directionLight.mode");
+    m_attrDirectionLightDirection = uniformLocation("directionLight.direction");
+    m_attrDirectionLightAmbient = uniformLocation("directionLight.ambient");
+    m_attrDirectionLightDiffuse = uniformLocation("directionLight.diffuse");
+    m_attrDirectionLightSpecular = uniformLocation("directionLight.specular");
 
     if (m_attrDirectionLightDirection < 0)
         result = false;
@@ -193,18 +223,24 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
     for (int i = 0; i < pointLightsCount; ++i)
     {
         const QString key = QString("pointLight[%1].").arg(i);
+        m_attrPointLightMode[i] = uniformLocation(key + "mode");
         m_attrPointLightPosition[i] = uniformLocation(key + "position");
         m_attrPointLightConstant[i] = uniformLocation(key + "constant");
         m_attrPointLightLinear[i] = uniformLocation(key + "linear");
+        m_attrPointLightQuadratic[i] = uniformLocation(key + "quadratic");
         m_attrPointLightAmbient[i] = uniformLocation(key + "ambient");
         m_attrPointLightDiffuse[i] = uniformLocation(key + "diffuse");
         m_attrPointLightSpecular[i] = uniformLocation(key + "specular");
 
+        if (m_attrPointLightMode[i] < 0)
+            result = false;
         if (m_attrPointLightPosition[i] < 0)
             result = false;
         if (m_attrPointLightConstant[i] < 0)
             result = false;
         if (m_attrPointLightLinear[i] < 0)
+            result = false;
+        if (m_attrPointLightQuadratic[i] < 0)
             result = false;
         if (m_attrPointLightAmbient[i] < 0)
             result = false;
@@ -213,11 +249,6 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
         if (m_attrPointLightSpecular[i] < 0)
             result = false;
     }
-
-    m_attrPointLightCount = uniformLocation("pointLightCount");
-
-    if (m_attrPointLightCount < 0)
-        result = false;
 
     release();
 
@@ -252,6 +283,7 @@ void Universe1::OpenGL::ShaderProgram::setupMaterial(const Material &_material)
  */
 void Universe1::OpenGL::ShaderProgram::setupDirectionLight(const DirectionLight &_light)
 {
+    setUniformValue(m_attrDirectionLightMode, static_cast<int>(_light.mode));
     setUniformValue(m_attrDirectionLightDirection, _light.direction);
     setUniformValue(m_attrDirectionLightAmbient, _light.ambient);
     setUniformValue(m_attrDirectionLightDiffuse, _light.diffuse);
@@ -268,9 +300,11 @@ void Universe1::OpenGL::ShaderProgram::setupPointLights(const std::vector<PointL
     int i = 0;
     for (const PointLight &light : _lights)
     {
+        setUniformValue(m_attrPointLightMode[i], static_cast<int>(light.mode));
         setUniformValue(m_attrPointLightPosition[i], light.position);
         setUniformValue(m_attrPointLightConstant[i], light.constant);
         setUniformValue(m_attrPointLightLinear[i], light.linear);
+        setUniformValue(m_attrPointLightQuadratic[i], light.quadratic);
         setUniformValue(m_attrPointLightAmbient[i], light.ambient);
         setUniformValue(m_attrPointLightDiffuse[i], light.diffuse);
         setUniformValue(m_attrPointLightSpecular[i], light.specular);
@@ -278,5 +312,24 @@ void Universe1::OpenGL::ShaderProgram::setupPointLights(const std::vector<PointL
         if (i == pointLightsCount)
             break;
     }
-    setUniformValue(m_attrPointLightCount, i);
+}
+
+/*!
+ * \brief Setup point light at given index
+ * \param _lightIndex Light index
+ * \param _light Point lights
+ * \note Also checks and updates active light count if is lower then given index
+ */
+void Universe1::OpenGL::ShaderProgram::setupPointLight(const int _lightIndex, const PointLight &_light)
+{
+    if (_lightIndex < 0 || _lightIndex >= pointLightsCount)
+        return;
+    setUniformValue(m_attrPointLightMode[_lightIndex], static_cast<int>(_light.mode));
+    setUniformValue(m_attrPointLightPosition[_lightIndex], _light.position);
+    setUniformValue(m_attrPointLightConstant[_lightIndex], _light.constant);
+    setUniformValue(m_attrPointLightLinear[_lightIndex], _light.linear);
+    setUniformValue(m_attrPointLightQuadratic[_lightIndex], _light.quadratic);
+    setUniformValue(m_attrPointLightAmbient[_lightIndex], _light.ambient);
+    setUniformValue(m_attrPointLightDiffuse[_lightIndex], _light.diffuse);
+    setUniformValue(m_attrPointLightSpecular[_lightIndex], _light.specular);
 }

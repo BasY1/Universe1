@@ -52,6 +52,9 @@ SOURCES += \
     src/qt/qsimulationnewtoncurrent.cpp \
     \
     src/qt/opengl/camera.cpp \
+    src/qt/opengl/adscolors.cpp \
+    src/qt/opengl/material.cpp \
+    src/qt/opengl/lights.cpp \
     src/qt/opengl/shaderprogram.cpp \
     src/qt/opengl/glwidget.cpp \
 
@@ -60,6 +63,9 @@ HEADERS += \
     src/qt/qsimulationnewtoncurrent.h \
     \
     src/qt/opengl/camera.h \
+    src/qt/opengl/adscolors.h \
+    src/qt/opengl/material.h \
+    src/qt/opengl/lights.h \
     src/qt/opengl/shaderprogram.h \
     src/qt/opengl/glwidget.h \
 

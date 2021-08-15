@@ -26,9 +26,6 @@ Universe1::OpenGL::GLWidget::GLWidget(QWidget *_parent)
 {
     QSurfaceFormat format;
     format.setDepthBufferSize(24);
-    //format.setAlphaBufferSize(8);
-    // format.setStencilBufferSize(8);
-    // format.setVersion(3, 2);
     format.setSamples(4);
     format.setProfile(QSurfaceFormat::CoreProfile);
     setFormat(format);  // must be called before the widget or its parent window gets shown
