@@ -34,7 +34,7 @@ static float valueByFlags(
  * \param _up Camera up normal
  * \param _angleYawDeg Yaw angle in degrees
  * \param _anglePitchDeg Pitch angle in degrees
- * \return Pair of new direction normal and side normal
+ * \returns Pair of new direction normal and side normal
  */
 static std::pair<QVector3D, QVector3D> spinByYawPitch(const QVector3D &_forward,
                                                       const QVector3D &_sideRight,

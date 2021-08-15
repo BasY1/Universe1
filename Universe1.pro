@@ -53,6 +53,7 @@ SOURCES += \
     \
     src/qt/opengl/camera.cpp \
     src/qt/opengl/shaderprogram.cpp \
+    src/qt/opengl/glwidget.cpp \
 
 HEADERS += \
     src/qt/qsimulation.h \
@@ -60,6 +61,7 @@ HEADERS += \
     \
     src/qt/opengl/camera.h \
     src/qt/opengl/shaderprogram.h \
+    src/qt/opengl/glwidget.h \
 
 
 ########################################################################################################################

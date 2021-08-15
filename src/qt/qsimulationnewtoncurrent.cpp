@@ -6,46 +6,48 @@
 
 #include "qsimulationnewtoncurrent.h"
 
-QSimulationNewtonCurrent::QSimulationNewtonCurrent(const QString &ID, QObject *parent)
+Universe1::QSimulationNewtonCurrent::QSimulationNewtonCurrent(const QString &ID, QObject *parent)
     : QSimulation(ID, parent)
     , m_precision(PrecisionFloat)
 {
 }
 
-QSimulation::SimulationType QSimulationNewtonCurrent::simulationType() const
+Universe1::QSimulation::SimulationType Universe1::QSimulationNewtonCurrent::simulationType() const
 {
     return QSimulation::SimulationNewtonCurrent;
 }
 
-QSimulation::Precision QSimulationNewtonCurrent::precision() const
+Universe1::QSimulation::Precision Universe1::QSimulationNewtonCurrent::precision() const
 {
     return m_precision;
 }
 
-bool QSimulationNewtonCurrent::usesHistory() const
+bool Universe1::QSimulationNewtonCurrent::usesHistory() const
 {
     return false;
 }
 
-bool QSimulationNewtonCurrent::usesRadius() const
+bool Universe1::QSimulationNewtonCurrent::usesRadius() const
 {
     return false;
 }
 
-const std::vector<Universe1::Simulation::ConstantName> &QSimulationNewtonCurrent::supportedPhysicsConstants() const
+const std::vector<Universe1::Simulation::ConstantName> &
+Universe1::QSimulationNewtonCurrent::supportedPhysicsConstants() const
 {
     static const std::vector<Universe1::Simulation::ConstantName> supported = {
         Universe1::Simulation::Const_GravityConstant};
     return supported;
 }
 
-const std::vector<QSimulation::ElementProperty> &QSimulationNewtonCurrent::supportedElementProperties() const
+const std::vector<Universe1::QSimulation::ElementProperty> &
+Universe1::QSimulationNewtonCurrent::supportedElementProperties() const
 {
     static const std::vector<ElementProperty> supported = {PropertyPosition, PropertyVelocity, PropertyForce};
     return supported;
 }
 
-size_t QSimulationNewtonCurrent::objectCountCalc() const
+size_t Universe1::QSimulationNewtonCurrent::objectCountCalc() const
 {
     switch (m_precision)
     {
@@ -56,7 +58,7 @@ size_t QSimulationNewtonCurrent::objectCountCalc() const
     return 0U;
 }
 
-size_t QSimulationNewtonCurrent::lastInitObjectID() const
+size_t Universe1::QSimulationNewtonCurrent::lastInitObjectID() const
 {
     switch (m_precision)
     {
@@ -67,7 +69,7 @@ size_t QSimulationNewtonCurrent::lastInitObjectID() const
     return 0U;
 }
 
-void QSimulationNewtonCurrent::loadInitObjectIDs(std::vector<size_t> &_out) const
+void Universe1::QSimulationNewtonCurrent::loadInitObjectIDs(std::vector<size_t> &_out) const
 {
     switch (m_precision)
     {
@@ -77,8 +79,8 @@ void QSimulationNewtonCurrent::loadInitObjectIDs(std::vector<size_t> &_out) cons
     }
 }
 
-bool QSimulationNewtonCurrent::loadInitPath(std::vector<std::pair<double, QVector3D>> &_out,
-                                            const size_t _objectID) const
+bool Universe1::QSimulationNewtonCurrent::loadInitPath(std::vector<std::pair<double, QVector3D>> &_out,
+                                                       const size_t _objectID) const
 {
     switch (m_precision)
     {
@@ -89,8 +91,8 @@ bool QSimulationNewtonCurrent::loadInitPath(std::vector<std::pair<double, QVecto
     return false;
 }
 
-bool QSimulationNewtonCurrent::loadCalcPath(std::vector<std::pair<double, QVector3D>> &_out,
-                                            const size_t _objectID) const
+bool Universe1::QSimulationNewtonCurrent::loadCalcPath(std::vector<std::pair<double, QVector3D>> &_out,
+                                                       const size_t _objectID) const
 {
     switch (m_precision)
     {
@@ -101,9 +103,9 @@ bool QSimulationNewtonCurrent::loadCalcPath(std::vector<std::pair<double, QVecto
     return false;
 }
 
-std::pair<bool, QVector3D> QSimulationNewtonCurrent::loadInitProperty(const ElementProperty _property,
-                                                                      const size_t _objectID,
-                                                                      const double _timeStamp) const
+std::pair<bool, QVector3D> Universe1::QSimulationNewtonCurrent::loadInitProperty(const ElementProperty _property,
+                                                                                 const size_t _objectID,
+                                                                                 const double _timeStamp) const
 {
     switch (_property)
     {
@@ -143,9 +145,9 @@ std::pair<bool, QVector3D> QSimulationNewtonCurrent::loadInitProperty(const Elem
     return {false, QVector3D()};
 }
 
-std::pair<bool, QVector3D> QSimulationNewtonCurrent::loadCalcProperty(const ElementProperty _property,
-                                                                      const size_t _objectID,
-                                                                      const double _timeStamp) const
+std::pair<bool, QVector3D> Universe1::QSimulationNewtonCurrent::loadCalcProperty(const ElementProperty _property,
+                                                                                 const size_t _objectID,
+                                                                                 const double _timeStamp) const
 {
     switch (_property)
     {
@@ -185,7 +187,7 @@ std::pair<bool, QVector3D> QSimulationNewtonCurrent::loadCalcProperty(const Elem
     return {false, QVector3D()};
 }
 
-bool QSimulationNewtonCurrent::createSimulation(int _stepCount)
+bool Universe1::QSimulationNewtonCurrent::createSimulation(int _stepCount)
 {
     if (_stepCount < 1)
         return false;
@@ -206,12 +208,12 @@ bool QSimulationNewtonCurrent::createSimulation(int _stepCount)
  * \param _sim The simulation
  */
 template <typename T>
-void initObj(const std::vector<QSimulationNewtonCurrent::InitObject> &_objects,
+void initObj(const std::vector<Universe1::QSimulationNewtonCurrent::InitObject> &_objects,
              Universe1::Simulation::GravityNewton::SimulationNewtonCurrent<T> &_sim)
 {
     std::vector<std::tuple<T, Universe1::Math::Vec3<T>, Universe1::Math::Vec3<T>>> tmp(_objects.size());
     size_t idx = 0;
-    for (const QSimulationNewtonCurrent::InitObject &io : _objects)
+    for (const Universe1::QSimulationNewtonCurrent::InitObject &io : _objects)
     {
         std::get<0>(tmp.at(idx)) = io.mass;
         std::get<1>(tmp.at(idx)) = io.position.converted<T>();
@@ -221,7 +223,7 @@ void initObj(const std::vector<QSimulationNewtonCurrent::InitObject> &_objects,
     _sim.initializeObjects(tmp);
 }
 
-void QSimulationNewtonCurrent::initializeFromObjects(const std::vector<InitObject> &_objects)
+void Universe1::QSimulationNewtonCurrent::initializeFromObjects(const std::vector<InitObject> &_objects)
 {
     switch (m_precision)
     {
@@ -232,7 +234,7 @@ void QSimulationNewtonCurrent::initializeFromObjects(const std::vector<InitObjec
     emit dataChanged();
 }
 
-void QSimulationNewtonCurrent::setPrecision(Precision _precision)
+void Universe1::QSimulationNewtonCurrent::setPrecision(Precision _precision)
 {
     if (m_precision == _precision)
         return;

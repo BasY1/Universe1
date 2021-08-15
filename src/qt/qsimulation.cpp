@@ -6,33 +6,33 @@
 
 #include "qsimulation.h"
 
-QSimulation::QSimulation(const QString &ID, QObject *parent)
+Universe1::QSimulation::QSimulation(const QString &ID, QObject *parent)
     : QObject(parent)
     , m_ID(ID)
 {
 }
 
-const QString &QSimulation::ID() const
+const QString &Universe1::QSimulation::ID() const
 {
     return m_ID;
 }
 
-QString QSimulation::name() const
+QString Universe1::QSimulation::name() const
 {
     return m_name;
 }
 
-QString QSimulation::description() const
+QString Universe1::QSimulation::description() const
 {
     return m_description;
 }
 
-void QSimulation::setName(const QString &name)
+void Universe1::QSimulation::setName(const QString &name)
 {
     m_name = name;
 }
 
-void QSimulation::setDescription(const QString &description)
+void Universe1::QSimulation::setDescription(const QString &description)
 {
     m_description = description;
 }

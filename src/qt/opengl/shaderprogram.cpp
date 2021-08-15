@@ -39,7 +39,7 @@ Universe1::OpenGL::ShaderProgram::ShaderProgram(QObject *_parent)
 
 /*!
  * \brief Initialize shaders and location properties
- * \return Success flag
+ * \returns Success flag
  */
 bool Universe1::OpenGL::ShaderProgram::initGL()
 {
