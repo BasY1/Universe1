@@ -11,6 +11,8 @@
 
 #include <QObject>
 
+namespace Universe1 {
+
 /*!
  * \brief The QT Simulation abstract class
  */
@@ -247,5 +249,7 @@ inline QSimulation::Precision detectPrecision<long double>()
 }
 
 #endif  // DOXYGEN_SKIP
+
+}  // namespace Universe1
 
 #endif  // UNIVERSE1_QSIMULATION_H

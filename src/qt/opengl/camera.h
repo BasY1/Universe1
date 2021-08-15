@@ -1,11 +1,11 @@
 /*!
- * \file qt/opengl/glcamera.h
+ * \file qt/opengl/camera.h
  * \author Michal Steller
  * \brief The QT Open GL camera class declarations
  */
 
-#ifndef UNIVERSE1_OPENGL_GLCAMERA_H
-#define UNIVERSE1_OPENGL_GLCAMERA_H
+#ifndef UNIVERSE1_OPENGL_CAMERA_H
+#define UNIVERSE1_OPENGL_CAMERA_H
 
 #include <QMatrix4x4>
 #include <QObject>
@@ -18,14 +18,17 @@
 #include <QTimerEvent>
 #include <QWheelEvent>
 
+namespace Universe1 {
+namespace OpenGL {
+
 /*!
  * \brief The OpenGL camera
  */
-class GLCamera : public QObject
+class Camera : public QObject
 {
     Q_OBJECT
  public:
-    GLCamera(QObject *_parent = nullptr);
+    Camera(QObject *_parent = nullptr);
 
     inline const QVector3D &position() const;
     inline const QVector3D &centerOfView() const;
@@ -105,8 +108,8 @@ class GLCamera : public QObject
     void timerEvent(QTimerEvent *) override;
 
  public:
-    void saveSettings(const bool _savePosition, const QString &_keyGroup = "GLCamera") const;
-    void loadSettings(const bool _loadPosition, const QString &_keyGroup = "GLCamera");
+    void saveSettings(const bool _savePosition, const QString &_keyGroup = "Camera") const;
+    void loadSettings(const bool _loadPosition, const QString &_keyGroup = "Camera");
 
  signals:
     void changed();          //!< Emits when camera change property and this change should be visible (repaint needed)
@@ -169,7 +172,7 @@ class GLCamera : public QObject
  * \brief Getter for camera position
  * \returns Camera position
  */
-inline const QVector3D &GLCamera::position() const
+inline const QVector3D &Camera::position() const
 {
     return m_position;
 }
@@ -178,7 +181,7 @@ inline const QVector3D &GLCamera::position() const
  * \brief Getter for camera center of view
  * \returns Camera center of view
  */
-inline const QVector3D &GLCamera::centerOfView() const
+inline const QVector3D &Camera::centerOfView() const
 {
     return m_centerOfView;
 }
@@ -187,7 +190,7 @@ inline const QVector3D &GLCamera::centerOfView() const
  * \brief Getter for camera up vector
  * \returns Camera up vector
  */
-inline const QVector3D &GLCamera::upVector() const
+inline const QVector3D &Camera::upVector() const
 {
     return m_upVector;
 }
@@ -196,7 +199,7 @@ inline const QVector3D &GLCamera::upVector() const
  * \brief Getter for vertical angle [degrees]
  * \returns Camera vertical angle [degrees]
  */
-inline float GLCamera::verticalAngleDeg() const
+inline float Camera::verticalAngleDeg() const
 {
     return m_verticalAngleDeg;
 }
@@ -205,7 +208,7 @@ inline float GLCamera::verticalAngleDeg() const
  * \brief Getter for camera near plane
  * \returns Camera near plane
  */
-inline float GLCamera::nearPlane() const
+inline float Camera::nearPlane() const
 {
     return m_nearPlane;
 }
@@ -214,7 +217,7 @@ inline float GLCamera::nearPlane() const
  * \brief Getter for camera far plane
  * \returns Camera far plane
  */
-inline float GLCamera::farPlane() const
+inline float Camera::farPlane() const
 {
     return m_farPlane;
 }
@@ -223,7 +226,7 @@ inline float GLCamera::farPlane() const
  * \brief Getter for camera move speed
  * \returns Camera move speed
  */
-float GLCamera::moveSpeed() const
+float Camera::moveSpeed() const
 {
     return m_moveSpeed;
 }
@@ -232,7 +235,7 @@ float GLCamera::moveSpeed() const
  * \brief Getter for camera spin speed
  * \returns Camera spin speed
  */
-inline float GLCamera::spinSpeed() const
+inline float Camera::spinSpeed() const
 {
     return m_spinSpeed;
 }
@@ -241,7 +244,7 @@ inline float GLCamera::spinSpeed() const
  * \brief Getter for camera acceleration/deceleration multiplier
  * \returns Camera acceleration/deceleration multiplier
  */
-inline float GLCamera::modifierAccel() const
+inline float Camera::modifierAccel() const
 {
     return m_modifierAccel;
 }
@@ -250,7 +253,7 @@ inline float GLCamera::modifierAccel() const
  * \brief Getter for camera mouse sensitivity
  * \returns Camera mouse sensitivity
  */
-inline float GLCamera::mouseSensitivity() const
+inline float Camera::mouseSensitivity() const
 {
     return m_mouseSensitivity;
 }
@@ -259,7 +262,7 @@ inline float GLCamera::mouseSensitivity() const
  * \brief Getter for view width
  * \returns View width
  */
-inline int GLCamera::viewWidth() const
+inline int Camera::viewWidth() const
 {
     return m_viewWidth;
 }
@@ -268,7 +271,7 @@ inline int GLCamera::viewWidth() const
  * \brief Getter for view height
  * \returns View height
  */
-inline int GLCamera::viewHeight() const
+inline int Camera::viewHeight() const
 {
     return m_viewHeight;
 }
@@ -277,7 +280,7 @@ inline int GLCamera::viewHeight() const
  * \brief Getter for view aspect ratio \f$\frac{width}{height}\f$
  * \returns View aspect ratio
  */
-inline float GLCamera::aspectRatio() const
+inline float Camera::aspectRatio() const
 {
     return static_cast<float>(m_viewWidth) / static_cast<float>(m_viewHeight);
 }
@@ -290,7 +293,7 @@ inline float GLCamera::aspectRatio() const
  * \brief Getter for key mapping action: move forward
  * \returns Move forward key
  */
-inline Qt::Key GLCamera::keyMoveForward() const
+inline Qt::Key Camera::keyMoveForward() const
 {
     return m_keyMoveForward;
 }
@@ -299,7 +302,7 @@ inline Qt::Key GLCamera::keyMoveForward() const
  * \brief Getter for key mapping action: move backward
  * \returns Move backward key
  */
-inline Qt::Key GLCamera::keyMoveBackward() const
+inline Qt::Key Camera::keyMoveBackward() const
 {
     return m_keyMoveBackward;
 }
@@ -308,7 +311,7 @@ inline Qt::Key GLCamera::keyMoveBackward() const
  * \brief Getter for key mapping action: move left
  * \returns Move left key
  */
-inline Qt::Key GLCamera::keyMoveLeft() const
+inline Qt::Key Camera::keyMoveLeft() const
 {
     return m_keyMoveLeft;
 }
@@ -317,7 +320,7 @@ inline Qt::Key GLCamera::keyMoveLeft() const
  * \brief Getter for key mapping action: move right
  * \returns Move right key
  */
-inline Qt::Key GLCamera::keyMoveRight() const
+inline Qt::Key Camera::keyMoveRight() const
 {
     return m_keyMoveRight;
 }
@@ -326,7 +329,7 @@ inline Qt::Key GLCamera::keyMoveRight() const
  * \brief Getter for key mapping action: move up
  * \returns Move up key
  */
-inline Qt::Key GLCamera::keyMoveUp() const
+inline Qt::Key Camera::keyMoveUp() const
 {
     return m_keyMoveUp;
 }
@@ -335,7 +338,7 @@ inline Qt::Key GLCamera::keyMoveUp() const
  * \brief Getter for key mapping action: move down
  * \returns Move down key
  */
-inline Qt::Key GLCamera::keyMoveDown() const
+inline Qt::Key Camera::keyMoveDown() const
 {
     return m_keyMoveDown;
 }
@@ -344,7 +347,7 @@ inline Qt::Key GLCamera::keyMoveDown() const
  * \brief Getter for key mapping action: roll left
  * \returns Roll left key
  */
-inline Qt::Key GLCamera::keyRollLeft() const
+inline Qt::Key Camera::keyRollLeft() const
 {
     return m_keyRollLeft;
 }
@@ -353,7 +356,7 @@ inline Qt::Key GLCamera::keyRollLeft() const
  * \brief Getter for key mapping action: roll right
  * \returns Roll right key
  */
-inline Qt::Key GLCamera::keyRollRight() const
+inline Qt::Key Camera::keyRollRight() const
 {
     return m_keyRollRight;
 }
@@ -362,7 +365,7 @@ inline Qt::Key GLCamera::keyRollRight() const
  * \brief Getter for key mapping action: reset up vector
  * \returns Reset up vector key
  */
-inline Qt::Key GLCamera::keyResetZ() const
+inline Qt::Key Camera::keyResetZ() const
 {
     return m_keyResetZ;
 }
@@ -371,7 +374,7 @@ inline Qt::Key GLCamera::keyResetZ() const
  * \brief Getter for acceleration modifier
  * \returns Acceleration modifier
  */
-inline Qt::KeyboardModifier GLCamera::keyAccelerate() const
+inline Qt::KeyboardModifier Camera::keyAccelerate() const
 {
     return m_keyAccelerate;
 }
@@ -380,13 +383,12 @@ inline Qt::KeyboardModifier GLCamera::keyAccelerate() const
  * \brief Getter for deceleration modifier
  * \returns Deceleration modifier
  */
-inline Qt::KeyboardModifier GLCamera::keyDecelerate() const
+inline Qt::KeyboardModifier Camera::keyDecelerate() const
 {
     return m_keyDecelerate;
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+}  // namespace OpenGL
+}  // namespace Universe1
 
-#endif  // UNIVERSE1_OPENGL_GLCAMERA_H
+#endif  // UNIVERSE1_OPENGL_CAMERA_H

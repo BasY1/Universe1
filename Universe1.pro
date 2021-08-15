@@ -50,12 +50,16 @@ HEADERS += \
 SOURCES += \
     src/qt/qsimulation.cpp \
     src/qt/qsimulationnewtoncurrent.cpp \
-    src/qt/opengl/glcamera.cpp \
+    \
+    src/qt/opengl/camera.cpp \
+    src/qt/opengl/shaderprogram.cpp \
 
 HEADERS += \
     src/qt/qsimulation.h \
     src/qt/qsimulationnewtoncurrent.h \
-    src/qt/opengl/glcamera.h \
+    \
+    src/qt/opengl/camera.h \
+    src/qt/opengl/shaderprogram.h \
 
 
 ########################################################################################################################

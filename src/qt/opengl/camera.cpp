@@ -1,4 +1,10 @@
-#include "glcamera.h"
+/*!
+ * \file qt/opengl/camera.cpp
+ * \author Michal Steller
+ * \brief The QT Open GL camera class implementation
+ */
+
+#include "camera.h"
 
 #include <QSettings>
 
@@ -48,7 +54,7 @@ static std::pair<QVector3D, QVector3D> spinByYawPitch(const QVector3D &_forward,
  * \brief Constructor
  * \param _parent Parent \c QObject
  */
-GLCamera::GLCamera(QObject *_parent)
+Universe1::OpenGL::Camera::Camera(QObject *_parent)
     : QObject(_parent)
     , m_position(0.0F, -1.0F, -5.0F)
     , m_centerOfView()
@@ -92,7 +98,7 @@ GLCamera::GLCamera(QObject *_parent)
  * \brief Getter for camera perspective matrix
  * \returns Perspective matrix
  */
-QMatrix4x4 GLCamera::perspectiveMatrix() const
+QMatrix4x4 Universe1::OpenGL::Camera::perspectiveMatrix() const
 {
     QMatrix4x4 result;
     result.setToIdentity();
@@ -104,7 +110,7 @@ QMatrix4x4 GLCamera::perspectiveMatrix() const
  * \brief Getter for camera look at matrix
  * \returns Look at matrix
  */
-QMatrix4x4 GLCamera::lookAtMatrix() const
+QMatrix4x4 Universe1::OpenGL::Camera::lookAtMatrix() const
 {
     QMatrix4x4 result;
     result.setToIdentity();
@@ -116,7 +122,7 @@ QMatrix4x4 GLCamera::lookAtMatrix() const
  * \brief Getter for camera view matrix (\f$perspective \times lookAt\f$)
  * \returns View matrix
  */
-QMatrix4x4 GLCamera::viewMatrix() const
+QMatrix4x4 Universe1::OpenGL::Camera::viewMatrix() const
 {
     return perspectiveMatrix() * lookAtMatrix();
 }
@@ -125,7 +131,7 @@ QMatrix4x4 GLCamera::viewMatrix() const
  * \brief Getter for locked center of view flag
  * \returns Locked center of view flag
  */
-bool GLCamera::isLockedCenterOfView() const
+bool Universe1::OpenGL::Camera::isLockedCenterOfView() const
 {
     return m_lockedCenterOfView;
 }
@@ -134,7 +140,7 @@ bool GLCamera::isLockedCenterOfView() const
  * \brief Getter for handling input flag
  * \returns Handling input flag
  */
-bool GLCamera::isHandlingInput() const
+bool Universe1::OpenGL::Camera::isHandlingInput() const
 {
     return m_timer.isActive();
 }
@@ -146,7 +152,7 @@ bool GLCamera::isHandlingInput() const
  * \param _enable Start/stop flag
  * \note  Starts/stops \a m_timer
  */
-void GLCamera::setHandlingInput(const bool _enable)
+void Universe1::OpenGL::Camera::setHandlingInput(const bool _enable)
 {
     if (_enable)
     {
@@ -178,7 +184,9 @@ void GLCamera::setHandlingInput(const bool _enable)
  * \param _centerOfView New camera center of view
  * \param _upVector New camera up vector
  */
-void GLCamera::setCamera(const QVector3D &_position, const QVector3D &_centerOfView, const QVector3D &_upVector)
+void Universe1::OpenGL::Camera::setCamera(const QVector3D &_position,
+                                          const QVector3D &_centerOfView,
+                                          const QVector3D &_upVector)
 {
     m_position = _position;
     m_centerOfView = _centerOfView;
@@ -197,7 +205,7 @@ void GLCamera::setCamera(const QVector3D &_position, const QVector3D &_centerOfV
 /*!
  * \brief Reset up vector to best fit \b Z axis
  */
-void GLCamera::resetUpVector()
+void Universe1::OpenGL::Camera::resetUpVector()
 {
     setCamera(m_position, m_centerOfView);
 }
@@ -210,7 +218,7 @@ void GLCamera::resetUpVector()
  * \brief Setter for vertical angle [degrees]
  * \param _verticalAngleDeg New vertical angle
  */
-void GLCamera::setVerticalAngleDeg(const float _verticalAngleDeg)
+void Universe1::OpenGL::Camera::setVerticalAngleDeg(const float _verticalAngleDeg)
 {
     m_verticalAngleDeg = _verticalAngleDeg;
     emit changedSetting();
@@ -221,7 +229,7 @@ void GLCamera::setVerticalAngleDeg(const float _verticalAngleDeg)
  * \brief Setter for camera near plane
  * \param _nearPlane New near plane value
  */
-void GLCamera::setNearPlane(const float _nearPlane)
+void Universe1::OpenGL::Camera::setNearPlane(const float _nearPlane)
 {
     m_nearPlane = _nearPlane;
     emit changedSetting();
@@ -232,7 +240,7 @@ void GLCamera::setNearPlane(const float _nearPlane)
  * \brief Setter for camera far plane
  * \param _farPlane New far plane value
  */
-void GLCamera::setFarPlane(const float _farPlane)
+void Universe1::OpenGL::Camera::setFarPlane(const float _farPlane)
 {
     m_farPlane = _farPlane;
     emit changedSetting();
@@ -244,7 +252,7 @@ void GLCamera::setFarPlane(const float _farPlane)
  * \param _nearPlane New near plane value
  * \param _farPlane New far plane value
  */
-void GLCamera::setViewDistances(const float _nearPlane, const float _farPlane)
+void Universe1::OpenGL::Camera::setViewDistances(const float _nearPlane, const float _farPlane)
 {
     m_nearPlane = _nearPlane;
     m_farPlane = _farPlane;
@@ -256,7 +264,7 @@ void GLCamera::setViewDistances(const float _nearPlane, const float _farPlane)
  * \brief Setter for camera move speed
  * \param _moveSpeed New move speed value
  */
-void GLCamera::setMoveSpeed(const float _moveSpeed)
+void Universe1::OpenGL::Camera::setMoveSpeed(const float _moveSpeed)
 {
     m_moveSpeed = _moveSpeed;
     emit changedSetting();
@@ -266,7 +274,7 @@ void GLCamera::setMoveSpeed(const float _moveSpeed)
  * \brief Setter for camera spin speed
  * \param _spinSpeed New spin speed value
  */
-void GLCamera::setSpinSpeed(const float _spinSpeed)
+void Universe1::OpenGL::Camera::setSpinSpeed(const float _spinSpeed)
 {
     m_spinSpeed = _spinSpeed;
     emit changedSetting();
@@ -276,7 +284,7 @@ void GLCamera::setSpinSpeed(const float _spinSpeed)
  * \brief Setter for camera acceleration/deceleration multiplier
  * \param _modifierAccel New acceleration/deceleration multiplier
  */
-void GLCamera::setModifierAccel(const float _modifierAccel)
+void Universe1::OpenGL::Camera::setModifierAccel(const float _modifierAccel)
 {
     m_modifierAccel = _modifierAccel;
     emit changedSetting();
@@ -286,7 +294,7 @@ void GLCamera::setModifierAccel(const float _modifierAccel)
  * \brief Setter for camera mouse sensitivity
  * \param _mouseSensitivity New mouse sensitivity value
  */
-void GLCamera::setMouseSensitivity(const float _mouseSensitivity)
+void Universe1::OpenGL::Camera::setMouseSensitivity(const float _mouseSensitivity)
 {
     m_mouseSensitivity = _mouseSensitivity;
     emit changedSetting();
@@ -296,7 +304,7 @@ void GLCamera::setMouseSensitivity(const float _mouseSensitivity)
  * \brief Setter for locked center of view flag
  * \param _lockedCenterOfView New locked center of view flag value
  */
-void GLCamera::setLockedCenterOfView(const bool _lockedCenterOfView)
+void Universe1::OpenGL::Camera::setLockedCenterOfView(const bool _lockedCenterOfView)
 {
     if (m_lockedCenterOfView != _lockedCenterOfView)
     {
@@ -310,7 +318,7 @@ void GLCamera::setLockedCenterOfView(const bool _lockedCenterOfView)
  * \param _centerOfView New camera center of view
  * \param _lockedCenterOfView New locked center of view flag value
  */
-void GLCamera::setLockedCenterOfView(const QVector3D &_centerOfView, const bool _lockedCenterOfView)
+void Universe1::OpenGL::Camera::setLockedCenterOfView(const QVector3D &_centerOfView, const bool _lockedCenterOfView)
 {
     if (m_lockedCenterOfView != _lockedCenterOfView)
     {
@@ -331,7 +339,7 @@ void GLCamera::setLockedCenterOfView(const QVector3D &_centerOfView, const bool 
  * \param _w New width value
  * \param _h New height value
  */
-void GLCamera::resizeGL(int _w, int _h)
+void Universe1::OpenGL::Camera::resizeGL(int _w, int _h)
 {
     m_viewWidth = std::max(1, _w);
     m_viewHeight = std::max(1, _h);
@@ -342,7 +350,7 @@ void GLCamera::resizeGL(int _w, int _h)
  * \brief Mouse press handler
  * \param _event Mouse event data
  */
-void GLCamera::handleMousePress(QMouseEvent *_event)
+void Universe1::OpenGL::Camera::handleMousePress(QMouseEvent *_event)
 {
     if (!isHandlingInput())
         return;
@@ -358,7 +366,7 @@ void GLCamera::handleMousePress(QMouseEvent *_event)
  * \brief Mouse move handler
  * \param _event Mouse event data
  */
-void GLCamera::handleMouseMove(QMouseEvent *_event)
+void Universe1::OpenGL::Camera::handleMouseMove(QMouseEvent *_event)
 {
     if (!isHandlingInput())
         return;
@@ -389,7 +397,7 @@ void GLCamera::handleMouseMove(QMouseEvent *_event)
  * \brief Mouse wheel handler
  * \param _event Wheel event data
  */
-void GLCamera::handleWheel(QWheelEvent *_event)
+void Universe1::OpenGL::Camera::handleWheel(QWheelEvent *_event)
 {
     if (!isHandlingInput())
         return;
@@ -437,7 +445,7 @@ void GLCamera::handleWheel(QWheelEvent *_event)
  * \param _eventKey Key index
  * \param _value New flag value
  */
-void GLCamera::setupKey(const int _eventKey, const bool _value)
+void Universe1::OpenGL::Camera::setupKey(const int _eventKey, const bool _value)
 {
     if (_eventKey == m_keyMoveForward)
         m_isMoveForward = _value;
@@ -461,7 +469,7 @@ void GLCamera::setupKey(const int _eventKey, const bool _value)
  * \brief Key press handler
  * \param _event Key event data
  */
-void GLCamera::handleKeyPress(QKeyEvent *_event)
+void Universe1::OpenGL::Camera::handleKeyPress(QKeyEvent *_event)
 {
     if (!isHandlingInput())
         return;
@@ -477,7 +485,7 @@ void GLCamera::handleKeyPress(QKeyEvent *_event)
  * \brief Key release handler
  * \param _event Key event data
  */
-void GLCamera::handleKeyRelease(QKeyEvent *_event)
+void Universe1::OpenGL::Camera::handleKeyRelease(QKeyEvent *_event)
 {
     if (!isHandlingInput())
         return;
@@ -490,7 +498,7 @@ void GLCamera::handleKeyRelease(QKeyEvent *_event)
  * \brief Returns acceleration/deceleration multiplier value
  * \returns Acceleration/deceleration multiplier value
  */
-float GLCamera::multModifier() const
+float Universe1::OpenGL::Camera::multModifier() const
 {
     return valueByFlags(1.0F, m_modifierAccel, 1.0F / m_modifierAccel, m_isDownAccel, m_isDownDecel);
 }
@@ -499,7 +507,7 @@ float GLCamera::multModifier() const
  * \brief Modifiers handler
  * \param _event Event data
  */
-void GLCamera::setupModifiers(QInputEvent *_event)
+void Universe1::OpenGL::Camera::setupModifiers(QInputEvent *_event)
 {
     m_isDownAccel = _event->modifiers().testFlag(Qt::ShiftModifier);
     m_isDownDecel = _event->modifiers().testFlag(Qt::ControlModifier);
@@ -508,7 +516,7 @@ void GLCamera::setupModifiers(QInputEvent *_event)
 /*!
  * \brief Next step from camera dynamics
  */
-void GLCamera::timerEvent(QTimerEvent *)
+void Universe1::OpenGL::Camera::timerEvent(QTimerEvent *)
 {
     if (!m_isMoveForward && !m_isMoveBackward && !m_isMoveLeft && !m_isMoveRight && !m_isMoveUp && !m_isMoveDown &&
         !m_isRollLeft && !m_isRollRight)
@@ -565,7 +573,7 @@ void GLCamera::timerEvent(QTimerEvent *)
  * \param _minMax Scene range (\a first is minimum, \a second maximum)
  * \param _stayLocked Stay locked flag (if already locked)
  */
-void GLCamera::setLookAt(const std::pair<QVector3D, QVector3D> &_minMax, const bool _stayLocked)
+void Universe1::OpenGL::Camera::setLookAt(const std::pair<QVector3D, QVector3D> &_minMax, const bool _stayLocked)
 {
     const QVector3D &min = _minMax.first;
     const QVector3D &max = _minMax.second;
@@ -589,7 +597,7 @@ void GLCamera::setLookAt(const std::pair<QVector3D, QVector3D> &_minMax, const b
  * \param _minMax Scene range (\a first is minimum, \a second maximum)
  * \param _stayLocked Stay locked flag (if already locked)
  */
-void GLCamera::setMaybeLookAt(const std::pair<QVector3D, QVector3D> &_minMax, const bool _stayLocked)
+void Universe1::OpenGL::Camera::setMaybeLookAt(const std::pair<QVector3D, QVector3D> &_minMax, const bool _stayLocked)
 {
     if (position().x() > _minMax.first.x() && position().x() < _minMax.second.x() &&
         position().y() > _minMax.first.y() && position().y() < _minMax.second.y() &&
@@ -603,7 +611,7 @@ void GLCamera::setMaybeLookAt(const std::pair<QVector3D, QVector3D> &_minMax, co
  * \param _savePosition Save with position
  * \param _keyGroup \c QSettings group name
  */
-void GLCamera::saveSettings(const bool _savePosition, const QString &_keyGroup) const
+void Universe1::OpenGL::Camera::saveSettings(const bool _savePosition, const QString &_keyGroup) const
 {
     const QString key = _keyGroup.isEmpty() ? QString() : (_keyGroup.endsWith('/') ? _keyGroup : (_keyGroup + "/"));
     QSettings settings;
@@ -628,7 +636,7 @@ void GLCamera::saveSettings(const bool _savePosition, const QString &_keyGroup) 
  * \param _loadPosition Load with position
  * \param _keyGroup \c QSettings group name
  */
-void GLCamera::loadSettings(const bool _loadPosition, const QString &_keyGroup)
+void Universe1::OpenGL::Camera::loadSettings(const bool _loadPosition, const QString &_keyGroup)
 {
     const QString key = _keyGroup.isEmpty() ? QString() : (_keyGroup.endsWith('/') ? _keyGroup : (_keyGroup + "/"));
     const QSettings settings;

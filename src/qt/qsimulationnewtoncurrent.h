@@ -13,6 +13,8 @@
 
 #include <QObject>
 
+namespace Universe1 {
+
 /*!
  * \brief The QT Simulation abstract class
  */
@@ -166,5 +168,7 @@ class QSimulationNewtonCurrent : public QSimulation
 
     std::vector<InitObject> m_currentInitObjects;  //!< Collection of starting object's properties
 };
+
+}  // namespace Universe1
 
 #endif  // UNIVERSE1_QSIMULATIONNEWTONCURRENT_H
