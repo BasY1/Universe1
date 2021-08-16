@@ -187,16 +187,19 @@ void Universe1::OpenGL::GLWidget::paintGL()
     switch (m_cullFaceMode)
     {
     case CullDisabled: glDisable(GL_CULL_FACE); break;
+
     case CullFront:
         glEnable(GL_CULL_FACE);
         glCullFace(GL_FRONT);
         glFrontFace(m_cullFaceCcw ? GL_CCW : GL_CW);
         break;
+
     case CullBack:
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
         glFrontFace(m_cullFaceCcw ? GL_CCW : GL_CW);
         break;
+
     case CullFrontAndBack:
         glEnable(GL_CULL_FACE);
         glCullFace(GL_FRONT_AND_BACK);

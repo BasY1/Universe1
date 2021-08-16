@@ -57,6 +57,11 @@ SOURCES += \
     src/qt/opengl/lights.cpp \
     src/qt/opengl/shaderprogram.cpp \
     src/qt/opengl/glwidget.cpp \
+    \
+    src/qt/opengl/models/glmodel.cpp \
+    src/qt/opengl/models/materialmodel.cpp \
+    src/qt/opengl/models/trianglemodel.cpp \
+
 
 HEADERS += \
     src/qt/qsimulation.h \
@@ -68,6 +73,10 @@ HEADERS += \
     src/qt/opengl/lights.h \
     src/qt/opengl/shaderprogram.h \
     src/qt/opengl/glwidget.h \
+    \
+    src/qt/opengl/models/glmodel.h \
+    src/qt/opengl/models/materialmodel.h \
+    src/qt/opengl/models/trianglemodel.h \
 
 
 ########################################################################################################################
