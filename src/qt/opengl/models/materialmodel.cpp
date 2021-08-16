@@ -14,7 +14,7 @@
 Universe1::OpenGL::Models::MaterialModel::MaterialModel(const Material &_material, QObject *_parent)
     : GLModel(_parent)
     , m_isInit(false)
-    , m_canDrawWireFrame(false)
+    , m_canSwitchDrawWireFrame(false)
     , m_drawWireFrame(false)
     , m_material(_material)
     , m_memoryUsage(0U)
@@ -65,6 +65,7 @@ bool Universe1::OpenGL::Models::MaterialModel::initBuffers(const std::vector<QVe
                                                            const std::vector<uint> &_linesData)
 {
     m_isInit = false;
+    m_canSwitchDrawWireFrame = false;
     m_triangsCount = 0;
     m_linesCount = 0;
 
@@ -80,10 +81,13 @@ bool Universe1::OpenGL::Models::MaterialModel::initBuffers(const std::vector<QVe
             return false;
     }
 
-    if (!m_triangsIndexes.isCreated())
+    if (!_triangsData.empty())
     {
-        if (!m_triangsIndexes.create())
-            return false;
+        if (!m_triangsIndexes.isCreated())
+        {
+            if (!m_triangsIndexes.create())
+                return false;
+        }
     }
 
     if (!_linesData.empty())
@@ -105,11 +109,14 @@ bool Universe1::OpenGL::Models::MaterialModel::initBuffers(const std::vector<QVe
     m_normalBuffer.release();
     m_memoryUsage += _normalData.size() * sizeof(QVector3D);
 
-    m_triangsIndexes.bind();
-    m_triangsIndexes.allocate(_triangsData.data(), _triangsData.size() * sizeof(uint));
-    m_triangsIndexes.release();
-    m_memoryUsage += _triangsData.size() * sizeof(uint);
-    m_triangsCount = _triangsData.size();
+    if (!_triangsData.empty())
+    {
+        m_triangsIndexes.bind();
+        m_triangsIndexes.allocate(_triangsData.data(), _triangsData.size() * sizeof(uint));
+        m_triangsIndexes.release();
+        m_memoryUsage += _triangsData.size() * sizeof(uint);
+        m_triangsCount = _triangsData.size();
+    }
 
     if (!_linesData.empty())
     {
@@ -117,9 +124,18 @@ bool Universe1::OpenGL::Models::MaterialModel::initBuffers(const std::vector<QVe
         m_linesIndexes.allocate(_linesData.data(), _linesData.size() * sizeof(uint));
         m_linesIndexes.release();
         m_memoryUsage += _linesData.size() * sizeof(uint);
-        m_linesCount = _triangsData.size();
+        m_linesCount = _linesData.size();
     }
+
     m_isInit = true;
+
+    m_canSwitchDrawWireFrame = (!_triangsData.empty() && !_linesData.empty());
+
+    if (!_triangsData.empty() && _linesData.empty())
+        m_drawWireFrame = false;
+    else if (_triangsData.empty() && !_linesData.empty())
+        m_drawWireFrame = true;
+
     return true;
 }
 
@@ -162,10 +178,11 @@ void Universe1::OpenGL::Models::MaterialModel::paintGLImlp(ShaderProgram *_progr
 /*!
  * \brief Setter for draw wire-framed flag
  * \param _value New draw wire-framed flag value
+ * \note Updates only when
  */
 void Universe1::OpenGL::Models::MaterialModel::setDrawWireFrame(bool _value)
 {
-    if (m_canDrawWireFrame)
+    if (m_canSwitchDrawWireFrame && m_drawWireFrame != _value)
     {
         m_drawWireFrame = _value;
         emit changed();
@@ -176,7 +193,7 @@ void Universe1::OpenGL::Models::MaterialModel::setDrawWireFrame(bool _value)
  * \brief Setter for material
  * \param _value New material object with values
  */
-void Universe1::OpenGL::Models::MaterialModel::setMaterial(Material _value)
+void Universe1::OpenGL::Models::MaterialModel::setMaterial(const Material &_value)
 {
     m_material = _value;
     emit changed();

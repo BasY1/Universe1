@@ -61,6 +61,11 @@ SOURCES += \
     src/qt/opengl/models/glmodel.cpp \
     src/qt/opengl/models/materialmodel.cpp \
     src/qt/opengl/models/trianglemodel.cpp \
+    \
+    src/qt/widgets/widgetcolor.cpp \
+    src/qt/widgets/widgetcolorads.cpp \
+    src/qt/widgets/widgetfloat.cpp \
+    src/qt/widgets/widgetmaterial.cpp \
 
 
 HEADERS += \
@@ -77,6 +82,11 @@ HEADERS += \
     src/qt/opengl/models/glmodel.h \
     src/qt/opengl/models/materialmodel.h \
     src/qt/opengl/models/trianglemodel.h \
+    \
+    src/qt/widgets/widgetcolor.h \
+    src/qt/widgets/widgetcolorads.h \
+    src/qt/widgets/widgetfloat.h \
+    src/qt/widgets/widgetmaterial.h \
 
 
 ########################################################################################################################

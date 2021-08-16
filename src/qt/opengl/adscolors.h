@@ -18,71 +18,43 @@ namespace OpenGL {
  */
 struct ADSColors
 {
-    QVector3D ambient;   //!< Ambient color
-    QVector3D diffuse;   //!< Diffuse color
-    QVector3D specular;  //!< Specular color
+    QColor ambient;   //!< Ambient color
+    QColor diffuse;   //!< Diffuse color
+    QColor specular;  //!< Specular color
 
-    inline QColor ambientColor() const;
-    inline QColor diffuseColor() const;
-    inline QColor specularColor() const;
+    inline QVector3D ambientVector() const;
+    inline QVector3D diffuseVector() const;
+    inline QVector3D specularVector() const;
 
-    inline void setAmbientColor(const QColor _color);
-    inline void setDiffuseColor(const QColor _color);
-    inline void setSpecularColor(const QColor _color);
+    ADSColors();
+    ADSColors(const QColor &_ambient, const QColor &_diffuse, const QColor &_specular);
 };
 
 /*!
- * \brief Getter for ambient color as \c QColor
- * \returns Ambient color as \c QColor
+ * \brief Getter for ambient color as \c QVector3D
+ * \returns Ambient color as \c QVector3D
  */
-inline QColor ADSColors::ambientColor() const
+inline QVector3D ADSColors::ambientVector() const
 {
-    return QColor::fromRgbF(ambient.x(), ambient.y(), ambient.z());
+    return QVector3D(ambient.redF(), ambient.greenF(), ambient.blueF());
 }
 
 /*!
- * \brief Getter for diffuse color as \c QColor
- * \returns Diffuse color as \c QColor
+ * \brief Getter for diffuse color as \c QVector3D
+ * \returns Diffuse color as \c QVector3D
  */
-inline QColor ADSColors::diffuseColor() const
+inline QVector3D ADSColors::diffuseVector() const
 {
-    return QColor::fromRgbF(diffuse.x(), diffuse.y(), diffuse.z());
+    return QVector3D(diffuse.redF(), diffuse.greenF(), diffuse.blueF());
 }
 
 /*!
- * \brief Getter for specular color as \c QColor
- * \returns Specular color as \c QColor
+ * \brief Getter for specular color as \c QVector3D
+ * \returns Specular color as \c QVector3D
  */
-inline QColor ADSColors::specularColor() const
+inline QVector3D ADSColors::specularVector() const
 {
-    return QColor::fromRgbF(specular.x(), specular.y(), specular.z());
-}
-
-/*!
- * \brief Set ambient color from \c QColor
- * \param _color New ambient color
- */
-inline void ADSColors::setAmbientColor(const QColor _color)
-{
-    ambient = QVector3D(_color.redF(), _color.greenF(), _color.blueF());
-}
-
-/*!
- * \brief Set diffuse color from \c QColor
- * \param _color New diffuse color
- */
-inline void ADSColors::setDiffuseColor(const QColor _color)
-{
-    diffuse = QVector3D(_color.redF(), _color.greenF(), _color.blueF());
-}
-
-/*!
- * \brief Set specular color from \c QColor
- * \param _color New specular color
- */
-inline void ADSColors::setSpecularColor(const QColor _color)
-{
-    specular = QVector3D(_color.redF(), _color.greenF(), _color.blueF());
+    return QVector3D(specular.redF(), specular.greenF(), specular.blueF());
 }
 
 }  // namespace OpenGL

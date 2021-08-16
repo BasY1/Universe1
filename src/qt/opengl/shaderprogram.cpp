@@ -272,9 +272,9 @@ void Universe1::OpenGL::ShaderProgram::setupCamera(const Camera *_camera)
 void Universe1::OpenGL::ShaderProgram::setupMaterial(const Material &_material)
 {
     setUniformValue(m_attrMaterialShininess, _material.shininess);
-    setUniformValue(m_attrMaterialAmbient, _material.ambient);
-    setUniformValue(m_attrMaterialDiffuse, _material.diffuse);
-    setUniformValue(m_attrMaterialSpecular, _material.specular);
+    setUniformValue(m_attrMaterialAmbient, _material.ambientVector());
+    setUniformValue(m_attrMaterialDiffuse, _material.diffuseVector());
+    setUniformValue(m_attrMaterialSpecular, _material.specularVector());
 }
 
 /*!
@@ -285,9 +285,9 @@ void Universe1::OpenGL::ShaderProgram::setupDirectionLight(const DirectionLight 
 {
     setUniformValue(m_attrDirectionLightMode, static_cast<int>(_light.mode));
     setUniformValue(m_attrDirectionLightDirection, _light.direction);
-    setUniformValue(m_attrDirectionLightAmbient, _light.ambient);
-    setUniformValue(m_attrDirectionLightDiffuse, _light.diffuse);
-    setUniformValue(m_attrDirectionLightSpecular, _light.specular);
+    setUniformValue(m_attrDirectionLightAmbient, _light.ambientVector());
+    setUniformValue(m_attrDirectionLightDiffuse, _light.diffuseVector());
+    setUniformValue(m_attrDirectionLightSpecular, _light.specularVector());
 }
 
 /*!
@@ -305,9 +305,9 @@ void Universe1::OpenGL::ShaderProgram::setupPointLights(const std::vector<PointL
         setUniformValue(m_attrPointLightConstant[i], light.constant);
         setUniformValue(m_attrPointLightLinear[i], light.linear);
         setUniformValue(m_attrPointLightQuadratic[i], light.quadratic);
-        setUniformValue(m_attrPointLightAmbient[i], light.ambient);
-        setUniformValue(m_attrPointLightDiffuse[i], light.diffuse);
-        setUniformValue(m_attrPointLightSpecular[i], light.specular);
+        setUniformValue(m_attrPointLightAmbient[i], light.ambientVector());
+        setUniformValue(m_attrPointLightDiffuse[i], light.diffuseVector());
+        setUniformValue(m_attrPointLightSpecular[i], light.specularVector());
         ++i;
         if (i == pointLightsCount)
             break;
@@ -329,7 +329,7 @@ void Universe1::OpenGL::ShaderProgram::setupPointLight(const int _lightIndex, co
     setUniformValue(m_attrPointLightConstant[_lightIndex], _light.constant);
     setUniformValue(m_attrPointLightLinear[_lightIndex], _light.linear);
     setUniformValue(m_attrPointLightQuadratic[_lightIndex], _light.quadratic);
-    setUniformValue(m_attrPointLightAmbient[_lightIndex], _light.ambient);
-    setUniformValue(m_attrPointLightDiffuse[_lightIndex], _light.diffuse);
-    setUniformValue(m_attrPointLightSpecular[_lightIndex], _light.specular);
+    setUniformValue(m_attrPointLightAmbient[_lightIndex], _light.ambientVector());
+    setUniformValue(m_attrPointLightDiffuse[_lightIndex], _light.diffuseVector());
+    setUniformValue(m_attrPointLightSpecular[_lightIndex], _light.specularVector());
 }

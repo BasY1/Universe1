@@ -24,7 +24,7 @@ class MaterialModel : public GLModel
     ~MaterialModel();
 
     inline bool isInit() const;
-    inline bool canDrawWireFrame() const;
+    inline bool canSwitchDrawWireFrame() const;
     inline bool drawWireFrame() const;
     inline const Material &material() const;
 
@@ -34,19 +34,19 @@ class MaterialModel : public GLModel
     virtual bool initBuffers(const std::vector<QVector3D> &_vertexData,
                              const std::vector<QVector3D> &_normalData,
                              const std::vector<uint> &_triangsData,
-                             const std::vector<uint> &_linesData = {}) final;
+                             const std::vector<uint> &_linesData) final;
 
     void paintGLImlp(ShaderProgram *_program);
 
  public slots:
     void setDrawWireFrame(bool _value);
-    void setMaterial(Material _value);
+    void setMaterial(const Material &_value);
 
  protected:
-    bool m_isInit;            //!< OpenGL buffers initialized flag
-    bool m_canDrawWireFrame;  //!< Is possible draw wire-framed flag
-    bool m_drawWireFrame;     //!< Draw wire-framed flag
-    Material m_material;      //!< Material
+    bool m_isInit;                  //!< OpenGL buffers initialized flag
+    bool m_canSwitchDrawWireFrame;  //!< Is possible draw wire-framed flag
+    bool m_drawWireFrame;           //!< Draw wire-framed flag
+    Material m_material;            //!< Material
 
  private:
     size_t m_memoryUsage;            //!< Memory usage sum
@@ -71,9 +71,9 @@ inline bool MaterialModel::isInit() const
  * \brief Getter for is possible draw wire-framed flag
  * \returns Is possible draw wire-framed flag
  */
-inline bool MaterialModel::canDrawWireFrame() const
+inline bool MaterialModel::canSwitchDrawWireFrame() const
 {
-    return m_canDrawWireFrame;
+    return m_canSwitchDrawWireFrame;
 }
 
 /*!

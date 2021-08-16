@@ -21,12 +21,14 @@ class TriangleModel : public MaterialModel
     Q_OBJECT
  public:
     TriangleModel(const Material &_material, QObject *_parent = nullptr);
+
     TriangleModel(QVector3D _vertex1,
                   QVector3D _vertex2,
                   QVector3D _vertex3,
                   QVector3D _normalAll,
                   const Material &_material,
                   QObject *_parent = nullptr);
+
     TriangleModel(QVector3D _vertex1,
                   QVector3D _vertex2,
                   QVector3D _vertex3,
@@ -79,7 +81,8 @@ class TriangleModel : public MaterialModel
      * | \c true    | 1 - 2 - 3    |
      * | \c false   | 1 - 3 - 2    |
      */
-    bool m_ccw;           //!< Counter-clockwise flag
+    bool m_ccw;
+
     QVector3D m_vertex1;  //!< Vertex 1 position
     QVector3D m_vertex2;  //!< Vertex 2 position
     QVector3D m_vertex3;  //!< Vertex 3 position
