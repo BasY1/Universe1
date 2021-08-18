@@ -28,7 +28,8 @@ class MaterialModel : public GLModel
     inline bool drawWireFrame() const;
     inline const Material &material() const;
 
-    size_t memoryUsage() const;
+    size_t memoryUsage() const override;
+    std::pair<QVector3D, QVector3D> range() const override;
 
  protected:
     virtual bool initBuffers(const std::vector<QVector3D> &_vertexData,
@@ -36,7 +37,7 @@ class MaterialModel : public GLModel
                              const std::vector<uint> &_triangsData,
                              const std::vector<uint> &_linesData) final;
 
-    void paintGLImlp(ShaderProgram *_program);
+    void paintGLImlp(ShaderProgram *_program) override;
 
  public slots:
     void setDrawWireFrame(bool _value);
@@ -50,6 +51,8 @@ class MaterialModel : public GLModel
 
  private:
     size_t m_memoryUsage;            //!< Memory usage sum
+    QVector3D m_minimum;             //!< Minimum scene range [x, y, z] values
+    QVector3D m_maximum;             //!< Maximum scene range [x, y, z] values
     QOpenGLBuffer m_vertexBuffer;    //!< Vertex buffer
     QOpenGLBuffer m_normalBuffer;    //!< Normal buffer
     QOpenGLBuffer m_triangsIndexes;  //!< Triangles faces index buffer

@@ -44,7 +44,7 @@ Universe1::OpenGL::MaterialDB::MaterialDB(const Material &_material, QObject *_p
 
 /*!
  * \brief Getter for present names
- * \return Names collection
+ * \returns Names collection
  */
 QStringList Universe1::OpenGL::MaterialDB::names() const
 {

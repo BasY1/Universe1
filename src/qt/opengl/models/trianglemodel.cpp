@@ -6,6 +6,10 @@
 
 #include "trianglemodel.h"
 
+const QVector3D Universe1::OpenGL::Models::TriangleModel::defaultVertex1(-0.5F, 0.0F, -0.5F);
+const QVector3D Universe1::OpenGL::Models::TriangleModel::defaultVertex2(0.5F, 0.0F, -0.5F);
+const QVector3D Universe1::OpenGL::Models::TriangleModel::defaultVertex3(0.0F, 0.0F, 0.5F);
+
 /*!
  * \brief Constructor
  * \param _material Material
@@ -14,12 +18,12 @@
 Universe1::OpenGL::Models::TriangleModel::TriangleModel(const Material &_material, QObject *_parent)
     : MaterialModel(_material, _parent)
     , m_ccw(true)
-    , m_vertex1(-0.5F, -0.5F, 0.0F)
-    , m_vertex2(0.5F, -0.5F, 0.0F)
-    , m_vertex3(0.0F, 0.5F, 0.0F)
-    , m_normal1(0.0F, 0.0F, 1.0F)
-    , m_normal2(0.0F, 0.0F, 1.0F)
-    , m_normal3(0.0F, 0.0F, 1.0F)
+    , m_vertex1(defaultVertex1)
+    , m_vertex2(defaultVertex2)
+    , m_vertex3(defaultVertex3)
+    , m_normal1(0.0F, 1.0F, 0.0F)
+    , m_normal2(0.0F, 1.0F, 0.0F)
+    , m_normal3(0.0F, 1.0F, 0.0F)
 {
 }
 
@@ -229,6 +233,21 @@ void Universe1::OpenGL::Models::TriangleModel::setNormalAll(QVector3D _value)
     m_normal1 = _value;
     m_normal2 = _value;
     m_normal3 = _value;
+    rebuild();
+    emit changed();
+}
+
+/*!
+ * \brief Setter for all vertex normals
+ * \param _normal1 New vertex 1 normal
+ * \param _normal2 New vertex 2 normal
+ * \param _normal3 New vertex 3 normal
+ */
+void Universe1::OpenGL::Models::TriangleModel::setNormals(QVector3D _normal1, QVector3D _normal2, QVector3D _normal3)
+{
+    m_normal1 = _normal1;
+    m_normal2 = _normal2;
+    m_normal3 = _normal3;
     rebuild();
     emit changed();
 }

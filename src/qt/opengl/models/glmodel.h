@@ -30,6 +30,14 @@ class GLModel : public QObject, protected QOpenGLFunctions
      */
     virtual size_t memoryUsage() const = 0;
 
+    /*!
+     * \brief Returns object range
+     * \returns Object range (pair of 3D vectors minimum [x, y, z] and maximum [x, y, z])
+     */
+    virtual std::pair<QVector3D, QVector3D> range() const = 0;
+
+    inline QVector3D center() const;
+
     virtual void initGL();
     virtual void paintGL(ShaderProgram *_program);
 
@@ -64,6 +72,17 @@ class GLModel : public QObject, protected QOpenGLFunctions
 inline bool GLModel::isEnabled() const
 {
     return m_enabled;
+}
+
+/*!
+ * \brief Getter for center position
+ * \return Model central position
+ * \sa Universe1::OpenGL::Models::GLModel::range() const
+ */
+inline QVector3D GLModel::center() const
+{
+    const std::pair<QVector3D, QVector3D> r = range();
+    return (r.first + r.second) * 0.5F;
 }
 
 }  // namespace Models

@@ -44,11 +44,12 @@ Universe1::OpenGL::GLWidget::GLWidget(QWidget *_parent)
  */
 Universe1::OpenGL::GLWidget::~GLWidget()
 {
+    disconnect(m_camera, &Camera::changed, this, static_cast<void (QOpenGLWidget::*)()>(&QOpenGLWidget::update));
+
     makeCurrent();
     delete m_program;
     doneCurrent();
 
-    disconnect(m_camera, &Camera::changed, this, static_cast<void (QOpenGLWidget::*)()>(&QOpenGLWidget::update));
     delete m_camera;
 }
 
@@ -292,6 +293,46 @@ void Universe1::OpenGL::GLWidget::setPointSize(const float _value)
 void Universe1::OpenGL::GLWidget::setLineWidth(const float _value)
 {
     m_lineWidth = _value;
+    update();
+}
+
+/*!
+ * \brief Setter for Open GL background color red property
+ * \param _value Open GL background color red property
+ */
+void Universe1::OpenGL::GLWidget::setBGColorRed(const float _value)
+{
+    m_bgColorRed = _value;
+    update();
+}
+
+/*!
+ * \brief Setter for Open GL background color green property
+ * \param _value Open GL background color green property
+ */
+void Universe1::OpenGL::GLWidget::setBGColorGreen(const float _value)
+{
+    m_bgColorGreen = _value;
+    update();
+}
+
+/*!
+ * \brief Setter for Open GL background color blue property
+ * \param _value Open GL background color blue property
+ */
+void Universe1::OpenGL::GLWidget::setBGColorBlue(const float _value)
+{
+    m_bgColorBlue = _value;
+    update();
+}
+
+/*!
+ * \brief Setter for Open GL background color alpha property
+ * \param _value Open GL background color alpha property
+ */
+void Universe1::OpenGL::GLWidget::setBGColorAlpha(const float _value)
+{
+    m_bgColorAlpha = _value;
     update();
 }
 

@@ -62,10 +62,20 @@ SOURCES += \
     src/qt/opengl/models/materialmodel.cpp \
     src/qt/opengl/models/trianglemodel.cpp \
     \
-    src/qt/widgets/widgetcolor.cpp \
-    src/qt/widgets/widgetcolorads.cpp \
-    src/qt/widgets/widgetfloat.cpp \
-    src/qt/widgets/widgetmaterial.cpp \
+    src/qt/widgets/widgetbgcolor.cpp \
+    \
+    src/qt/widgets/gui/guiint.cpp \
+    src/qt/widgets/gui/guifloat.cpp \
+    src/qt/widgets/gui/guivector3d.cpp \
+    src/qt/widgets/gui/guicolor.cpp \
+    src/qt/widgets/gui/guicolorads.cpp \
+    src/qt/widgets/gui/guimaterial.cpp \
+    src/qt/widgets/gui/guidirectionlight.cpp \
+    src/qt/widgets/gui/guipointlight.cpp \
+    \
+    src/qt/widgets/materialeditor/widgetview.cpp \
+    src/qt/widgets/materialeditor/widgetmodel.cpp \
+    src/qt/widgets/materialeditor/widgetmodeltriangle.cpp \
 
 
 HEADERS += \
@@ -83,10 +93,20 @@ HEADERS += \
     src/qt/opengl/models/materialmodel.h \
     src/qt/opengl/models/trianglemodel.h \
     \
-    src/qt/widgets/widgetcolor.h \
-    src/qt/widgets/widgetcolorads.h \
-    src/qt/widgets/widgetfloat.h \
-    src/qt/widgets/widgetmaterial.h \
+    src/qt/widgets/widgetbgcolor.h \
+    \
+    src/qt/widgets/gui/guiint.h \
+    src/qt/widgets/gui/guifloat.h \
+    src/qt/widgets/gui/guivector3d.h \
+    src/qt/widgets/gui/guicolor.h \
+    src/qt/widgets/gui/guicolorads.h \
+    src/qt/widgets/gui/guimaterial.h \
+    src/qt/widgets/gui/guidirectionlight.h \
+    src/qt/widgets/gui/guipointlight.h \
+    \
+    src/qt/widgets/materialeditor/widgetview.h \
+    src/qt/widgets/materialeditor/widgetmodel.h \
+    src/qt/widgets/materialeditor/widgetmodeltriangle.h \
 
 
 ########################################################################################################################

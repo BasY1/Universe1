@@ -39,15 +39,15 @@ class TriangleModel : public MaterialModel
                   QObject *_parent = nullptr);
 
     inline bool ccw() const;
-    inline QVector3D vertex1() const;
-    inline QVector3D vertex2() const;
-    inline QVector3D vertex3() const;
-    inline QVector3D normal1() const;
-    inline QVector3D normal2() const;
-    inline QVector3D normal3() const;
+    inline const QVector3D &vertex1() const;
+    inline const QVector3D &vertex2() const;
+    inline const QVector3D &vertex3() const;
+    inline const QVector3D &normal1() const;
+    inline const QVector3D &normal2() const;
+    inline const QVector3D &normal3() const;
 
  protected:
-    void initGLImlp();
+    void initGLImlp() override;
 
     void rebuild();
 
@@ -71,6 +71,7 @@ class TriangleModel : public MaterialModel
     void setNormal3(QVector3D _value);
 
     void setNormalAll(QVector3D _value);
+    void setNormals(QVector3D _normal1, QVector3D _normal2, QVector3D _normal3);
 
  protected:
     /*!
@@ -89,6 +90,11 @@ class TriangleModel : public MaterialModel
     QVector3D m_normal1;  //!< Vertex 1 normal
     QVector3D m_normal2;  //!< Vertex 2 normal
     QVector3D m_normal3;  //!< Vertex 3 normal
+
+ public:
+    static const QVector3D defaultVertex1;  //!< Default vertex 1 position
+    static const QVector3D defaultVertex2;  //!< Default vertex 2 position
+    static const QVector3D defaultVertex3;  //!< Default vertex 3 position
 };
 
 /*!
@@ -104,7 +110,7 @@ inline bool TriangleModel::ccw() const
  * \brief Getter for vertex 1 position
  * \returns Vertex 1 position
  */
-inline QVector3D TriangleModel::vertex1() const
+inline const QVector3D &TriangleModel::vertex1() const
 {
     return m_vertex1;
 }
@@ -113,7 +119,7 @@ inline QVector3D TriangleModel::vertex1() const
  * \brief Getter for vertex 2 position
  * \returns Vertex 2 position
  */
-inline QVector3D TriangleModel::vertex2() const
+inline const QVector3D &TriangleModel::vertex2() const
 {
     return m_vertex2;
 }
@@ -122,7 +128,7 @@ inline QVector3D TriangleModel::vertex2() const
  * \brief Getter for vertex 3 position
  * \returns Vertex 3 position
  */
-inline QVector3D TriangleModel::vertex3() const
+inline const QVector3D &TriangleModel::vertex3() const
 {
     return m_vertex3;
 }
@@ -131,7 +137,7 @@ inline QVector3D TriangleModel::vertex3() const
  * \brief Getter for vertex 1 normal
  * \returns Vertex 1 normal
  */
-inline QVector3D TriangleModel::normal1() const
+inline const QVector3D &TriangleModel::normal1() const
 {
     return m_normal1;
 }
@@ -140,7 +146,7 @@ inline QVector3D TriangleModel::normal1() const
  * \brief Getter for vertex 2 normal
  * \returns Vertex 2 normal
  */
-inline QVector3D TriangleModel::normal2() const
+inline const QVector3D &TriangleModel::normal2() const
 {
     return m_normal2;
 }
@@ -149,7 +155,7 @@ inline QVector3D TriangleModel::normal2() const
  * \brief Getter for vertex 3 normal
  * \returns Vertex 3 normal
  */
-inline QVector3D TriangleModel::normal3() const
+inline const QVector3D &TriangleModel::normal3() const
 {
     return m_normal3;
 }

@@ -26,9 +26,51 @@ struct DirectionLight : public ADSColors
         LightOn = 1,   //!< Light enabled
     };
 
+    DirectionLight(const QVector3D &_direction,
+                   const QColor &_ambient,
+                   const QColor &_diffuse,
+                   const QColor &_specular);
+
+    inline DirectionLight(const QVector3D &_direction, const QColor &_colorAll);
+    inline DirectionLight(const QVector3D &_direction);
+    inline DirectionLight();
+
     Mode mode;            //!< Light mode
     QVector3D direction;  //!< Light direction
 };
+
+/*!
+ * \brief Constructor
+ * \param _colorAll Color for ambient, diffuse and specular colors
+ * \param _direction Light direction
+ */
+inline DirectionLight::DirectionLight(const QVector3D &_direction, const QColor &_colorAll)
+    : DirectionLight(_direction, _colorAll, _colorAll, _colorAll)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _direction Light direction
+ * \note White color
+ */
+inline DirectionLight::DirectionLight(const QVector3D &_direction)
+    : DirectionLight(_direction, Qt::white, Qt::white, Qt::white)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \note White color, Direction: [0, -1, 0]
+ */
+inline DirectionLight::DirectionLight()
+    : DirectionLight(QVector3D(0.0F, -1.0F, 0.0F), Qt::white, Qt::white, Qt::white)
+{
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
  * \brief Point light properties
@@ -48,11 +90,240 @@ struct PointLight : public ADSColors
     };
 
     Mode mode;           //!< Light mode
+    QVector3D position;  //!< Light position
     float constant;      //!< Constant attenuation factor
     float linear;        //!< Linear attenuation factor
     float quadratic;     //!< Quadratic attenuation factor
-    QVector3D position;  //!< Light position
+
+    PointLight(const Mode _mode,
+               const QVector3D &_position,
+               const QColor &_ambient,
+               const QColor &_diffuse,
+               const QColor &_specular,
+               const float _constant,
+               const float _linear,
+               const float _quadratic);
+
+    inline PointLight(const QVector3D &_position,
+                      const QColor &_ambient,
+                      const QColor &_diffuse,
+                      const QColor &_specular,
+                      const float _constant,
+                      const float _linear,
+                      const float _quadratic);
+
+    inline PointLight(const QVector3D &_position,
+                      const QColor &_colorAll,
+                      const float _constant,
+                      const float _linear,
+                      const float _quadratic);
+
+    inline PointLight(const QVector3D &_position, const float _constant, const float _linear, const float _quadratic);
+
+    inline PointLight(const QVector3D &_position,
+                      const QColor &_ambient,
+                      const QColor &_diffuse,
+                      const QColor &_specular,
+                      const float _constant,
+                      const float _linear);
+
+    inline PointLight(const QVector3D &_position, const QColor &_colorAll, const float _constant, const float _linear);
+
+    inline PointLight(const QVector3D &_position, const float _constant, const float _linear);
+
+    inline PointLight(const QVector3D &_position,
+                      const QColor &_ambient,
+                      const QColor &_diffuse,
+                      const QColor &_specular,
+                      const float _constant);
+
+    inline PointLight(const QVector3D &_position, const QColor &_colorAll, const float _constant);
+
+    inline PointLight(const QVector3D &_position, const float _constant);
+
+    inline PointLight(const QVector3D &_position,
+                      const QColor &_ambient,
+                      const QColor &_diffuse,
+                      const QColor &_specular);
+
+    inline PointLight(const QVector3D &_position, const QColor &_colorAll);
+
+    inline PointLight(const QVector3D &_position);
 };
+
+/*!
+ * \brief Constructor - creates \b quadratic light
+ * \param _position Light position
+ * \param _ambient Ambient color
+ * \param _diffuse Diffuse color
+ * \param _specular Specular color
+ * \param _constant Constant attenuation factor
+ * \param _linear Linear attenuation factor
+ * \param _quadratic Quadratic attenuation factor
+ */
+inline PointLight::PointLight(const QVector3D &_position,
+                              const QColor &_ambient,
+                              const QColor &_diffuse,
+                              const QColor &_specular,
+                              const float _constant,
+                              const float _linear,
+                              const float _quadratic)
+    : PointLight(LightQuadratic, _position, _ambient, _diffuse, _specular, _constant, _linear, _quadratic)
+{
+}
+
+/*!
+ * \brief Constructor - creates \b quadratic light
+ * \param _position Light position
+ * \param _colorAll Color
+ * \param _constant Constant attenuation factor
+ * \param _linear Linear attenuation factor
+ * \param _quadratic Quadratic attenuation factor
+ */
+inline PointLight::PointLight(const QVector3D &_position,
+                              const QColor &_colorAll,
+                              const float _constant,
+                              const float _linear,
+                              const float _quadratic)
+    : PointLight(LightQuadratic, _position, _colorAll, _colorAll, _colorAll, _constant, _linear, _quadratic)
+{
+}
+
+/*!
+ * \brief Constructor - creates \b quadratic light
+ * \param _position Light position
+ * \param _constant Constant attenuation factor
+ * \param _linear Linear attenuation factor
+ * \param _quadratic Quadratic attenuation factor
+ * \note Creates white light
+ */
+inline PointLight::PointLight(const QVector3D &_position,
+                              const float _constant,
+                              const float _linear,
+                              const float _quadratic)
+    : PointLight(LightQuadratic, _position, Qt::white, Qt::white, Qt::white, _constant, _linear, _quadratic)
+{
+}
+
+/*!
+ * \brief Constructor - creates \b linear light
+ * \param _position Light position
+ * \param _ambient Ambient color
+ * \param _diffuse Diffuse color
+ * \param _specular Specular color
+ * \param _constant Constant attenuation factor
+ * \param _linear Linear attenuation factor
+ */
+inline PointLight::PointLight(const QVector3D &_position,
+                              const QColor &_ambient,
+                              const QColor &_diffuse,
+                              const QColor &_specular,
+                              const float _constant,
+                              const float _linear)
+    : PointLight(LightLinear, _position, _ambient, _diffuse, _specular, _constant, _linear, 0.0F)
+{
+}
+
+/*!
+ * \brief Constructor - creates \b linear light
+ * \param _position Light position
+ * \param _colorAll Color
+ * \param _constant Constant attenuation factor
+ * \param _linear Linear attenuation factor
+ */
+inline PointLight::PointLight(const QVector3D &_position,
+                              const QColor &_colorAll,
+                              const float _constant,
+                              const float _linear)
+    : PointLight(LightLinear, _position, _colorAll, _colorAll, _colorAll, _constant, _linear, 0.0F)
+{
+}
+
+/*!
+ * \brief Constructor - creates \b linear light
+ * \param _position Light position
+ * \param _constant Constant attenuation factor
+ * \param _linear Linear attenuation factor
+ * \note Creates white light
+ */
+inline PointLight::PointLight(const QVector3D &_position, const float _constant, const float _linear)
+    : PointLight(LightLinear, _position, Qt::white, Qt::white, Qt::white, _constant, _linear, 0.0F)
+{
+}
+
+/*!
+ * \brief Constructor - creates \b scalar light
+ * \param _position Light position
+ * \param _ambient Ambient color
+ * \param _diffuse Diffuse color
+ * \param _specular Specular color
+ * \param _constant Constant attenuation factor
+ */
+inline PointLight::PointLight(const QVector3D &_position,
+                              const QColor &_ambient,
+                              const QColor &_diffuse,
+                              const QColor &_specular,
+                              const float _constant)
+    : PointLight(LightScalar, _position, _ambient, _diffuse, _specular, _constant, 0.0F, 0.0F)
+{
+}
+
+/*!
+ * \brief Constructor - creates \b scalar light
+ * \param _position Light position
+ * \param _colorAll Color
+ * \param _constant Constant attenuation factor
+ */
+inline PointLight::PointLight(const QVector3D &_position, const QColor &_colorAll, const float _constant)
+    : PointLight(LightScalar, _position, _colorAll, _colorAll, _colorAll, _constant, 0.0F, 0.0F)
+{
+}
+
+/*!
+ * \brief Constructor - creates \b scalar light
+ * \param _position Light position
+ * \param _constant Constant attenuation factor
+ * \note Creates white light
+ */
+inline PointLight::PointLight(const QVector3D &_position, const float _constant)
+    : PointLight(LightScalar, _position, Qt::white, Qt::white, Qt::white, _constant, 0.0F, 0.0F)
+{
+}
+
+/*!
+ * \brief Constructor - creates \b fixed light (No attenuation)
+ * \param _position Light position
+ * \param _ambient Ambient color
+ * \param _diffuse Diffuse color
+ * \param _specular Specular color
+ */
+inline PointLight::PointLight(const QVector3D &_position,
+                              const QColor &_ambient,
+                              const QColor &_diffuse,
+                              const QColor &_specular)
+    : PointLight(LightFixed, _position, _ambient, _diffuse, _specular, 0.0F, 0.0F, 0.0F)
+{
+}
+
+/*!
+ * \brief Constructor - creates \b fixed light (No attenuation)
+ * \param _position Light position
+ * \param _colorAll Color
+ */
+inline PointLight::PointLight(const QVector3D &_position, const QColor &_colorAll)
+    : PointLight(LightFixed, _position, _colorAll, _colorAll, _colorAll, 0.0F, 0.0F, 0.0F)
+{
+}
+
+/*!
+ * \brief Constructor - creates \b fixed light (No attenuation)
+ * \param _position Light position
+ * \note Creates white light
+ */
+inline PointLight::PointLight(const QVector3D &_position)
+    : PointLight(LightFixed, _position, Qt::white, Qt::white, Qt::white, 0.0F, 0.0F, 0.0F)
+{
+}
 
 }  // namespace OpenGL
 }  // namespace Universe1

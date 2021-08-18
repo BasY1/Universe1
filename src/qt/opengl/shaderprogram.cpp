@@ -67,6 +67,10 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
     addShaderFromSourceCode(QOpenGLShader::Fragment,
                             ("#version 330 core                                                          \n"
                              "                                                                           \n"
+                             "#define POINT_LIGHT_COUNT " +
+                             QString::number(pointLightsCount) +
+                             "\n"
+                             "                                                                           \n"
                              "struct Material {                                                          \n"
                              "    float shininess;                                                       \n"
                              "                                                                           \n"
@@ -97,14 +101,10 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
                              "    vec3 specular;                                                         \n"
                              "};                                                                         \n"
                              "                                                                           \n"
-                             "#define POINT_LIGHT_COUNT " +
-                             QString::number(pointLightsCount) +
-                             "\n"
-                             "                                                                           \n"
                              "uniform vec3 cameraPosition;                                               \n"
                              "uniform Material material;                                                 \n"
                              "uniform DirectionLight directionLight;                                     \n"
-                             "uniform PointLight pointLight[NR_POINT_LIGHTS];                            \n"
+                             "uniform PointLight pointLight[POINT_LIGHT_COUNT];                          \n"
                              "                                                                           \n"
                              "in vec3 vertOut;                                                           \n"
                              "in vec3 normOut;                                                           \n"

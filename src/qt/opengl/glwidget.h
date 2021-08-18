@@ -69,16 +69,16 @@ class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
     void resizeGL(int _w, int _h) override;
 
     /*!
-     * \brief Paint scene within Open GL
-     * \returns Void
-     */
-    virtual void paintGLImpl() = 0;
-
-    /*!
      * \brief Initialize scene within Open GL
      * \returns Void
      */
     virtual void initializeGLImpl() = 0;
+
+    /*!
+     * \brief Paint scene within Open GL
+     * \returns Void
+     */
+    virtual void paintGLImpl() = 0;
 
  public slots:
     void setEmitContextPainted(const bool _value);
@@ -90,6 +90,10 @@ class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
     void setLineWidth(const float _value);
 
     void setBGColor(const QColor &_color);
+    void setBGColorRed(const float _value);
+    void setBGColorGreen(const float _value);
+    void setBGColorBlue(const float _value);
+    void setBGColorAlpha(const float _value);
 
  signals:
     /*!

@@ -60,7 +60,7 @@ class MaterialDB : public QObject
 
 /*!
  * \brief Getter for default material
- * \return Default material
+ * \returns Default material
  */
 inline const Material &MaterialDB::defaultMaterial() const
 {
@@ -70,7 +70,7 @@ inline const Material &MaterialDB::defaultMaterial() const
 /*!
  * \brief Test if given name already exists in database
  * \param _name Name to test
- * \return \c true if given name already exists in database
+ * \returns \c true if given name already exists in database
  */
 inline bool MaterialDB::contains(const QString &_name) const
 {
@@ -80,7 +80,7 @@ inline bool MaterialDB::contains(const QString &_name) const
 /*!
  * \brief Test if given name already exists in database
  * \param _name Name to test
- * \return \c true if given name already exists in database
+ * \returns \c true if given name already exists in database
  */
 inline const Material &MaterialDB::get(const QString &_name) const
 {
@@ -101,7 +101,7 @@ inline void MaterialDB::setDefaultMaterial(const Material &_material)
  * \brief Insert material into database
  * \param _name New material name
  * \param _material New material object with values
- * \return \c true if insert success
+ * \returns \c true if insert success
  */
 inline bool Universe1::OpenGL::MaterialDB::add(const QString &_name, const Material &_material)
 {
@@ -111,7 +111,7 @@ inline bool Universe1::OpenGL::MaterialDB::add(const QString &_name, const Mater
 /*!
  * \brief Remove material from database
  * \param _name Material name
- * \return \c true if erase success
+ * \returns \c true if erase success
  */
 inline bool Universe1::OpenGL::MaterialDB::remove(const QString &_name)
 {

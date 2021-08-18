@@ -28,3 +28,14 @@ Universe1::OpenGL::ADSColors::ADSColors(const QColor &_ambient, const QColor &_d
     , specular(_specular)
 {
 }
+
+/*!
+ * \brief Setter for all aspects colors
+ * \param _color New color
+ */
+void Universe1::OpenGL::ADSColors::setColorAll(const QColor &_color)
+{
+    ambient = _color;
+    diffuse = _color;
+    specular = _color;
+}

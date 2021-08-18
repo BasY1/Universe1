@@ -18,6 +18,8 @@ Universe1::OpenGL::Models::MaterialModel::MaterialModel(const Material &_materia
     , m_drawWireFrame(false)
     , m_material(_material)
     , m_memoryUsage(0U)
+    , m_minimum()
+    , m_maximum()
     , m_vertexBuffer()
     , m_normalBuffer()
     , m_triangsIndexes(QOpenGLBuffer::IndexBuffer)
@@ -52,6 +54,15 @@ size_t Universe1::OpenGL::Models::MaterialModel::memoryUsage() const
 }
 
 /*!
+ * \brief Returns object range
+ * \returns Object range (pair of 3D vectors minimum [x, y, z] and maximum [x, y, z])
+ */
+std::pair<QVector3D, QVector3D> Universe1::OpenGL::Models::MaterialModel::range() const
+{
+    return {m_minimum, m_maximum};
+}
+
+/*!
  * \brief Initialize buffers
  * \param _vertexData Vertex buffer
  * \param _normalData Normal buffer
@@ -68,6 +79,8 @@ bool Universe1::OpenGL::Models::MaterialModel::initBuffers(const std::vector<QVe
     m_canSwitchDrawWireFrame = false;
     m_triangsCount = 0;
     m_linesCount = 0;
+    m_minimum = QVector3D();
+    m_maximum = QVector3D();
 
     if (!m_vertexBuffer.isCreated())
     {
@@ -98,11 +111,31 @@ bool Universe1::OpenGL::Models::MaterialModel::initBuffers(const std::vector<QVe
                 return false;
         }
     }
-    m_memoryUsage = 0U;
+
     m_vertexBuffer.bind();
     m_vertexBuffer.allocate(_vertexData.data(), _vertexData.size() * sizeof(QVector3D));
     m_vertexBuffer.release();
     m_memoryUsage += _vertexData.size() * sizeof(QVector3D);
+    if (!_vertexData.empty())
+    {
+        m_minimum = _vertexData.front();
+        m_maximum = m_minimum;
+        for (const QVector3D &v : _vertexData)
+        {
+            if (m_minimum.x() > v.x())
+                m_minimum.setX(v.x());
+            if (m_minimum.y() > v.y())
+                m_minimum.setY(v.y());
+            if (m_minimum.z() > v.z())
+                m_minimum.setZ(v.z());
+            if (m_maximum.x() < v.x())
+                m_maximum.setX(v.x());
+            if (m_maximum.y() < v.y())
+                m_maximum.setY(v.y());
+            if (m_maximum.z() < v.z())
+                m_maximum.setZ(v.z());
+        }
+    }
 
     m_normalBuffer.bind();
     m_normalBuffer.allocate(_normalData.data(), _normalData.size() * sizeof(QVector3D));

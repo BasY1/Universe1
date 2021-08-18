@@ -1,17 +1,15 @@
 /*!
- * \file qt/widgets/widgetfloat.cpp
+ * \file qt/widgets/gui/guifloat.cpp
  * \author Michal Steller
- * \brief The QT \c float value widget class implementations
+ * \brief The QT \c float value GUI class implementations
  */
 
-#include "widgetfloat.h"
-
-#include <QGridLayout>
+#include "guifloat.h"
 
 /*!
  * \brief Power of 10 tool function
  * \param _exponent Exponent value
- * \return \f$10^{exponent}\f$
+ * \returns \f$10^{exponent}\f$
  */
 static int pow10(int _exponent)
 {
@@ -32,19 +30,17 @@ static int pow10(int _exponent)
  * \param _value Value
  * \param _minimum Minimum possible value
  * \param _maximum Maximum possible value
- * \param _name Color name displayed on GUI
- * \param _orientation Orientation
  * \param _decimals Decimal count (range 1 to 6)
- * \param _parent Parent \c QWidget
+ * \param _orientation Orientation
+ * \param _parent Parent \c QObject
  */
-Universe1::Widgets::WidgetFloat::WidgetFloat(const float _value,
-                                             const int _minimum,
-                                             const int _maximum,
-                                             const int _decimals,
-                                             const QString &_name,
-                                             const Qt::Orientation _orientation,
-                                             QWidget *_parent)
-    : QWidget(_parent)
+Universe1::Widgets::GUI::GuiFloat::GuiFloat(const float _value,
+                                            const int _minimum,
+                                            const int _maximum,
+                                            const int _decimals,
+                                            const Qt::Orientation _orientation,
+                                            QObject *_parent)
+    : QObject(_parent)
     , m_decimals(std::min(6, std::max(1, _decimals)))
     , m_mult(pow10(m_decimals))
     , m_multF(m_mult)
@@ -55,8 +51,6 @@ Universe1::Widgets::WidgetFloat::WidgetFloat(const float _value,
     , m_value(std::min(m_maximum, std::max(m_minimum, _value)))
     , m_slider(new QSlider(_orientation))
     , m_box(new QDoubleSpinBox())
-    , m_labelName(new QLabel(_name.isEmpty() ? QString(" ") : _name))
-    , m_labelColor(new QLabel(" "))
 {
     m_slider->setRange(_minimum * m_mult, _maximum * m_mult);
     m_slider->setValue(static_cast<int>(m_multF * m_value));
@@ -64,70 +58,45 @@ Universe1::Widgets::WidgetFloat::WidgetFloat(const float _value,
     m_box->setDecimals(m_decimals);
     m_box->setRange(m_minimum, m_maximum);
     m_box->setValue(m_value);
+    m_box->setSingleStep(1.0F / m_multF);
 
     m_box->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-    m_labelName->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-    m_labelColor->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-
-    QGridLayout *lay = new QGridLayout();
 
     if (_orientation == Qt::Horizontal)
-    {
-        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
         m_slider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-        lay->addWidget(m_labelName, 0, 0);
-        // lay->addWidget(m_labelColor, 0, 1);
-        lay->addWidget(m_box, 0, 1);
-        lay->addWidget(m_slider, 0, 2);
-
-        lay->addItem(new QSpacerItem(1, 1, QSizePolicy::Minimum, QSizePolicy::Expanding), 3, 0, 1, 3);
-    }
     else
-    {
-        setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
         m_slider->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
 
-        lay->addWidget(m_labelName, 0, 0);
-        lay->addWidget(m_labelColor, 1, 0);
-        lay->addWidget(m_box, 2, 0);
-        lay->addWidget(m_slider, 3, 0);
-
-        lay->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Minimum), 0, 1, 4, 1);
-    }
-
-    setLayout(lay);
-
-    connect(m_slider, &QSlider::valueChanged, this, &WidgetFloat::sliderChanged);
+    connect(m_slider, &QSlider::valueChanged, this, &GuiFloat::sliderChanged);
     connect(m_box,
             static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
             this,
-            &WidgetFloat::boxChanged);
+            &GuiFloat::boxChanged);
 }
 
 /*!
  * \brief Destructor
  */
-Universe1::Widgets::WidgetFloat::~WidgetFloat()
+Universe1::Widgets::GUI::GuiFloat::~GuiFloat()
 {
-    disconnect(m_slider, &QSlider::valueChanged, this, &WidgetFloat::sliderChanged);
+    disconnect(m_slider, &QSlider::valueChanged, this, &GuiFloat::sliderChanged);
     disconnect(m_box,
                static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
                this,
-               &WidgetFloat::boxChanged);
+               &GuiFloat::boxChanged);
 }
 
 /*!
  * \brief Setup new value
  * \param _value New value
  */
-void Universe1::Widgets::WidgetFloat::setValue(float _value)
+void Universe1::Widgets::GUI::GuiFloat::setValue(float _value)
 {
-    disconnect(m_slider, &QSlider::valueChanged, this, &WidgetFloat::sliderChanged);
+    disconnect(m_slider, &QSlider::valueChanged, this, &GuiFloat::sliderChanged);
     disconnect(m_box,
                static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
                this,
-               &WidgetFloat::boxChanged);
+               &GuiFloat::boxChanged);
 
     m_value = std::min(m_maximum, std::max(m_minimum, _value));
 
@@ -135,23 +104,48 @@ void Universe1::Widgets::WidgetFloat::setValue(float _value)
 
     m_box->setValue(m_value);
 
-    connect(m_slider, &QSlider::valueChanged, this, &WidgetFloat::sliderChanged);
+    connect(m_slider, &QSlider::valueChanged, this, &GuiFloat::sliderChanged);
     connect(m_box,
             static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
             this,
-            &WidgetFloat::boxChanged);
+            &GuiFloat::boxChanged);
+
+    emit changed(m_value);
+}
+
+/*!
+ * \brief Setup new orientation
+ * \param _orientation New orientation
+ */
+void Universe1::Widgets::GUI::GuiFloat::setOrientation(Qt::Orientation _orientation)
+{
+    m_slider->setOrientation(_orientation);
+    if (_orientation == Qt::Horizontal)
+        m_slider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+    else
+        m_slider->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+}
+
+/*!
+ * \brief Setup widget enabled
+ * \param _value Enabled value
+ */
+void Universe1::Widgets::GUI::GuiFloat::setEnabled(bool _value)
+{
+    m_slider->setEnabled(_value);
+    m_box->setEnabled(_value);
 }
 
 /*!
  * \brief Slider changed handler
  * \param _value New slider value
  */
-void Universe1::Widgets::WidgetFloat::sliderChanged(int _value)
+void Universe1::Widgets::GUI::GuiFloat::sliderChanged(int _value)
 {
     disconnect(m_box,
                static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
                this,
-               &WidgetFloat::boxChanged);
+               &GuiFloat::boxChanged);
 
     m_value = m_minimum + m_rangeF * (static_cast<float>(_value - m_slider->minimum()) / m_sliderRangeF);
     m_box->setValue(m_value);
@@ -159,7 +153,7 @@ void Universe1::Widgets::WidgetFloat::sliderChanged(int _value)
     disconnect(m_box,
                static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
                this,
-               &WidgetFloat::boxChanged);
+               &GuiFloat::boxChanged);
 
     emit changed(m_value);
 }
@@ -168,14 +162,14 @@ void Universe1::Widgets::WidgetFloat::sliderChanged(int _value)
  * \brief Box changed handler
  * \param _value New value
  */
-void Universe1::Widgets::WidgetFloat::boxChanged(double _value)
+void Universe1::Widgets::GUI::GuiFloat::boxChanged(double _value)
 {
-    disconnect(m_slider, &QSlider::valueChanged, this, &WidgetFloat::sliderChanged);
+    disconnect(m_slider, &QSlider::valueChanged, this, &GuiFloat::sliderChanged);
 
     m_value = _value;
     m_slider->setValue(static_cast<int>(m_multF * m_value));
 
-    connect(m_slider, &QSlider::valueChanged, this, &WidgetFloat::sliderChanged);
+    connect(m_slider, &QSlider::valueChanged, this, &GuiFloat::sliderChanged);
 
     emit changed(m_value);
 }

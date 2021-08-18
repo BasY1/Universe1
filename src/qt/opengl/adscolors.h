@@ -28,6 +28,8 @@ struct ADSColors
 
     ADSColors();
     ADSColors(const QColor &_ambient, const QColor &_diffuse, const QColor &_specular);
+
+    void setColorAll(const QColor &_color);
 };
 
 /*!
