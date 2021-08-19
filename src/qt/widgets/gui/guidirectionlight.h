@@ -36,6 +36,8 @@ class GuiDirectionLight : public QObject
     inline GuiVector3D *directionWidgets();
     inline GuiColorADS *colorsWidgets();
 
+    void layoutRow(QGridLayout *_lay, int &_row, const bool _addSingleColor = true);
+
  public slots:
     void setLight(const OpenGL::DirectionLight &_light);
     void setOrientation(Qt::Orientation _orientation);

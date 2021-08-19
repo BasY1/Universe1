@@ -1,11 +1,11 @@
 /*!
- * \file qt/opengl/models/trianglemodel.h
+ * \file qt/opengl/models/modeltriangle.h
  * \author Michal Steller
  * \brief Open GL single triangle model with material class declarations
  */
 
-#ifndef UNIVERSE1_OPENGL_MODELS_TRIANGLEMODEL_H
-#define UNIVERSE1_OPENGL_MODELS_TRIANGLEMODEL_H
+#ifndef UNIVERSE1_OPENGL_MODELS_MODELTRIANGLE_H
+#define UNIVERSE1_OPENGL_MODELS_MODELTRIANGLE_H
 
 #include "materialmodel.h"
 
@@ -16,20 +16,20 @@ namespace Models {
 /*!
  * \brief Open GL single triangle model
  */
-class TriangleModel : public MaterialModel
+class ModelTriangle : public MaterialModel
 {
     Q_OBJECT
  public:
-    TriangleModel(const Material &_material, QObject *_parent = nullptr);
+    ModelTriangle(const Material &_material, QObject *_parent = nullptr);
 
-    TriangleModel(QVector3D _vertex1,
+    ModelTriangle(QVector3D _vertex1,
                   QVector3D _vertex2,
                   QVector3D _vertex3,
                   QVector3D _normalAll,
                   const Material &_material,
                   QObject *_parent = nullptr);
 
-    TriangleModel(QVector3D _vertex1,
+    ModelTriangle(QVector3D _vertex1,
                   QVector3D _vertex2,
                   QVector3D _vertex3,
                   QVector3D _normal1,
@@ -47,9 +47,7 @@ class TriangleModel : public MaterialModel
     inline const QVector3D &normal3() const;
 
  protected:
-    void initGLImlp() override;
-
-    void rebuild();
+    void rebuild() override;
 
  public slots:
     void setCcw(bool _value);
@@ -101,7 +99,7 @@ class TriangleModel : public MaterialModel
  * \brief Getter for counter-clockwise flag
  * \returns Counter-clockwise flag
  */
-inline bool TriangleModel::ccw() const
+inline bool ModelTriangle::ccw() const
 {
     return m_ccw;
 }
@@ -110,7 +108,7 @@ inline bool TriangleModel::ccw() const
  * \brief Getter for vertex 1 position
  * \returns Vertex 1 position
  */
-inline const QVector3D &TriangleModel::vertex1() const
+inline const QVector3D &ModelTriangle::vertex1() const
 {
     return m_vertex1;
 }
@@ -119,7 +117,7 @@ inline const QVector3D &TriangleModel::vertex1() const
  * \brief Getter for vertex 2 position
  * \returns Vertex 2 position
  */
-inline const QVector3D &TriangleModel::vertex2() const
+inline const QVector3D &ModelTriangle::vertex2() const
 {
     return m_vertex2;
 }
@@ -128,7 +126,7 @@ inline const QVector3D &TriangleModel::vertex2() const
  * \brief Getter for vertex 3 position
  * \returns Vertex 3 position
  */
-inline const QVector3D &TriangleModel::vertex3() const
+inline const QVector3D &ModelTriangle::vertex3() const
 {
     return m_vertex3;
 }
@@ -137,7 +135,7 @@ inline const QVector3D &TriangleModel::vertex3() const
  * \brief Getter for vertex 1 normal
  * \returns Vertex 1 normal
  */
-inline const QVector3D &TriangleModel::normal1() const
+inline const QVector3D &ModelTriangle::normal1() const
 {
     return m_normal1;
 }
@@ -146,7 +144,7 @@ inline const QVector3D &TriangleModel::normal1() const
  * \brief Getter for vertex 2 normal
  * \returns Vertex 2 normal
  */
-inline const QVector3D &TriangleModel::normal2() const
+inline const QVector3D &ModelTriangle::normal2() const
 {
     return m_normal2;
 }
@@ -155,7 +153,7 @@ inline const QVector3D &TriangleModel::normal2() const
  * \brief Getter for vertex 3 normal
  * \returns Vertex 3 normal
  */
-inline const QVector3D &TriangleModel::normal3() const
+inline const QVector3D &ModelTriangle::normal3() const
 {
     return m_normal3;
 }
@@ -164,4 +162,4 @@ inline const QVector3D &TriangleModel::normal3() const
 }  // namespace OpenGL
 }  // namespace Universe1
 
-#endif  // UNIVERSE1_OPENGL_MODELS_TRIANGLEMODEL_H
+#endif  // UNIVERSE1_OPENGL_MODELS_MODELTRIANGLE_H

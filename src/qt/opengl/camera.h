@@ -15,6 +15,7 @@
 #include <QBasicTimer>
 #include <QKeyEvent>
 #include <QMouseEvent>
+#include <QSettings>
 #include <QTimerEvent>
 #include <QWheelEvent>
 
@@ -28,7 +29,10 @@ class Camera : public QObject
 {
     Q_OBJECT
  public:
-    Camera(QObject *_parent = nullptr);
+    Camera(const QString &_settingsKey, const bool _storePosition, QObject *_parent = nullptr);
+    inline Camera(QObject *_parent = nullptr);
+
+    ~Camera();
 
     inline const QVector3D &position() const;
     inline const QVector3D &centerOfView() const;
@@ -108,8 +112,8 @@ class Camera : public QObject
     void timerEvent(QTimerEvent *) override;
 
  public:
-    void saveSettings(const bool _savePosition, const QString &_keyGroup = "Camera") const;
-    void loadSettings(const bool _loadPosition, const QString &_keyGroup = "Camera");
+    void saveSettings(QSettings &_settings, const bool _savePosition, const QString &_keyGroup = "Camera") const;
+    void loadSettings(const QSettings &_settings, const bool _loadPosition, const QString &_keyGroup = "Camera");
 
  signals:
     void changed();          //!< Emits when camera change property and this change should be visible (repaint needed)
@@ -119,6 +123,9 @@ class Camera : public QObject
     void changedHandling();  //!< Emits when handling input state changed
 
  protected:
+    const QString m_settingsKey;  //!< Key for storing within \c QSettings
+    const bool m_storePosition;   //!< Store position flag
+
     QBasicTimer m_timer;  //!< Basic timer for dynamic behavior
 
     QVector3D m_position;      //!< Current camera position (position of "eye")
@@ -167,6 +174,15 @@ class Camera : public QObject
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Constructor prepare camera without \c QSettings support
+ * \param _parent Parent \c QObject
+ */
+inline Camera::Camera(QObject *_parent)
+    : Camera(QString(), false, _parent)
+{
+}
 
 /*!
  * \brief Getter for camera position

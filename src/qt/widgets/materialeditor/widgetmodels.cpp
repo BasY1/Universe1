@@ -1,19 +1,20 @@
 /*!
- * \file qt/widgets/materialeditor/widgetmodeltriangle.cpp
+ * \file qt/widgets/materialeditor/widgetmodels.cpp
  * \author Michal Steller
- * \brief Material editor - Triangle model widget class implementation
+ * \brief Material editor - Models widget classes implementation
  */
 
-#include "widgetmodeltriangle.h"
+#include "widgetmodels.h"
 
 #include <QGridLayout>
+#include <QLabel>
 #include <QSettings>
 
 /*!
  * \brief Tool function - prepare triangle normal vectors
  * \param _angle Angle with "direction to center"
  * \param _nameExt Name extension
- * \return Triangle normal vectors
+ * \returns Triangle normal vectors
  */
 Universe1::Widgets::MaterialEditor::WidgetModelTriangle::NormalSetup
 Universe1::Widgets::MaterialEditor::WidgetModelTriangle::NormalSetup::fromAngle(const float _angle,
@@ -26,24 +27,24 @@ Universe1::Widgets::MaterialEditor::WidgetModelTriangle::NormalSetup::fromAngle(
         result.name += (" (" + _nameExt + ')');
 
     result.normal1 =
-        ((OpenGL::Models::TriangleModel::defaultVertex2 - OpenGL::Models::TriangleModel::defaultVertex1).normalized() -
-         (OpenGL::Models::TriangleModel::defaultVertex3 - OpenGL::Models::TriangleModel::defaultVertex1).normalized())
+        ((OpenGL::Models::ModelTriangle::defaultVertex2 - OpenGL::Models::ModelTriangle::defaultVertex1).normalized() -
+         (OpenGL::Models::ModelTriangle::defaultVertex3 - OpenGL::Models::ModelTriangle::defaultVertex1).normalized())
             .normalized();
 
     result.normal2 =
-        ((OpenGL::Models::TriangleModel::defaultVertex1 - OpenGL::Models::TriangleModel::defaultVertex2).normalized() -
-         (OpenGL::Models::TriangleModel::defaultVertex3 - OpenGL::Models::TriangleModel::defaultVertex2).normalized())
+        ((OpenGL::Models::ModelTriangle::defaultVertex1 - OpenGL::Models::ModelTriangle::defaultVertex2).normalized() -
+         (OpenGL::Models::ModelTriangle::defaultVertex3 - OpenGL::Models::ModelTriangle::defaultVertex2).normalized())
             .normalized();
 
     result.normal3 =
-        ((OpenGL::Models::TriangleModel::defaultVertex1 - OpenGL::Models::TriangleModel::defaultVertex3).normalized() -
-         (OpenGL::Models::TriangleModel::defaultVertex2 - OpenGL::Models::TriangleModel::defaultVertex3).normalized())
+        ((OpenGL::Models::ModelTriangle::defaultVertex1 - OpenGL::Models::ModelTriangle::defaultVertex3).normalized() -
+         (OpenGL::Models::ModelTriangle::defaultVertex2 - OpenGL::Models::ModelTriangle::defaultVertex3).normalized())
             .normalized();
 
     const QVector3D nTr =
         QVector3D::crossProduct(
-            (OpenGL::Models::TriangleModel::defaultVertex2 - OpenGL::Models::TriangleModel::defaultVertex1),
-            (OpenGL::Models::TriangleModel::defaultVertex3 - OpenGL::Models::TriangleModel::defaultVertex1))
+            (OpenGL::Models::ModelTriangle::defaultVertex2 - OpenGL::Models::ModelTriangle::defaultVertex1),
+            (OpenGL::Models::ModelTriangle::defaultVertex3 - OpenGL::Models::ModelTriangle::defaultVertex1))
             .normalized();
 
     result.normal1 = QQuaternion::fromAxisAndAngle(QVector3D::crossProduct(nTr, result.normal1).normalized(), _angle)
@@ -122,10 +123,11 @@ const std::vector<Universe1::Widgets::MaterialEditor::WidgetModelTriangle::Norma
  * \param _model Triangle Open GL model
  * \param _parent Parent \c QWidget
  */
-Universe1::Widgets::MaterialEditor::WidgetModelTriangle::WidgetModelTriangle(OpenGL::Models::TriangleModel *_model,
+Universe1::Widgets::MaterialEditor::WidgetModelTriangle::WidgetModelTriangle(OpenGL::Models::ModelTriangle *_model,
                                                                              QWidget *_parent)
-    : WidgetModel(_parent)
+    : QWidget(_parent)
     , m_model(_model)
+    , m_wireFrame(new QCheckBox())
     , m_boxCWW(new QCheckBox())
     , m_boxNormal(new QComboBox())
 {
@@ -133,17 +135,30 @@ Universe1::Widgets::MaterialEditor::WidgetModelTriangle::WidgetModelTriangle(Ope
         m_boxNormal->addItem(ns.name);
 
     const QSettings settings;
+    m_wireFrame->setChecked(settings.value("MaterialEditor/Triangle/wireFrame", m_model->drawWireFrame()).toBool());
     m_boxCWW->setChecked(settings.value("MaterialEditor/Triangle/cww", m_model->ccw()).toBool());
     m_boxNormal->setCurrentIndex(settings.value("MaterialEditor/Triangle/normalIdx", 4).toInt());
 
+    m_model->setDrawWireFrame(m_wireFrame->isChecked());
     m_model->setCcw(m_boxCWW->isChecked());
     normalChanged(m_boxNormal->currentIndex());
 
-    connect(m_boxCWW, &QCheckBox::toggled, m_model, &OpenGL::Models::TriangleModel::setCcw);
+    connect(m_wireFrame, &QCheckBox::toggled, m_model, &OpenGL::Models::ModelTriangle::setDrawWireFrame);
+    connect(m_boxCWW, &QCheckBox::toggled, m_model, &OpenGL::Models::ModelTriangle::setCcw);
     connect(m_boxNormal,
             static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
             this,
             &WidgetModelTriangle::normalChanged);
+
+    QGridLayout *lay = new QGridLayout();
+    lay->addWidget(new QLabel(tr("Draw wire-frame")), 0, 0);
+    lay->addWidget(m_wireFrame, 0, 1);
+    lay->addWidget(new QLabel(tr("Counter-clockwise point order")), 1, 0);
+    lay->addWidget(m_boxCWW, 1, 1);
+    lay->addWidget(new QLabel(tr("Normal directions")), 2, 0);
+    lay->addWidget(m_boxNormal, 2, 1);
+    lay->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Expanding), 3, 0, 1, 2);
+    setLayout(lay);
 }
 
 /*!
@@ -152,32 +167,16 @@ Universe1::Widgets::MaterialEditor::WidgetModelTriangle::WidgetModelTriangle(Ope
 Universe1::Widgets::MaterialEditor::WidgetModelTriangle::~WidgetModelTriangle()
 {
     QSettings settings;
+    settings.setValue("MaterialEditor/Triangle/wireFrame", m_model->drawWireFrame());
     settings.setValue("MaterialEditor/Triangle/cww", m_model->ccw());
     settings.setValue("MaterialEditor/Triangle/normalIdx", m_boxNormal->currentIndex());
 
-    disconnect(m_boxCWW, &QCheckBox::toggled, m_model, &OpenGL::Models::TriangleModel::setCcw);
+    disconnect(m_wireFrame, &QCheckBox::toggled, m_model, &OpenGL::Models::ModelTriangle::setDrawWireFrame);
+    disconnect(m_boxCWW, &QCheckBox::toggled, m_model, &OpenGL::Models::ModelTriangle::setCcw);
     disconnect(m_boxNormal,
                static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
                this,
                &WidgetModelTriangle::normalChanged);
-}
-
-/*!
- * \brief Getter for Open GL model object
- * \return Open GL triangle model object
- */
-Universe1::OpenGL::Models::GLModel *Universe1::Widgets::MaterialEditor::WidgetModelTriangle::model()
-{
-    return m_model;
-}
-
-/*!
- * \brief Getter for model name
- * \return Model name
- */
-QString Universe1::Widgets::MaterialEditor::WidgetModelTriangle::name() const
-{
-    return tr("Triangle");
 }
 
 /*!
@@ -201,4 +200,53 @@ void Universe1::Widgets::MaterialEditor::WidgetModelTriangle::normalChanged(int 
                                 .arg(ns.normal3.z()));
 
     m_model->setNormals(ns.normal1, ns.normal2, ns.normal3);
+}
+
+/*!
+ * \brief Constructor
+ * \param _model Sphere Open GL model
+ * \param _parent Parent \c QWidget
+ */
+Universe1::Widgets::MaterialEditor::WidgetModelSphere::WidgetModelSphere(OpenGL::Models::ModelSphere *_model,
+                                                                         QWidget *_parent)
+    : QWidget(_parent)
+    , m_model(_model)
+    , m_wireFrame(new QCheckBox())
+    , m_equatorPointCount(new GUI::GuiInt(m_model->equatorPointCount(), 4, 1024, Qt::Horizontal))
+{
+    const QSettings settings;
+    m_wireFrame->setChecked(settings.value("MaterialEditor/Sphere/wireFrame", m_model->drawWireFrame()).toBool());
+    m_model->setDrawWireFrame(m_wireFrame->isChecked());
+
+    m_equatorPointCount->setValue(
+        settings.value("MaterialEditor/Sphere/equatorPointCount", m_model->equatorPointCount()).toInt());
+
+    m_model->setEquatorPointCount(m_equatorPointCount->value());
+
+    connect(m_wireFrame, &QCheckBox::toggled, m_model, &OpenGL::Models::ModelSphere::setDrawWireFrame);
+    connect(m_equatorPointCount, &GUI::GuiInt::changed, m_model, &OpenGL::Models::ModelSphere::setEquatorPointCount);
+
+    QGridLayout *lay = new QGridLayout();
+    int row = 0;
+    lay->addWidget(new QLabel(tr("Draw wire-frame")), row, 0, 1, 2);
+    lay->addWidget(m_wireFrame, row++, 2, 1, 2);
+
+    m_equatorPointCount->layoutRow(tr("Equator point count"), lay, row);
+
+    lay->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Expanding), row, 0, 1, 4);
+
+    setLayout(lay);
+}
+
+/*!
+ * \brief Destructor
+ */
+Universe1::Widgets::MaterialEditor::WidgetModelSphere::~WidgetModelSphere()
+{
+    disconnect(m_wireFrame, &QCheckBox::toggled, m_model, &OpenGL::Models::ModelSphere::setDrawWireFrame);
+    disconnect(m_equatorPointCount, &GUI::GuiInt::changed, m_model, &OpenGL::Models::ModelSphere::setEquatorPointCount);
+
+    QSettings settings;
+    settings.setValue("MaterialEditor/Sphere/wireFrame", m_model->drawWireFrame());
+    settings.setValue("MaterialEditor/Sphere/equatorPointCount", m_model->equatorPointCount());
 }

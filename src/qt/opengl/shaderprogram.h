@@ -44,9 +44,11 @@ class ShaderProgram : public QOpenGLShaderProgram
     int m_attrVertex;  //!< Vertex attribute location
     int m_attrNormal;  //!< Color attribute location
 
+    int m_attrModel;           //!< Camera projection x camera view matrix attribute location
     int m_attrProjXview;       //!< Camera projection x camera view matrix attribute location
     int m_attrCameraPosition;  //!< Camera position attribute location
 
+    int m_attrMaterialAlpha;      //!< Material alpha attribute location
     int m_attrMaterialShininess;  //!< Material shininess attribute location
     int m_attrMaterialAmbient;    //!< Material ambient color attribute location
     int m_attrMaterialDiffuse;    //!< Material diffuse color attribute location

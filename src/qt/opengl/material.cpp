@@ -5,7 +5,7 @@
  */
 
 #include "material.h"
-
+#include <QSettings>
 /*!
  * \brief Default constructor
  */
@@ -21,14 +21,40 @@ Universe1::OpenGL::Material::Material()
  * \param _diffuse Diffuse color
  * \param _specular Specular color
  * \param _shininess Material shininess
+ * \param _alpha Material color alpha
  */
-Universe1::OpenGL::Material::Material(const QColor &_ambient,
-                                      const QColor &_diffuse,
-                                      const QColor &_specular,
-                                      const float _shininess)
+Universe1::OpenGL::Material::Material(
+    const QColor &_ambient, const QColor &_diffuse, const QColor &_specular, const float _shininess, const float _alpha)
     : ADSColors(_ambient, _diffuse, _specular)
     , shininess(_shininess)
+    , alpha(_alpha)
 {
+}
+
+/*!
+ * \brief Save material into \c QSettings
+ * \param _settings \c QSettings object
+ * \param _keyGroup \c QSettings group name
+ */
+void Universe1::OpenGL::Material::saveSettings(QSettings &_settings, const QString &_keyGroup) const
+{
+    const QString key = _keyGroup.isEmpty() ? QString() : (_keyGroup.endsWith('/') ? _keyGroup : (_keyGroup + "/"));
+    _settings.setValue(key + "shininess", shininess);
+    _settings.setValue(key + "alpha", alpha);
+    ADSColors::saveSettings(_settings, key);
+}
+
+/*!
+ * \brief Load material from \c QSettings
+ * \param _settings \c QSettings object
+ * \param _keyGroup \c QSettings group name
+ */
+void Universe1::OpenGL::Material::loadSettings(const QSettings &_settings, const QString &_keyGroup)
+{
+    const QString key = _keyGroup.isEmpty() ? QString() : (_keyGroup.endsWith('/') ? _keyGroup : (_keyGroup + "/"));
+    shininess = _settings.value(key + "shininess", shininess).toFloat();
+    alpha = _settings.value(key + "alpha", alpha).toFloat();
+    ADSColors::loadSettings(_settings, key);
 }
 
 /*!

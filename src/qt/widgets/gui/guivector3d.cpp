@@ -15,7 +15,7 @@
  * \param _maximumY Maximum Y value
  * \param _minimumZ Minimum Z value
  * \param _maximumZ Maximum Z value
- * \param _decimals Decimal count (range 1 to 6)
+ * \param _decimals Decimal count (range 0 to 6)
  * \param _orientation Orientation
  * \param _parent Parent \c QObject
  */
@@ -32,10 +32,14 @@ Universe1::Widgets::GUI::GuiVector3D::GuiVector3D(const QVector3D &_value,
     : QObject(_parent)
     , m_keepNormalized(false)
     , m_value(_value)
-    , m_x(new GuiFloat(m_value.x(), _minimumX, _maximumX, _decimals, _orientation, this))
-    , m_y(new GuiFloat(m_value.y(), _minimumY, _maximumY, _decimals, _orientation, this))
-    , m_z(new GuiFloat(m_value.z(), _minimumZ, _maximumZ, _decimals, _orientation, this))
+    , m_x(new GuiFloat(m_value.x(), _minimumX, _maximumX, _decimals, _orientation))
+    , m_y(new GuiFloat(m_value.y(), _minimumY, _maximumY, _decimals, _orientation))
+    , m_z(new GuiFloat(m_value.z(), _minimumZ, _maximumZ, _decimals, _orientation))
 {
+    m_x->setToolTip(tr("X"));
+    m_y->setToolTip(tr("Y"));
+    m_z->setToolTip(tr("Z"));
+
     connectAll();
 }
 
@@ -45,6 +49,36 @@ Universe1::Widgets::GUI::GuiVector3D::GuiVector3D(const QVector3D &_value,
 Universe1::Widgets::GUI::GuiVector3D::~GuiVector3D()
 {
     disconnectAll();
+    delete m_x;
+    delete m_y;
+    delete m_z;
+}
+
+/*!
+ * \brief Fill new layout row with widgets
+ * \param _name Property name
+ * \param _lay Layout object
+ * \param _row Current row within layout
+ */
+void Universe1::Widgets::GUI::GuiVector3D::layoutRow(const QString &_name, QGridLayout *_lay, int &_row)
+{
+    _lay->addWidget(new QLabel(_name), _row, 0);
+    _lay->addWidget(new QLabel("<b>" + tr("X") + "</b>"), _row, 1, Qt::AlignRight);
+    _lay->addWidget(m_x->box(), _row, 2);
+    _lay->addWidget(m_x->slider(), _row, 3);
+    ++_row;
+
+    _lay->addItem(new QSpacerItem(1, 1, QSizePolicy::Minimum, QSizePolicy::Minimum), _row, 0);
+    _lay->addWidget(new QLabel("<b>" + tr("Y") + "</b>"), _row, 1, Qt::AlignRight);
+    _lay->addWidget(m_y->box(), _row, 2);
+    _lay->addWidget(m_y->slider(), _row, 3);
+    ++_row;
+
+    _lay->addItem(new QSpacerItem(1, 1, QSizePolicy::Minimum, QSizePolicy::Minimum), _row, 0);
+    _lay->addWidget(new QLabel("<b>" + tr("Z") + "</b>"), _row, 1, Qt::AlignRight);
+    _lay->addWidget(m_z->box(), _row, 2);
+    _lay->addWidget(m_z->slider(), _row, 3);
+    ++_row;
 }
 
 /*!
@@ -106,6 +140,17 @@ void Universe1::Widgets::GUI::GuiVector3D::setEnabled(bool _value)
     m_x->setEnabled(_value);
     m_y->setEnabled(_value);
     m_z->setEnabled(_value);
+}
+
+/*!
+ * \brief Setup widgets tool-tip
+ * \param _toolTip Tool tip text
+ */
+void Universe1::Widgets::GUI::GuiVector3D::setToolTip(QString _toolTip)
+{
+    m_x->setToolTip(_toolTip + " - " + tr("X"));
+    m_y->setToolTip(_toolTip + " - " + tr("Y"));
+    m_z->setToolTip(_toolTip + " - " + tr("Z"));
 }
 
 /*!

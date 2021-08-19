@@ -1,21 +1,21 @@
 /*!
- * \file qt/opengl/models/trianglemodel.h
+ * \file qt/opengl/models/modeltriangle.h
  * \author Michal Steller
  * \brief Open GL single triangle model with material class implementation
  */
 
-#include "trianglemodel.h"
+#include "modeltriangle.h"
 
-const QVector3D Universe1::OpenGL::Models::TriangleModel::defaultVertex1(-0.5F, 0.0F, -0.5F);
-const QVector3D Universe1::OpenGL::Models::TriangleModel::defaultVertex2(0.5F, 0.0F, -0.5F);
-const QVector3D Universe1::OpenGL::Models::TriangleModel::defaultVertex3(0.0F, 0.0F, 0.5F);
+const QVector3D Universe1::OpenGL::Models::ModelTriangle::defaultVertex1(-0.5F, 0.0F, -0.5F);
+const QVector3D Universe1::OpenGL::Models::ModelTriangle::defaultVertex2(0.5F, 0.0F, -0.5F);
+const QVector3D Universe1::OpenGL::Models::ModelTriangle::defaultVertex3(0.0F, 0.0F, 0.5F);
 
 /*!
  * \brief Constructor
  * \param _material Material
  * \param _parent Parent \c QObject
  */
-Universe1::OpenGL::Models::TriangleModel::TriangleModel(const Material &_material, QObject *_parent)
+Universe1::OpenGL::Models::ModelTriangle::ModelTriangle(const Material &_material, QObject *_parent)
     : MaterialModel(_material, _parent)
     , m_ccw(true)
     , m_vertex1(defaultVertex1)
@@ -36,7 +36,7 @@ Universe1::OpenGL::Models::TriangleModel::TriangleModel(const Material &_materia
  * \param _material Material
  * \param _parent Parent \c QObject
  */
-Universe1::OpenGL::Models::TriangleModel::TriangleModel(QVector3D _vertex1,
+Universe1::OpenGL::Models::ModelTriangle::ModelTriangle(QVector3D _vertex1,
                                                         QVector3D _vertex2,
                                                         QVector3D _vertex3,
                                                         QVector3D _normalAll,
@@ -64,7 +64,7 @@ Universe1::OpenGL::Models::TriangleModel::TriangleModel(QVector3D _vertex1,
  * \param _material Material
  * \param _parent Parent \c QObject
  */
-Universe1::OpenGL::Models::TriangleModel::TriangleModel(QVector3D _vertex1,
+Universe1::OpenGL::Models::ModelTriangle::ModelTriangle(QVector3D _vertex1,
                                                         QVector3D _vertex2,
                                                         QVector3D _vertex3,
                                                         QVector3D _normal1,
@@ -84,21 +84,13 @@ Universe1::OpenGL::Models::TriangleModel::TriangleModel(QVector3D _vertex1,
 }
 
 /*!
- * \brief Initialize Open GL
- */
-void Universe1::OpenGL::Models::TriangleModel::initGLImlp()
-{
-    rebuild();
-}
-
-/*!
  * \brief Rebuild triangle
  */
-void Universe1::OpenGL::Models::TriangleModel::rebuild()
+void Universe1::OpenGL::Models::ModelTriangle::rebuild()
 {
     const std::vector<QVector3D> vertexData = {m_vertex1, m_vertex2, m_vertex3};
     const std::vector<QVector3D> normalData = {m_normal1, m_normal2, m_normal3};
-    const std::vector<uint> linesData = {0U, 1U, 1U, 2U, 2U, 3U};
+    const std::vector<uint> linesData = {0U, 1U, 1U, 2U, 2U, 0U};
 
     if (m_ccw)
         initBuffers(vertexData, normalData, {0U, 1U, 2U}, linesData);
@@ -110,7 +102,7 @@ void Universe1::OpenGL::Models::TriangleModel::rebuild()
  * \brief Setter for counter-clockwise flag
  * \param _value New counter-clockwise flag value
  */
-void Universe1::OpenGL::Models::TriangleModel::setCcw(bool _value)
+void Universe1::OpenGL::Models::ModelTriangle::setCcw(bool _value)
 {
     m_ccw = _value;
     rebuild();
@@ -124,7 +116,7 @@ void Universe1::OpenGL::Models::TriangleModel::setCcw(bool _value)
  * \param _vertex3 Vertex 3 position
  * \param _normalAll Vertex normal for all three vertices
  */
-void Universe1::OpenGL::Models::TriangleModel::setTriangle(QVector3D _vertex1,
+void Universe1::OpenGL::Models::ModelTriangle::setTriangle(QVector3D _vertex1,
                                                            QVector3D _vertex2,
                                                            QVector3D _vertex3,
                                                            QVector3D _normalAll)
@@ -141,7 +133,7 @@ void Universe1::OpenGL::Models::TriangleModel::setTriangle(QVector3D _vertex1,
  * \param _normal2 Vertex 2 normal
  * \param _normal3 Vertex 3 normal
  */
-void Universe1::OpenGL::Models::TriangleModel::setTriangle(QVector3D _vertex1,
+void Universe1::OpenGL::Models::ModelTriangle::setTriangle(QVector3D _vertex1,
                                                            QVector3D _vertex2,
                                                            QVector3D _vertex3,
                                                            QVector3D _normal1,
@@ -162,7 +154,7 @@ void Universe1::OpenGL::Models::TriangleModel::setTriangle(QVector3D _vertex1,
  * \brief Setter for vertex 1 position
  * \param _value New vertex 1 position value
  */
-void Universe1::OpenGL::Models::TriangleModel::setVertex1(QVector3D _value)
+void Universe1::OpenGL::Models::ModelTriangle::setVertex1(QVector3D _value)
 {
     m_vertex1 = _value;
     rebuild();
@@ -173,7 +165,7 @@ void Universe1::OpenGL::Models::TriangleModel::setVertex1(QVector3D _value)
  * \brief Setter for vertex 2 position
  * \param _value New vertex 2 position value
  */
-void Universe1::OpenGL::Models::TriangleModel::setVertex2(QVector3D _value)
+void Universe1::OpenGL::Models::ModelTriangle::setVertex2(QVector3D _value)
 {
     m_vertex2 = _value;
     rebuild();
@@ -184,7 +176,7 @@ void Universe1::OpenGL::Models::TriangleModel::setVertex2(QVector3D _value)
  * \brief Setter for vertex 3 position
  * \param _value New vertex 3 position value
  */
-void Universe1::OpenGL::Models::TriangleModel::setVertex3(QVector3D _value)
+void Universe1::OpenGL::Models::ModelTriangle::setVertex3(QVector3D _value)
 {
     m_vertex3 = _value;
     rebuild();
@@ -195,7 +187,7 @@ void Universe1::OpenGL::Models::TriangleModel::setVertex3(QVector3D _value)
  * \brief Setter for vertex 1 normal
  * \param _value New vertex 1 normal value
  */
-void Universe1::OpenGL::Models::TriangleModel::setNormal1(QVector3D _value)
+void Universe1::OpenGL::Models::ModelTriangle::setNormal1(QVector3D _value)
 {
     m_normal1 = _value;
     rebuild();
@@ -206,7 +198,7 @@ void Universe1::OpenGL::Models::TriangleModel::setNormal1(QVector3D _value)
  * \brief Setter for vertex 2 normal
  * \param _value New vertex 2 normal value
  */
-void Universe1::OpenGL::Models::TriangleModel::setNormal2(QVector3D _value)
+void Universe1::OpenGL::Models::ModelTriangle::setNormal2(QVector3D _value)
 {
     m_normal2 = _value;
     rebuild();
@@ -217,7 +209,7 @@ void Universe1::OpenGL::Models::TriangleModel::setNormal2(QVector3D _value)
  * \brief Setter for vertex 3 normal
  * \param _value New vertex 3 normal value
  */
-void Universe1::OpenGL::Models::TriangleModel::setNormal3(QVector3D _value)
+void Universe1::OpenGL::Models::ModelTriangle::setNormal3(QVector3D _value)
 {
     m_normal3 = _value;
     rebuild();
@@ -228,7 +220,7 @@ void Universe1::OpenGL::Models::TriangleModel::setNormal3(QVector3D _value)
  * \brief Setter for normal for all vertices
  * \param _value New normal value
  */
-void Universe1::OpenGL::Models::TriangleModel::setNormalAll(QVector3D _value)
+void Universe1::OpenGL::Models::ModelTriangle::setNormalAll(QVector3D _value)
 {
     m_normal1 = _value;
     m_normal2 = _value;
@@ -243,7 +235,7 @@ void Universe1::OpenGL::Models::TriangleModel::setNormalAll(QVector3D _value)
  * \param _normal2 New vertex 2 normal
  * \param _normal3 New vertex 3 normal
  */
-void Universe1::OpenGL::Models::TriangleModel::setNormals(QVector3D _normal1, QVector3D _normal2, QVector3D _normal3)
+void Universe1::OpenGL::Models::ModelTriangle::setNormals(QVector3D _normal1, QVector3D _normal2, QVector3D _normal3)
 {
     m_normal1 = _normal1;
     m_normal2 = _normal2;

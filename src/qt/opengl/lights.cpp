@@ -5,7 +5,7 @@
  */
 
 #include "lights.h"
-
+#include <QSettings>
 /*!
  * \brief Constructor
  * \param _direction Light direction
@@ -22,6 +22,34 @@ Universe1::OpenGL::DirectionLight::DirectionLight(const QVector3D &_direction,
     , direction(_direction)
 {
 }
+
+/*!
+ * \brief Save direction light into \c QSettings
+ * \param _settings \c QSettings object
+ * \param _keyGroup \c QSettings group name
+ */
+void Universe1::OpenGL::DirectionLight::saveSettings(QSettings &_settings, const QString &_keyGroup) const
+{
+    const QString key = _keyGroup.isEmpty() ? QString() : (_keyGroup.endsWith('/') ? _keyGroup : (_keyGroup + "/"));
+    _settings.setValue(key + "direction", direction);
+    ADSColors::saveSettings(_settings, key);
+}
+
+/*!
+ * \brief Load direction light from \c QSettings
+ * \param _settings \c QSettings object
+ * \param _keyGroup \c QSettings group name
+ */
+void Universe1::OpenGL::DirectionLight::loadSettings(const QSettings &_settings, const QString &_keyGroup)
+{
+    const QString key = _keyGroup.isEmpty() ? QString() : (_keyGroup.endsWith('/') ? _keyGroup : (_keyGroup + "/"));
+    direction = _settings.value(key + "direction", direction).value<QVector3D>();
+    ADSColors::loadSettings(_settings, key);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
  * \brief Constructor
@@ -49,4 +77,36 @@ Universe1::OpenGL::PointLight::PointLight(const Mode _mode,
     , linear(_linear)
     , quadratic(_quadratic)
 {
+}
+
+/*!
+ * \brief Save direction light into \c QSettings
+ * \param _settings \c QSettings object
+ * \param _keyGroup \c QSettings group name
+ */
+void Universe1::OpenGL::PointLight::saveSettings(QSettings &_settings, const QString &_keyGroup) const
+{
+    const QString key = _keyGroup.isEmpty() ? QString() : (_keyGroup.endsWith('/') ? _keyGroup : (_keyGroup + "/"));
+    _settings.setValue(key + "mode", static_cast<int>(mode));
+    _settings.setValue(key + "position", position);
+    _settings.setValue(key + "constant", constant);
+    _settings.setValue(key + "linear", linear);
+    _settings.setValue(key + "quadratic", quadratic);
+    ADSColors::saveSettings(_settings, key);
+}
+
+/*!
+ * \brief Load direction light from \c QSettings
+ * \param _settings \c QSettings object
+ * \param _keyGroup \c QSettings group name
+ */
+void Universe1::OpenGL::PointLight::loadSettings(const QSettings &_settings, const QString &_keyGroup)
+{
+    const QString key = _keyGroup.isEmpty() ? QString() : (_keyGroup.endsWith('/') ? _keyGroup : (_keyGroup + "/"));
+    mode = static_cast<Mode>(_settings.value(key + "mode", static_cast<int>(mode)).toInt());
+    position = _settings.value(key + "position", position).value<QVector3D>();
+    constant = _settings.value(key + "constant", constant).toFloat();
+    linear = _settings.value(key + "linear", linear).toFloat();
+    quadratic = _settings.value(key + "quadratic", quadratic).toFloat();
+    ADSColors::loadSettings(_settings, key);
 }

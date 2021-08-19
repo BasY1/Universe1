@@ -6,6 +6,8 @@
 
 #include <QApplication>
 
+#include "qt/widgets/materialeditor/dialogmaterialeditor.h"
+
 /*!
  * \brief Run unit tests
  * \returns \c true if all unit tests success
@@ -22,10 +24,14 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    if (!runTests())
-        return EXIT_FAILURE;
+    // if (!runTests())
+    //    return EXIT_FAILURE;
 
-    return EXIT_SUCCESS;
+    Universe1::OpenGL::MaterialDB db(Universe1::OpenGL::Material(Qt::white, Qt::white, Qt::white, 1.0F, 1.0F));
+    Universe1::Widgets::MaterialEditor::DialogMaterialEditor dialog(&db);
+    return dialog.exec();
+
+    // return EXIT_SUCCESS;
     // return app.exec();
 }
 

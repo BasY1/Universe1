@@ -6,6 +6,8 @@
 
 #include "guimaterial.h"
 
+#include "../horizontallinespacer.h"
+
 /*!
  * \brief Constructor
  * \param _material Initialization material
@@ -17,9 +19,11 @@ Universe1::Widgets::GUI::GuiMaterial::GuiMaterial(const OpenGL::Material &_mater
                                                   QObject *_parent)
     : QObject(_parent)
     , m_material(_material)
-    , m_shininess(new GuiFloat(m_material.shininess, 0, 1, 3, _orientation, this))
-    , m_colors(new GuiColorADS(m_material, _orientation, this))
+    , m_alpha(new GuiFloat(m_material.alpha, 0, 1, 3, _orientation))
+    , m_shininess(new GuiFloat(m_material.shininess, 0, 100, 1, _orientation))
+    , m_colors(new GuiColorADS(m_material, _orientation))
 {
+    connect(m_alpha, &GuiFloat::changed, this, &GuiMaterial::alphaChanged);
     connect(m_shininess, &GuiFloat::changed, this, &GuiMaterial::shininessChanged);
     connect(m_colors, &GuiColorADS::changed, this, &GuiMaterial::adsChanged);
 }
@@ -29,8 +33,27 @@ Universe1::Widgets::GUI::GuiMaterial::GuiMaterial(const OpenGL::Material &_mater
  */
 Universe1::Widgets::GUI::GuiMaterial::~GuiMaterial()
 {
+    disconnect(m_alpha, &GuiFloat::changed, this, &GuiMaterial::alphaChanged);
     disconnect(m_shininess, &GuiFloat::changed, this, &GuiMaterial::shininessChanged);
     disconnect(m_colors, &GuiColorADS::changed, this, &GuiMaterial::adsChanged);
+
+    delete m_shininess;
+    delete m_colors;
+}
+
+/*!
+ * \brief Fill new layout row with widgets
+ * \param _lay Layout object
+ * \param _row Current row within layout
+ * \param _addSingleColor Layout object
+ */
+void Universe1::Widgets::GUI::GuiMaterial::layoutRow(QGridLayout *_lay, int &_row, const bool _addSingleColor)
+{
+    m_colors->layoutRow(_lay, _row, _addSingleColor);
+    _lay->addWidget(new HorizontalLineSpacer(), _row++, 0, 1, 4);
+    m_shininess->layoutRow(tr("Shininess"), _lay, _row);
+    _lay->addWidget(new HorizontalLineSpacer(), _row++, 0, 1, 4);
+    m_alpha->layoutRow(tr("Color alpha"), _lay, _row);
 }
 
 /*!
@@ -41,12 +64,15 @@ void Universe1::Widgets::GUI::GuiMaterial::setMaterial(const OpenGL::Material &_
 {
     m_material = _material;
 
+    disconnect(m_alpha, &GuiFloat::changed, this, &GuiMaterial::alphaChanged);
     disconnect(m_shininess, &GuiFloat::changed, this, &GuiMaterial::shininessChanged);
     disconnect(m_colors, &GuiColorADS::changed, this, &GuiMaterial::adsChanged);
 
     m_colors->setColorsADS(m_material);
     m_shininess->setValue(m_material.shininess);
+    m_alpha->setValue(m_material.alpha);
 
+    connect(m_alpha, &GuiFloat::changed, this, &GuiMaterial::alphaChanged);
     connect(m_shininess, &GuiFloat::changed, this, &GuiMaterial::shininessChanged);
     connect(m_colors, &GuiColorADS::changed, this, &GuiMaterial::adsChanged);
 
@@ -59,6 +85,7 @@ void Universe1::Widgets::GUI::GuiMaterial::setMaterial(const OpenGL::Material &_
  */
 void Universe1::Widgets::GUI::GuiMaterial::setOrientation(Qt::Orientation _orientation)
 {
+    m_alpha->setOrientation(_orientation);
     m_shininess->setOrientation(_orientation);
     m_colors->setOrientation(_orientation);
 }
@@ -69,6 +96,7 @@ void Universe1::Widgets::GUI::GuiMaterial::setOrientation(Qt::Orientation _orien
  */
 void Universe1::Widgets::GUI::GuiMaterial::setEnabled(bool _value)
 {
+    m_alpha->setEnabled(_value);
     m_shininess->setEnabled(_value);
     m_colors->setEnabled(_value);
 }
@@ -92,5 +120,15 @@ void Universe1::Widgets::GUI::GuiMaterial::adsChanged(const OpenGL::ADSColors &_
 void Universe1::Widgets::GUI::GuiMaterial::shininessChanged(float _value)
 {
     m_material.shininess = _value;
+    emit changed(m_material);
+}
+
+/*!
+ * \brief Alpha widget changed value
+ * \param _value New alpha value
+ */
+void Universe1::Widgets::GUI::GuiMaterial::alphaChanged(float _value)
+{
+    m_material.alpha = _value;
     emit changed(m_material);
 }

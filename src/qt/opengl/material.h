@@ -10,7 +10,7 @@
 #include "adscolors.h"
 
 #include <QObject>
-#include <unordered_map>
+#include <map>
 
 namespace Universe1 {
 namespace OpenGL {
@@ -21,8 +21,16 @@ namespace OpenGL {
 struct Material : public ADSColors
 {
     float shininess;  //!< Material shininess
+    float alpha;      //!< Material alpha
     Material();
-    Material(const QColor &_ambient, const QColor &_diffuse, const QColor &_specular, const float _shininess);
+    Material(const QColor &_ambient,
+             const QColor &_diffuse,
+             const QColor &_specular,
+             const float _shininess,
+             const float _alpha);
+
+    void saveSettings(QSettings &_settings, const QString &_keyGroup) const;
+    void loadSettings(const QSettings &_settings, const QString &_keyGroup);
 };
 
 }  // namespace OpenGL
@@ -43,6 +51,8 @@ class MaterialDB : public QObject
     MaterialDB(const Material &_material, QObject *_parent = nullptr);
 
     inline const Material &defaultMaterial() const;
+    inline const std::map<QString, Material> &map() const;
+
     inline const Material &get(const QString &_name) const;
     inline bool contains(const QString &_name) const;
 
@@ -54,8 +64,8 @@ class MaterialDB : public QObject
     inline bool remove(const QString &_name);
 
  protected:
-    Material m_defaultMaterial;                   //!< Default material
-    std::unordered_map<QString, Material> m_map;  //!< Hash map buffer
+    Material m_defaultMaterial;         //!< Default material
+    std::map<QString, Material> m_map;  //!< Hash map buffer
 };
 
 /*!
@@ -65,6 +75,15 @@ class MaterialDB : public QObject
 inline const Material &MaterialDB::defaultMaterial() const
 {
     return m_defaultMaterial;
+}
+
+/*!
+ * \brief Getter for material map
+ * \returns Material map
+ */
+inline const std::map<QString, Material> &MaterialDB::map() const
+{
+    return m_map;
 }
 
 /*!
@@ -78,13 +97,13 @@ inline bool MaterialDB::contains(const QString &_name) const
 }
 
 /*!
- * \brief Test if given name already exists in database
- * \param _name Name to test
- * \returns \c true if given name already exists in database
+ * \brief Get material by name
+ * \param _name Name to find
+ * \returns Found material or \a m_defaultMaterial
  */
 inline const Material &MaterialDB::get(const QString &_name) const
 {
-    std::unordered_map<QString, Material>::const_iterator it = m_map.find(_name);
+    std::map<QString, Material>::const_iterator it = m_map.find(_name);
     return it == m_map.cend() ? m_defaultMaterial : it->second;
 }
 

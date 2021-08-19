@@ -60,6 +60,8 @@ class GuiPointLight : public QObject
     inline GuiFloat *linearWidgets();
     inline GuiFloat *quadraticWidgets();
 
+    void layoutRow(QGridLayout *_lay, int &_row, const bool _addSingleColor = true);
+
  public slots:
     void setLight(const OpenGL::PointLight &_light);
     void setOrientation(Qt::Orientation _orientation);
@@ -100,7 +102,7 @@ class GuiPointLight : public QObject
  * \param _index Light index
  * \param _light Initialization light
  * \param _sceneRange Scene range - light position range will be + 50% greater
- * \param _decimals Decimal count (range 1 to 6)
+ * \param _decimals Decimal count (range 0 to 6)
  * \param _parent Parent \c QObject
  * \note Default horizontal orientation
  * \note Default decimal count 3

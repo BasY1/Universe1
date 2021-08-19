@@ -42,13 +42,15 @@ class GuiColorADS : public QObject
 
     inline const OpenGL::ADSColors &colors() const;
     inline QCheckBox *singleColor();
-    inline GuiColor *ambientWidgets();
-    inline GuiColor *diffuseWidgets();
-    inline GuiColor *specularWidgets();
+    inline GuiColor *ambientGui();
+    inline GuiColor *diffuseGui();
+    inline GuiColor *specularGui();
 
     inline QColor colorAmbient() const;
     inline QColor colorDiffuse() const;
     inline QColor colorSpecular() const;
+
+    void layoutRow(QGridLayout *_lay, int &_row, const bool _addSingleColor = true);
 
  public slots:
     void setColorAmbient(QColor _color);
@@ -148,7 +150,7 @@ inline QCheckBox *GuiColorADS::singleColor()
  * \brief Getter for current ambient color widget
  * \returns Ambient color widget
  */
-inline GuiColor *GuiColorADS::ambientWidgets()
+inline GuiColor *GuiColorADS::ambientGui()
 {
     return m_ambient;
 }
@@ -157,7 +159,7 @@ inline GuiColor *GuiColorADS::ambientWidgets()
  * \brief Getter for current diffuse color widget
  * \returns Diffuse color widget
  */
-inline GuiColor *GuiColorADS::diffuseWidgets()
+inline GuiColor *GuiColorADS::diffuseGui()
 {
     return m_diffuse;
 }
@@ -166,7 +168,7 @@ inline GuiColor *GuiColorADS::diffuseWidgets()
  * \brief Getter for current specular color widget
  * \returns Specular color widget
  */
-inline GuiColor *GuiColorADS::specularWidgets()
+inline GuiColor *GuiColorADS::specularGui()
 {
     return m_specular;
 }

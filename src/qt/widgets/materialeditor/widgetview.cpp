@@ -12,11 +12,28 @@
  * \param _parent Parent \c QWidget
  */
 Universe1::Widgets::MaterialEditor::WidgetView::WidgetView(const OpenGL::Material &_material, QWidget *_parent)
-    : OpenGL::GLWidget(_parent)
-    , m_modelTriangle(new OpenGL::Models::TriangleModel(_material))
-    , m_models({m_modelTriangle})
+    : OpenGL::GLWidget("MaterialEditor/View/", true, _parent)
+    , m_modelSphere(new OpenGL::Models::ModelSphere(_material))
+    , m_modelTriangle(new OpenGL::Models::ModelTriangle(_material))
+    , m_models({m_modelSphere, m_modelTriangle})
     , m_currentModel(0)
 {
+    m_pointLights.reserve(OpenGL::ShaderProgram::pointLightsCount);
+    m_pointLights.push_back(OpenGL::PointLight(QVector3D(-1.0F, -1.0F, -1.0F)));
+    m_pointLights.push_back(OpenGL::PointLight(QVector3D(-1.0F, -1.0F, +1.0F)));
+    m_pointLights.push_back(OpenGL::PointLight(QVector3D(+1.0F, -1.0F, -1.0F)));
+    m_pointLights.push_back(OpenGL::PointLight(QVector3D(+1.0F, -1.0F, +1.0F)));
+    m_pointLights.push_back(OpenGL::PointLight(QVector3D(-1.0F, +1.0F, -1.0F)));
+    m_pointLights.push_back(OpenGL::PointLight(QVector3D(-1.0F, +1.0F, +1.0F)));
+    m_pointLights.push_back(OpenGL::PointLight(QVector3D(+1.0F, +1.0F, -1.0F)));
+    m_pointLights.push_back(OpenGL::PointLight(QVector3D(+1.0F, +1.0F, +1.0F)));
+
+    const QSettings settings;
+    m_currentModel = settings.value(m_settingsKey + "currentModel", m_currentModel).toInt();
+
+    m_directionLight.loadSettings(settings, m_settingsKey + "/DirectionLight/");
+    for (size_t i = 0; i < m_pointLights.size(); ++i)
+        m_pointLights[i].loadSettings(settings, m_settingsKey + "/PointLight_" + QString::number(i) + "_/");
 }
 
 /*!
@@ -24,6 +41,13 @@ Universe1::Widgets::MaterialEditor::WidgetView::WidgetView(const OpenGL::Materia
  */
 Universe1::Widgets::MaterialEditor::WidgetView::~WidgetView()
 {
+    QSettings settings;
+    settings.setValue(m_settingsKey + "currentModel", m_currentModel);
+
+    m_directionLight.saveSettings(settings, m_settingsKey + "/DirectionLight/");
+    for (size_t i = 0; i < m_pointLights.size(); ++i)
+        m_pointLights[i].saveSettings(settings, m_settingsKey + "/PointLight_" + QString::number(i) + "_/");
+
     disconnect(m_models.at(m_currentModel),
                &OpenGL::Models::GLModel::changed,
                this,
@@ -51,7 +75,7 @@ size_t Universe1::Widgets::MaterialEditor::WidgetView::memoryUsage() const
  * \brief Setter for new current model
  * \param _modelIndex Model index
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::setModel(int _modelIndex)
+void Universe1::Widgets::MaterialEditor::WidgetView::setCurrentModel(int _modelIndex)
 {
     if (m_currentModel != _modelIndex && _modelIndex >= 0 && _modelIndex < static_cast<int>(m_models.size()))
     {
@@ -69,6 +93,17 @@ void Universe1::Widgets::MaterialEditor::WidgetView::setModel(int _modelIndex)
 
         update();
     }
+}
+
+/*!
+ * \brief Setter for material, update all models
+ * \param _material New material
+ */
+void Universe1::Widgets::MaterialEditor::WidgetView::setMaterial(const OpenGL::Material &_material)
+{
+    m_modelTriangle->setMaterial(_material);
+    m_modelSphere->setMaterial(_material);
+    update();
 }
 
 /*!

@@ -30,8 +30,11 @@ class GuiMaterial : public QObject
     ~GuiMaterial();
 
     inline const OpenGL::Material &material() const;
+    inline GuiFloat *alphaGui();
     inline GuiFloat *shininessGui();
     inline GuiColorADS *colorsGui();
+
+    void layoutRow(QGridLayout *_lay, int &_row, const bool _addSingleColor = true);
 
  public slots:
     void setMaterial(const OpenGL::Material &_material);
@@ -42,6 +45,7 @@ class GuiMaterial : public QObject
  protected slots:
     void adsChanged(const OpenGL::ADSColors &_value);
     void shininessChanged(float _value);
+    void alphaChanged(float _value);
 
  signals:
     /*!
@@ -52,6 +56,7 @@ class GuiMaterial : public QObject
 
  protected:
     OpenGL::Material m_material;  //!< Current colors
+    GuiFloat *m_alpha;            //!< Material alpha widget
     GuiFloat *m_shininess;        //!< Material shininess widget
     GuiColorADS *m_colors;        //!< Ambient - diffuse - specular color widget
 };
@@ -74,6 +79,15 @@ inline GuiMaterial::GuiMaterial(const OpenGL::Material &_material, QObject *_par
 inline const OpenGL::Material &GuiMaterial::material() const
 {
     return m_material;
+}
+
+/*!
+ * \brief Getter for alpha widgets
+ * \returns Alpha widgets
+ */
+inline GuiFloat *GuiMaterial::alphaGui()
+{
+    return m_alpha;
 }
 
 /*!

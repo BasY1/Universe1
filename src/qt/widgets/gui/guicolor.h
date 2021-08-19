@@ -27,10 +27,12 @@ class GuiColor : public QObject
     ~GuiColor();
 
     inline QColor color() const;
-    inline GuiInt *redWidgets();
-    inline GuiInt *greenWidgets();
-    inline GuiInt *blueWidgets();
+    inline GuiInt *redGui();
+    inline GuiInt *greenGui();
+    inline GuiInt *blueGui();
     inline WidgetBGColor *bgWidget();
+
+    void layoutRow(const QString &_name, QGridLayout *_lay, int &_row);
 
  protected:
     void connectAll();
@@ -40,6 +42,7 @@ class GuiColor : public QObject
     void setColor(QColor _color);
     void setOrientation(Qt::Orientation _orientation);
     void setEnabled(bool _value);
+    void setToolTip(QString _toolTip);
 
  protected slots:
     void redChanged(int _value);
@@ -87,7 +90,7 @@ inline QColor GuiColor::color() const
  * \brief Getter for red widgets
  * \returns Red widgets
  */
-inline GuiInt *GuiColor::redWidgets()
+inline GuiInt *GuiColor::redGui()
 {
     return m_red;
 }
@@ -96,7 +99,7 @@ inline GuiInt *GuiColor::redWidgets()
  * \brief Getter for green widgets
  * \returns Green widgets
  */
-inline GuiInt *GuiColor::greenWidgets()
+inline GuiInt *GuiColor::greenGui()
 {
     return m_green;
 }
@@ -105,7 +108,7 @@ inline GuiInt *GuiColor::greenWidgets()
  * \brief Getter for blue widgets
  * \returns Blue widgets
  */
-inline GuiInt *GuiColor::blueWidgets()
+inline GuiInt *GuiColor::blueGui()
 {
     return m_blue;
 }

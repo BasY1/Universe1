@@ -25,6 +25,24 @@ class GLModel : public QObject, protected QOpenGLFunctions
     inline bool isEnabled() const;
 
     /*!
+     * \brief Getter for initialized flag
+     * \returns Initialized flag
+     */
+    virtual bool isInit() const = 0;
+
+    /*!
+     * \brief Getter for is possible to switch value of draw wire-framed flag
+     * \returns Is possible to switch value of draw wire-framed flag
+     */
+    virtual bool canSwitchDrawWireFrame() const = 0;
+
+    /*!
+     * \brief Getter draw wire-framed flag
+     * \returns Draw wire-framed flag
+     */
+    virtual bool drawWireFrame() const = 0;
+
+    /*!
      * \brief Memory usage: returns size of allocated memory within OpenGL context
      * \returns Size of allocated memory within OpenGL context
      */
@@ -58,6 +76,12 @@ class GLModel : public QObject, protected QOpenGLFunctions
  public slots:
     void setEnabled(bool _value);
 
+    /*!
+     * \brief Setter for draw wire-framed flag
+     * \param _value New draw wire-framed flag value
+     */
+    virtual void setDrawWireFrame(bool _value) = 0;
+
  signals:
     void changed();  //!< Model changed
 
@@ -76,7 +100,7 @@ inline bool GLModel::isEnabled() const
 
 /*!
  * \brief Getter for center position
- * \return Model central position
+ * \returns Model central position
  * \sa Universe1::OpenGL::Models::GLModel::range() const
  */
 inline QVector3D GLModel::center() const

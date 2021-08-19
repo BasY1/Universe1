@@ -6,6 +6,8 @@
 
 #include "guidirectionlight.h"
 
+#include "../horizontallinespacer.h"
+
 /*!
  * \brief Constructor
  * \param _light Initialization light
@@ -18,8 +20,8 @@ Universe1::Widgets::GUI::GuiDirectionLight::GuiDirectionLight(const OpenGL::Dire
     : QObject(_parent)
     , m_light(_light)
     , m_lightOnOff(new QCheckBox())
-    , m_direction(new GuiVector3D(m_light.direction, 3, _orientation, this))
-    , m_colors(new GuiColorADS(m_light, _orientation, this))
+    , m_direction(new GuiVector3D(m_light.direction, 3, _orientation))
+    , m_colors(new GuiColorADS(m_light, _orientation))
 {
     m_lightOnOff->setChecked(m_light.mode == OpenGL::DirectionLight::LightOn);
 
@@ -39,6 +41,27 @@ Universe1::Widgets::GUI::GuiDirectionLight::~GuiDirectionLight()
     disconnect(m_lightOnOff, &QCheckBox::toggled, this, &GuiDirectionLight::onOffChanged);
     disconnect(m_direction, &GuiVector3D::changed, this, &GuiDirectionLight::directionChanged);
     disconnect(m_colors, &GuiColorADS::changed, this, &GuiDirectionLight::adsChanged);
+
+    delete m_direction;
+    delete m_colors;
+}
+
+/*!
+ * \brief Fill new layout row with widgets
+ * \param _lay Layout object
+ * \param _row Current row within layout
+ * \param _addSingleColor Layout object
+ */
+void Universe1::Widgets::GUI::GuiDirectionLight::layoutRow(QGridLayout *_lay, int &_row, const bool _addSingleColor)
+{
+    _lay->addWidget(new QLabel(tr("Enabled")), _row, 0, 1, 2);
+    _lay->addWidget(m_lightOnOff, _row, 2, 1, 2);
+    _row++;
+
+    m_colors->layoutRow(_lay, _row, _addSingleColor);
+    _lay->addWidget(new HorizontalLineSpacer(), _row++, 0, 1, 4);
+    m_direction->layoutRow(tr("Direction"), _lay, _row);
+    m_direction->setToolTip(tr("Light direction normal vector"));
 }
 
 /*!

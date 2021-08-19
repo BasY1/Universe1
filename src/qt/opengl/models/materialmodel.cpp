@@ -45,6 +45,33 @@ Universe1::OpenGL::Models::MaterialModel::~MaterialModel()
 }
 
 /*!
+ * \brief Getter for OpenGL buffers initialized flag
+ * \returns OpenGL buffers initialized flag
+ */
+bool Universe1::OpenGL::Models::MaterialModel::isInit() const
+{
+    return m_isInit;
+}
+
+/*!
+ * \brief Getter for is possible to switch value of draw wire-framed flag
+ * \returns Is possible to switch value of draw wire-framed flag
+ */
+bool Universe1::OpenGL::Models::MaterialModel::canSwitchDrawWireFrame() const
+{
+    return m_canSwitchDrawWireFrame;
+}
+
+/*!
+ * \brief Getter draw wire-framed flag
+ * \returns Draw wire-framed flag
+ */
+bool Universe1::OpenGL::Models::MaterialModel::drawWireFrame() const
+{
+    return m_drawWireFrame;
+}
+
+/*!
  * \brief Returns size of allocated memory within OpenGL context
  * \returns Size of allocated memory within OpenGL context
  */
@@ -173,6 +200,14 @@ bool Universe1::OpenGL::Models::MaterialModel::initBuffers(const std::vector<QVe
 }
 
 /*!
+ * \brief Initialize Open GL
+ */
+void Universe1::OpenGL::Models::MaterialModel::initGLImlp()
+{
+    rebuild();
+}
+
+/*!
  * \brief Paint model within Open GL
  * \param _program Shader program
  */
@@ -211,7 +246,7 @@ void Universe1::OpenGL::Models::MaterialModel::paintGLImlp(ShaderProgram *_progr
 /*!
  * \brief Setter for draw wire-framed flag
  * \param _value New draw wire-framed flag value
- * \note Updates only when
+ * \note Updates only when allowed by \a m_canSwitchDrawWireFrame = \c true
  */
 void Universe1::OpenGL::Models::MaterialModel::setDrawWireFrame(bool _value)
 {

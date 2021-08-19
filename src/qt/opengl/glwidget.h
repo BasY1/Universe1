@@ -10,6 +10,7 @@
 #include "shaderprogram.h"
 
 #include <QOpenGLWidget>
+#include <QSettings>
 
 namespace Universe1 {
 namespace OpenGL {
@@ -33,13 +34,16 @@ class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
     };
     Q_ENUM(CullFaceMode)
 
-    GLWidget(QWidget *parent = nullptr);
+    GLWidget(const QString &_settingsKey, const bool _storePosition, QWidget *_parent = nullptr);
+    inline GLWidget(QWidget *_parent = nullptr);
+
     ~GLWidget();
 
     inline Camera *camera();
 
     inline bool emitContextPainted() const;
     inline bool blending() const;
+    inline bool blendFunc() const;
     inline bool antialiasing() const;
     inline bool cullFaceCcw() const;
     inline CullFaceMode cullFaceMode() const;
@@ -84,6 +88,7 @@ class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
     void setEmitContextPainted(const bool _value);
     void setAntialiasing(const bool _value);
     void setBlending(const bool _value);
+    void setBlendFunc(const bool _value);
     void setCullFaceCcw(const bool _value);
     void setCullFaceMode(const CullFaceMode _value);
     void setPointSize(const float _value);
@@ -110,9 +115,24 @@ class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
     void contextPainted(QOpenGLContext *_context);
 
  protected:
-    bool m_emitContextPainted;    //!< Enable flag for emitting context painted signal
-    bool m_antialiasing;          //!< Antialiasing enabled flag
-    bool m_blending;              //!< Blending enabled flag
+    const QString m_settingsKey;  //!< Key for storing within \c QSettings
+
+    bool m_emitContextPainted;  //!< Enable flag for emitting context painted signal
+
+    bool m_antialiasing;  //!< Antialiasing enabled flag
+
+    bool m_blending;  //!< Blending enabled flag
+
+    /*!
+     * \brief Blending function flag
+     * \details
+     * | Value    | \c glBlendFunc(ARGS)                          |
+     * | :------- | :-------------------------------------------- |
+     * | \c true  | <tt>GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA</tt> |
+     * | \c false | <tt>GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA</tt> |
+     */
+    bool m_blendFunc;
+
     bool m_cullFaceCcw;           //!< Counter clock wise flag for front face definition
     CullFaceMode m_cullFaceMode;  //!< Cull-face mode
 
@@ -128,6 +148,19 @@ class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
 
     ShaderProgram *m_program;  //!< Shader program
 };
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Constructor
+ * \param _parent Parent \c QWidget
+ */
+inline GLWidget::GLWidget(QWidget *_parent)
+    : GLWidget(QString(), false, _parent)
+{
+}
 
 /*!
  * \brief Getter for camera object
@@ -181,6 +214,20 @@ inline GLWidget::CullFaceMode GLWidget::cullFaceMode() const
 inline bool GLWidget::blending() const
 {
     return m_blending;
+}
+
+/*!
+ * \brief Getter for blending function flag
+ * \returns Blending function flag
+ * \details
+ * | Value    | \c glBlendFunc(ARGS)                          |
+ * | :------- | :-------------------------------------------- |
+ * | \c true  | <tt>GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA</tt> |
+ * | \c false | <tt>GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA</tt> |
+ */
+inline bool GLWidget::blendFunc() const
+{
+    return m_blendFunc;
 }
 
 /*!

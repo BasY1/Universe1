@@ -7,6 +7,7 @@
 #ifndef UNIVERSE1_WIDGETS_GUI_GUIINT_H
 #define UNIVERSE1_WIDGETS_GUI_GUIINT_H
 
+#include <QGridLayout>
 #include <QSlider>
 #include <QSpinBox>
 
@@ -38,11 +39,14 @@ class GuiInt : public QObject
     inline QSlider *slider();
     inline QSpinBox *box();
 
+    void layoutRow(const QString &_name, QGridLayout *_lay, int &_row);
+
  public slots:
     void setValue(int _value);
     void setRange(int _minimum, int _maximum);
     void setOrientation(Qt::Orientation _orientation);
     void setEnabled(bool _value);
+    void setToolTip(QString _toolTip);
 
  protected slots:
     void sliderChanged(int _value);

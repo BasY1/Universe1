@@ -97,9 +97,11 @@ class GuiVector3D : public QObject
     inline bool keepNormalized() const;
     inline const QVector3D &value() const;
 
-    inline GuiFloat *xWidgets();
-    inline GuiFloat *yWidgets();
-    inline GuiFloat *zWidgets();
+    inline GuiFloat *xGui();
+    inline GuiFloat *yGui();
+    inline GuiFloat *zGui();
+
+    void layoutRow(const QString &_name, QGridLayout *_lay, int &_row);
 
  protected:
     void connectAll();
@@ -109,6 +111,7 @@ class GuiVector3D : public QObject
     void setValue(QVector3D _value);
     void setOrientation(Qt::Orientation _orientation);
     void setEnabled(bool _value);
+    void setToolTip(QString _toolTip);
 
  protected slots:
     void xChanged(float _value);
@@ -142,7 +145,7 @@ class GuiVector3D : public QObject
  * \param _maximumY Maximum Y value
  * \param _minimumZ Minimum Z value
  * \param _maximumZ Maximum Z value
- * \param _decimals Decimal count (range 1 to 6)
+ * \param _decimals Decimal count (range 0 to 6)
  * \param _parent Parent \c QObject
  * \note Default horizontal orientation
  */
@@ -224,7 +227,7 @@ inline GuiVector3D::GuiVector3D(const QVector3D &_value,
  * \brief Constructor
  * \param _value Initialization value
  * \param _sceneRange Vector value range (Pair of minimum and maximum)
- * \param _decimals Decimal count (range 1 to 6)
+ * \param _decimals Decimal count (range 0 to 6)
  * \param _orientation Orientation
  * \param _parent Parent \c QObject
  */
@@ -250,7 +253,7 @@ inline GuiVector3D::GuiVector3D(const QVector3D &_value,
  * \brief Constructor
  * \param _value Initialization value
  * \param _sceneRange Vector value range (Pair of minimum and maximum)
- * \param _decimals Decimal count (range 1 to 6)
+ * \param _decimals Decimal count (range 0 to 6)
  * \param _parent Parent \c QObject
  * \note Default horizontal orientation
  */
@@ -330,7 +333,7 @@ inline GuiVector3D::GuiVector3D(const QVector3D &_value,
 /*!
  * \brief Constructor
  * \param _value Initialization value
- * \param _decimals Decimal count (range 1 to 6)
+ * \param _decimals Decimal count (range 0 to 6)
  * \param _orientation Orientation
  * \param _parent Parent \c QObject
  * \note Default range from -1 to 1 (Value keeps normalized)
@@ -347,7 +350,7 @@ inline GuiVector3D::GuiVector3D(const QVector3D &_value,
 /*!
  * \brief Constructor
  * \param _value Initialization value
- * \param _decimals Decimal count (range 1 to 6)
+ * \param _decimals Decimal count (range 0 to 6)
  * \param _parent Parent \c QObject
  * \note Default horizontal orientation
  * \note Default range from -1 to 1 (Value keeps normalized)
@@ -408,7 +411,7 @@ inline const QVector3D &GuiVector3D::value() const
  * \brief Getter for X widgets
  * \returns X widgets
  */
-inline GuiFloat *GuiVector3D::xWidgets()
+inline GuiFloat *GuiVector3D::xGui()
 {
     return m_x;
 }
@@ -417,7 +420,7 @@ inline GuiFloat *GuiVector3D::xWidgets()
  * \brief Getter for Y widgets
  * \returns Y widgets
  */
-inline GuiFloat *GuiVector3D::yWidgets()
+inline GuiFloat *GuiVector3D::yGui()
 {
     return m_y;
 }
@@ -426,7 +429,7 @@ inline GuiFloat *GuiVector3D::yWidgets()
  * \brief Getter for Z widgets
  * \returns Z widgets
  */
-inline GuiFloat *GuiVector3D::zWidgets()
+inline GuiFloat *GuiVector3D::zGui()
 {
     return m_z;
 }

@@ -26,6 +26,9 @@ struct DirectionLight : public ADSColors
         LightOn = 1,   //!< Light enabled
     };
 
+    Mode mode;            //!< Light mode
+    QVector3D direction;  //!< Light direction
+
     DirectionLight(const QVector3D &_direction,
                    const QColor &_ambient,
                    const QColor &_diffuse,
@@ -35,8 +38,8 @@ struct DirectionLight : public ADSColors
     inline DirectionLight(const QVector3D &_direction);
     inline DirectionLight();
 
-    Mode mode;            //!< Light mode
-    QVector3D direction;  //!< Light direction
+    void saveSettings(QSettings &_settings, const QString &_keyGroup) const;
+    void loadSettings(const QSettings &_settings, const QString &_keyGroup);
 };
 
 /*!
@@ -149,6 +152,9 @@ struct PointLight : public ADSColors
     inline PointLight(const QVector3D &_position, const QColor &_colorAll);
 
     inline PointLight(const QVector3D &_position);
+
+    void saveSettings(QSettings &_settings, const QString &_keyGroup) const;
+    void loadSettings(const QSettings &_settings, const QString &_keyGroup);
 };
 
 /*!

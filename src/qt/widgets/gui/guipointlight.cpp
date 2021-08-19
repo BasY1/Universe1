@@ -6,12 +6,14 @@
 
 #include "guipointlight.h"
 
+#include "../horizontallinespacer.h"
+
 /*!
  * \brief Constructor
  * \param _index Light index
  * \param _light Initialization light
  * \param _sceneRange Scene range - light position range will be + 50% greater
- * \param _decimals Decimal count (range 1 to 6)
+ * \param _decimals Decimal count (range 0 to 6)
  * \param _orientation Widgets orientation
  * \param _parent Parent \c QObject
  */
@@ -25,12 +27,17 @@ Universe1::Widgets::GUI::GuiPointLight::GuiPointLight(const int _index,
     , m_index(_index)
     , m_light(_light)
     , m_lightMode(new QComboBox())
-    , m_position(new GuiVector3D(m_light.position, _sceneRange, _decimals, _orientation, this))
+    , m_position(new GuiVector3D(m_light.position, _sceneRange, _decimals, _orientation))
     , m_constantWidgets(new GuiFloat(m_light.constant, 0, 2, 3, _orientation))
     , m_linearWidgets(new GuiFloat(m_light.linear, 0, 2, 3, _orientation))
     , m_quadraticWidgets(new GuiFloat(m_light.quadratic, 0, 2, 3, _orientation))
-    , m_colors(new GuiColorADS(m_light, _orientation, this))
+    , m_colors(new GuiColorADS(m_light, _orientation))
 {
+    m_position->setToolTip(tr("Light position"));
+    m_constantWidgets->setToolTip(tr("Constant attenuation factor"));
+    m_linearWidgets->setToolTip(tr("Linear attenuation factor"));
+    m_quadraticWidgets->setToolTip(tr("Quadratic attenuation factor"));
+
     m_lightMode->addItem(tr("Off"), static_cast<int>(OpenGL::PointLight::LightOff));
     m_lightMode->addItem(tr("Fixed"), static_cast<int>(OpenGL::PointLight::LightFixed));
     m_lightMode->addItem(tr("Scalar"), static_cast<int>(OpenGL::PointLight::LightScalar));
@@ -60,6 +67,32 @@ Universe1::Widgets::GUI::GuiPointLight::GuiPointLight(const int _index,
 Universe1::Widgets::GUI::GuiPointLight::~GuiPointLight()
 {
     disconnectAll();
+
+    delete m_position;
+    delete m_colors;
+    delete m_constantWidgets;
+    delete m_linearWidgets;
+    delete m_quadraticWidgets;
+}
+
+/*!
+ * \brief Fill new layout row with widgets
+ * \param _lay Layout object
+ * \param _row Current row within layout
+ * \param _addSingleColor Layout object
+ */
+void Universe1::Widgets::GUI::GuiPointLight::layoutRow(QGridLayout *_lay, int &_row, const bool _addSingleColor)
+{
+    _lay->addWidget(new QLabel(tr("Mode")), _row, 0, 1, 2);
+    _lay->addWidget(m_lightMode, _row++, 2, 1, 2);
+
+    m_colors->layoutRow(_lay, _row, _addSingleColor);
+    _lay->addWidget(new HorizontalLineSpacer(), _row++, 0, 1, 4);
+    m_position->layoutRow(tr("Position"), _lay, _row);
+    _lay->addWidget(new HorizontalLineSpacer(), _row++, 0, 1, 4);
+    m_constantWidgets->layoutRow(tr("Scalar"), _lay, _row);
+    m_linearWidgets->layoutRow(tr("Linear"), _lay, _row);
+    m_quadraticWidgets->layoutRow(tr("Quadratic"), _lay, _row);
 }
 
 /*!

@@ -6,6 +6,10 @@
 
 #include "guicolorads.h"
 
+#include "../horizontallinespacer.h"
+
+#include <QLabel>
+
 /*!
  * \brief Constructor
  * \param _colors Initialization colors
@@ -18,10 +22,14 @@ Universe1::Widgets::GUI::GuiColorADS::GuiColorADS(const OpenGL::ADSColors &_colo
     : QObject(_parent)
     , m_colors(_colors)
     , m_singleColor(new QCheckBox())
-    , m_ambient(new GuiColor(m_colors.ambient, _orientation, this))
-    , m_diffuse(new GuiColor(m_colors.diffuse, _orientation, this))
-    , m_specular(new GuiColor(m_colors.specular, _orientation, this))
+    , m_ambient(new GuiColor(m_colors.ambient, _orientation))
+    , m_diffuse(new GuiColor(m_colors.diffuse, _orientation))
+    , m_specular(new GuiColor(m_colors.specular, _orientation))
 {
+    m_ambient->setToolTip(tr("Ambient color"));
+    m_diffuse->setToolTip(tr("Diffuse color"));
+    m_specular->setToolTip(tr("Specular color"));
+
     connect(m_ambient, &GuiColor::changed, this, &GuiColorADS::ambientChanged);
     connect(m_diffuse, &GuiColor::changed, this, &GuiColorADS::diffuseChanged);
     connect(m_specular, &GuiColor::changed, this, &GuiColorADS::specularChanged);
@@ -35,6 +43,32 @@ Universe1::Widgets::GUI::GuiColorADS::~GuiColorADS()
     disconnect(m_ambient, &GuiColor::changed, this, &GuiColorADS::ambientChanged);
     disconnect(m_diffuse, &GuiColor::changed, this, &GuiColorADS::diffuseChanged);
     disconnect(m_specular, &GuiColor::changed, this, &GuiColorADS::specularChanged);
+
+    delete m_ambient;
+    delete m_diffuse;
+    delete m_specular;
+}
+
+/*!
+ * \brief Fill new layout row with widgets
+ * \param _lay Layout object
+ * \param _row Current row within layout
+ * \param _addSingleColor Layout object
+ */
+void Universe1::Widgets::GUI::GuiColorADS::layoutRow(QGridLayout *_lay, int &_row, const bool _addSingleColor)
+{
+    if (_addSingleColor)
+    {
+        _lay->addWidget(new QLabel(tr("Single color")), _row, 0, 1, 2);
+        _lay->addWidget(m_singleColor, _row, 2, 1, 2);
+        _row++;
+    }
+
+    m_ambient->layoutRow(tr("Ambient"), _lay, _row);
+    _lay->addWidget(new HorizontalLineSpacer(), _row++, 0, 1, 4);
+    m_diffuse->layoutRow(tr("Diffuse"), _lay, _row);
+    _lay->addWidget(new HorizontalLineSpacer(), _row++, 0, 1, 4);
+    m_specular->layoutRow(tr("Specular"), _lay, _row);
 }
 
 /*!

@@ -39,3 +39,31 @@ void Universe1::OpenGL::ADSColors::setColorAll(const QColor &_color)
     diffuse = _color;
     specular = _color;
 }
+
+/*!
+ * \brief Save colors into \c QSettings
+ * \param _settings \c QSettings object
+ * \param _keyGroup \c QSettings group name
+ * \returns
+ */
+void Universe1::OpenGL::ADSColors::saveSettings(QSettings &_settings, const QString &_keyGroup) const
+{
+    const QString key = _keyGroup.isEmpty() ? QString() : (_keyGroup.endsWith('/') ? _keyGroup : (_keyGroup + "/"));
+    _settings.setValue(key + "ambient", ambient);
+    _settings.setValue(key + "diffuse", diffuse);
+    _settings.setValue(key + "specular", specular);
+}
+
+/*!
+ * \brief Load colors from \c QSettings
+ * \param _settings \c QSettings object
+ * \param _keyGroup \c QSettings group name
+ * \returns
+ */
+void Universe1::OpenGL::ADSColors::loadSettings(const QSettings &_settings, const QString &_keyGroup)
+{
+    const QString key = _keyGroup.isEmpty() ? QString() : (_keyGroup.endsWith('/') ? _keyGroup : (_keyGroup + "/"));
+    ambient = _settings.value(key + "ambient", ambient).value<QColor>();
+    diffuse = _settings.value(key + "diffuse", diffuse).value<QColor>();
+    specular = _settings.value(key + "specular", specular).value<QColor>();
+}

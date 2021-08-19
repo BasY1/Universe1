@@ -8,6 +8,7 @@
 #define UNIVERSE1_WIDGETS_GUI_GUIFLOAT_H
 
 #include <QDoubleSpinBox>
+#include <QGridLayout>
 #include <QSlider>
 
 namespace Universe1 {
@@ -44,10 +45,13 @@ class GuiFloat : public QObject
     inline QSlider *slider();
     inline QDoubleSpinBox *box();
 
+    void layoutRow(const QString &_name, QGridLayout *_lay, int &_row);
+
  public slots:
     void setValue(float _value);
     void setOrientation(Qt::Orientation _orientation);
     void setEnabled(bool _value);
+    void setToolTip(QString _toolTip);
 
  protected slots:
     void sliderChanged(int _value);
@@ -80,7 +84,7 @@ class GuiFloat : public QObject
  * \param _value Value
  * \param _minimum Minimum possible value
  * \param _maximum Maximum possible value
- * \param _decimals Decimal count (range 1 to 6)
+ * \param _decimals Decimal count (range 0 to 6)
  * \param _parent Parent \c QObject
  * \note Default horizontal orientation
  */

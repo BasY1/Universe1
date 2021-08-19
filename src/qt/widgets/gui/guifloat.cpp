@@ -5,6 +5,7 @@
  */
 
 #include "guifloat.h"
+#include <QLabel>
 
 /*!
  * \brief Power of 10 tool function
@@ -30,7 +31,7 @@ static int pow10(int _exponent)
  * \param _value Value
  * \param _minimum Minimum possible value
  * \param _maximum Maximum possible value
- * \param _decimals Decimal count (range 1 to 6)
+ * \param _decimals Decimal count (range 0 to 6)
  * \param _orientation Orientation
  * \param _parent Parent \c QObject
  */
@@ -41,7 +42,7 @@ Universe1::Widgets::GUI::GuiFloat::GuiFloat(const float _value,
                                             const Qt::Orientation _orientation,
                                             QObject *_parent)
     : QObject(_parent)
-    , m_decimals(std::min(6, std::max(1, _decimals)))
+    , m_decimals(std::min(6, std::max(0, _decimals)))
     , m_mult(pow10(m_decimals))
     , m_multF(m_mult)
     , m_minimum(_minimum)
@@ -84,6 +85,20 @@ Universe1::Widgets::GUI::GuiFloat::~GuiFloat()
                static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
                this,
                &GuiFloat::boxChanged);
+}
+
+/*!
+ * \brief Fill new layout row with widgets
+ * \param _name Property name
+ * \param _lay Layout object
+ * \param _row Current row within layout
+ */
+void Universe1::Widgets::GUI::GuiFloat::layoutRow(const QString &_name, QGridLayout *_lay, int &_row)
+{
+    _lay->addWidget(new QLabel(_name), _row, 0, 1, 2);
+    _lay->addWidget(m_box, _row, 2);
+    _lay->addWidget(m_slider, _row, 3);
+    ++_row;
 }
 
 /*!
@@ -137,6 +152,16 @@ void Universe1::Widgets::GUI::GuiFloat::setEnabled(bool _value)
 }
 
 /*!
+ * \brief Setup widgets tool-tip
+ * \param _toolTip Tool tip text
+ */
+void Universe1::Widgets::GUI::GuiFloat::setToolTip(QString _toolTip)
+{
+    m_slider->setToolTip(_toolTip);
+    m_box->setToolTip(_toolTip);
+}
+
+/*!
  * \brief Slider changed handler
  * \param _value New slider value
  */
@@ -150,10 +175,10 @@ void Universe1::Widgets::GUI::GuiFloat::sliderChanged(int _value)
     m_value = m_minimum + m_rangeF * (static_cast<float>(_value - m_slider->minimum()) / m_sliderRangeF);
     m_box->setValue(m_value);
 
-    disconnect(m_box,
-               static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-               this,
-               &GuiFloat::boxChanged);
+    connect(m_box,
+            static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+            this,
+            &GuiFloat::boxChanged);
 
     emit changed(m_value);
 }

@@ -6,7 +6,6 @@
 
 #include "camera.h"
 
-#include <QSettings>
 
 /*!
  * \brief Tool function returns value from flag setup
@@ -52,10 +51,14 @@ static std::pair<QVector3D, QVector3D> spinByYawPitch(const QVector3D &_forward,
 
 /*!
  * \brief Constructor
+ * \param _settingsKey Key for storing in QSettings
+ * \param _storePosition Store position flag
  * \param _parent Parent \c QObject
  */
-Universe1::OpenGL::Camera::Camera(QObject *_parent)
+Universe1::OpenGL::Camera::Camera(const QString &_settingsKey, const bool _storePosition, QObject *_parent)
     : QObject(_parent)
+    , m_settingsKey(_settingsKey)
+    , m_storePosition(_storePosition)
     , m_position(0.0F, -1.0F, -5.0F)
     , m_centerOfView()
     , m_upVector(0.0F, 0.0F, 1.0F)
@@ -92,6 +95,22 @@ Universe1::OpenGL::Camera::Camera(QObject *_parent)
     , m_keyAccelerate(Qt::ShiftModifier)
     , m_keyDecelerate(Qt::ControlModifier)
 {
+    if (!m_settingsKey.isEmpty())
+    {
+        const QSettings settings;
+        loadSettings(settings, m_storePosition, m_settingsKey);
+    }
+}
+/*!
+ * \brief Destructor
+ */
+Universe1::OpenGL::Camera::~Camera()
+{
+    if (!m_settingsKey.isEmpty())
+    {
+        QSettings settings;
+        saveSettings(settings, m_storePosition, m_settingsKey);
+    }
 }
 
 /*!
@@ -608,49 +627,52 @@ void Universe1::OpenGL::Camera::setMaybeLookAt(const std::pair<QVector3D, QVecto
 
 /*!
  * \brief Save camera into \c QSettings
+ * \param _settings \c QSettings object
  * \param _savePosition Save with position
  * \param _keyGroup \c QSettings group name
  */
-void Universe1::OpenGL::Camera::saveSettings(const bool _savePosition, const QString &_keyGroup) const
+void Universe1::OpenGL::Camera::saveSettings(QSettings &_settings,
+                                             const bool _savePosition,
+                                             const QString &_keyGroup) const
 {
     const QString key = _keyGroup.isEmpty() ? QString() : (_keyGroup.endsWith('/') ? _keyGroup : (_keyGroup + "/"));
-    QSettings settings;
-
-    settings.setValue(key + "verticalAngleDeg", m_verticalAngleDeg);
-    settings.setValue(key + "nearPlane", m_nearPlane);
-    settings.setValue(key + "farPlane", m_farPlane);
-    settings.setValue(key + "moveSpeed", m_moveSpeed);
-    settings.setValue(key + "spinSpeed", m_spinSpeed);
-    settings.setValue(key + "modifierAccel", m_modifierAccel);
-    settings.setValue(key + "mouseSensitivity", m_mouseSensitivity);
+    _settings.setValue(key + "verticalAngleDeg", m_verticalAngleDeg);
+    _settings.setValue(key + "nearPlane", m_nearPlane);
+    _settings.setValue(key + "farPlane", m_farPlane);
+    _settings.setValue(key + "moveSpeed", m_moveSpeed);
+    _settings.setValue(key + "spinSpeed", m_spinSpeed);
+    _settings.setValue(key + "modifierAccel", m_modifierAccel);
+    _settings.setValue(key + "mouseSensitivity", m_mouseSensitivity);
     if (_savePosition)
     {
-        settings.setValue(key + "position", m_position);
-        settings.setValue(key + "centerOfView", m_centerOfView);
-        settings.setValue(key + "upVector", m_upVector);
+        _settings.setValue(key + "position", m_position);
+        _settings.setValue(key + "centerOfView", m_centerOfView);
+        _settings.setValue(key + "upVector", m_upVector);
     }
 }
 
 /*!
  * \brief Load camera properties from \c QSettings
+ * \param _settings \c QSettings object
  * \param _loadPosition Load with position
  * \param _keyGroup \c QSettings group name
  */
-void Universe1::OpenGL::Camera::loadSettings(const bool _loadPosition, const QString &_keyGroup)
+void Universe1::OpenGL::Camera::loadSettings(const QSettings &_settings,
+                                             const bool _loadPosition,
+                                             const QString &_keyGroup)
 {
     const QString key = _keyGroup.isEmpty() ? QString() : (_keyGroup.endsWith('/') ? _keyGroup : (_keyGroup + "/"));
-    const QSettings settings;
-    m_verticalAngleDeg = settings.value(key + "verticalAngleDeg", m_verticalAngleDeg).toFloat();
-    m_nearPlane = settings.value(key + "nearPlane", m_nearPlane).toFloat();
-    m_farPlane = settings.value(key + "farPlane", m_farPlane).toFloat();
-    m_moveSpeed = settings.value(key + "moveSpeed", m_moveSpeed).toFloat();
-    m_spinSpeed = settings.value(key + "spinSpeed", m_spinSpeed).toFloat();
-    m_modifierAccel = settings.value(key + "modifierAccel", m_modifierAccel).toFloat();
-    m_mouseSensitivity = settings.value(key + "mouseSensitivity", m_mouseSensitivity).toFloat();
+    m_verticalAngleDeg = _settings.value(key + "verticalAngleDeg", m_verticalAngleDeg).toFloat();
+    m_nearPlane = _settings.value(key + "nearPlane", m_nearPlane).toFloat();
+    m_farPlane = _settings.value(key + "farPlane", m_farPlane).toFloat();
+    m_moveSpeed = _settings.value(key + "moveSpeed", m_moveSpeed).toFloat();
+    m_spinSpeed = _settings.value(key + "spinSpeed", m_spinSpeed).toFloat();
+    m_modifierAccel = _settings.value(key + "modifierAccel", m_modifierAccel).toFloat();
+    m_mouseSensitivity = _settings.value(key + "mouseSensitivity", m_mouseSensitivity).toFloat();
     if (_loadPosition)
     {
-        m_position = settings.value(key + "position", m_position).value<QVector3D>();
-        m_centerOfView = settings.value(key + "centerOfView", m_centerOfView).value<QVector3D>();
-        m_upVector = settings.value(key + "upVector", m_upVector).value<QVector3D>();
+        m_position = _settings.value(key + "position", m_position).value<QVector3D>();
+        m_centerOfView = _settings.value(key + "centerOfView", m_centerOfView).value<QVector3D>();
+        m_upVector = _settings.value(key + "upVector", m_upVector).value<QVector3D>();
     }
 }

@@ -67,11 +67,14 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
     addShaderFromSourceCode(QOpenGLShader::Fragment,
                             ("#version 330 core                                                          \n"
                              "                                                                           \n"
+                             "out vec4 FragColor;                                                        \n"
+                             "                                                                           \n"
                              "#define POINT_LIGHT_COUNT " +
                              QString::number(pointLightsCount) +
                              "\n"
                              "                                                                           \n"
                              "struct Material {                                                          \n"
+                             "    float alpha;                                                           \n"
                              "    float shininess;                                                       \n"
                              "                                                                           \n"
                              "    vec3 ambient;                                                          \n"
@@ -111,7 +114,7 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
                              "                                                                           \n"
                              "void main(void)                                                            \n"
                              "{                                                                          \n"
-                             "    vec3 out;                                                              \n"
+                             "    vec3 result;                                                           \n"
                              "    vec3 norm = normalize(normOut);                                        \n"
                              "    vec3 viewDir = normalize(cameraPosition - vertOut);                    \n"
                              "    if (directionLight.mode != 0)                                          \n"
@@ -122,9 +125,9 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
                              "        float d = max(dot(norm, lightDir), 0.0);                           \n"
                              "        float s = pow(max(dot(viewDir, reflDir), 0.0), material.shininess);\n"
                              "                                                                           \n"
-                             "        out += directionLight.ambient * material.ambient;                  \n"
-                             "        out += d * directionLight.diffuse * material.diffuse;              \n"
-                             "        out += s * directionLight.specular * material.specular;            \n"
+                             "        result += directionLight.ambient * material.ambient;               \n"
+                             "        result += d * directionLight.diffuse * material.diffuse;           \n"
+                             "        result += s * directionLight.specular * material.specular;         \n"
                              "    }                                                                      \n"
                              "                                                                           \n"
                              "    for (int i = 0 ; i < POINT_LIGHT_COUNT ; ++i)                          \n"
@@ -157,12 +160,12 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
                              "        default: break;                                                    \n"
                              "        }                                                                  \n"
                              "                                                                           \n"
-                             "        out += a * pointLight[i].ambient * material.ambient;               \n"
-                             "        out += a * d * pointLight[i].diffuse * material.diffuse;           \n"
-                             "        out += a * s *  pointLight[i].specular * material.specular;        \n"
+                             "        result += a * pointLight[i].ambient * material.ambient;            \n"
+                             "        result += a * d * pointLight[i].diffuse * material.diffuse;        \n"
+                             "        result += a * s *  pointLight[i].specular * material.specular;     \n"
                              "    }                                                                      \n"
                              "                                                                           \n"
-                             "    gl_FragColor = vec4(out, 1.0);                                         \n"
+                             "    FragColor = vec4(result, material.alpha);                              \n"
                              "}                                                                          \n"));
 
     if (!link())
@@ -183,19 +186,34 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
     if (m_attrNormal < 0)
         result = false;
 
-    m_attrProjXview = uniformLocation("projXview");
-    m_attrCameraPosition = uniformLocation("cameraPosition");
+    m_attrModel = uniformLocation("model");
+    if (m_attrModel < 0)
+    {
+        result = false;
+    }
+    else
+    {
+        QMatrix4x4 identityMatrix;
+        identityMatrix.setToIdentity();
+        setUniformValue(m_attrModel, identityMatrix);
+    }
 
+    m_attrProjXview = uniformLocation("projXview");
     if (m_attrProjXview < 0)
         result = false;
+
+    m_attrCameraPosition = uniformLocation("cameraPosition");
     if (m_attrCameraPosition < 0)
         result = false;
 
+    m_attrMaterialAlpha = uniformLocation("material.alpha");
     m_attrMaterialShininess = uniformLocation("material.shininess");
     m_attrMaterialAmbient = uniformLocation("material.ambient");
     m_attrMaterialDiffuse = uniformLocation("material.diffuse");
     m_attrMaterialSpecular = uniformLocation("material.specular");
 
+    if (m_attrMaterialAlpha < 0)
+        result = false;
     if (m_attrMaterialShininess < 0)
         result = false;
     if (m_attrMaterialAmbient < 0)
@@ -271,6 +289,7 @@ void Universe1::OpenGL::ShaderProgram::setupCamera(const Camera *_camera)
  */
 void Universe1::OpenGL::ShaderProgram::setupMaterial(const Material &_material)
 {
+    setUniformValue(m_attrMaterialAlpha, _material.alpha);
     setUniformValue(m_attrMaterialShininess, _material.shininess);
     setUniformValue(m_attrMaterialAmbient, _material.ambientVector());
     setUniformValue(m_attrMaterialDiffuse, _material.diffuseVector());

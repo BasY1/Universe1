@@ -23,9 +23,9 @@ class MaterialModel : public GLModel
     MaterialModel(const Material &_material, QObject *_parent = nullptr);
     ~MaterialModel();
 
-    inline bool isInit() const;
-    inline bool canSwitchDrawWireFrame() const;
-    inline bool drawWireFrame() const;
+    bool isInit() const override;
+    bool canSwitchDrawWireFrame() const override;
+    bool drawWireFrame() const override;
     inline const Material &material() const;
 
     size_t memoryUsage() const override;
@@ -37,15 +37,22 @@ class MaterialModel : public GLModel
                              const std::vector<uint> &_triangsData,
                              const std::vector<uint> &_linesData) final;
 
+    void initGLImlp() override;
     void paintGLImlp(ShaderProgram *_program) override;
 
+    /*!
+     * \brief Rebuild model
+     * \returns
+     */
+    virtual void rebuild() = 0;
+
  public slots:
-    void setDrawWireFrame(bool _value);
+    void setDrawWireFrame(bool _value) override;
     void setMaterial(const Material &_value);
 
  protected:
     bool m_isInit;                  //!< OpenGL buffers initialized flag
-    bool m_canSwitchDrawWireFrame;  //!< Is possible draw wire-framed flag
+    bool m_canSwitchDrawWireFrame;  //!< Is possible to switch value of draw wire-framed flag
     bool m_drawWireFrame;           //!< Draw wire-framed flag
     Material m_material;            //!< Material
 
@@ -60,33 +67,6 @@ class MaterialModel : public GLModel
     GLsizei m_triangsCount;          //!< Triangles faces index buffer item count
     GLsizei m_linesCount;            //!< Line index buffer item count
 };
-
-/*!
- * \brief Getter for OpenGL buffers initialized flag
- * \returns OpenGL buffers initialized flag
- */
-inline bool MaterialModel::isInit() const
-{
-    return m_isInit;
-}
-
-/*!
- * \brief Getter for is possible draw wire-framed flag
- * \returns Is possible draw wire-framed flag
- */
-inline bool MaterialModel::canSwitchDrawWireFrame() const
-{
-    return m_canSwitchDrawWireFrame;
-}
-
-/*!
- * \brief Getter draw wire-framed flag
- * \returns Draw wire-framed flag
- */
-inline bool MaterialModel::drawWireFrame() const
-{
-    return m_drawWireFrame;
-}
 
 /*!
  * \brief Getter for model's material

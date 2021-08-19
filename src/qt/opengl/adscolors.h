@@ -8,6 +8,7 @@
 #define UNIVERSE1_OPENGL_ADSCOLORS_H
 
 #include <QColor>
+#include <QSettings>
 #include <QVector3D>
 
 namespace Universe1 {
@@ -30,6 +31,9 @@ struct ADSColors
     ADSColors(const QColor &_ambient, const QColor &_diffuse, const QColor &_specular);
 
     void setColorAll(const QColor &_color);
+
+    virtual void saveSettings(QSettings &_settings, const QString &_keyGroup) const;
+    virtual void loadSettings(const QSettings &_settings, const QString &_keyGroup);
 };
 
 /*!

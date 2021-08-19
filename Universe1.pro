@@ -60,9 +60,12 @@ SOURCES += \
     \
     src/qt/opengl/models/glmodel.cpp \
     src/qt/opengl/models/materialmodel.cpp \
-    src/qt/opengl/models/trianglemodel.cpp \
+    src/qt/opengl/models/modeltriangle.cpp \
+    src/qt/opengl/models/modelsphere.cpp \
     \
+    src/qt/widgets/horizontallinespacer.cpp \
     src/qt/widgets/widgetbgcolor.cpp \
+    src/qt/widgets/widgetglsettings.cpp \
     \
     src/qt/widgets/gui/guiint.cpp \
     src/qt/widgets/gui/guifloat.cpp \
@@ -74,8 +77,9 @@ SOURCES += \
     src/qt/widgets/gui/guipointlight.cpp \
     \
     src/qt/widgets/materialeditor/widgetview.cpp \
-    src/qt/widgets/materialeditor/widgetmodel.cpp \
-    src/qt/widgets/materialeditor/widgetmodeltriangle.cpp \
+    src/qt/widgets/materialeditor/widgetmodels.cpp \
+    src/qt/widgets/materialeditor/widgetmaterialeditor.cpp \
+    src/qt/widgets/materialeditor/dialogmaterialeditor.cpp \
 
 
 HEADERS += \
@@ -91,9 +95,12 @@ HEADERS += \
     \
     src/qt/opengl/models/glmodel.h \
     src/qt/opengl/models/materialmodel.h \
-    src/qt/opengl/models/trianglemodel.h \
+    src/qt/opengl/models/modeltriangle.h \
+    src/qt/opengl/models/modelsphere.h \
     \
+    src/qt/widgets/horizontallinespacer.h \
     src/qt/widgets/widgetbgcolor.h \
+    src/qt/widgets/widgetglsettings.h \
     \
     src/qt/widgets/gui/guiint.h \
     src/qt/widgets/gui/guifloat.h \
@@ -105,8 +112,9 @@ HEADERS += \
     src/qt/widgets/gui/guipointlight.h \
     \
     src/qt/widgets/materialeditor/widgetview.h \
-    src/qt/widgets/materialeditor/widgetmodel.h \
-    src/qt/widgets/materialeditor/widgetmodeltriangle.h \
+    src/qt/widgets/materialeditor/widgetmodels.h \
+    src/qt/widgets/materialeditor/widgetmaterialeditor.h \
+    src/qt/widgets/materialeditor/dialogmaterialeditor.h \
 
 
 ########################################################################################################################

@@ -6,15 +6,22 @@
 
 #include "glwidget.h"
 
+#include <QApplication>
+
 /*!
  * \brief Constructor
+ * \param _settingsKey Key for storing in QSettings
+ * \param _storePosition Store position flag
  * \param _parent Parent \c QWidget
  */
-Universe1::OpenGL::GLWidget::GLWidget(QWidget *_parent)
+Universe1::OpenGL::GLWidget::GLWidget(const QString &_settingsKey, const bool _storePosition, QWidget *_parent)
     : QOpenGLWidget(_parent)
+    , m_settingsKey(_settingsKey.isEmpty() ? QString()
+                                           : (_settingsKey.endsWith('/') ? _settingsKey : (_settingsKey + '/')))
     , m_emitContextPainted(false)
     , m_antialiasing(false)
     , m_blending(false)
+    , m_blendFunc(true)
     , m_cullFaceCcw(false)
     , m_cullFaceMode(CullDisabled)
     , m_bgColorRed(0.0F)
@@ -23,9 +30,30 @@ Universe1::OpenGL::GLWidget::GLWidget(QWidget *_parent)
     , m_bgColorAlpha(0.0F)
     , m_pointSize(1.0F)
     , m_lineWidth(1.0F)
-    , m_camera(new Camera())
+    , m_camera(new Camera(m_settingsKey.isEmpty() ? QString() : (m_settingsKey + "Camera"), _storePosition, this))
     , m_program(new ShaderProgram())
 {
+    if (!m_settingsKey.isEmpty())
+    {
+        const QSettings settings;
+        m_antialiasing = settings.value(m_settingsKey + "antialiasing", m_antialiasing).toBool();
+
+        m_blending = settings.value(m_settingsKey + "blending", m_blending).toBool();
+        m_blendFunc = settings.value(m_settingsKey + "blendFunc", m_blendFunc).toBool();
+
+        m_cullFaceCcw = settings.value(m_settingsKey + "cullFaceCcw", m_cullFaceCcw).toBool();
+        m_cullFaceMode = static_cast<CullFaceMode>(
+            settings.value(m_settingsKey + "cullFaceMode", static_cast<int>(m_cullFaceMode)).toInt());
+
+        m_bgColorRed = settings.value(m_settingsKey + "bgColorRed", m_bgColorRed).toFloat();
+        m_bgColorGreen = settings.value(m_settingsKey + "bgColorGreen", m_bgColorGreen).toFloat();
+        m_bgColorBlue = settings.value(m_settingsKey + "bgColorBlue", m_bgColorBlue).toFloat();
+        m_bgColorAlpha = settings.value(m_settingsKey + "bgColorAlpha", m_bgColorAlpha).toFloat();
+
+        m_pointSize = settings.value(m_settingsKey + "pointSize", m_pointSize).toFloat();
+        m_lineWidth = settings.value(m_settingsKey + "lineWidth", m_lineWidth).toFloat();
+    }
+
     QSurfaceFormat format;
     format.setDepthBufferSize(24);
     format.setSamples(4);
@@ -36,7 +64,7 @@ Universe1::OpenGL::GLWidget::GLWidget(QWidget *_parent)
     setMouseTracking(true);
     connect(m_camera, &Camera::changed, this, static_cast<void (QOpenGLWidget::*)()>(&QOpenGLWidget::update));
 
-    m_camera->setHandlingInput(true);
+    m_camera->setHandlingInput(QApplication::focusWidget() == this);
 }
 
 /*!
@@ -44,13 +72,30 @@ Universe1::OpenGL::GLWidget::GLWidget(QWidget *_parent)
  */
 Universe1::OpenGL::GLWidget::~GLWidget()
 {
+    if (!m_settingsKey.isEmpty())
+    {
+        QSettings settings;
+        settings.setValue(m_settingsKey + "antialiasing", m_antialiasing);
+
+        settings.setValue(m_settingsKey + "blending", m_blending);
+        settings.setValue(m_settingsKey + "blendFunc", m_blendFunc);
+
+        settings.setValue(m_settingsKey + "cullFaceCcw", m_cullFaceCcw);
+        settings.setValue(m_settingsKey + "cullFaceMode", static_cast<int>(m_cullFaceMode));
+
+        settings.setValue(m_settingsKey + "bgColorRed", m_bgColorRed);
+        settings.setValue(m_settingsKey + "bgColorGreen", m_bgColorGreen);
+        settings.setValue(m_settingsKey + "bgColorBlue", m_bgColorBlue);
+        settings.setValue(m_settingsKey + "bgColorAlpha", m_bgColorAlpha);
+
+        settings.setValue(m_settingsKey + "pointSize", m_pointSize);
+        settings.setValue(m_settingsKey + "lineWidth", m_lineWidth);
+    }
     disconnect(m_camera, &Camera::changed, this, static_cast<void (QOpenGLWidget::*)()>(&QOpenGLWidget::update));
 
     makeCurrent();
     delete m_program;
     doneCurrent();
-
-    delete m_camera;
 }
 
 /*!
@@ -162,8 +207,10 @@ void Universe1::OpenGL::GLWidget::paintGL()
     if (m_blending)
     {
         glEnable(GL_BLEND);
-        //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
+        if (m_blendFunc)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        else
+            glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
     }
     else
     {
@@ -173,16 +220,22 @@ void Universe1::OpenGL::GLWidget::paintGL()
     if (m_antialiasing)
     {
         glEnable(GL_MULTISAMPLE);
+
         glEnable(GL_POINT_SMOOTH);
         glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+
         glEnable(GL_LINE_SMOOTH);
         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+
+        glEnable(GL_POLYGON_SMOOTH);
+        glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
     }
     else
     {
         glDisable(GL_MULTISAMPLE);
         glDisable(GL_POINT_SMOOTH);
         glDisable(GL_LINE_SMOOTH);
+        glDisable(GL_POLYGON_SMOOTH);
     }
 
     switch (m_cullFaceMode)
@@ -253,6 +306,17 @@ void Universe1::OpenGL::GLWidget::setAntialiasing(const bool _value)
 void Universe1::OpenGL::GLWidget::setBlending(const bool _value)
 {
     m_blending = _value;
+    update();
+}
+
+/*!
+ * \brief Setter for blending function flag
+ * \param _value New blending function flag value
+ * \sa Universe1::OpenGL::GLWidget::m_blendFunc
+ */
+void Universe1::OpenGL::GLWidget::setBlendFunc(const bool _value)
+{
+    m_blendFunc = _value;
     update();
 }
 

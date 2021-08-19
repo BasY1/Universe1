@@ -5,6 +5,7 @@
  */
 
 #include "guiint.h"
+#include <QLabel>
 
 /*!
  * \brief Constructor
@@ -17,7 +18,7 @@
 Universe1::Widgets::GUI::GuiInt::GuiInt(
     const int _value, const int _minimum, const int _maximum, const Qt::Orientation _orientation, QObject *_parent)
     : QObject(_parent)
-    , m_value(std::min(_minimum, std::max(_maximum, _value)))
+    , m_value(std::min(_maximum, std::max(_minimum, _value)))
     , m_slider(new QSlider(_orientation))
     , m_box(new QSpinBox())
 {
@@ -44,6 +45,20 @@ Universe1::Widgets::GUI::GuiInt::~GuiInt()
 {
     disconnect(m_slider, &QSlider::valueChanged, this, &GuiInt::sliderChanged);
     disconnect(m_box, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &GuiInt::boxChanged);
+}
+
+/*!
+ * \brief Fill new layout row with widgets
+ * \param _name Property name
+ * \param _lay Layout object
+ * \param _row Current row within layout
+ */
+void Universe1::Widgets::GUI::GuiInt::layoutRow(const QString &_name, QGridLayout *_lay, int &_row)
+{
+    _lay->addWidget(new QLabel(_name), _row, 0, 1, 2);
+    _lay->addWidget(m_box, _row, 2);
+    _lay->addWidget(m_slider, _row, 3);
+    ++_row;
 }
 
 /*!
@@ -87,6 +102,16 @@ void Universe1::Widgets::GUI::GuiInt::setEnabled(bool _value)
 {
     m_slider->setEnabled(_value);
     m_box->setEnabled(_value);
+}
+
+/*!
+ * \brief Setup widgets tool-tip
+ * \param _toolTip Tool tip text
+ */
+void Universe1::Widgets::GUI::GuiInt::setToolTip(QString _toolTip)
+{
+    m_slider->setToolTip(_toolTip);
+    m_box->setToolTip(_toolTip);
 }
 
 /*!
