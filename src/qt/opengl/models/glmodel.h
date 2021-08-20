@@ -32,18 +32,6 @@ class GLModel : public QObject, protected QOpenGLFunctions
     virtual bool isInit() const = 0;
 
     /*!
-     * \brief Getter for is possible to switch value of draw wire-framed flag
-     * \returns Is possible to switch value of draw wire-framed flag
-     */
-    virtual bool canSwitchDrawWireFrame() const = 0;
-
-    /*!
-     * \brief Getter for draw wire-framed flag
-     * \returns Draw wire-framed flag
-     */
-    virtual bool drawWireFrame() const = 0;
-
-    /*!
      * \brief Memory usage: returns size of allocated memory within OpenGL context
      * \returns Size of allocated memory within OpenGL context
      */
@@ -76,12 +64,6 @@ class GLModel : public QObject, protected QOpenGLFunctions
 
  public slots:
     void setEnabled(bool _value);
-
-    /*!
-     * \brief Setter for draw wire-framed flag
-     * \param _value New draw wire-framed flag value
-     */
-    virtual void setDrawWireFrame(bool _value) = 0;
 
     virtual void setMaterial(const Material &_value);
 

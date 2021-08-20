@@ -58,8 +58,12 @@ void Universe1::Widgets::GUI::GuiDirectionLight::layoutRow(QGridLayout *_lay, in
     _lay->addWidget(m_lightOnOff, _row, 2, 1, 2);
     _row++;
 
-    m_colors->layoutRow(_lay, _row, _addSingleColor);
     _lay->addWidget(new HorizontalLineSpacer(), _row++, 0, 1, 4);
+
+    m_colors->layoutRow(_lay, _row, _addSingleColor);
+
+    _lay->addWidget(new HorizontalLineSpacer(), _row++, 0, 1, 4);
+
     m_direction->layoutRow(tr("Direction"), _lay, _row);
     m_direction->setToolTip(tr("Light direction normal vector"));
 }

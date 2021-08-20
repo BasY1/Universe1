@@ -48,24 +48,6 @@ bool Universe1::OpenGL::Models::LinesModel::isInit() const
 }
 
 /*!
- * \brief Getter for is possible to switch value of draw wire-framed flag (always \c false)
- * \returns Always \c false
- */
-bool Universe1::OpenGL::Models::LinesModel::canSwitchDrawWireFrame() const
-{
-    return false;
-}
-
-/*!
- * \brief Getter draw wire-framed flag (always \c true)
- * \returns Always \c true
- */
-bool Universe1::OpenGL::Models::LinesModel::drawWireFrame() const
-{
-    return true;
-}
-
-/*!
  * \brief Returns size of allocated memory within OpenGL context
  * \returns Size of allocated memory within OpenGL context
  */
@@ -210,14 +192,3 @@ void Universe1::OpenGL::Models::LinesModel::paintGLImlp(ShaderProgram *_program)
     m_normalBuffer.release();
     m_vertexBuffer.release();
 }
-
-/*!
- * \brief Setter for draw wire-framed flag
- * \param _value New draw wire-framed flag value
- * \note Do nothing for this model implementation
- */
-void Universe1::OpenGL::Models::LinesModel::setDrawWireFrame(bool _value)
-{
-    Q_UNUSED(_value)
-}
-

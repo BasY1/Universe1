@@ -52,6 +52,7 @@ class WidgetMaterialEditor : public QSplitter
 
     WidgetView *m_view;  //!< Editor's Open GL view
 
+    GUI::GuiFloat *m_sceneAmbient;    //!< Scene ambient factor
     GUI::GuiMaterial *m_guiMaterial;  //!< Material GUI widgets
     QLineEdit *m_materialName;        //!< Line editor for material name
     QPushButton *m_addMaterial;       //!< Add material button
@@ -65,6 +66,7 @@ class WidgetMaterialEditor : public QSplitter
 
     WidgetModelSphere *m_widgetSphere;      //!< Sphere model widget
     WidgetModelTriangle *m_widgetTriangle;  //!< Triangle model widget
+    WidgetModelPlane *m_widgetPlane;        //!< Plane model widget
 
     QTabWidget *m_tabModels;       //!< Tab for model widgets and current model selection
     QTabWidget *m_tabPointLights;  //!< Tab for point lights collection

@@ -31,6 +31,7 @@ Universe1::OpenGL::DirectionLight::DirectionLight(const QVector3D &_direction,
 void Universe1::OpenGL::DirectionLight::saveSettings(QSettings &_settings, const QString &_keyGroup) const
 {
     const QString key = _keyGroup.isEmpty() ? QString() : (_keyGroup.endsWith('/') ? _keyGroup : (_keyGroup + "/"));
+    _settings.setValue(key + "mode", static_cast<int>(mode));
     _settings.setValue(key + "direction", direction);
     ADSColors::saveSettings(_settings, key);
 }
@@ -43,6 +44,7 @@ void Universe1::OpenGL::DirectionLight::saveSettings(QSettings &_settings, const
 void Universe1::OpenGL::DirectionLight::loadSettings(const QSettings &_settings, const QString &_keyGroup)
 {
     const QString key = _keyGroup.isEmpty() ? QString() : (_keyGroup.endsWith('/') ? _keyGroup : (_keyGroup + "/"));
+    mode = static_cast<Mode>(_settings.value(key + "mode", static_cast<int>(mode)).toInt());
     direction = _settings.value(key + "direction", direction).value<QVector3D>();
     ADSColors::loadSettings(_settings, key);
 }

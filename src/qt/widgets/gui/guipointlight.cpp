@@ -86,10 +86,16 @@ void Universe1::Widgets::GUI::GuiPointLight::layoutRow(QGridLayout *_lay, int &_
     _lay->addWidget(new QLabel(tr("Mode")), _row, 0, 1, 2);
     _lay->addWidget(m_lightMode, _row++, 2, 1, 2);
 
+    _lay->addWidget(new HorizontalLineSpacer(), _row++, 0, 1, 4);
+
     m_colors->layoutRow(_lay, _row, _addSingleColor);
+
     _lay->addWidget(new HorizontalLineSpacer(), _row++, 0, 1, 4);
+
     m_position->layoutRow(tr("Position"), _lay, _row);
+
     _lay->addWidget(new HorizontalLineSpacer(), _row++, 0, 1, 4);
+
     m_constantWidgets->layoutRow(tr("Scalar"), _lay, _row);
     m_linearWidgets->layoutRow(tr("Linear"), _lay, _row);
     m_quadraticWidgets->layoutRow(tr("Quadratic"), _lay, _row);

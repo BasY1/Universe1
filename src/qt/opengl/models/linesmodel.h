@@ -24,8 +24,6 @@ class LinesModel : public GLModel
     ~LinesModel();
 
     bool isInit() const override;
-    bool canSwitchDrawWireFrame() const override;
-    bool drawWireFrame() const override;
 
     size_t memoryUsage() const override;
     std::pair<QVector3D, QVector3D> range() const override;
@@ -44,9 +42,6 @@ class LinesModel : public GLModel
      */
     virtual void rebuild() = 0;
 
- public slots:
-    void setDrawWireFrame(bool _value) override;
-
  protected:
     bool m_isInit;                  //!< OpenGL buffers initialized flag
 
@@ -60,7 +55,6 @@ class LinesModel : public GLModel
     QOpenGLBuffer m_linesIndexes;    //!< Line index buffer
     GLsizei m_linesCount;            //!< Line item count
 };
-
 
 }  // namespace Models
 }  // namespace OpenGL

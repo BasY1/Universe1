@@ -62,6 +62,8 @@ void Universe1::Widgets::GUI::GuiColorADS::layoutRow(QGridLayout *_lay, int &_ro
         _lay->addWidget(new QLabel(tr("Single color")), _row, 0, 1, 2);
         _lay->addWidget(m_singleColor, _row, 2, 1, 2);
         _row++;
+
+        //_lay->addWidget(new HorizontalLineSpacer(), _row++, 0, 1, 4);
     }
 
     m_ambient->layoutRow(tr("Ambient"), _lay, _row);

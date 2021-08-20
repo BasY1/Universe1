@@ -72,11 +72,6 @@ Universe1::Widgets::WidgetGLSettings::WidgetGLSettings(OpenGL::GLWidget *_glWidg
         lay->addWidget(new QLabel(tr("Antialiasing")), row, 0, 1, 2);
         lay->addWidget(m_antialiasing, row, 2, 1, 2);
         row++;
-
-        if (isFirst)
-            lay->addWidget(new HorizontalLineSpacer(), row++, 0, 1, 4);
-        else
-            isFirst = true;
     }
 
     if (m_settings.testFlag(SettingsBlending))
@@ -341,7 +336,9 @@ void Universe1::Widgets::WidgetGLSettings::cullFaceModeChanged(int _value)
     m_cullFaceCcw->setEnabled(m_glWidget->cullFaceMode() != OpenGL::GLWidget::CullDisabled);
 }
 
-#define TABLE_BEGIN "<table border=\"1\" cellspacing=\"2\" cellpadding=\"1\">\n";  //!< Default HTML table header
+//#define TABLE_BEGIN "<table border=\"1\" cellspacing=\"2\" cellpadding=\"1\">\n";  //!< Default HTML table header
+
+#define TABLE_BEGIN "<table border=\"0\" cellspacing=\"0\" cellpadding=\"1\">\n";  //!< Default HTML table header
 
 /*!
  * \brief Cull face mode widget change handler

@@ -1,5 +1,5 @@
 /*!
- * \file qt/opengl/models/modelsphere.h
+ * \file qt/opengl/models/modelsphere.cpp
  * \author Michal Steller
  * \brief Open GL single sphere model with material class implementation
  */

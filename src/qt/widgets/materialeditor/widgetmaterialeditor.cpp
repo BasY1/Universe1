@@ -6,6 +6,8 @@
 
 #include "widgetmaterialeditor.h"
 
+#include "../horizontallinespacer.h"
+
 #include <QDialogButtonBox>
 #include <QGridLayout>
 
@@ -55,6 +57,7 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(O
     : QSplitter(Qt::Horizontal, _parent)
     , m_materialDB(_materialDB)
     , m_view(new WidgetView(m_materialDB->defaultMaterial()))
+    , m_sceneAmbient(new GUI::GuiFloat(m_view->sceneAmbientFactor(), 0, 1, 3, Qt::Horizontal))
     , m_guiMaterial(new GUI::GuiMaterial(m_materialDB->defaultMaterial(), Qt::Horizontal))
     , m_materialName(new QLineEdit())
     , m_addMaterial(new QPushButton(tr("Add")))
@@ -64,6 +67,7 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(O
     , m_widgetGLSettings(new WidgetGLSettings(m_view))
     , m_widgetSphere(new WidgetModelSphere(m_view->modelSphere()))
     , m_widgetTriangle(new WidgetModelTriangle(m_view->modelTriangle()))
+    , m_widgetPlane(new WidgetModelPlane(m_view->modelPlane()))
     , m_tabModels(new QTabWidget())
     , m_tabPointLights(new QTabWidget())
     , m_tabSettings(new QTabWidget())
@@ -72,6 +76,11 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(O
     QGridLayout *layMaterial = new QGridLayout();
 
     m_guiMaterial->layoutRow(layMaterial, rowLay, true);
+
+    layMaterial->addWidget(new HorizontalLineSpacer(), rowLay++, 0, 1, 4);
+
+    m_sceneAmbient->layoutRow(tr("Scene ambient"), layMaterial, rowLay);
+    m_sceneAmbient->setToolTip(tr("Scene ambient factor"));
 
     layMaterial->addWidget(new QLabel(tr("Name")), rowLay, 0, 1, 2);
     layMaterial->addWidget(m_materialName, rowLay, 2, 1, 2);
@@ -140,6 +149,7 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(O
 
     m_tabModels->addTab(m_widgetSphere, tr("Sphere"));
     m_tabModels->addTab(m_widgetTriangle, tr("Triangle"));
+    m_tabModels->addTab(m_widgetPlane, tr("Plane"));
     m_tabModels->setCurrentIndex(m_view->currentModel());
 
     m_tabSettings->addTab(m_tabModels, tr("Models"));
@@ -167,7 +177,26 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(O
     for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
         connect(m_guiPointLight[i], &GUI::GuiPointLight::changed, this, &WidgetMaterialEditor::pointLightChanged);
 
+    connect(m_sceneAmbient, &GUI::GuiFloat::changed, m_view, &WidgetView::setSceneAmbientFactor);
     connect(m_tabModels, &QTabWidget::currentChanged, m_view, &WidgetView::setCurrentModel);
+
+    connect(m_widgetSphere, &WidgetModelSphere::wireFrameChanged, m_view, &WidgetView::sphereWireFrameChanged);
+    connect(m_widgetSphere,
+            &WidgetModelSphere::equatorPointCountChanged,
+            m_view,
+            &WidgetView::sphereEquatorPointCountChanged);
+
+    connect(m_widgetTriangle, &WidgetModelTriangle::wireFrameChanged, m_view, &WidgetView::triangleWireFrameChanged);
+    connect(m_widgetTriangle, &WidgetModelTriangle::ccwChanged, m_view, &WidgetView::triangleCcwChanged);
+    connect(m_widgetTriangle, &WidgetModelTriangle::normal1Changed, m_view, &WidgetView::triangleNormal1Changed);
+    connect(m_widgetTriangle, &WidgetModelTriangle::normal2Changed, m_view, &WidgetView::triangleNormal2Changed);
+    connect(m_widgetTriangle, &WidgetModelTriangle::normal3Changed, m_view, &WidgetView::triangleNormal3Changed);
+
+    connect(m_widgetPlane, &WidgetModelPlane::wireFrameChanged, m_view, &WidgetView::planeWireFrameChanged);
+    connect(m_widgetPlane, &WidgetModelPlane::normal1Changed, m_view, &WidgetView::planeNormal1Changed);
+    connect(m_widgetPlane, &WidgetModelPlane::normal2Changed, m_view, &WidgetView::planeNormal2Changed);
+    connect(m_widgetPlane, &WidgetModelPlane::dots1Changed, m_view, &WidgetView::planeDots1Changed);
+    connect(m_widgetPlane, &WidgetModelPlane::dots2Changed, m_view, &WidgetView::planeDots2Changed);
 }
 
 /*!
@@ -191,8 +220,28 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::~WidgetMaterialEditor(
     for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
         disconnect(m_guiPointLight[i], &GUI::GuiPointLight::changed, this, &WidgetMaterialEditor::pointLightChanged);
 
+    disconnect(m_sceneAmbient, &GUI::GuiFloat::changed, m_view, &WidgetView::setSceneAmbientFactor);
     disconnect(m_tabModels, &QTabWidget::currentChanged, m_view, &WidgetView::setCurrentModel);
 
+    disconnect(m_widgetSphere, &WidgetModelSphere::wireFrameChanged, m_view, &WidgetView::sphereWireFrameChanged);
+    disconnect(m_widgetSphere,
+               &WidgetModelSphere::equatorPointCountChanged,
+               m_view,
+               &WidgetView::sphereEquatorPointCountChanged);
+
+    disconnect(m_widgetTriangle, &WidgetModelTriangle::wireFrameChanged, m_view, &WidgetView::triangleWireFrameChanged);
+    disconnect(m_widgetTriangle, &WidgetModelTriangle::ccwChanged, m_view, &WidgetView::triangleCcwChanged);
+    disconnect(m_widgetTriangle, &WidgetModelTriangle::normal1Changed, m_view, &WidgetView::triangleNormal1Changed);
+    disconnect(m_widgetTriangle, &WidgetModelTriangle::normal2Changed, m_view, &WidgetView::triangleNormal2Changed);
+    disconnect(m_widgetTriangle, &WidgetModelTriangle::normal3Changed, m_view, &WidgetView::triangleNormal3Changed);
+
+    disconnect(m_widgetPlane, &WidgetModelPlane::wireFrameChanged, m_view, &WidgetView::planeWireFrameChanged);
+    disconnect(m_widgetPlane, &WidgetModelPlane::normal1Changed, m_view, &WidgetView::planeNormal1Changed);
+    disconnect(m_widgetPlane, &WidgetModelPlane::normal2Changed, m_view, &WidgetView::planeNormal2Changed);
+    disconnect(m_widgetPlane, &WidgetModelPlane::dots1Changed, m_view, &WidgetView::planeDots1Changed);
+    disconnect(m_widgetPlane, &WidgetModelPlane::dots2Changed, m_view, &WidgetView::planeDots2Changed);
+
+    delete m_sceneAmbient;
     delete m_guiMaterial;
     delete m_guiDirectionLight;
     for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)

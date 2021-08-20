@@ -24,6 +24,8 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
+    // QSettings().clear();
+
     // if (!runTests())
     //    return EXIT_FAILURE;
 

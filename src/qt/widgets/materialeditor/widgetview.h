@@ -9,6 +9,7 @@
 
 #include "../../opengl/glwidget.h"
 #include "../../opengl/lights.h"
+#include "../../opengl/models/modelplane.h"
 #include "../../opengl/models/modelpointlight.h"
 #include "../../opengl/models/modelsphere.h"
 #include "../../opengl/models/modeltriangle.h"
@@ -27,8 +28,10 @@ class WidgetView : public OpenGL::GLWidget
     WidgetView(const OpenGL::Material &_material, QWidget *parent = nullptr);
     ~WidgetView();
 
-    inline OpenGL::Models::ModelTriangle *modelTriangle();
+    inline float sceneAmbientFactor() const;
     inline OpenGL::Models::ModelSphere *modelSphere();
+    inline OpenGL::Models::ModelTriangle *modelTriangle();
+    inline OpenGL::Models::ModelPlane *modelPlane();
     inline int currentModel() const;
 
     inline const OpenGL::DirectionLight &directionLight() const;
@@ -38,9 +41,25 @@ class WidgetView : public OpenGL::GLWidget
 
  public slots:
     void setCurrentModel(int _modelIndex);
+    void setSceneAmbientFactor(float _value);
     void setMaterial(const OpenGL::Material &_material);
     void setDirectionLight(const OpenGL::DirectionLight &_directionLight);
     void setPointLight(int _idx, const OpenGL::PointLight &_pointLight);
+
+    void triangleWireFrameChanged(bool _value);
+    void triangleCcwChanged(bool _value);
+    void triangleNormal1Changed(const QVector3D &_value);
+    void triangleNormal2Changed(const QVector3D &_value);
+    void triangleNormal3Changed(const QVector3D &_value);
+
+    void sphereWireFrameChanged(bool _value);
+    void sphereEquatorPointCountChanged(int _value);
+
+    void planeWireFrameChanged(bool _value);
+    void planeNormal1Changed(const QVector3D &_value);
+    void planeNormal2Changed(const QVector3D &_value);
+    void planeDots1Changed(int _value);
+    void planeDots2Changed(int _value);
 
  protected:
     void mouseDoubleClickEvent(QMouseEvent *_event) override;
@@ -49,8 +68,10 @@ class WidgetView : public OpenGL::GLWidget
     void paintGLImpl() override;
 
  protected:
+    float m_sceneAmbientFactor;                      //!< Scene ambient factor
     OpenGL::Models::ModelSphere *m_modelSphere;      //!< Sphere Open GL model
     OpenGL::Models::ModelTriangle *m_modelTriangle;  //!< Triangle Open GL model
+    OpenGL::Models::ModelPlane *m_modelPlane;        //!< Plane Open GL model
 
     std::vector<OpenGL::Models::GLModel *> m_models;  //!< Open GL Model collection
     int m_currentModel;                               //!< Current Open GL model index
@@ -62,12 +83,30 @@ class WidgetView : public OpenGL::GLWidget
 };
 
 /*!
+ * \brief Getter for scene ambient factor
+ * \returns Scene ambient factor
+ */
+inline float WidgetView::sceneAmbientFactor() const
+{
+    return m_sceneAmbientFactor;
+}
+
+/*!
  * \brief Getter for triangle Open GL model
  * \returns Triangle Open GL model
  */
 inline OpenGL::Models::ModelTriangle *WidgetView::modelTriangle()
 {
     return m_modelTriangle;
+}
+
+/*!
+ * \brief Getter for plane Open GL model
+ * \returns Plane Open GL model
+ */
+inline OpenGL::Models::ModelPlane *WidgetView::modelPlane()
+{
+    return m_modelPlane;
 }
 
 /*!

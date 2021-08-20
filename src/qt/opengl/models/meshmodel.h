@@ -23,10 +23,10 @@ class MeshModel : public GLModel
     MeshModel(const Material &_material, QObject *_parent = nullptr);
     ~MeshModel();
 
-    bool isInit() const override;
-    bool canSwitchDrawWireFrame() const override;
-    bool drawWireFrame() const override;
+    inline bool canSwitchDrawWireFrame() const;
+    inline bool drawWireFrame() const;
 
+    bool isInit() const override;
     size_t memoryUsage() const override;
     std::pair<QVector3D, QVector3D> range() const override;
 
@@ -46,7 +46,7 @@ class MeshModel : public GLModel
     virtual void rebuild() = 0;
 
  public slots:
-    void setDrawWireFrame(bool _value) override;
+    void setDrawWireFrame(bool _value);
 
  protected:
     bool m_isInit;                  //!< OpenGL buffers initialized flag
@@ -65,6 +65,23 @@ class MeshModel : public GLModel
     GLsizei m_linesCount;            //!< Line index buffer item count
 };
 
+/*!
+ * \brief Getter for is possible to switch value of draw wire-framed flag
+ * \returns Is possible to switch value of draw wire-framed flag
+ */
+inline bool Universe1::OpenGL::Models::MeshModel::canSwitchDrawWireFrame() const
+{
+    return m_canSwitchDrawWireFrame;
+}
+
+/*!
+ * \brief Getter draw wire-framed flag
+ * \returns Draw wire-framed flag
+ */
+inline bool Universe1::OpenGL::Models::MeshModel::drawWireFrame() const
+{
+    return m_drawWireFrame;
+}
 
 }  // namespace Models
 }  // namespace OpenGL

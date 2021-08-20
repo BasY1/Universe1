@@ -1,5 +1,5 @@
 /*!
- * \file qt/opengl/models/modelpointlight.h
+ * \file qt/opengl/models/modelpointlight.cpp
  * \author Michal Steller
  * \brief Open GL point light model with material class implementation
  */
@@ -31,7 +31,6 @@ Universe1::OpenGL::Models::ModelPointLight::ModelPointLight(const Material &_mat
 void Universe1::OpenGL::Models::ModelPointLight::setPointLight(const PointLight &_light)
 {
     m_enabled = _light.mode != PointLight::LightOff;
-
     m_position = _light.position;
 
     m_material.ambient = _light.ambient;

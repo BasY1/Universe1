@@ -53,24 +53,6 @@ bool Universe1::OpenGL::Models::MeshModel::isInit() const
 }
 
 /*!
- * \brief Getter for is possible to switch value of draw wire-framed flag
- * \returns Is possible to switch value of draw wire-framed flag
- */
-bool Universe1::OpenGL::Models::MeshModel::canSwitchDrawWireFrame() const
-{
-    return m_canSwitchDrawWireFrame;
-}
-
-/*!
- * \brief Getter draw wire-framed flag
- * \returns Draw wire-framed flag
- */
-bool Universe1::OpenGL::Models::MeshModel::drawWireFrame() const
-{
-    return m_drawWireFrame;
-}
-
-/*!
  * \brief Returns size of allocated memory within OpenGL context
  * \returns Size of allocated memory within OpenGL context
  */

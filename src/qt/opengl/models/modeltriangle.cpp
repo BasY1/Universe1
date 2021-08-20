@@ -1,5 +1,5 @@
 /*!
- * \file qt/opengl/models/modeltriangle.h
+ * \file qt/opengl/models/modeltriangle.cpp
  * \author Michal Steller
  * \brief Open GL single triangle model with material class implementation
  */

@@ -61,7 +61,9 @@ SOURCES += \
     src/qt/opengl/models/glmodel.cpp \
     src/qt/opengl/models/meshmodel.cpp \
     src/qt/opengl/models/linesmodel.cpp \
+    src/qt/opengl/models/modelpath.cpp \
     src/qt/opengl/models/modeltriangle.cpp \
+    src/qt/opengl/models/modelplane.cpp \
     src/qt/opengl/models/modelsphere.cpp \
     src/qt/opengl/models/modelpointlight.cpp \
     \
@@ -98,7 +100,9 @@ HEADERS += \
     src/qt/opengl/models/glmodel.h \
     src/qt/opengl/models/meshmodel.h \
     src/qt/opengl/models/linesmodel.h \
+    src/qt/opengl/models/modelpath.h \
     src/qt/opengl/models/modeltriangle.h \
+    src/qt/opengl/models/modelplane.h \
     src/qt/opengl/models/modelsphere.h \
     src/qt/opengl/models/modelpointlight.h \
     \
