@@ -7,7 +7,7 @@
 #ifndef UNIVERSE1_OPENGL_LIGHTS_H
 #define UNIVERSE1_OPENGL_LIGHTS_H
 
-#include "adscolors.h"
+#include "material.h"
 
 namespace Universe1 {
 namespace OpenGL {
@@ -152,6 +152,8 @@ struct PointLight : public ADSColors
     inline PointLight(const QVector3D &_position, const QColor &_colorAll);
 
     inline PointLight(const QVector3D &_position);
+
+    inline Material toMaterial() const;
 
     void saveSettings(QSettings &_settings, const QString &_keyGroup) const;
     void loadSettings(const QSettings &_settings, const QString &_keyGroup);
@@ -329,6 +331,15 @@ inline PointLight::PointLight(const QVector3D &_position, const QColor &_colorAl
 inline PointLight::PointLight(const QVector3D &_position)
     : PointLight(LightFixed, _position, Qt::white, Qt::white, Qt::white, 0.0F, 0.0F, 0.0F)
 {
+}
+
+/*!
+ * \brief Create material from light colors
+ * \return Material created from light colors
+ */
+inline Universe1::OpenGL::Material Universe1::OpenGL::PointLight::toMaterial() const
+{
+    return Material(*this);
 }
 
 }  // namespace OpenGL

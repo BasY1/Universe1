@@ -32,8 +32,12 @@ Universe1::Widgets::MaterialEditor::WidgetView::WidgetView(const OpenGL::Materia
     m_currentModel = settings.value(m_settingsKey + "currentModel", m_currentModel).toInt();
 
     m_directionLight.loadSettings(settings, m_settingsKey + "/DirectionLight/");
-    for (size_t i = 0; i < m_pointLights.size(); ++i)
+    for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
         m_pointLights[i].loadSettings(settings, m_settingsKey + "/PointLight_" + QString::number(i) + "_/");
+
+    m_pointLightModels.reserve(OpenGL::ShaderProgram::pointLightsCount);
+    for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
+        m_pointLightModels.push_back(new OpenGL::Models::ModelPointLight(m_pointLights[i], 0.1F));
 }
 
 /*!
@@ -45,7 +49,7 @@ Universe1::Widgets::MaterialEditor::WidgetView::~WidgetView()
     settings.setValue(m_settingsKey + "currentModel", m_currentModel);
 
     m_directionLight.saveSettings(settings, m_settingsKey + "/DirectionLight/");
-    for (size_t i = 0; i < m_pointLights.size(); ++i)
+    for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
         m_pointLights[i].saveSettings(settings, m_settingsKey + "/PointLight_" + QString::number(i) + "_/");
 
     disconnect(m_models.at(m_currentModel),
@@ -117,15 +121,16 @@ void Universe1::Widgets::MaterialEditor::WidgetView::setDirectionLight(const Ope
 }
 
 /*!
- * \brief Setter for directional light
+ * \brief Setter for point light
  * \param _idx Point light index
  * \param _pointLight New point light object with values
  */
 void Universe1::Widgets::MaterialEditor::WidgetView::setPointLight(int _idx, const OpenGL::PointLight &_pointLight)
 {
-    if (_idx > 0 && _idx < OpenGL::ShaderProgram::pointLightsCount)
+    if (_idx >= 0 && _idx < OpenGL::ShaderProgram::pointLightsCount)
     {
         m_pointLights.at(_idx) = _pointLight;
+        m_pointLightModels.at(_idx)->setPointLight(_pointLight);
         update();
     }
 }
@@ -150,6 +155,9 @@ void Universe1::Widgets::MaterialEditor::WidgetView::mouseDoubleClickEvent(QMous
  */
 void Universe1::Widgets::MaterialEditor::WidgetView::initializeGLImpl()
 {
+    for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
+        m_pointLightModels[i]->initGL();
+
     for (OpenGL::Models::GLModel *m : m_models)
         m->initGL();
 
@@ -166,6 +174,9 @@ void Universe1::Widgets::MaterialEditor::WidgetView::paintGLImpl()
 {
     m_program->setupDirectionLight(m_directionLight);
     m_program->setupPointLights(m_pointLights);
+
+    for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
+        m_pointLightModels[i]->paintGL(m_program);
 
     m_models.at(m_currentModel)->paintGL(m_program);
 }

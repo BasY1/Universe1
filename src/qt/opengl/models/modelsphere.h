@@ -7,7 +7,7 @@
 #ifndef UNIVERSE1_OPENGL_MODELS_MODELSPHERE_H
 #define UNIVERSE1_OPENGL_MODELS_MODELSPHERE_H
 
-#include "materialmodel.h"
+#include "meshmodel.h"
 
 namespace Universe1 {
 namespace OpenGL {
@@ -16,7 +16,7 @@ namespace Models {
 /*!
  * \brief Open GL single sphere model
  */
-class ModelSphere : public MaterialModel
+class ModelSphere : public MeshModel
 {
     Q_OBJECT
  public:

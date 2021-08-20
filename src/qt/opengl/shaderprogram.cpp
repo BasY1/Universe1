@@ -108,13 +108,15 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
                              "uniform Material material;                                                 \n"
                              "uniform DirectionLight directionLight;                                     \n"
                              "uniform PointLight pointLight[POINT_LIGHT_COUNT];                          \n"
+                             "uniform float ambientFactor;                                               \n"
                              "                                                                           \n"
                              "in vec3 vertOut;                                                           \n"
                              "in vec3 normOut;                                                           \n"
                              "                                                                           \n"
                              "void main(void)                                                            \n"
                              "{                                                                          \n"
-                             "    vec3 result;                                                           \n"
+                             "    vec3 usedAmbient = ambientFactor * material.ambient;                   \n"
+                             "    vec3 result = usedAmbient;                                             \n"
                              "    vec3 norm = normalize(normOut);                                        \n"
                              "    vec3 viewDir = normalize(cameraPosition - vertOut);                    \n"
                              "    if (directionLight.mode != 0)                                          \n"
@@ -125,7 +127,7 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
                              "        float d = max(dot(norm, lightDir), 0.0);                           \n"
                              "        float s = pow(max(dot(viewDir, reflDir), 0.0), material.shininess);\n"
                              "                                                                           \n"
-                             "        result += directionLight.ambient * material.ambient;               \n"
+                             "        result += directionLight.ambient * usedAmbient;                    \n"
                              "        result += d * directionLight.diffuse * material.diffuse;           \n"
                              "        result += s * directionLight.specular * material.specular;         \n"
                              "    }                                                                      \n"
@@ -160,7 +162,7 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
                              "        default: break;                                                    \n"
                              "        }                                                                  \n"
                              "                                                                           \n"
-                             "        result += a * pointLight[i].ambient * material.ambient;            \n"
+                             "        result += a * pointLight[i].ambient * usedAmbient;                 \n"
                              "        result += a * d * pointLight[i].diffuse * material.diffuse;        \n"
                              "        result += a * s *  pointLight[i].specular * material.specular;     \n"
                              "    }                                                                      \n"
@@ -268,6 +270,11 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
             result = false;
     }
 
+    m_attrSceneAmbientFactor = uniformLocation("ambientFactor");
+    if (m_attrSceneAmbientFactor < 0)
+        result = false;
+    else
+        setUniformValue(m_attrSceneAmbientFactor, 0.1F);
     release();
 
     return result;
@@ -351,4 +358,13 @@ void Universe1::OpenGL::ShaderProgram::setupPointLight(const int _lightIndex, co
     setUniformValue(m_attrPointLightAmbient[_lightIndex], _light.ambientVector());
     setUniformValue(m_attrPointLightDiffuse[_lightIndex], _light.diffuseVector());
     setUniformValue(m_attrPointLightSpecular[_lightIndex], _light.specularVector());
+}
+
+/*!
+ * \brief Setup scene ambient factor
+ * \param _value New scene ambient factor value
+ */
+void Universe1::OpenGL::ShaderProgram::setupSceneAmbientFactor(const float _value)
+{
+    setUniformValue(m_attrSceneAmbientFactor, _value);
 }

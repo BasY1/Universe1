@@ -59,9 +59,11 @@ SOURCES += \
     src/qt/opengl/glwidget.cpp \
     \
     src/qt/opengl/models/glmodel.cpp \
-    src/qt/opengl/models/materialmodel.cpp \
+    src/qt/opengl/models/meshmodel.cpp \
+    src/qt/opengl/models/linesmodel.cpp \
     src/qt/opengl/models/modeltriangle.cpp \
     src/qt/opengl/models/modelsphere.cpp \
+    src/qt/opengl/models/modelpointlight.cpp \
     \
     src/qt/widgets/horizontallinespacer.cpp \
     src/qt/widgets/widgetbgcolor.cpp \
@@ -94,9 +96,11 @@ HEADERS += \
     src/qt/opengl/glwidget.h \
     \
     src/qt/opengl/models/glmodel.h \
-    src/qt/opengl/models/materialmodel.h \
+    src/qt/opengl/models/meshmodel.h \
+    src/qt/opengl/models/linesmodel.h \
     src/qt/opengl/models/modeltriangle.h \
     src/qt/opengl/models/modelsphere.h \
+    src/qt/opengl/models/modelpointlight.h \
     \
     src/qt/widgets/horizontallinespacer.h \
     src/qt/widgets/widgetbgcolor.h \

@@ -1,30 +1,26 @@
 /*!
- * \file qt/opengl/models/materialmodel.cpp
+ * \file qt/opengl/models/linesmodel.cpp
  * \author Michal Steller
- * \brief Base Open GL model with material class implementation
+ * \brief Base Open GL lines model with material class implementation
  */
 
-#include "materialmodel.h"
+#include "linesmodel.h"
 
 /*!
  * \brief Constructor
- * \param _material Material
+ * \param _material Initial material object with values
  * \param _parent Parent \c QObject
  */
-Universe1::OpenGL::Models::MaterialModel::MaterialModel(const Material &_material, QObject *_parent)
-    : GLModel(_parent)
+Universe1::OpenGL::Models::LinesModel::LinesModel(const Material &_material, QObject *_parent)
+    : GLModel(_material, _parent)
     , m_isInit(false)
-    , m_canSwitchDrawWireFrame(false)
-    , m_drawWireFrame(false)
-    , m_material(_material)
+    , m_hasIndexes(false)
     , m_memoryUsage(0U)
     , m_minimum()
     , m_maximum()
     , m_vertexBuffer()
     , m_normalBuffer()
-    , m_triangsIndexes(QOpenGLBuffer::IndexBuffer)
     , m_linesIndexes(QOpenGLBuffer::IndexBuffer)
-    , m_triangsCount(0)
     , m_linesCount(0)
 {
 }
@@ -32,14 +28,12 @@ Universe1::OpenGL::Models::MaterialModel::MaterialModel(const Material &_materia
 /*!
  * \brief Destructor
  */
-Universe1::OpenGL::Models::MaterialModel::~MaterialModel()
+Universe1::OpenGL::Models::LinesModel::~LinesModel()
 {
     if (m_vertexBuffer.isCreated())
         m_vertexBuffer.destroy();
     if (m_normalBuffer.isCreated())
         m_normalBuffer.destroy();
-    if (m_triangsIndexes.isCreated())
-        m_triangsIndexes.destroy();
     if (m_linesIndexes.isCreated())
         m_linesIndexes.destroy();
 }
@@ -48,34 +42,34 @@ Universe1::OpenGL::Models::MaterialModel::~MaterialModel()
  * \brief Getter for OpenGL buffers initialized flag
  * \returns OpenGL buffers initialized flag
  */
-bool Universe1::OpenGL::Models::MaterialModel::isInit() const
+bool Universe1::OpenGL::Models::LinesModel::isInit() const
 {
     return m_isInit;
 }
 
 /*!
- * \brief Getter for is possible to switch value of draw wire-framed flag
- * \returns Is possible to switch value of draw wire-framed flag
+ * \brief Getter for is possible to switch value of draw wire-framed flag (always \c false)
+ * \returns Always \c false
  */
-bool Universe1::OpenGL::Models::MaterialModel::canSwitchDrawWireFrame() const
+bool Universe1::OpenGL::Models::LinesModel::canSwitchDrawWireFrame() const
 {
-    return m_canSwitchDrawWireFrame;
+    return false;
 }
 
 /*!
- * \brief Getter draw wire-framed flag
- * \returns Draw wire-framed flag
+ * \brief Getter draw wire-framed flag (always \c true)
+ * \returns Always \c true
  */
-bool Universe1::OpenGL::Models::MaterialModel::drawWireFrame() const
+bool Universe1::OpenGL::Models::LinesModel::drawWireFrame() const
 {
-    return m_drawWireFrame;
+    return true;
 }
 
 /*!
  * \brief Returns size of allocated memory within OpenGL context
  * \returns Size of allocated memory within OpenGL context
  */
-size_t Universe1::OpenGL::Models::MaterialModel::memoryUsage() const
+size_t Universe1::OpenGL::Models::LinesModel::memoryUsage() const
 {
     return m_memoryUsage;
 }
@@ -84,7 +78,7 @@ size_t Universe1::OpenGL::Models::MaterialModel::memoryUsage() const
  * \brief Returns object range
  * \returns Object range (pair of 3D vectors minimum [x, y, z] and maximum [x, y, z])
  */
-std::pair<QVector3D, QVector3D> Universe1::OpenGL::Models::MaterialModel::range() const
+std::pair<QVector3D, QVector3D> Universe1::OpenGL::Models::LinesModel::range() const
 {
     return {m_minimum, m_maximum};
 }
@@ -93,21 +87,18 @@ std::pair<QVector3D, QVector3D> Universe1::OpenGL::Models::MaterialModel::range(
  * \brief Initialize buffers
  * \param _vertexData Vertex buffer
  * \param _normalData Normal buffer
- * \param _triangsData Triangles faces index buffer
  * \param _linesData Line index buffer
  * \returns Success flag
  */
-bool Universe1::OpenGL::Models::MaterialModel::initBuffers(const std::vector<QVector3D> &_vertexData,
-                                                           const std::vector<QVector3D> &_normalData,
-                                                           const std::vector<uint> &_triangsData,
-                                                           const std::vector<uint> &_linesData)
+bool Universe1::OpenGL::Models::LinesModel::initBuffers(const std::vector<QVector3D> &_vertexData,
+                                                        const std::vector<QVector3D> &_normalData,
+                                                        const std::vector<uint> &_linesData)
 {
     m_isInit = false;
-    m_canSwitchDrawWireFrame = false;
-    m_triangsCount = 0;
     m_linesCount = 0;
     m_minimum = QVector3D();
     m_maximum = QVector3D();
+    m_hasIndexes = !_linesData.empty();
 
     if (!m_vertexBuffer.isCreated())
     {
@@ -119,15 +110,6 @@ bool Universe1::OpenGL::Models::MaterialModel::initBuffers(const std::vector<QVe
     {
         if (!m_normalBuffer.create())
             return false;
-    }
-
-    if (!_triangsData.empty())
-    {
-        if (!m_triangsIndexes.isCreated())
-        {
-            if (!m_triangsIndexes.create())
-                return false;
-        }
     }
 
     if (!_linesData.empty())
@@ -142,7 +124,6 @@ bool Universe1::OpenGL::Models::MaterialModel::initBuffers(const std::vector<QVe
     m_vertexBuffer.bind();
     m_vertexBuffer.allocate(_vertexData.data(), _vertexData.size() * sizeof(QVector3D));
     m_vertexBuffer.release();
-    m_memoryUsage += _vertexData.size() * sizeof(QVector3D);
     if (!_vertexData.empty())
     {
         m_minimum = _vertexData.front();
@@ -163,22 +144,14 @@ bool Universe1::OpenGL::Models::MaterialModel::initBuffers(const std::vector<QVe
                 m_maximum.setZ(v.z());
         }
     }
+    m_memoryUsage += _vertexData.size() * sizeof(QVector3D);
 
     m_normalBuffer.bind();
     m_normalBuffer.allocate(_normalData.data(), _normalData.size() * sizeof(QVector3D));
     m_normalBuffer.release();
     m_memoryUsage += _normalData.size() * sizeof(QVector3D);
 
-    if (!_triangsData.empty())
-    {
-        m_triangsIndexes.bind();
-        m_triangsIndexes.allocate(_triangsData.data(), _triangsData.size() * sizeof(uint));
-        m_triangsIndexes.release();
-        m_memoryUsage += _triangsData.size() * sizeof(uint);
-        m_triangsCount = _triangsData.size();
-    }
-
-    if (!_linesData.empty())
+    if (m_hasIndexes)
     {
         m_linesIndexes.bind();
         m_linesIndexes.allocate(_linesData.data(), _linesData.size() * sizeof(uint));
@@ -186,15 +159,12 @@ bool Universe1::OpenGL::Models::MaterialModel::initBuffers(const std::vector<QVe
         m_memoryUsage += _linesData.size() * sizeof(uint);
         m_linesCount = _linesData.size();
     }
+    else
+    {
+        m_linesCount = _vertexData.size();
+    }
 
     m_isInit = true;
-
-    m_canSwitchDrawWireFrame = (!_triangsData.empty() && !_linesData.empty());
-
-    if (!_triangsData.empty() && _linesData.empty())
-        m_drawWireFrame = false;
-    else if (_triangsData.empty() && !_linesData.empty())
-        m_drawWireFrame = true;
 
     return true;
 }
@@ -202,7 +172,7 @@ bool Universe1::OpenGL::Models::MaterialModel::initBuffers(const std::vector<QVe
 /*!
  * \brief Initialize Open GL
  */
-void Universe1::OpenGL::Models::MaterialModel::initGLImlp()
+void Universe1::OpenGL::Models::LinesModel::initGLImlp()
 {
     rebuild();
 }
@@ -211,7 +181,7 @@ void Universe1::OpenGL::Models::MaterialModel::initGLImlp()
  * \brief Paint model within Open GL
  * \param _program Shader program
  */
-void Universe1::OpenGL::Models::MaterialModel::paintGLImlp(ShaderProgram *_program)
+void Universe1::OpenGL::Models::LinesModel::paintGLImlp(ShaderProgram *_program)
 {
     if (!m_isInit)
         return;
@@ -226,7 +196,7 @@ void Universe1::OpenGL::Models::MaterialModel::paintGLImlp(ShaderProgram *_progr
     _program->enableAttributeArray(_program->attrNormal());
     _program->setAttributeBuffer(_program->attrNormal(), GL_FLOAT, 0, 3);
 
-    if (m_drawWireFrame)
+    if (m_hasIndexes)
     {
         m_linesIndexes.bind();
         glDrawElements(GL_LINES, m_linesCount, GL_UNSIGNED_INT, nullptr);
@@ -234,9 +204,7 @@ void Universe1::OpenGL::Models::MaterialModel::paintGLImlp(ShaderProgram *_progr
     }
     else
     {
-        m_triangsIndexes.bind();
-        glDrawElements(GL_TRIANGLES, m_triangsCount, GL_UNSIGNED_INT, nullptr);
-        m_triangsIndexes.release();
+        glDrawArrays(GL_LINES, 0, m_linesCount);
     }
 
     m_normalBuffer.release();
@@ -246,23 +214,10 @@ void Universe1::OpenGL::Models::MaterialModel::paintGLImlp(ShaderProgram *_progr
 /*!
  * \brief Setter for draw wire-framed flag
  * \param _value New draw wire-framed flag value
- * \note Updates only when allowed by \a m_canSwitchDrawWireFrame = \c true
+ * \note Do nothing for this model implementation
  */
-void Universe1::OpenGL::Models::MaterialModel::setDrawWireFrame(bool _value)
+void Universe1::OpenGL::Models::LinesModel::setDrawWireFrame(bool _value)
 {
-    if (m_canSwitchDrawWireFrame && m_drawWireFrame != _value)
-    {
-        m_drawWireFrame = _value;
-        emit changed();
-    }
+    Q_UNUSED(_value)
 }
 
-/*!
- * \brief Setter for material
- * \param _value New material object with values
- */
-void Universe1::OpenGL::Models::MaterialModel::setMaterial(const Material &_value)
-{
-    m_material = _value;
-    emit changed();
-}

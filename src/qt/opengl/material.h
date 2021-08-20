@@ -29,6 +29,9 @@ struct Material : public ADSColors
              const float _shininess,
              const float _alpha);
 
+    Material(const ADSColors &_colors, const float _shininess, const float _alpha);
+    Material(const ADSColors &_colors);
+
     void saveSettings(QSettings &_settings, const QString &_keyGroup) const;
     void loadSettings(const QSettings &_settings, const QString &_keyGroup);
 };

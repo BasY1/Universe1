@@ -8,11 +8,13 @@
 
 /*!
  * \brief Constructor
+ * \param _material Initial material object with values
  * \param _parent Parent \c QObject
  */
-Universe1::OpenGL::Models::GLModel::GLModel(QObject *_parent)
+Universe1::OpenGL::Models::GLModel::GLModel(const Material &_material, QObject *_parent)
     : QObject(_parent)
     , m_enabled(true)
+    , m_material(_material)
 {
 }
 
@@ -33,8 +35,12 @@ void Universe1::OpenGL::Models::GLModel::initGL()
  */
 void Universe1::OpenGL::Models::GLModel::paintGL(ShaderProgram *_program)
 {
-    if (m_enabled)
+    if (m_enabled && isInit())
+    {
+        _program->setupMaterial(m_material);
+
         paintGLImlp(_program);
+    }
 }
 
 /*!
@@ -44,5 +50,15 @@ void Universe1::OpenGL::Models::GLModel::paintGL(ShaderProgram *_program)
 void Universe1::OpenGL::Models::GLModel::setEnabled(bool _value)
 {
     m_enabled = _value;
+    emit changed();
+}
+
+/*!
+ * \brief Setter for material
+ * \param _value New material object with values
+ */
+void Universe1::OpenGL::Models::GLModel::setMaterial(const Material &_value)
+{
+    m_material = _value;
     emit changed();
 }

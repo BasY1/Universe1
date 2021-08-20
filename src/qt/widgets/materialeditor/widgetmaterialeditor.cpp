@@ -111,7 +111,8 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(O
     static const std::pair<QVector3D, QVector3D> range = {QVector3D(-1, -1, -1), QVector3D(1, 1, 1)};
     for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
     {
-        m_guiPointLight[i] = new GUI::GuiPointLight(i, m_view->pointLights().at(i), range, 2, Qt::Horizontal);
+        const OpenGL::PointLight &pl = m_view->pointLights().at(i);
+        m_guiPointLight[i] = new GUI::GuiPointLight(i, pl, range, 2, Qt::Horizontal);
 
         QGridLayout *layPointLight = new QGridLayout();
         rowLay = 0;
@@ -122,7 +123,8 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(O
         QWidget *widLight = new QWidget();
         widLight->setLayout(layPointLight);
 
-        m_tabPointLights->addTab(widLight, tr("Light %1").arg(i + 1));
+        m_tabPointLights->addTab(
+            widLight, tr("%1 %2").arg(pl.mode == OpenGL::PointLight::LightOff ? tr("Off") : tr("Light")).arg(i + 1));
     }
 
     const QSettings settings;
@@ -163,7 +165,7 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(O
     connect(m_guiMaterial, &GUI::GuiMaterial::changed, m_view, &WidgetView::setMaterial);
     connect(m_guiDirectionLight, &GUI::GuiDirectionLight::changed, m_view, &WidgetView::setDirectionLight);
     for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
-        connect(m_guiPointLight[i], &GUI::GuiPointLight::changed, m_view, &WidgetView::setPointLight);
+        connect(m_guiPointLight[i], &GUI::GuiPointLight::changed, this, &WidgetMaterialEditor::pointLightChanged);
 
     connect(m_tabModels, &QTabWidget::currentChanged, m_view, &WidgetView::setCurrentModel);
 }
@@ -187,7 +189,7 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::~WidgetMaterialEditor(
     disconnect(m_guiMaterial, &GUI::GuiMaterial::changed, m_view, &WidgetView::setMaterial);
     disconnect(m_guiDirectionLight, &GUI::GuiDirectionLight::changed, m_view, &WidgetView::setDirectionLight);
     for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
-        disconnect(m_guiPointLight[i], &GUI::GuiPointLight::changed, m_view, &WidgetView::setPointLight);
+        disconnect(m_guiPointLight[i], &GUI::GuiPointLight::changed, this, &WidgetMaterialEditor::pointLightChanged);
 
     disconnect(m_tabModels, &QTabWidget::currentChanged, m_view, &WidgetView::setCurrentModel);
 
@@ -257,4 +259,18 @@ void Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::delClicked()
     QTableWidgetItem *item = m_tableDB->currentItem();
     if (item != nullptr && m_materialDB->remove(m_tableDB->item(item->row(), 0)->text()))
         m_tableDB->removeRow(item->row());
+}
+
+/*!
+ * \brief Point light changed handler
+ * \param _idx Point light index
+ * \param _pointLight New point light object with values
+ */
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::pointLightChanged(int _idx,
+                                                                                 const OpenGL::PointLight &_pointLight)
+{
+    m_view->setPointLight(_idx, _pointLight);
+    m_tabPointLights->setTabText(
+        _idx,
+        tr("%1 %2").arg(_pointLight.mode == OpenGL::PointLight::LightOff ? tr("Off") : tr("Light")).arg(_idx + 1));
 }

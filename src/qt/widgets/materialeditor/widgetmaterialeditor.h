@@ -45,6 +45,8 @@ class WidgetMaterialEditor : public QSplitter
     void addClicked();
     void delClicked();
 
+    void pointLightChanged(int _idx, const OpenGL::PointLight &_pointLight);
+
  protected:
     OpenGL::MaterialDB *m_materialDB;  //!< Processing material database
 

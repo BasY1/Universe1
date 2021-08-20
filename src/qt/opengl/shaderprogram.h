@@ -39,6 +39,7 @@ class ShaderProgram : public QOpenGLShaderProgram
     void setupDirectionLight(const DirectionLight &_light);
     void setupPointLights(const std::vector<PointLight> &_lights);
     void setupPointLight(const int _lightIndex, const PointLight &_light);
+    void setupSceneAmbientFactor(const float _value);
 
  protected:
     int m_attrVertex;  //!< Vertex attribute location
@@ -68,6 +69,8 @@ class ShaderProgram : public QOpenGLShaderProgram
     int m_attrPointLightAmbient[pointLightsCount];    //!< Direction light ambient color attribute locations
     int m_attrPointLightDiffuse[pointLightsCount];    //!< Direction light diffuse color attribute locations
     int m_attrPointLightSpecular[pointLightsCount];   //!< Direction light specular color attribute locations
+
+    int m_attrSceneAmbientFactor;  //!< Scene ambient factor attribute location
 };
 
 /*!

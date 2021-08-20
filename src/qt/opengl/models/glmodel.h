@@ -20,9 +20,10 @@ class GLModel : public QObject, protected QOpenGLFunctions
 {
     Q_OBJECT
  public:
-    GLModel(QObject *_parent = nullptr);
+    GLModel(const Material &_material, QObject *_parent = nullptr);
 
     inline bool isEnabled() const;
+    inline const Material &material() const;
 
     /*!
      * \brief Getter for initialized flag
@@ -37,7 +38,7 @@ class GLModel : public QObject, protected QOpenGLFunctions
     virtual bool canSwitchDrawWireFrame() const = 0;
 
     /*!
-     * \brief Getter draw wire-framed flag
+     * \brief Getter for draw wire-framed flag
      * \returns Draw wire-framed flag
      */
     virtual bool drawWireFrame() const = 0;
@@ -82,11 +83,14 @@ class GLModel : public QObject, protected QOpenGLFunctions
      */
     virtual void setDrawWireFrame(bool _value) = 0;
 
+    virtual void setMaterial(const Material &_value);
+
  signals:
     void changed();  //!< Model changed
 
  protected:
-    bool m_enabled;  //!< Enable within paint process flag
+    bool m_enabled;       //!< Enable within paint process flag
+    Material m_material;  //!< Model material
 };
 
 /*!
@@ -96,6 +100,15 @@ class GLModel : public QObject, protected QOpenGLFunctions
 inline bool GLModel::isEnabled() const
 {
     return m_enabled;
+}
+
+/*!
+ * \brief Getter for model material
+ * \returns Model material
+ */
+inline const OpenGL::Material &GLModel::material() const
+{
+    return m_material;
 }
 
 /*!

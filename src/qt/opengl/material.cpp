@@ -6,12 +6,14 @@
 
 #include "material.h"
 #include <QSettings>
+
 /*!
  * \brief Default constructor
  */
 Universe1::OpenGL::Material::Material()
     : ADSColors()
-    , shininess(0.0F)
+    , shininess(1.0F)
+    , alpha(1.0F)
 {
 }
 
@@ -28,6 +30,30 @@ Universe1::OpenGL::Material::Material(
     : ADSColors(_ambient, _diffuse, _specular)
     , shininess(_shininess)
     , alpha(_alpha)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _colors Ambient - Diffuse - Specular colors
+ * \param _shininess Material shininess
+ * \param _alpha Material color alpha
+ */
+Universe1::OpenGL::Material::Material(const ADSColors &_colors, const float _shininess, const float _alpha)
+    : ADSColors(_colors)
+    , shininess(_shininess)
+    , alpha(_alpha)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _colors Ambient - Diffuse - Specular colors
+ */
+Universe1::OpenGL::Material::Material(const ADSColors &_colors)
+    : ADSColors(_colors)
+    , shininess(1.0F)
+    , alpha(1.0F)
 {
 }
 

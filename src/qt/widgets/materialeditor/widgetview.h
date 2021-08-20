@@ -9,6 +9,7 @@
 
 #include "../../opengl/glwidget.h"
 #include "../../opengl/lights.h"
+#include "../../opengl/models/modelpointlight.h"
 #include "../../opengl/models/modelsphere.h"
 #include "../../opengl/models/modeltriangle.h"
 
@@ -54,8 +55,10 @@ class WidgetView : public OpenGL::GLWidget
     std::vector<OpenGL::Models::GLModel *> m_models;  //!< Open GL Model collection
     int m_currentModel;                               //!< Current Open GL model index
 
-    OpenGL::DirectionLight m_directionLight;        //!< Scene directional light
-    std::vector<OpenGL::PointLight> m_pointLights;  //!< Scene point lights
+    OpenGL::DirectionLight m_directionLight;  //!< Scene directional light
+
+    std::vector<OpenGL::PointLight> m_pointLights;                      //!< Scene point lights
+    std::vector<OpenGL::Models::ModelPointLight *> m_pointLightModels;  //!< Scene point light models
 };
 
 /*!

@@ -24,7 +24,7 @@ Universe1::OpenGL::Models::ModelSphere::ModelSphere(const Material &_material,
                                                     const float _radius,
                                                     const int _equatorPointCount,
                                                     QObject *_parent)
-    : MaterialModel(_material, _parent)
+    : MeshModel(_material, _parent)
     , m_position(_position)
     , m_toPole(_toPole)
     , m_toEquator(_toEquator)
@@ -45,6 +45,7 @@ void Universe1::OpenGL::Models::ModelSphere::setPosition(const QVector3D &_value
     m_position = _value;
     if (isInit())
         rebuild();
+    emit changed();
 }
 
 /*!
@@ -59,6 +60,7 @@ void Universe1::OpenGL::Models::ModelSphere::setNormal(const QVector3D &_toPole,
     initNormals(m_toPole, m_toEquator);
     if (isInit())
         rebuild();
+    emit changed();
 }
 
 /*!
@@ -70,6 +72,7 @@ void Universe1::OpenGL::Models::ModelSphere::setRadius(float _value)
     m_radius = _value;
     if (isInit())
         rebuild();
+    emit changed();
 }
 
 /*!
@@ -86,6 +89,7 @@ void Universe1::OpenGL::Models::ModelSphere::setEquatorPointCount(int _value)
         m_equatorPointCount = newValue;
         if (isInit())
             rebuild();
+        emit changed();
     }
 }
 
@@ -138,21 +142,20 @@ void Universe1::OpenGL::Models::ModelSphere::initNormals(QVector3D &_pole, QVect
 
 /*!
  * \brief Returns rotated point around normal by angle (right-handed rotation)
- * \param _point Point to rotate
+ * \param _p Point to rotate
  * \param _n Rotation normal (axis)
- * \param _angleRad Angle in radians
+ * \param _sa Sinus angle in radians
+ * \param _ca Cosinus angle in radians
  * \return
  */
-static QVector3D rotate(const QVector3D &_point, const QVector3D &_n, const float _angleRad)
+static QVector3D rotate(const QVector3D &_p, const QVector3D &_n, const float _sa, const float _ca)
 {
-    const float sa = std::sin(_angleRad);
-    const float ca = std::cos(_angleRad);
-    const QVector3D u = _n.x() * _point;
-    const QVector3D v = _n.y() * _point;
-    const QVector3D w = _n.z() * _point;
-    return QVector3D(_n.x() * u.x() + sa * (v.z() - w.y()) + ca * _point.x() * (_n.y() * _n.y() + _n.z() * _n.z()),
-                     _n.y() * v.y() + sa * (w.x() - u.z()) + ca * _point.y() * (_n.x() * _n.x() + _n.z() * _n.z()),
-                     _n.z() * w.z() + sa * (u.y() - v.x()) + ca * _point.z() * (_n.x() * _n.x() + _n.y() * _n.y()));
+    const QVector3D u = _n.x() * _p;
+    const QVector3D v = _n.y() * _p;
+    const QVector3D w = _n.z() * _p;
+    return QVector3D(_n.x() * u.x() + _sa * (v.z() - w.y()) + _ca * _p.x() * (_n.y() * _n.y() + _n.z() * _n.z()),
+                     _n.y() * v.y() + _sa * (w.x() - u.z()) + _ca * _p.y() * (_n.x() * _n.x() + _n.z() * _n.z()),
+                     _n.z() * w.z() + _sa * (u.y() - v.x()) + _ca * _p.z() * (_n.x() * _n.x() + _n.y() * _n.y()));
 }
 
 /*!
@@ -161,6 +164,8 @@ static QVector3D rotate(const QVector3D &_point, const QVector3D &_n, const floa
 void Universe1::OpenGL::Models::ModelSphere::rebuild()
 {
     const float angle = 2.0 * M_PI / static_cast<float>(m_equatorPointCount);
+    const float sa = std::sin(angle);
+    const float ca = std::cos(angle);
     const int rows = m_equatorPointCount / 2 - 1;
     const size_t pointCount = rows * m_equatorPointCount + 2;
 
@@ -175,12 +180,12 @@ void Universe1::OpenGL::Models::ModelSphere::rebuild()
     float ar = angle;
     for (int r = 0; r < rows; ++r, ar += angle)
     {
-        QVector3D arm = rotate(m_toPole, m_toEquator, ar).normalized();
+        QVector3D arm = rotate(m_toPole, m_toEquator, std::sin(ar), std::cos(ar)).normalized();
         for (int p = 0; p < m_equatorPointCount; ++p)
         {
             vertexData.push_back(m_position + arm * m_radius);
             normalData.push_back(arm);
-            arm = rotate(arm, m_toPole, angle).normalized();
+            arm = rotate(arm, m_toPole, sa, ca).normalized();
         }
     }
 

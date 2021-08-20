@@ -16,7 +16,7 @@ const QVector3D Universe1::OpenGL::Models::ModelTriangle::defaultVertex3(0.0F, 0
  * \param _parent Parent \c QObject
  */
 Universe1::OpenGL::Models::ModelTriangle::ModelTriangle(const Material &_material, QObject *_parent)
-    : MaterialModel(_material, _parent)
+    : MeshModel(_material, _parent)
     , m_ccw(true)
     , m_vertex1(defaultVertex1)
     , m_vertex2(defaultVertex2)
@@ -42,7 +42,7 @@ Universe1::OpenGL::Models::ModelTriangle::ModelTriangle(QVector3D _vertex1,
                                                         QVector3D _normalAll,
                                                         const Material &_material,
                                                         QObject *_parent)
-    : MaterialModel(_material, _parent)
+    : MeshModel(_material, _parent)
     , m_ccw(true)
     , m_vertex1(_vertex1)
     , m_vertex2(_vertex2)
@@ -72,7 +72,7 @@ Universe1::OpenGL::Models::ModelTriangle::ModelTriangle(QVector3D _vertex1,
                                                         QVector3D _normal3,
                                                         const Material &_material,
                                                         QObject *_parent)
-    : MaterialModel(_material, _parent)
+    : MeshModel(_material, _parent)
     , m_ccw(true)
     , m_vertex1(_vertex1)
     , m_vertex2(_vertex2)
@@ -105,7 +105,8 @@ void Universe1::OpenGL::Models::ModelTriangle::rebuild()
 void Universe1::OpenGL::Models::ModelTriangle::setCcw(bool _value)
 {
     m_ccw = _value;
-    rebuild();
+    if (isInit())
+        rebuild();
     emit changed();
 }
 
@@ -146,7 +147,8 @@ void Universe1::OpenGL::Models::ModelTriangle::setTriangle(QVector3D _vertex1,
     m_normal1 = _normal1;
     m_normal2 = _normal2;
     m_normal3 = _normal3;
-    rebuild();
+    if (isInit())
+        rebuild();
     emit changed();
 }
 
@@ -157,7 +159,8 @@ void Universe1::OpenGL::Models::ModelTriangle::setTriangle(QVector3D _vertex1,
 void Universe1::OpenGL::Models::ModelTriangle::setVertex1(QVector3D _value)
 {
     m_vertex1 = _value;
-    rebuild();
+    if (isInit())
+        rebuild();
     emit changed();
 }
 
@@ -168,7 +171,8 @@ void Universe1::OpenGL::Models::ModelTriangle::setVertex1(QVector3D _value)
 void Universe1::OpenGL::Models::ModelTriangle::setVertex2(QVector3D _value)
 {
     m_vertex2 = _value;
-    rebuild();
+    if (isInit())
+        rebuild();
     emit changed();
 }
 
@@ -179,7 +183,8 @@ void Universe1::OpenGL::Models::ModelTriangle::setVertex2(QVector3D _value)
 void Universe1::OpenGL::Models::ModelTriangle::setVertex3(QVector3D _value)
 {
     m_vertex3 = _value;
-    rebuild();
+    if (isInit())
+        rebuild();
     emit changed();
 }
 
@@ -190,7 +195,8 @@ void Universe1::OpenGL::Models::ModelTriangle::setVertex3(QVector3D _value)
 void Universe1::OpenGL::Models::ModelTriangle::setNormal1(QVector3D _value)
 {
     m_normal1 = _value;
-    rebuild();
+    if (isInit())
+        rebuild();
     emit changed();
 }
 
@@ -201,7 +207,8 @@ void Universe1::OpenGL::Models::ModelTriangle::setNormal1(QVector3D _value)
 void Universe1::OpenGL::Models::ModelTriangle::setNormal2(QVector3D _value)
 {
     m_normal2 = _value;
-    rebuild();
+    if (isInit())
+        rebuild();
     emit changed();
 }
 
@@ -212,7 +219,8 @@ void Universe1::OpenGL::Models::ModelTriangle::setNormal2(QVector3D _value)
 void Universe1::OpenGL::Models::ModelTriangle::setNormal3(QVector3D _value)
 {
     m_normal3 = _value;
-    rebuild();
+    if (isInit())
+        rebuild();
     emit changed();
 }
 
@@ -225,7 +233,8 @@ void Universe1::OpenGL::Models::ModelTriangle::setNormalAll(QVector3D _value)
     m_normal1 = _value;
     m_normal2 = _value;
     m_normal3 = _value;
-    rebuild();
+    if (isInit())
+        rebuild();
     emit changed();
 }
 
@@ -240,6 +249,7 @@ void Universe1::OpenGL::Models::ModelTriangle::setNormals(QVector3D _normal1, QV
     m_normal1 = _normal1;
     m_normal2 = _normal2;
     m_normal3 = _normal3;
-    rebuild();
+    if (isInit())
+        rebuild();
     emit changed();
 }
