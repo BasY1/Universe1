@@ -123,6 +123,87 @@ Universe1::Widgets::MaterialEditor::WidgetModelSphere::~WidgetModelSphere()
 
 /*!
  * \brief Constructor
+ * \param _model Box Open GL model
+ * \param _parent Parent \c QWidget
+ */
+Universe1::Widgets::MaterialEditor::WidgetModelBox::WidgetModelBox(OpenGL::Models::ModelBox *_model, QWidget *_parent)
+    : QWidget(_parent)
+    , m_model(_model)
+    , m_wireFrame(new QCheckBox())
+    , m_normalSetup(new QComboBox())
+    , m_boxSize1(new GUI::GuiFloat(m_model->boxSize1(), 0, 2, 3, Qt::Horizontal))
+    , m_boxSize2(new GUI::GuiFloat(m_model->boxSize2(), 0, 2, 3, Qt::Horizontal))
+    , m_boxSize3(new GUI::GuiFloat(m_model->boxSize3(), 0, 2, 3, Qt::Horizontal))
+{
+    m_wireFrame->setChecked(m_model->drawWireFrame());
+
+    m_normalSetup->addItem(tr("Precise"), static_cast<int>(OpenGL::Models::ModelBox::NormalPrecise));
+    m_normalSetup->addItem(tr("From center"), static_cast<int>(OpenGL::Models::ModelBox::NormalFromCenter));
+    m_normalSetup->addItem(tr("45 deg"), static_cast<int>(OpenGL::Models::ModelBox::Normal45deg));
+
+    m_normalSetup->setCurrentIndex(m_normalSetup->findData(static_cast<int>(_model->normalSetup())));
+
+    connect(m_wireFrame, &QCheckBox::toggled, this, &WidgetModelBox::wireFrameChanged);
+    connect(m_normalSetup,
+            static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+            this,
+            &WidgetModelBox::normalComboChanged);
+    connect(m_boxSize1, &GUI::GuiFloat::changed, this, &WidgetModelBox::boxSize1Changed);
+    connect(m_boxSize2, &GUI::GuiFloat::changed, this, &WidgetModelBox::boxSize2Changed);
+    connect(m_boxSize3, &GUI::GuiFloat::changed, this, &WidgetModelBox::boxSize3Changed);
+
+    QGridLayout *lay = new QGridLayout();
+    int row = 0;
+    lay->addWidget(new QLabel(tr("Wire-frame")), row, 0, 1, 2);
+    lay->addWidget(m_wireFrame, row++, 2, 1, 2);
+    lay->addWidget(new QLabel(tr("Normal setup")), row, 0, 1, 2);
+    lay->addWidget(m_normalSetup, row++, 2, 1, 2);
+
+    lay->addWidget(new HorizontalLineSpacer(), row++, 0, 1, 4);
+
+    m_boxSize1->layoutRow(tr("Box size 1"), lay, row);
+    m_boxSize2->layoutRow(tr("Box size 2"), lay, row);
+    m_boxSize3->layoutRow(tr("Box size 3"), lay, row);
+
+    lay->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Expanding), row, 0, 1, 4);
+
+    setLayout(lay);
+}
+
+/*!
+ * \brief Destructor
+ */
+Universe1::Widgets::MaterialEditor::WidgetModelBox::~WidgetModelBox()
+{
+    disconnect(m_wireFrame, &QCheckBox::toggled, this, &WidgetModelBox::wireFrameChanged);
+    disconnect(m_normalSetup,
+               static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+               this,
+               &WidgetModelBox::normalComboChanged);
+    disconnect(m_boxSize1, &GUI::GuiFloat::changed, this, &WidgetModelBox::boxSize1Changed);
+    disconnect(m_boxSize2, &GUI::GuiFloat::changed, this, &WidgetModelBox::boxSize2Changed);
+    disconnect(m_boxSize3, &GUI::GuiFloat::changed, this, &WidgetModelBox::boxSize3Changed);
+
+    delete m_boxSize1;
+    delete m_boxSize2;
+    delete m_boxSize3;
+}
+
+/*!
+ * \brief Normal combo-box changed
+ * \param _idx New combo-box index
+ */
+void Universe1::Widgets::MaterialEditor::WidgetModelBox::normalComboChanged(int _idx)
+{
+    emit normalSetupChanged(static_cast<OpenGL::Models::ModelBox::NormalSetup>(m_normalSetup->itemData(_idx).toInt()));
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Constructor
  * \param _model Plane Open GL model
  * \param _parent Parent \c QWidget
  */
@@ -141,8 +222,8 @@ Universe1::Widgets::MaterialEditor::WidgetModelPlane::WidgetModelPlane(OpenGL::M
     m_wireFrame->setChecked(m_model->drawWireFrame());
 
     connect(m_wireFrame, &QCheckBox::toggled, this, &WidgetModelPlane::wireFrameChanged);
-    connect(m_normal1X, &GUI::GuiFloat::changed, this, &WidgetModelPlane::normal1XChaged);
-    connect(m_normal2Z, &GUI::GuiFloat::changed, this, &WidgetModelPlane::normal2ZChaged);
+    connect(m_normal1X, &GUI::GuiFloat::changed, this, &WidgetModelPlane::normal1XChanged);
+    connect(m_normal2Z, &GUI::GuiFloat::changed, this, &WidgetModelPlane::normal2ZChanged);
     connect(m_dots1Count, &GUI::GuiInt::changed, this, &WidgetModelPlane::dots1Changed);
     connect(m_dots2Count, &GUI::GuiInt::changed, this, &WidgetModelPlane::dots2Changed);
 
@@ -172,8 +253,8 @@ Universe1::Widgets::MaterialEditor::WidgetModelPlane::WidgetModelPlane(OpenGL::M
 Universe1::Widgets::MaterialEditor::WidgetModelPlane::~WidgetModelPlane()
 {
     disconnect(m_wireFrame, &QCheckBox::toggled, this, &WidgetModelPlane::wireFrameChanged);
-    disconnect(m_normal1X, &GUI::GuiFloat::changed, this, &WidgetModelPlane::normal1XChaged);
-    disconnect(m_normal2Z, &GUI::GuiFloat::changed, this, &WidgetModelPlane::normal2ZChaged);
+    disconnect(m_normal1X, &GUI::GuiFloat::changed, this, &WidgetModelPlane::normal1XChanged);
+    disconnect(m_normal2Z, &GUI::GuiFloat::changed, this, &WidgetModelPlane::normal2ZChanged);
     disconnect(m_dots1Count, &GUI::GuiInt::changed, this, &WidgetModelPlane::dots1Changed);
     disconnect(m_dots2Count, &GUI::GuiInt::changed, this, &WidgetModelPlane::dots2Changed);
 
@@ -187,7 +268,7 @@ Universe1::Widgets::MaterialEditor::WidgetModelPlane::~WidgetModelPlane()
  * \brief Update normal 1 (X)
  * \param _value New normal 1 (X)
  */
-void Universe1::Widgets::MaterialEditor::WidgetModelPlane::normal1XChaged(float _value)
+void Universe1::Widgets::MaterialEditor::WidgetModelPlane::normal1XChanged(float _value)
 {
     m_normal1.setX(_value);
     emit normal1Changed(m_normal1);
@@ -197,7 +278,7 @@ void Universe1::Widgets::MaterialEditor::WidgetModelPlane::normal1XChaged(float 
  * \brief Update normal 2 (Z)
  * \param _value New normal 2 (Z)
  */
-void Universe1::Widgets::MaterialEditor::WidgetModelPlane::normal2ZChaged(float _value)
+void Universe1::Widgets::MaterialEditor::WidgetModelPlane::normal2ZChanged(float _value)
 {
     m_normal2.setZ(_value);
     emit normal2Changed(m_normal2);

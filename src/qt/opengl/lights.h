@@ -335,7 +335,7 @@ inline PointLight::PointLight(const QVector3D &_position)
 
 /*!
  * \brief Create material from light colors
- * \return Material created from light colors
+ * \returns Material created from light colors
  */
 inline Universe1::OpenGL::Material Universe1::OpenGL::PointLight::toMaterial() const
 {

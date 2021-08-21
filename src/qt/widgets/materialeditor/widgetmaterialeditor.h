@@ -65,6 +65,7 @@ class WidgetMaterialEditor : public QSplitter
     WidgetGLSettings *m_widgetGLSettings;  //!< Open GL settings widget
 
     WidgetModelSphere *m_widgetSphere;      //!< Sphere model widget
+    WidgetModelBox *m_widgetBox;            //!< Box model widget
     WidgetModelTriangle *m_widgetTriangle;  //!< Triangle model widget
     WidgetModelPlane *m_widgetPlane;        //!< Plane model widget
 

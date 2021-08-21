@@ -15,10 +15,11 @@ Universe1::Widgets::MaterialEditor::WidgetView::WidgetView(const OpenGL::Materia
     : OpenGL::GLWidget("MaterialEditor/View/", true, _parent)
     , m_sceneAmbientFactor(0.1F)
     , m_modelSphere(new OpenGL::Models::ModelSphere(_material))
+    , m_modelBox(new OpenGL::Models::ModelBox(_material))
     , m_modelTriangle(new OpenGL::Models::ModelTriangle(_material))
     , m_modelPlane(new OpenGL::Models::ModelPlane(
           _material, QVector3D(), QVector3D(0.5F, 0.0F, 0.0F), QVector3D(0.0F, 0.0F, 0.5F)))
-    , m_models({m_modelSphere, m_modelTriangle, m_modelPlane})
+    , m_models({m_modelSphere, m_modelBox, m_modelTriangle, m_modelPlane})
     , m_currentModel(0)
 {
     const QSettings settings;
@@ -26,6 +27,14 @@ Universe1::Widgets::MaterialEditor::WidgetView::WidgetView(const OpenGL::Materia
         settings.value(m_settingsKey + "Sphere/drawWireFrame", m_modelSphere->drawWireFrame()).toBool());
     m_modelSphere->setEquatorPointCount(
         settings.value(m_settingsKey + "Sphere/equatorPointCount", m_modelSphere->equatorPointCount()).toInt());
+
+    m_modelBox->setDrawWireFrame(
+        settings.value(m_settingsKey + "Box/drawWireFrame", m_modelBox->drawWireFrame()).toBool());
+    m_modelBox->setNormalSetup(static_cast<OpenGL::Models::ModelBox::NormalSetup>(
+        settings.value(m_settingsKey + "Box/normalSetup", static_cast<int>(m_modelBox->normalSetup())).toInt()));
+    m_modelBox->setBoxSize1(settings.value(m_settingsKey + "Box/boxSize1", m_modelBox->boxSize1()).toFloat());
+    m_modelBox->setBoxSize2(settings.value(m_settingsKey + "Box/boxSize2", m_modelBox->boxSize2()).toFloat());
+    m_modelBox->setBoxSize3(settings.value(m_settingsKey + "Box/boxSize3", m_modelBox->boxSize3()).toFloat());
 
     m_modelTriangle->setDrawWireFrame(
         settings.value(m_settingsKey + "Triangle/drawWireFrame", m_modelTriangle->drawWireFrame()).toBool());
@@ -84,6 +93,11 @@ Universe1::Widgets::MaterialEditor::WidgetView::~WidgetView()
     QSettings settings;
     settings.setValue(m_settingsKey + "Sphere/drawWireFrame", m_modelSphere->drawWireFrame());
     settings.setValue(m_settingsKey + "Sphere/equatorPointCount", m_modelSphere->equatorPointCount());
+    settings.setValue(m_settingsKey + "Box/drawWireFrame", m_modelBox->drawWireFrame());
+    settings.setValue(m_settingsKey + "Box/normalSetup", static_cast<int>(m_modelBox->normalSetup()));
+    settings.setValue(m_settingsKey + "Box/boxSize1", m_modelBox->boxSize1());
+    settings.setValue(m_settingsKey + "Box/boxSize2", m_modelBox->boxSize2());
+    settings.setValue(m_settingsKey + "Box/boxSize3", m_modelBox->boxSize3());
     settings.setValue(m_settingsKey + "Triangle/drawWireFrame", m_modelTriangle->drawWireFrame());
     settings.setValue(m_settingsKey + "Triangle/ccw", m_modelTriangle->ccw());
     settings.setValue(m_settingsKey + "Triangle/normal1", m_modelTriangle->normal1());
@@ -110,7 +124,9 @@ Universe1::Widgets::MaterialEditor::WidgetView::~WidgetView()
 
     makeCurrent();
     delete m_modelSphere;
+    delete m_modelBox;
     delete m_modelTriangle;
+    delete m_modelPlane;
     doneCurrent();
 }
 
@@ -167,6 +183,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::setSceneAmbientFactor(float
 void Universe1::Widgets::MaterialEditor::WidgetView::setMaterial(const OpenGL::Material &_material)
 {
     m_modelSphere->setMaterial(_material);
+    m_modelBox->setMaterial(_material);
     m_modelTriangle->setMaterial(_material);
     m_modelPlane->setMaterial(_material);
     update();
@@ -329,6 +346,65 @@ void Universe1::Widgets::MaterialEditor::WidgetView::sphereEquatorPointCountChan
 {
     makeCurrent();
     m_modelSphere->setEquatorPointCount(_value);
+    doneCurrent();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Box widget changed draw wire-frame flag
+ * \param _value New flag value
+ */
+void Universe1::Widgets::MaterialEditor::WidgetView::boxWireFrameChanged(bool _value)
+{
+    makeCurrent();
+    m_modelBox->setDrawWireFrame(_value);
+    doneCurrent();
+}
+
+/*!
+ * \brief Box widget changed normal setup
+ * \param _value New normal setup value
+ */
+void Universe1::Widgets::MaterialEditor::WidgetView::boxNormalSetupChanged(OpenGL::Models::ModelBox::NormalSetup _value)
+{
+    makeCurrent();
+    m_modelBox->setNormalSetup(_value);
+    doneCurrent();
+}
+
+/*!
+ * \brief Box widget changed box size 1
+ * \param _value New box size 1 value
+ */
+void Universe1::Widgets::MaterialEditor::WidgetView::boxBoxSize1Changed(float _value)
+{
+    makeCurrent();
+    m_modelBox->setBoxSize1(_value);
+    doneCurrent();
+}
+
+/*!
+ * \brief Box widget changed box size 2
+ * \param _value New box size 2 value
+ */
+void Universe1::Widgets::MaterialEditor::WidgetView::boxBoxSize2Changed(float _value)
+{
+    makeCurrent();
+    m_modelBox->setBoxSize2(_value);
+    doneCurrent();
+}
+
+/*!
+ * \brief Box widget changed box size 3
+ * \param _value New box size 3 value
+ */
+void Universe1::Widgets::MaterialEditor::WidgetView::boxBoxSize3Changed(float _value)
+{
+    makeCurrent();
+    m_modelBox->setBoxSize3(_value);
     doneCurrent();
 }
 

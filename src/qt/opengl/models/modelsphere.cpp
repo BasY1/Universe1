@@ -94,53 +94,6 @@ void Universe1::OpenGL::Models::ModelSphere::setEquatorPointCount(int _value)
 }
 
 /*!
- * \brief Tool function prepare perpendicular vector
- * \param _vec Base vector
- * \returns Normalized vector perpendicular to base vector
- */
-QVector3D Universe1::OpenGL::Models::ModelSphere::perpendicularVector(const QVector3D &_vec)
-{
-    static const QVector3D n(1.0F, 0.0F, 0.0F);
-    if (qFuzzyCompare(_vec, n))
-        return QVector3D::crossProduct(QVector3D(0.0F, 1.0F, 0.0F), _vec).normalized();
-    return QVector3D::crossProduct(n, _vec).normalized();
-}
-
-/*!
- * \brief Tool function, make sure sphere normals are perpendicular
- * \param _pole Sphere normal 1
- * \param _equator Sphere normal 1
- * \returns
- */
-void Universe1::OpenGL::Models::ModelSphere::initNormals(QVector3D &_pole, QVector3D &_equator)
-{
-    if (!qFuzzyCompare(1.0F, _pole.lengthSquared()))
-    {
-        if (_pole.isNull())
-        {
-            _pole = QVector3D(0.0F, 0.0F, 1.0F);
-            _equator = QVector3D(1.0F, 0.0F, 0.0F);
-            return;
-        }
-        _pole.normalize();
-    }
-
-    if (!qFuzzyCompare(1.0F, _equator.lengthSquared()))
-    {
-        if (_equator.isNull())
-        {
-            _equator = perpendicularVector(_pole);
-            return;
-        }
-
-        _equator.normalize();
-    }
-
-    if (!qFuzzyIsNull(QVector3D::dotProduct(_pole, _equator)))
-        _equator = QVector3D::crossProduct(QVector3D::crossProduct(_equator, _pole), _equator).normalized();
-}
-
-/*!
  * \brief Returns rotated point around normal by angle (right-handed rotation)
  * \param _p Point to rotate
  * \param _n Rotation normal (axis)

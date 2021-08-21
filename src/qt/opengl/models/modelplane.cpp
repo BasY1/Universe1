@@ -63,7 +63,7 @@ void Universe1::OpenGL::Models::ModelPlane::rebuild()
         tmp2 += step;
     }
 
-    const std::vector<uint> triangData = {0U, 1U, idx - 1U, 0U, idx - 1U, idx - 2U};
+    const std::vector<uint> triangData = {0U, idx - 1U, 1U, 0U, idx - 2U, idx - 1U};
 
     linesData.push_back(0U);
     linesData.push_back(idx - 2U);

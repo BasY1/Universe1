@@ -66,6 +66,7 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(O
     , m_guiDirectionLight(new GUI::GuiDirectionLight(m_view->directionLight()))
     , m_widgetGLSettings(new WidgetGLSettings(m_view))
     , m_widgetSphere(new WidgetModelSphere(m_view->modelSphere()))
+    , m_widgetBox(new WidgetModelBox(m_view->modelBox()))
     , m_widgetTriangle(new WidgetModelTriangle(m_view->modelTriangle()))
     , m_widgetPlane(new WidgetModelPlane(m_view->modelPlane()))
     , m_tabModels(new QTabWidget())
@@ -148,6 +149,7 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(O
     widDirLight->setLayout(layDirLight);
 
     m_tabModels->addTab(m_widgetSphere, tr("Sphere"));
+    m_tabModels->addTab(m_widgetBox, tr("Box"));
     m_tabModels->addTab(m_widgetTriangle, tr("Triangle"));
     m_tabModels->addTab(m_widgetPlane, tr("Plane"));
     m_tabModels->setCurrentIndex(m_view->currentModel());
@@ -185,6 +187,12 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(O
             &WidgetModelSphere::equatorPointCountChanged,
             m_view,
             &WidgetView::sphereEquatorPointCountChanged);
+
+    connect(m_widgetBox, &WidgetModelBox::wireFrameChanged, m_view, &WidgetView::boxWireFrameChanged);
+    connect(m_widgetBox, &WidgetModelBox::normalSetupChanged, m_view, &WidgetView::boxNormalSetupChanged);
+    connect(m_widgetBox, &WidgetModelBox::boxSize1Changed, m_view, &WidgetView::boxBoxSize1Changed);
+    connect(m_widgetBox, &WidgetModelBox::boxSize2Changed, m_view, &WidgetView::boxBoxSize2Changed);
+    connect(m_widgetBox, &WidgetModelBox::boxSize3Changed, m_view, &WidgetView::boxBoxSize3Changed);
 
     connect(m_widgetTriangle, &WidgetModelTriangle::wireFrameChanged, m_view, &WidgetView::triangleWireFrameChanged);
     connect(m_widgetTriangle, &WidgetModelTriangle::ccwChanged, m_view, &WidgetView::triangleCcwChanged);
@@ -228,6 +236,12 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::~WidgetMaterialEditor(
                &WidgetModelSphere::equatorPointCountChanged,
                m_view,
                &WidgetView::sphereEquatorPointCountChanged);
+
+    disconnect(m_widgetBox, &WidgetModelBox::wireFrameChanged, m_view, &WidgetView::boxWireFrameChanged);
+    disconnect(m_widgetBox, &WidgetModelBox::normalSetupChanged, m_view, &WidgetView::boxNormalSetupChanged);
+    disconnect(m_widgetBox, &WidgetModelBox::boxSize1Changed, m_view, &WidgetView::boxBoxSize1Changed);
+    disconnect(m_widgetBox, &WidgetModelBox::boxSize2Changed, m_view, &WidgetView::boxBoxSize2Changed);
+    disconnect(m_widgetBox, &WidgetModelBox::boxSize3Changed, m_view, &WidgetView::boxBoxSize3Changed);
 
     disconnect(m_widgetTriangle, &WidgetModelTriangle::wireFrameChanged, m_view, &WidgetView::triangleWireFrameChanged);
     disconnect(m_widgetTriangle, &WidgetModelTriangle::ccwChanged, m_view, &WidgetView::triangleCcwChanged);

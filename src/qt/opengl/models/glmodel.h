@@ -73,6 +73,10 @@ class GLModel : public QObject, protected QOpenGLFunctions
  protected:
     bool m_enabled;       //!< Enable within paint process flag
     Material m_material;  //!< Model material
+
+ public:
+    static QVector3D perpendicularVector(const QVector3D &_pole);
+    static void initNormals(QVector3D &_pole, QVector3D &_equator);
 };
 
 /*!

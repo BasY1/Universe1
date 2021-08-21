@@ -9,6 +9,7 @@
 
 #include "../../opengl/glwidget.h"
 #include "../../opengl/lights.h"
+#include "../../opengl/models/modelbox.h"
 #include "../../opengl/models/modelplane.h"
 #include "../../opengl/models/modelpointlight.h"
 #include "../../opengl/models/modelsphere.h"
@@ -30,6 +31,7 @@ class WidgetView : public OpenGL::GLWidget
 
     inline float sceneAmbientFactor() const;
     inline OpenGL::Models::ModelSphere *modelSphere();
+    inline OpenGL::Models::ModelBox *modelBox();
     inline OpenGL::Models::ModelTriangle *modelTriangle();
     inline OpenGL::Models::ModelPlane *modelPlane();
     inline int currentModel() const;
@@ -46,14 +48,20 @@ class WidgetView : public OpenGL::GLWidget
     void setDirectionLight(const OpenGL::DirectionLight &_directionLight);
     void setPointLight(int _idx, const OpenGL::PointLight &_pointLight);
 
+    void sphereWireFrameChanged(bool _value);
+    void sphereEquatorPointCountChanged(int _value);
+
+    void boxWireFrameChanged(bool _value);
+    void boxNormalSetupChanged(OpenGL::Models::ModelBox::NormalSetup _value);
+    void boxBoxSize1Changed(float _value);
+    void boxBoxSize2Changed(float _value);
+    void boxBoxSize3Changed(float _value);
+
     void triangleWireFrameChanged(bool _value);
     void triangleCcwChanged(bool _value);
     void triangleNormal1Changed(const QVector3D &_value);
     void triangleNormal2Changed(const QVector3D &_value);
     void triangleNormal3Changed(const QVector3D &_value);
-
-    void sphereWireFrameChanged(bool _value);
-    void sphereEquatorPointCountChanged(int _value);
 
     void planeWireFrameChanged(bool _value);
     void planeNormal1Changed(const QVector3D &_value);
@@ -70,6 +78,7 @@ class WidgetView : public OpenGL::GLWidget
  protected:
     float m_sceneAmbientFactor;                      //!< Scene ambient factor
     OpenGL::Models::ModelSphere *m_modelSphere;      //!< Sphere Open GL model
+    OpenGL::Models::ModelBox *m_modelBox;            //!< Box Open GL model
     OpenGL::Models::ModelTriangle *m_modelTriangle;  //!< Triangle Open GL model
     OpenGL::Models::ModelPlane *m_modelPlane;        //!< Plane Open GL model
 
@@ -116,6 +125,15 @@ inline OpenGL::Models::ModelPlane *WidgetView::modelPlane()
 inline OpenGL::Models::ModelSphere *WidgetView::modelSphere()
 {
     return m_modelSphere;
+}
+
+/*!
+ * \brief Getter for box Open GL model
+ * \returns Box Open GL model
+ */
+inline OpenGL::Models::ModelBox *WidgetView::modelBox()
+{
+    return m_modelBox;
 }
 
 /*!

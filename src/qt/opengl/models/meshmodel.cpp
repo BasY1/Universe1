@@ -168,7 +168,8 @@ bool Universe1::OpenGL::Models::MeshModel::initBuffers(const std::vector<QVector
         m_linesCount = _linesData.size();
     }
 
-    m_isInit = true;
+    m_isInit = !_vertexData.empty() && _vertexData.size() == _normalData.size() &&
+        (_triangsData.size() > 2 || _linesData.size() > 1);
 
     m_canSwitchDrawWireFrame = (!_triangsData.empty() && !_linesData.empty());
 

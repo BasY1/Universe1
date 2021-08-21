@@ -7,6 +7,7 @@
 #ifndef UNIVERSE1_WIDGETS_MATERIALEDITOR_WIDGETMODELS_H
 #define UNIVERSE1_WIDGETS_MATERIALEDITOR_WIDGETMODELS_H
 
+#include "../../opengl/models/modelbox.h"
 #include "../../opengl/models/modelplane.h"
 #include "../../opengl/models/modelsphere.h"
 #include "../../opengl/models/modeltriangle.h"
@@ -121,9 +122,8 @@ class WidgetModelPlane : public QWidget
     ~WidgetModelPlane();
 
  protected slots:
-
-    void normal1XChaged(float _value);
-    void normal2ZChaged(float _value);
+    void normal1XChanged(float _value);
+    void normal2ZChanged(float _value);
 
  signals:
     /*!
@@ -167,6 +167,64 @@ class WidgetModelPlane : public QWidget
     GUI::GuiFloat *m_normal2Z;  //!< Normal 2 Z widget
     GUI::GuiInt *m_dots1Count;  //!< Count in direction 1
     GUI::GuiInt *m_dots2Count;  //!< Count in direction 2
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Box model widget
+ */
+class WidgetModelBox : public QWidget
+{
+    Q_OBJECT
+ public:
+    explicit WidgetModelBox(OpenGL::Models::ModelBox *_model, QWidget *_parent = nullptr);
+    ~WidgetModelBox();
+
+ signals:
+    /*!
+     * \brief Wire-frame changed
+     * \param _value New flag value
+     */
+    void wireFrameChanged(bool _value);
+
+    /*!
+     * \brief Box normal setup changed
+     * \param _value New normal setup value
+     */
+    void normalSetupChanged(OpenGL::Models::ModelBox::NormalSetup _value);
+
+    /*!
+     * \brief Box size 1 changed
+     * \param _value New box size 1
+     */
+    void boxSize1Changed(float _value);
+
+    /*!
+     * \brief Box size 2 changed
+     * \param _value New box size 2
+     */
+    void boxSize2Changed(float _value);
+
+    /*!
+     * \brief Box size 3 changed
+     * \param _value New box size 3
+     */
+    void boxSize3Changed(float _value);
+
+ protected slots:
+    void normalComboChanged(int _idx);
+
+ protected:
+    OpenGL::Models::ModelBox *m_model;  //!< Box model
+
+    QCheckBox *m_wireFrame;     //!< Draw wire-frame check-box
+    QComboBox *m_normalSetup;   //!< Box normal setup combo-box
+    GUI::GuiFloat *m_boxSize1;  //!< Box size 1 GIU
+    GUI::GuiFloat *m_boxSize2;  //!< Box size 2 GIU
+    GUI::GuiFloat *m_boxSize3;  //!< Box size 3 GIU
 };
 
 }  // namespace MaterialEditor

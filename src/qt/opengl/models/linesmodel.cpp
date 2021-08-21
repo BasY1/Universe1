@@ -146,7 +146,7 @@ bool Universe1::OpenGL::Models::LinesModel::initBuffers(const std::vector<QVecto
         m_linesCount = _vertexData.size();
     }
 
-    m_isInit = true;
+    m_isInit = m_linesCount > 1;
 
     return true;
 }
@@ -165,11 +165,6 @@ void Universe1::OpenGL::Models::LinesModel::initGLImlp()
  */
 void Universe1::OpenGL::Models::LinesModel::paintGLImlp(ShaderProgram *_program)
 {
-    if (!m_isInit)
-        return;
-
-    _program->setupMaterial(m_material);
-
     m_vertexBuffer.bind();
     _program->enableAttributeArray(_program->attrVertex());
     _program->setAttributeBuffer(_program->attrVertex(), GL_FLOAT, 0, 3);

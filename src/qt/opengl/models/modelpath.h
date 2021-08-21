@@ -67,7 +67,7 @@ inline ModelPath::ModelPath(const Material &_material, QObject *_parent)
 
 /*!
  * \brief Getter for path vertex position data
- * \return Path vertex position data
+ * \returns Path vertex position data
  */
 inline const std::vector<QVector3D> &ModelPath::pathData() const
 {

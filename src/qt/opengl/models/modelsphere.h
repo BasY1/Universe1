@@ -84,8 +84,6 @@ class ModelSphere : public MeshModel
     int m_equatorPointCount;  //!< Point count on equator
 
     static const int defaultPointCount{64};  //!< Default value for point count on equator
-    static QVector3D perpendicularVector(const QVector3D &_pole);
-    static void initNormals(QVector3D &_pole, QVector3D &_equator);
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
