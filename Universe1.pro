@@ -68,6 +68,7 @@ SOURCES += \
     src/qt/opengl/models/modelbox.cpp \
     src/qt/opengl/models/modelsphere.cpp \
     src/qt/opengl/models/modelpointlight.cpp \
+    src/qt/opengl/models/modelarrow.cpp \
     \
     src/qt/widgets/horizontallinespacer.cpp \
     src/qt/widgets/widgetbgcolor.cpp \
@@ -109,6 +110,7 @@ HEADERS += \
     src/qt/opengl/models/modelbox.h \
     src/qt/opengl/models/modelsphere.h \
     src/qt/opengl/models/modelpointlight.h \
+    src/qt/opengl/models/modelarrow.h \
     \
     src/qt/widgets/horizontallinespacer.h \
     src/qt/widgets/widgetbgcolor.h \

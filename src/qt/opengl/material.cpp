@@ -12,7 +12,7 @@
  */
 Universe1::OpenGL::Material::Material()
     : ADSColors()
-    , shininess(1.0F)
+    , shininess(32.0F)
     , alpha(1.0F)
 {
 }
@@ -52,7 +52,7 @@ Universe1::OpenGL::Material::Material(const ADSColors &_colors, const float _shi
  */
 Universe1::OpenGL::Material::Material(const ADSColors &_colors)
     : ADSColors(_colors)
-    , shininess(1.0F)
+    , shininess(32.0F)
     , alpha(1.0F)
 {
 }

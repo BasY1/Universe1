@@ -16,10 +16,11 @@ Universe1::Widgets::MaterialEditor::WidgetView::WidgetView(const OpenGL::Materia
     , m_sceneAmbientFactor(0.1F)
     , m_modelSphere(new OpenGL::Models::ModelSphere(_material))
     , m_modelBox(new OpenGL::Models::ModelBox(_material))
+    , m_modelArrow(new OpenGL::Models::ModelArrow(_material, QVector3D(0.0F, 0.0F, -0.5F), QVector3D(0.0F, 0.0F, 0.5F)))
     , m_modelTriangle(new OpenGL::Models::ModelTriangle(_material))
     , m_modelPlane(new OpenGL::Models::ModelPlane(
           _material, QVector3D(), QVector3D(0.5F, 0.0F, 0.0F), QVector3D(0.0F, 0.0F, 0.5F)))
-    , m_models({m_modelSphere, m_modelBox, m_modelTriangle, m_modelPlane})
+    , m_models({m_modelSphere, m_modelBox, m_modelArrow, m_modelTriangle, m_modelPlane})
     , m_currentModel(0)
 {
     const QSettings settings;
@@ -35,6 +36,11 @@ Universe1::Widgets::MaterialEditor::WidgetView::WidgetView(const OpenGL::Materia
     m_modelBox->setBoxSize1(settings.value(m_settingsKey + "Box/boxSize1", m_modelBox->boxSize1()).toFloat());
     m_modelBox->setBoxSize2(settings.value(m_settingsKey + "Box/boxSize2", m_modelBox->boxSize2()).toFloat());
     m_modelBox->setBoxSize3(settings.value(m_settingsKey + "Box/boxSize3", m_modelBox->boxSize3()).toFloat());
+
+    m_modelArrow->setDrawWireFrame(
+        settings.value(m_settingsKey + "Arrow/drawWireFrame", m_modelArrow->drawWireFrame()).toBool());
+    m_modelArrow->setCirclePointCount(
+        settings.value(m_settingsKey + "Arrow/circlePointCount", m_modelArrow->circlePointCount()).toInt());
 
     m_modelTriangle->setDrawWireFrame(
         settings.value(m_settingsKey + "Triangle/drawWireFrame", m_modelTriangle->drawWireFrame()).toBool());
@@ -98,6 +104,8 @@ Universe1::Widgets::MaterialEditor::WidgetView::~WidgetView()
     settings.setValue(m_settingsKey + "Box/boxSize1", m_modelBox->boxSize1());
     settings.setValue(m_settingsKey + "Box/boxSize2", m_modelBox->boxSize2());
     settings.setValue(m_settingsKey + "Box/boxSize3", m_modelBox->boxSize3());
+    settings.setValue(m_settingsKey + "Arrow/drawWireFrame", m_modelArrow->drawWireFrame());
+    settings.setValue(m_settingsKey + "Arrow/circlePointCount", m_modelArrow->circlePointCount());
     settings.setValue(m_settingsKey + "Triangle/drawWireFrame", m_modelTriangle->drawWireFrame());
     settings.setValue(m_settingsKey + "Triangle/ccw", m_modelTriangle->ccw());
     settings.setValue(m_settingsKey + "Triangle/normal1", m_modelTriangle->normal1());
@@ -125,6 +133,7 @@ Universe1::Widgets::MaterialEditor::WidgetView::~WidgetView()
     makeCurrent();
     delete m_modelSphere;
     delete m_modelBox;
+    delete m_modelArrow;
     delete m_modelTriangle;
     delete m_modelPlane;
     doneCurrent();
@@ -184,6 +193,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::setMaterial(const OpenGL::M
 {
     m_modelSphere->setMaterial(_material);
     m_modelBox->setMaterial(_material);
+    m_modelArrow->setMaterial(_material);
     m_modelTriangle->setMaterial(_material);
     m_modelPlane->setMaterial(_material);
     update();
@@ -405,6 +415,32 @@ void Universe1::Widgets::MaterialEditor::WidgetView::boxBoxSize3Changed(float _v
 {
     makeCurrent();
     m_modelBox->setBoxSize3(_value);
+    doneCurrent();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Arrow widget changed draw wire-frame flag
+ * \param _value New flag value
+ */
+void Universe1::Widgets::MaterialEditor::WidgetView::arrowWireFrameChanged(bool _value)
+{
+    makeCurrent();
+    m_modelArrow->setDrawWireFrame(_value);
+    doneCurrent();
+}
+
+/*!
+ * \brief Arrow widget changed point count
+ * \param _value New flag value
+ */
+void Universe1::Widgets::MaterialEditor::WidgetView::arrowCirclePointCountChanged(int _value)
+{
+    makeCurrent();
+    m_modelArrow->setCirclePointCount(_value);
     doneCurrent();
 }
 

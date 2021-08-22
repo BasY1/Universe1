@@ -9,6 +9,7 @@
 
 #include "../../opengl/glwidget.h"
 #include "../../opengl/lights.h"
+#include "../../opengl/models/modelarrow.h"
 #include "../../opengl/models/modelbox.h"
 #include "../../opengl/models/modelplane.h"
 #include "../../opengl/models/modelpointlight.h"
@@ -32,6 +33,7 @@ class WidgetView : public OpenGL::GLWidget
     inline float sceneAmbientFactor() const;
     inline OpenGL::Models::ModelSphere *modelSphere();
     inline OpenGL::Models::ModelBox *modelBox();
+    inline OpenGL::Models::ModelArrow *modelArrow();
     inline OpenGL::Models::ModelTriangle *modelTriangle();
     inline OpenGL::Models::ModelPlane *modelPlane();
     inline int currentModel() const;
@@ -57,6 +59,9 @@ class WidgetView : public OpenGL::GLWidget
     void boxBoxSize2Changed(float _value);
     void boxBoxSize3Changed(float _value);
 
+    void arrowWireFrameChanged(bool _value);
+    void arrowCirclePointCountChanged(int _value);
+
     void triangleWireFrameChanged(bool _value);
     void triangleCcwChanged(bool _value);
     void triangleNormal1Changed(const QVector3D &_value);
@@ -79,6 +84,7 @@ class WidgetView : public OpenGL::GLWidget
     float m_sceneAmbientFactor;                      //!< Scene ambient factor
     OpenGL::Models::ModelSphere *m_modelSphere;      //!< Sphere Open GL model
     OpenGL::Models::ModelBox *m_modelBox;            //!< Box Open GL model
+    OpenGL::Models::ModelArrow *m_modelArrow;        //!< Arrow Open GL model
     OpenGL::Models::ModelTriangle *m_modelTriangle;  //!< Triangle Open GL model
     OpenGL::Models::ModelPlane *m_modelPlane;        //!< Plane Open GL model
 
@@ -134,6 +140,15 @@ inline OpenGL::Models::ModelSphere *WidgetView::modelSphere()
 inline OpenGL::Models::ModelBox *WidgetView::modelBox()
 {
     return m_modelBox;
+}
+
+/*!
+ * \brief Getter for arrow Open GL model
+ * \returns Arrow Open GL model
+ */
+inline OpenGL::Models::ModelArrow *WidgetView::modelArrow()
+{
+    return m_modelArrow;
 }
 
 /*!

@@ -7,6 +7,7 @@
 #ifndef UNIVERSE1_WIDGETS_MATERIALEDITOR_WIDGETMODELS_H
 #define UNIVERSE1_WIDGETS_MATERIALEDITOR_WIDGETMODELS_H
 
+#include "../../opengl/models/modelarrow.h"
 #include "../../opengl/models/modelbox.h"
 #include "../../opengl/models/modelplane.h"
 #include "../../opengl/models/modelsphere.h"
@@ -225,6 +226,40 @@ class WidgetModelBox : public QWidget
     GUI::GuiFloat *m_boxSize1;  //!< Box size 1 GIU
     GUI::GuiFloat *m_boxSize2;  //!< Box size 2 GIU
     GUI::GuiFloat *m_boxSize3;  //!< Box size 3 GIU
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Arrow model widget
+ */
+class WidgetModelArrow : public QWidget
+{
+    Q_OBJECT
+ public:
+    explicit WidgetModelArrow(OpenGL::Models::ModelArrow *_model, QWidget *_parent = nullptr);
+    ~WidgetModelArrow();
+
+ signals:
+    /*!
+     * \brief Wire-frame changed
+     * \param _value New flag value
+     */
+    void wireFrameChanged(bool _value);
+
+    /*!
+     * \brief Point count on circle changed
+     * \param _value New point count
+     */
+    void circlePointCountChanged(int _value);
+
+ protected:
+    OpenGL::Models::ModelArrow *m_model;  //!< Arrow model
+
+    QCheckBox *m_wireFrame;           //!< Draw wire-frame check-box
+    GUI::GuiInt *m_circlePointCount;  //!< Point count on circle widget
 };
 
 }  // namespace MaterialEditor

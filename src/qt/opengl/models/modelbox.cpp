@@ -36,7 +36,7 @@ Universe1::OpenGL::Models::ModelBox::ModelBox(const Material &_material,
     , m_boxSize2(std::max(0.000001F, _boxSize2))
     , m_boxSize3(std::max(0.000001F, _boxSize3))
 {
-    initNormals(m_normal1, m_normal2);
+    prepareNormals(m_normal1, m_normal2);
 }
 
 static void addQuad(uint &_idx,
@@ -181,7 +181,7 @@ void Universe1::OpenGL::Models::ModelBox::setNormals(const QVector3D &_normal1, 
 {
     m_normal1 = _normal1;
     m_normal2 = _normal2;
-    initNormals(m_normal1, m_normal2);
+    prepareNormals(m_normal1, m_normal2);
     if (isInit())
         rebuild();
     emit changed();

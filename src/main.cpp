@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     // if (!runTests())
     //    return EXIT_FAILURE;
 
-    Universe1::OpenGL::MaterialDB db(Universe1::OpenGL::Material(Qt::white, Qt::white, Qt::white, 1.0F, 1.0F));
+    Universe1::OpenGL::MaterialDB db(Universe1::OpenGL::Material(Qt::red, Qt::green, Qt::blue, 32.0F, 1.0F));
     Universe1::Widgets::MaterialEditor::DialogMaterialEditor dialog(&db);
     return dialog.exec();
 

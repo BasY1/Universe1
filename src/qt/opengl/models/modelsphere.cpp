@@ -5,7 +5,6 @@
  */
 
 #include "modelsphere.h"
-#include <cmath>
 
 /*!
  * \brief Constructor
@@ -29,11 +28,9 @@ Universe1::OpenGL::Models::ModelSphere::ModelSphere(const Material &_material,
     , m_toPole(_toPole)
     , m_toEquator(_toEquator)
     , m_radius(_radius)
-    , m_equatorPointCount(std::min(1024, std::max(4, _equatorPointCount)))
+    , m_equatorPointCount(prepareCirclePointCount(_equatorPointCount))
 {
-    if (m_equatorPointCount % 2 != 0)
-        ++m_equatorPointCount;
-    initNormals(m_toPole, m_toEquator);
+    prepareNormals(m_toPole, m_toEquator);
 }
 
 /*!
@@ -57,7 +54,7 @@ void Universe1::OpenGL::Models::ModelSphere::setNormal(const QVector3D &_toPole,
 {
     m_toPole = _toPole;
     m_toEquator = _toEquator;
-    initNormals(m_toPole, m_toEquator);
+    prepareNormals(m_toPole, m_toEquator);
     if (isInit())
         rebuild();
     emit changed();
@@ -81,34 +78,10 @@ void Universe1::OpenGL::Models::ModelSphere::setRadius(float _value)
  */
 void Universe1::OpenGL::Models::ModelSphere::setEquatorPointCount(int _value)
 {
-    int newValue = std::min(1024, std::max(4, _value));
-    if (newValue % 2 != 0)
-        ++newValue;
-    if (m_equatorPointCount != newValue)
-    {
-        m_equatorPointCount = newValue;
-        if (isInit())
-            rebuild();
-        emit changed();
-    }
-}
-
-/*!
- * \brief Returns rotated point around normal by angle (right-handed rotation)
- * \param _p Point to rotate
- * \param _n Rotation normal (axis)
- * \param _sa Sinus angle in radians
- * \param _ca Cosinus angle in radians
- * \return
- */
-static QVector3D rotate(const QVector3D &_p, const QVector3D &_n, const float _sa, const float _ca)
-{
-    const QVector3D u = _n.x() * _p;
-    const QVector3D v = _n.y() * _p;
-    const QVector3D w = _n.z() * _p;
-    return QVector3D(_n.x() * u.x() + _sa * (v.z() - w.y()) + _ca * _p.x() * (_n.y() * _n.y() + _n.z() * _n.z()),
-                     _n.y() * v.y() + _sa * (w.x() - u.z()) + _ca * _p.y() * (_n.x() * _n.x() + _n.z() * _n.z()),
-                     _n.z() * w.z() + _sa * (u.y() - v.x()) + _ca * _p.z() * (_n.x() * _n.x() + _n.y() * _n.y()));
+    m_equatorPointCount = prepareCirclePointCount(_value);
+    if (isInit())
+        rebuild();
+    emit changed();
 }
 
 /*!

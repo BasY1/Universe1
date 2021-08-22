@@ -283,3 +283,47 @@ void Universe1::Widgets::MaterialEditor::WidgetModelPlane::normal2ZChanged(float
     m_normal2.setZ(_value);
     emit normal2Changed(m_normal2);
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Constructor
+ * \param _model Arrow Open GL model
+ * \param _parent Parent \c QWidget
+ */
+Universe1::Widgets::MaterialEditor::WidgetModelArrow::WidgetModelArrow(OpenGL::Models::ModelArrow *_model,
+                                                                       QWidget *_parent)
+    : QWidget(_parent)
+    , m_model(_model)
+    , m_wireFrame(new QCheckBox())
+    , m_circlePointCount(new GUI::GuiInt(m_model->circlePointCount(), 4, 1024, Qt::Horizontal))
+{
+    m_wireFrame->setChecked(m_model->drawWireFrame());
+
+    connect(m_wireFrame, &QCheckBox::toggled, this, &WidgetModelArrow::wireFrameChanged);
+    connect(m_circlePointCount, &GUI::GuiInt::changed, this, &WidgetModelArrow::circlePointCountChanged);
+
+    QGridLayout *lay = new QGridLayout();
+    int row = 0;
+    lay->addWidget(new QLabel(tr("Wire-frame")), row, 0, 1, 2);
+    lay->addWidget(m_wireFrame, row++, 2, 1, 2);
+
+    m_circlePointCount->layoutRow(tr("Circle point count"), lay, row);
+
+    lay->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Expanding), row, 0, 1, 4);
+
+    setLayout(lay);
+}
+
+/*!
+ * \brief Destructor
+ */
+Universe1::Widgets::MaterialEditor::WidgetModelArrow::~WidgetModelArrow()
+{
+    disconnect(m_wireFrame, &QCheckBox::toggled, this, &WidgetModelArrow::wireFrameChanged);
+    disconnect(m_circlePointCount, &GUI::GuiInt::changed, this, &WidgetModelArrow::circlePointCountChanged);
+
+    delete m_circlePointCount;
+}

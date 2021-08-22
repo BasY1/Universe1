@@ -66,6 +66,7 @@ class WidgetMaterialEditor : public QSplitter
 
     WidgetModelSphere *m_widgetSphere;      //!< Sphere model widget
     WidgetModelBox *m_widgetBox;            //!< Box model widget
+    WidgetModelArrow *m_widgetArrow;        //!< Arrow model widget
     WidgetModelTriangle *m_widgetTriangle;  //!< Triangle model widget
     WidgetModelPlane *m_widgetPlane;        //!< Plane model widget
 

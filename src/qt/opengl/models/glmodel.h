@@ -9,6 +9,8 @@
 
 #include "../shaderprogram.h"
 
+#include <cmath>
+
 namespace Universe1 {
 namespace OpenGL {
 namespace Models {
@@ -75,8 +77,12 @@ class GLModel : public QObject, protected QOpenGLFunctions
     Material m_material;  //!< Model material
 
  public:
+    static QVector3D rotate(const QVector3D &_p, const QVector3D &_n, const float _sa, const float _ca);
     static QVector3D perpendicularVector(const QVector3D &_pole);
-    static void initNormals(QVector3D &_pole, QVector3D &_equator);
+    static void prepareNormals(QVector3D &_pole, QVector3D &_equator);
+    static int prepareCirclePointCount(const int _count);
+
+    static const int defaultCirclePointCount{64};  //!< Default value for point count on equator
 };
 
 /*!

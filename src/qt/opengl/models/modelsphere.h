@@ -82,8 +82,6 @@ class ModelSphere : public MeshModel
     QVector3D m_toEquator;    //!< Sphere normal 2 (direction from center to equator)
     float m_radius;           //!< Sphere radius
     int m_equatorPointCount;  //!< Point count on equator
-
-    static const int defaultPointCount{64};  //!< Default value for point count on equator
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -105,7 +103,7 @@ inline ModelSphere::ModelSphere(const Material &_material,
                                 const QVector3D &_toEquator,
                                 const float _radius,
                                 QObject *_parent)
-    : ModelSphere(_material, _position, _toPole, _toEquator, _radius, defaultPointCount, _parent)
+    : ModelSphere(_material, _position, _toPole, _toEquator, _radius, defaultCirclePointCount, _parent)
 {
 }
 
@@ -141,7 +139,8 @@ inline ModelSphere::ModelSphere(const Material &_material,
                                 const QVector3D &_toPole,
                                 const float _radius,
                                 QObject *_parent)
-    : ModelSphere(_material, _position, _toPole, perpendicularVector(_toPole), _radius, defaultPointCount, _parent)
+    : ModelSphere(
+          _material, _position, _toPole, perpendicularVector(_toPole), _radius, defaultCirclePointCount, _parent)
 {
 }
 
@@ -184,7 +183,7 @@ inline ModelSphere::ModelSphere(const Material &_material,
                   QVector3D(0.0F, 0.0F, 1.0F),
                   QVector3D(1.0F, 0.0F, 0.0F),
                   _radius,
-                  defaultPointCount,
+                  defaultCirclePointCount,
                   _parent)
 {
 }
@@ -201,7 +200,7 @@ inline ModelSphere::ModelSphere(const Material &_material, QObject *_parent)
                   QVector3D(0.0F, 0.0F, 1.0F),
                   QVector3D(1.0F, 0.0F, 0.0F),
                   1.0F,
-                  defaultPointCount,
+                  defaultCirclePointCount,
                   _parent)
 {
 }
