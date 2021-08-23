@@ -299,11 +299,15 @@ Universe1::Widgets::MaterialEditor::WidgetModelArrow::WidgetModelArrow(OpenGL::M
     , m_model(_model)
     , m_wireFrame(new QCheckBox())
     , m_circlePointCount(new GUI::GuiInt(m_model->circlePointCount(), 4, 1024, Qt::Horizontal))
+    , m_guiLine(new GUI::GuiMaterial(m_model->materialLine(), Qt::Horizontal))
+    , m_guiBottom(new GUI::GuiMaterial(m_model->materialHeaderBottom(), Qt::Horizontal))
 {
     m_wireFrame->setChecked(m_model->drawWireFrame());
 
     connect(m_wireFrame, &QCheckBox::toggled, this, &WidgetModelArrow::wireFrameChanged);
     connect(m_circlePointCount, &GUI::GuiInt::changed, this, &WidgetModelArrow::circlePointCountChanged);
+    connect(m_guiLine, &GUI::GuiMaterial::changed, this, &WidgetModelArrow::materialLineChanged);
+    connect(m_guiBottom, &GUI::GuiMaterial::changed, this, &WidgetModelArrow::materialBottomChanged);
 
     QGridLayout *lay = new QGridLayout();
     int row = 0;
@@ -311,6 +315,14 @@ Universe1::Widgets::MaterialEditor::WidgetModelArrow::WidgetModelArrow(OpenGL::M
     lay->addWidget(m_wireFrame, row++, 2, 1, 2);
 
     m_circlePointCount->layoutRow(tr("Circle point count"), lay, row);
+
+    lay->addWidget(new HorizontalLineSpacer(), row++, 0, 1, 4);
+
+    m_guiLine->layoutRow(lay, row);
+
+    lay->addWidget(new HorizontalLineSpacer(), row++, 0, 1, 4);
+
+    m_guiBottom->layoutRow(lay, row);
 
     lay->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Expanding), row, 0, 1, 4);
 
@@ -324,6 +336,10 @@ Universe1::Widgets::MaterialEditor::WidgetModelArrow::~WidgetModelArrow()
 {
     disconnect(m_wireFrame, &QCheckBox::toggled, this, &WidgetModelArrow::wireFrameChanged);
     disconnect(m_circlePointCount, &GUI::GuiInt::changed, this, &WidgetModelArrow::circlePointCountChanged);
+    disconnect(m_guiLine, &GUI::GuiMaterial::changed, this, &WidgetModelArrow::materialLineChanged);
+    disconnect(m_guiBottom, &GUI::GuiMaterial::changed, this, &WidgetModelArrow::materialBottomChanged);
 
     delete m_circlePointCount;
+    delete m_guiLine;
+    delete m_guiBottom;
 }

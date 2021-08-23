@@ -8,7 +8,9 @@
 
 /*!
  * \brief Constructor
- * \param _material Initial material
+ * \param _materialLine Initial line material
+ * \param _materialHeader Initial header material
+ * \param _materialHeaderBottom Initial header bottom material
  * \param _fromPosition Initial from point position
  * \param _toPosition Initial to point position (Header peak)
  * \param _ratioRadiusLine Initial arrow line radius as ratio to full arrow length
@@ -17,7 +19,9 @@
  * \param _circlePointCount Initial point count on circle
  * \param _parent Parent \c QObject
  */
-Universe1::OpenGL::Models::ModelArrow::ModelArrow(const Material &_material,
+Universe1::OpenGL::Models::ModelArrow::ModelArrow(const Material &_materialLine,
+                                                  const Material &_materialHeader,
+                                                  const Material &_materialHeaderBottom,
                                                   const QVector3D &_fromPosition,
                                                   const QVector3D &_toPosition,
                                                   float _ratioRadiusLine,
@@ -25,7 +29,7 @@ Universe1::OpenGL::Models::ModelArrow::ModelArrow(const Material &_material,
                                                   float _ratioLengthHeader,
                                                   int _circlePointCount,
                                                   QObject *_parent)
-    : MeshModel(_material, _parent)
+    : MeshModel(std::vector<Material>({_materialLine, _materialHeader, _materialHeaderBottom}), _parent)
     , m_fromPosition(_fromPosition)
     , m_toPosition(_toPosition)
     , m_ratioRadiusLine(_ratioRadiusLine)
@@ -143,12 +147,13 @@ void Universe1::OpenGL::Models::ModelArrow::rebuild()
 {
     std::vector<QVector3D> vertexData;
     std::vector<QVector3D> normalData;
+    std::vector<uint8_t> materialData;
     std::vector<uint> triangData;
     std::vector<uint> linesData;
 
     if (qFuzzyCompare(m_fromPosition, m_toPosition))
     {
-        initBuffers(vertexData, normalData, {}, triangData, linesData);
+        initBuffers(vertexData, normalData, materialData, triangData, linesData);
         return;
     }
 
@@ -164,6 +169,7 @@ void Universe1::OpenGL::Models::ModelArrow::rebuild()
     const size_t vCnt = 7U * m_circlePointCount + 1U;
     vertexData.reserve(vCnt);
     normalData.reserve(vCnt);
+    materialData.reserve(vCnt);
 
     const QVector3D normalDir = (m_toPosition - m_fromPosition).normalized();
     const QVector3D normalBack = -normalDir;
@@ -182,6 +188,7 @@ void Universe1::OpenGL::Models::ModelArrow::rebuild()
 
     vertexData.push_back(m_fromPosition);
     normalData.push_back(normalBack);
+    materialData.push_back(0U);
 
     for (int i = 0; i < m_circlePointCount; ++i)
     {
@@ -191,24 +198,31 @@ void Universe1::OpenGL::Models::ModelArrow::rebuild()
 
         vertexData.push_back(posBack);
         normalData.push_back(normalBack);
+        materialData.push_back(0U);
 
         vertexData.push_back(posBack);
         normalData.push_back(arm1);
+        materialData.push_back(0U);
 
         vertexData.push_back(posH1);
         normalData.push_back(arm1);
+        materialData.push_back(0U);
 
         vertexData.push_back(posH1);
         normalData.push_back(normalBack);
+        materialData.push_back(1U);
 
         vertexData.push_back(posH2);
         normalData.push_back(normalBack);
+        materialData.push_back(1U);
 
         vertexData.push_back(posH2);
         normalData.push_back(arm2);
+        materialData.push_back(2U);
 
         vertexData.push_back(m_toPosition);
         normalData.push_back(arm3);
+        materialData.push_back(2U);
 
         arm1 = rotate(arm1, normalDir, sa, ca);
         arm2 = rotate(arm2, normalDir, sa, ca);
@@ -309,5 +323,43 @@ void Universe1::OpenGL::Models::ModelArrow::rebuild()
     linesData.push_back(m_circlePointCount * 7U - 2U);
     linesData.push_back(5U);
 
-    initBuffers(vertexData, normalData, {}, triangData, linesData);
+    initBuffers(vertexData, normalData, materialData, triangData, linesData);
+}
+
+/*!
+ * \brief Setter for material for all three components
+ * \param _value New material object with values
+ */
+void Universe1::OpenGL::Models::ModelArrow::setMaterial(const Material &_value)
+{
+    GLModel::setMaterial(0, _value);
+    GLModel::setMaterial(1, _value);
+    GLModel::setMaterial(2, _value);
+}
+
+/*!
+ * \brief Setter for line material
+ * \param _value New material object with values
+ */
+void Universe1::OpenGL::Models::ModelArrow::setMaterialLine(const Material &_value)
+{
+    GLModel::setMaterial(0, _value);
+}
+
+/*!
+ * \brief Setter for header material
+ * \param _value New material object with values
+ */
+void Universe1::OpenGL::Models::ModelArrow::setMaterialHeader(const Material &_value)
+{
+    GLModel::setMaterial(2, _value);
+}
+
+/*!
+ * \brief Setter for header bottom material
+ * \param _value New material object with values
+ */
+void Universe1::OpenGL::Models::ModelArrow::setMaterialHeaderBottom(const Material &_value)
+{
+    GLModel::setMaterial(1, _value);
 }

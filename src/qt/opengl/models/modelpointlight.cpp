@@ -37,17 +37,17 @@ void Universe1::OpenGL::Models::ModelPointLight::setPointLight(const PointLight 
     m_enabled = _light.mode != PointLight::LightOff;
     m_position = _light.position;
 
-    m_materials.at(0).ambient = _light.ambient;
-    m_materials.at(0).diffuse = _light.ambient;
-    m_materials.at(0).specular = _light.ambient;
+    GLModel::m_materials.at(0).ambient = _light.ambient;
+    GLModel::m_materials.at(0).diffuse = _light.ambient;
+    GLModel::m_materials.at(0).specular = _light.ambient;
 
-    m_materials.at(1).ambient = _light.diffuse;
-    m_materials.at(1).diffuse = _light.diffuse;
-    m_materials.at(1).specular = _light.diffuse;
+    GLModel::m_materials.at(1).ambient = _light.diffuse;
+    GLModel::m_materials.at(1).diffuse = _light.diffuse;
+    GLModel::m_materials.at(1).specular = _light.diffuse;
 
-    m_materials.at(2).ambient = _light.specular;
-    m_materials.at(2).diffuse = _light.specular;
-    m_materials.at(2).specular = _light.specular;
+    GLModel::m_materials.at(2).ambient = _light.specular;
+    GLModel::m_materials.at(2).diffuse = _light.specular;
+    GLModel::m_materials.at(2).specular = _light.specular;
 
     if (isInit() && needRebuild)
         rebuild();

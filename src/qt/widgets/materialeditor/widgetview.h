@@ -61,6 +61,8 @@ class WidgetView : public OpenGL::GLWidget
 
     void arrowWireFrameChanged(bool _value);
     void arrowCirclePointCountChanged(int _value);
+    void arrowMaterialLineChanged(const OpenGL::Material &_value);
+    void arrowMaterialBottomChanged(const OpenGL::Material &_value);
 
     void triangleWireFrameChanged(bool _value);
     void triangleCcwChanged(bool _value);

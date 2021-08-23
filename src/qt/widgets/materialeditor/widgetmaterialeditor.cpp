@@ -199,6 +199,8 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(O
     connect(m_widgetArrow, &WidgetModelArrow::wireFrameChanged, m_view, &WidgetView::arrowWireFrameChanged);
     connect(
         m_widgetArrow, &WidgetModelArrow::circlePointCountChanged, m_view, &WidgetView::arrowCirclePointCountChanged);
+    connect(m_widgetArrow, &WidgetModelArrow::materialLineChanged, m_view, &WidgetView::arrowMaterialLineChanged);
+    connect(m_widgetArrow, &WidgetModelArrow::materialBottomChanged, m_view, &WidgetView::arrowMaterialBottomChanged);
 
     connect(m_widgetTriangle, &WidgetModelTriangle::wireFrameChanged, m_view, &WidgetView::triangleWireFrameChanged);
     connect(m_widgetTriangle, &WidgetModelTriangle::ccwChanged, m_view, &WidgetView::triangleCcwChanged);
@@ -252,6 +254,9 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::~WidgetMaterialEditor(
     disconnect(m_widgetArrow, &WidgetModelArrow::wireFrameChanged, m_view, &WidgetView::arrowWireFrameChanged);
     disconnect(
         m_widgetArrow, &WidgetModelArrow::circlePointCountChanged, m_view, &WidgetView::arrowCirclePointCountChanged);
+    disconnect(m_widgetArrow, &WidgetModelArrow::materialLineChanged, m_view, &WidgetView::arrowMaterialLineChanged);
+    disconnect(
+        m_widgetArrow, &WidgetModelArrow::materialBottomChanged, m_view, &WidgetView::arrowMaterialBottomChanged);
 
     disconnect(m_widgetTriangle, &WidgetModelTriangle::wireFrameChanged, m_view, &WidgetView::triangleWireFrameChanged);
     disconnect(m_widgetTriangle, &WidgetModelTriangle::ccwChanged, m_view, &WidgetView::triangleCcwChanged);

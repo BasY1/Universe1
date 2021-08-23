@@ -20,7 +20,9 @@ class ModelArrow : public MeshModel
 {
     Q_OBJECT
  public:
-    ModelArrow(const Material &_material,
+    ModelArrow(const Material &_materialLine,
+               const Material &_materialHeader,
+               const Material &_materialHeaderBottom,
                const QVector3D &_fromPosition,
                const QVector3D &_toPosition,
                float _ratioRadiusLine,
@@ -28,6 +30,40 @@ class ModelArrow : public MeshModel
                float _ratioLengthHeader,
                int _circlePointCount,
                QObject *_parent = nullptr);
+
+    inline ModelArrow(const Material &_materialLine,
+                      const Material &_materialHeader,
+                      const Material &_materialHeaderBottom,
+                      const QVector3D &_fromPosition,
+                      const QVector3D &_toPosition,
+                      float _ratioRadiusLine,
+                      float _ratioRadiusHeader,
+                      float _ratioLengthHeader,
+                      QObject *_parent = nullptr);
+
+    inline ModelArrow(const Material &_materialLine,
+                      const Material &_materialHeader,
+                      const Material &_materialHeaderBottom,
+                      const QVector3D &_fromPosition,
+                      const QVector3D &_toPosition,
+                      int _circlePointCount,
+                      QObject *_parent = nullptr);
+
+    inline ModelArrow(const Material &_materialLine,
+                      const Material &_materialHeader,
+                      const Material &_materialHeaderBottom,
+                      const QVector3D &_fromPosition,
+                      const QVector3D &_toPosition,
+                      QObject *_parent = nullptr);
+
+    inline ModelArrow(const Material &_material,
+                      const QVector3D &_fromPosition,
+                      const QVector3D &_toPosition,
+                      float _ratioRadiusLine,
+                      float _ratioRadiusHeader,
+                      float _ratioLengthHeader,
+                      int _circlePointCount,
+                      QObject *_parent = nullptr);
 
     inline ModelArrow(const Material &_material,
                       const QVector3D &_fromPosition,
@@ -49,6 +85,10 @@ class ModelArrow : public MeshModel
                       QObject *_parent = nullptr);
 
     inline ModelArrow(const Material &_material, QObject *_parent = nullptr);
+
+    inline const Material &materialLine() const;
+    inline const Material &materialHeader() const;
+    inline const Material &materialHeaderBottom() const;
 
     inline const QVector3D &fromPosition() const;
     inline const QVector3D &toPosition() const;
@@ -77,6 +117,11 @@ class ModelArrow : public MeshModel
 
     void setCirclePointCount(int _value);
 
+    void setMaterial(const Material &_value) override;
+    void setMaterialLine(const Material &_value);
+    void setMaterialHeader(const Material &_value);
+    void setMaterialHeaderBottom(const Material &_value);
+
  protected:
     QVector3D m_fromPosition;   //!< Arrow begin point position
     QVector3D m_toPosition;     //!< Arrow end point position (Header peak)
@@ -94,7 +139,135 @@ class ModelArrow : public MeshModel
 
 /*!
  * \brief Constructor
- * \param _material Initial material
+ * \param _materialLine Initial line material
+ * \param _materialHeader Initial header material
+ * \param _materialHeaderBottom Initial header bottom material
+ * \param _fromPosition Initial from point position
+ * \param _toPosition Initial to point position (Header peak)
+ * \param _ratioRadiusLine Initial arrow line radius as ratio to full arrow length
+ * \param _ratioRadiusHeader Initial arrow header circle radius as ratio to full arrow length
+ * \param _ratioLengthHeader Initial arrow header length as ratio to full arrow length
+ * \param _parent Parent \c QObject
+ */
+inline ModelArrow::ModelArrow(const Material &_materialLine,
+                              const Material &_materialHeader,
+                              const Material &_materialHeaderBottom,
+                              const QVector3D &_fromPosition,
+                              const QVector3D &_toPosition,
+                              float _ratioRadiusLine,
+                              float _ratioRadiusHeader,
+                              float _ratioLengthHeader,
+                              QObject *_parent)
+    : ModelArrow(_materialLine,
+                 _materialHeader,
+                 _materialHeaderBottom,
+                 _fromPosition,
+                 _toPosition,
+                 _ratioRadiusLine,
+                 _ratioRadiusHeader,
+                 _ratioLengthHeader,
+                 defaultCirclePointCount,
+                 _parent)
+{
+}
+
+#define DEF__ratioRadiusLine 0.025F  //!< Default initial value for arrow line radius
+#define DEF__ratioRadiusHeader 0.1F  //!< Default initial value for arrow header circle radius
+#define DEF__ratioLengthHeader 0.2F  //!< Default initial value for arrow header length
+
+/*!
+ * \brief Constructor
+ * \param _materialLine Initial line material
+ * \param _materialHeader Initial header material
+ * \param _materialHeaderBottom Initial header bottom material
+ * \param _fromPosition Initial from point position
+ * \param _toPosition Initial to point position (Header peak)
+ * \param _circlePointCount Initial point count on circle
+ * \param _parent Parent \c QObject
+ */
+inline ModelArrow::ModelArrow(const Material &_materialLine,
+                              const Material &_materialHeader,
+                              const Material &_materialHeaderBottom,
+                              const QVector3D &_fromPosition,
+                              const QVector3D &_toPosition,
+                              int _circlePointCount,
+                              QObject *_parent)
+    : ModelArrow(_materialLine,
+                 _materialHeader,
+                 _materialHeaderBottom,
+                 _fromPosition,
+                 _toPosition,
+                 DEF__ratioRadiusLine,
+                 DEF__ratioRadiusHeader,
+                 DEF__ratioLengthHeader,
+                 _circlePointCount,
+                 _parent)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _materialLine Initial line material
+ * \param _materialHeader Initial header material
+ * \param _materialHeaderBottom Initial header bottom material
+ * \param _fromPosition Initial from point position
+ * \param _toPosition Initial to point position (Header peak)
+ * \param _parent Parent \c QObject
+ */
+inline ModelArrow::ModelArrow(const Material &_materialLine,
+                              const Material &_materialHeader,
+                              const Material &_materialHeaderBottom,
+                              const QVector3D &_fromPosition,
+                              const QVector3D &_toPosition,
+                              QObject *_parent)
+    : ModelArrow(_materialLine,
+                 _materialHeader,
+                 _materialHeaderBottom,
+                 _fromPosition,
+                 _toPosition,
+                 DEF__ratioRadiusLine,
+                 DEF__ratioRadiusHeader,
+                 DEF__ratioLengthHeader,
+                 defaultCirclePointCount,
+                 _parent)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _material Initial material for all arrow parts
+ * \param _fromPosition Initial from point position
+ * \param _toPosition Initial to point position (Header peak)
+ * \param _ratioRadiusLine Initial arrow line radius as ratio to full arrow length
+ * \param _ratioRadiusHeader Initial arrow header circle radius as ratio to full arrow length
+ * \param _ratioLengthHeader Initial arrow header length as ratio to full arrow length
+ * \param _circlePointCount Initial point count on circle
+ * \param _parent Parent \c QObject
+ */
+inline ModelArrow::ModelArrow(const Material &_material,
+                              const QVector3D &_fromPosition,
+                              const QVector3D &_toPosition,
+                              float _ratioRadiusLine,
+                              float _ratioRadiusHeader,
+                              float _ratioLengthHeader,
+                              int _circlePointCount,
+                              QObject *_parent)
+    : ModelArrow(_material,
+                 _material,
+                 _material,
+                 _fromPosition,
+                 _toPosition,
+                 _ratioRadiusLine,
+                 _ratioRadiusHeader,
+                 _ratioLengthHeader,
+                 _circlePointCount,
+                 _parent)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _material Initial material for all arrow parts
  * \param _fromPosition Initial from point position
  * \param _toPosition Initial to point position (Header peak)
  * \param _ratioRadiusLine Initial arrow line radius as ratio to full arrow length
@@ -110,19 +283,20 @@ inline ModelArrow::ModelArrow(const Material &_material,
                               float _ratioLengthHeader,
                               QObject *_parent)
     : ModelArrow(_material,
+                 _material,
+                 _material,
                  _fromPosition,
                  _toPosition,
                  _ratioRadiusLine,
                  _ratioRadiusHeader,
                  _ratioLengthHeader,
-                 defaultCirclePointCount,
                  _parent)
 {
 }
 
 /*!
  * \brief Constructor
- * \param _material Initial material
+ * \param _material Initial material for all arrow parts
  * \param _fromPosition Initial from point position
  * \param _toPosition Initial to point position (Header peak)
  * \param _circlePointCount Initial point count on circle
@@ -133,13 +307,22 @@ inline ModelArrow::ModelArrow(const Material &_material,
                               const QVector3D &_toPosition,
                               int _circlePointCount,
                               QObject *_parent)
-    : ModelArrow(_material, _fromPosition, _toPosition, 0.025F, 0.1F, 0.2F, _circlePointCount, _parent)
+    : ModelArrow(_material,
+                 _material,
+                 _material,
+                 _fromPosition,
+                 _toPosition,
+                 DEF__ratioRadiusLine,
+                 DEF__ratioRadiusHeader,
+                 DEF__ratioLengthHeader,
+                 _circlePointCount,
+                 _parent)
 {
 }
 
 /*!
  * \brief Constructor
- * \param _material Initial material
+ * \param _material Initial material for all arrow parts
  * \param _fromPosition Initial from point position
  * \param _toPosition Initial to point position (Header peak)
  * \param _parent Parent \c QObject
@@ -148,22 +331,33 @@ inline ModelArrow::ModelArrow(const Material &_material,
                               const QVector3D &_fromPosition,
                               const QVector3D &_toPosition,
                               QObject *_parent)
-    : ModelArrow(_material, _fromPosition, _toPosition, 0.025F, 0.1F, 0.2F, defaultCirclePointCount, _parent)
+    : ModelArrow(_material,
+                 _material,
+                 _material,
+                 _fromPosition,
+                 _toPosition,
+                 DEF__ratioRadiusLine,
+                 DEF__ratioRadiusHeader,
+                 DEF__ratioLengthHeader,
+                 defaultCirclePointCount,
+                 _parent)
 {
 }
 
 /*!
  * \brief Constructor
- * \param _material Initial material
+ * \param _material Initial material for all arrow parts
  * \param _parent Parent \c QObject
  */
 inline ModelArrow::ModelArrow(const Material &_material, QObject *_parent)
     : ModelArrow(_material,
-                 QVector3D(0.0F, 0.0F, 0.0F),
+                 _material,
+                 _material,
+                 QVector3D(),
                  QVector3D(0.0F, 0.0F, 1.0F),
-                 0.025F,
-                 0.1F,
-                 0.2F,
+                 DEF__ratioRadiusLine,
+                 DEF__ratioRadiusHeader,
+                 DEF__ratioLengthHeader,
                  defaultCirclePointCount,
                  _parent)
 {
@@ -172,6 +366,33 @@ inline ModelArrow::ModelArrow(const Material &_material, QObject *_parent)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Getter for line material
+ * \returns Line material
+ */
+inline const Material &ModelArrow::materialLine() const
+{
+    return GLModel::m_materials.at(0U);
+}
+
+/*!
+ * \brief Getter for header material
+ * \returns Header material
+ */
+inline const Material &ModelArrow::materialHeader() const
+{
+    return GLModel::m_materials.at(2U);
+}
+
+/*!
+ * \brief Getter for header bottom material
+ * \returns Header bottom material
+ */
+inline const Material &ModelArrow::materialHeaderBottom() const
+{
+    return GLModel::m_materials.at(1U);
+}
 
 /*!
  * \brief Getter for begin point position

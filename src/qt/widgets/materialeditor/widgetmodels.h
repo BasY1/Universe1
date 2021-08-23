@@ -14,6 +14,7 @@
 #include "../../opengl/models/modeltriangle.h"
 
 #include "../gui/guiint.h"
+#include "../gui/guimaterial.h"
 #include "../gui/guivector3d.h"
 
 #include <QCheckBox>
@@ -255,11 +256,26 @@ class WidgetModelArrow : public QWidget
      */
     void circlePointCountChanged(int _value);
 
+    /*!
+     * \brief Line material changed
+     * \param _value New material
+     */
+    void materialLineChanged(const OpenGL::Material &_value);
+
+    /*!
+     * \brief Bottom material changed
+     * \param _value New material
+     */
+    void materialBottomChanged(const OpenGL::Material &_value);
+
  protected:
     OpenGL::Models::ModelArrow *m_model;  //!< Arrow model
 
     QCheckBox *m_wireFrame;           //!< Draw wire-frame check-box
     GUI::GuiInt *m_circlePointCount;  //!< Point count on circle widget
+
+    GUI::GuiMaterial *m_guiLine;    //!< Line material GUI
+    GUI::GuiMaterial *m_guiBottom;  //!< Header bottom material GUI
 };
 
 }  // namespace MaterialEditor
