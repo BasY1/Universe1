@@ -8,23 +8,31 @@
 
 /*!
  * \brief Constructor
- * \param _pathData Initial path vertex position data
- * \param _material Initial material object with values
+ * \param _materials Initial materials
+ * \param _vertexData Initial vertex positions
+ * \param _normalData Initial vertex normals
+ * \param _materialData Initial vertex materials
  * \param _parent Parent \c QObject
  */
-Universe1::OpenGL::Models::ModelPath::ModelPath(const std::vector<QVector3D> &_pathData,
-                                                const Material &_material,
+Universe1::OpenGL::Models::ModelPath::ModelPath(const std::vector<Material> &_materials,
+                                                const std::vector<QVector3D> &_vertexData,
+                                                const std::vector<QVector3D> &_normalData,
+                                                const std::vector<uint8_t> &_materialData,
                                                 QObject *_parent)
-    : GLModel(_material, _parent)
-    , m_isInit(false)
-    , m_pathData(_pathData)
-    , m_memoryUsage(0U)
-    , m_minimum()
-    , m_maximum()
+    : GLModel(_materials, _parent)
+    , m_vertexData(_vertexData)
+    , m_normalData()
+    , m_materialData()
     , m_vertexBuffer()
     , m_normalBuffer()
+    , m_materialBuffer()
     , m_linesCount(0)
 {
+    if (_normalData.size() == m_vertexData.size())
+        m_normalData = _normalData;
+
+    if (_materialData.size() == m_vertexData.size())
+        m_materialData = _materialData;
 }
 
 /*!
@@ -36,6 +44,8 @@ Universe1::OpenGL::Models::ModelPath::~ModelPath()
         m_vertexBuffer.destroy();
     if (m_normalBuffer.isCreated())
         m_normalBuffer.destroy();
+    if (m_materialBuffer.isCreated())
+        m_materialBuffer.destroy();
 }
 
 /*!
@@ -48,32 +58,15 @@ bool Universe1::OpenGL::Models::ModelPath::isInit() const
 }
 
 /*!
- * \brief Returns size of allocated memory within OpenGL context
- * \returns Size of allocated memory within OpenGL context
- */
-size_t Universe1::OpenGL::Models::ModelPath::memoryUsage() const
-{
-    return m_memoryUsage;
-}
-
-/*!
- * \brief Returns object range
- * \returns Object range (pair of 3D vectors minimum [x, y, z] and maximum [x, y, z])
- */
-std::pair<QVector3D, QVector3D> Universe1::OpenGL::Models::ModelPath::range() const
-{
-    return {m_minimum, m_maximum};
-}
-
-/*!
  * \brief Rebuild buffers
  * \returns
  */
 void Universe1::OpenGL::Models::ModelPath::rebuild()
 {
     m_isInit = false;
-    m_minimum = QVector3D();
-    m_maximum = QVector3D();
+    clearRange();
+    m_memoryUsage = 0U;
+    m_linesCount = 0;
 
     if (!m_vertexBuffer.isCreated())
     {
@@ -87,62 +80,79 @@ void Universe1::OpenGL::Models::ModelPath::rebuild()
             return;
     }
 
-    m_vertexBuffer.bind();
-    m_vertexBuffer.allocate(m_pathData.data(), m_pathData.size() * sizeof(QVector3D));
-    m_vertexBuffer.release();
-    if (!m_pathData.empty())
+    if (!m_materialBuffer.isCreated())
     {
-        m_minimum = m_pathData.front();
-        m_maximum = m_minimum;
-        for (const QVector3D &v : m_pathData)
-        {
-            if (m_minimum.x() > v.x())
-                m_minimum.setX(v.x());
-            if (m_minimum.y() > v.y())
-                m_minimum.setY(v.y());
-            if (m_minimum.z() > v.z())
-                m_minimum.setZ(v.z());
-            if (m_maximum.x() < v.x())
-                m_maximum.setX(v.x());
-            if (m_maximum.y() < v.y())
-                m_maximum.setY(v.y());
-            if (m_maximum.z() < v.z())
-                m_maximum.setZ(v.z());
-        }
+        if (!m_materialBuffer.create())
+            return;
     }
-    m_memoryUsage += m_pathData.size() * sizeof(QVector3D);
 
-    std::vector<QVector3D> normalData;
+    m_vertexBuffer.bind();
+    m_vertexBuffer.allocate(m_vertexData.data(), m_vertexData.size() * sizeof(QVector3D));
+    m_vertexBuffer.release();
+    prepareRange(m_vertexData);
+    m_memoryUsage += m_vertexData.size() * sizeof(QVector3D);
 
-    if (m_pathData.size() > 1U && !qFuzzyCompare(m_pathData[0], m_pathData[1]))
+    if (m_normalData.empty())
     {
-        QVector3D lastNormal = (m_pathData[1] - m_pathData[0]).normalized();
-        normalData.reserve(m_pathData.size());
-        normalData.push_back(lastNormal);
-
-        size_t lastID = 1;
-        for (size_t i = 2; i < m_pathData.size(); ++i)
+        std::vector<QVector3D> normalData;
+        if (m_vertexData.size() > 1U && !qFuzzyCompare(m_vertexData[0], m_vertexData[1]))
         {
-            if (!qFuzzyCompare(m_pathData[i], m_pathData[lastID]))
+            QVector3D lastNormal = (m_vertexData[1] - m_vertexData[0]).normalized();
+            normalData.reserve(m_vertexData.size());
+            normalData.push_back(lastNormal);
+
+            size_t lastID = 1;
+            for (size_t i = 2; i < m_vertexData.size(); ++i)
             {
-                lastNormal = (m_pathData[i] - m_pathData[lastID]).normalized();
-                lastID = i;
+                if (!qFuzzyCompare(m_vertexData[i], m_vertexData[lastID]))
+                {
+                    lastNormal = (m_vertexData[i] - m_vertexData[lastID]).normalized();
+                    lastID = i;
+                }
+                normalData.push_back(lastNormal);
             }
             normalData.push_back(lastNormal);
         }
-        normalData.push_back(lastNormal);
+        else
+        {
+            normalData = std::vector<QVector3D>(m_vertexData.size(), QVector3D(1.0F, 0.0F, 0.0F));
+        }
+
+        m_normalBuffer.bind();
+        m_normalBuffer.allocate(normalData.data(), normalData.size() * sizeof(QVector3D));
+        m_normalBuffer.release();
+        m_memoryUsage += normalData.size() * sizeof(QVector3D);
     }
     else
     {
-        normalData = std::vector<QVector3D>(m_pathData.size(), QVector3D(1.0F, 0.0F, 0.0F));
+        m_normalBuffer.bind();
+        m_normalBuffer.allocate(m_normalData.data(), m_normalData.size() * sizeof(QVector3D));
+        m_normalBuffer.release();
+        m_memoryUsage += m_normalData.size() * sizeof(QVector3D);
     }
 
-    m_normalBuffer.bind();
-    m_normalBuffer.allocate(normalData.data(), normalData.size() * sizeof(QVector3D));
-    m_normalBuffer.release();
-    m_memoryUsage += normalData.size() * sizeof(QVector3D);
+    if (m_materialData.empty())
+    {
+        const std::vector<float> materialData(m_vertexData.size(), 0.1F);
+        m_materialBuffer.bind();
+        m_materialBuffer.allocate(materialData.data(), materialData.size() * sizeof(float));
+        m_materialBuffer.release();
+        m_memoryUsage += materialData.size() * sizeof(float);
+    }
+    else
+    {
+        std::vector<float> materialData;
+        materialData.reserve(m_materialData.size());
+        for (const uint8_t md : m_materialData)
+            materialData.push_back(static_cast<float>(md) + 0.1F);
 
-    m_linesCount = m_pathData.size();
+        m_materialBuffer.bind();
+        m_materialBuffer.allocate(m_materialData.data(), m_materialData.size() * sizeof(float));
+        m_materialBuffer.release();
+        m_memoryUsage += m_materialData.size() * sizeof(float);
+    }
+
+    m_linesCount = m_vertexData.size();
 
     m_isInit = m_linesCount > 1;
 }
@@ -169,20 +179,71 @@ void Universe1::OpenGL::Models::ModelPath::paintGLImlp(ShaderProgram *_program)
     _program->enableAttributeArray(_program->attrNormal());
     _program->setAttributeBuffer(_program->attrNormal(), GL_FLOAT, 0, 3);
 
+    m_materialBuffer.bind();
+    _program->enableAttributeArray(_program->attrMaterial());
+    _program->setAttributeBuffer(_program->attrMaterial(), GL_UNSIGNED_BYTE, 0, 1);
+
     glDrawArrays(GL_LINE_STRIP, 0, m_linesCount);
 
+    m_materialBuffer.release();
     m_normalBuffer.release();
     m_vertexBuffer.release();
 }
 
 /*!
- * \brief Setter for path vertex data
- * \param _pathData New path vertices
+ * \brief Setup path data
+ * \param _vertexData New vertex positions
+ * \param _normalData New vertex normals
+ * \param _materialData New vertex materials
  */
-void Universe1::OpenGL::Models::ModelPath::setPath(const std::vector<QVector3D> &_pathData)
+void Universe1::OpenGL::Models::ModelPath::setPath(const std::vector<QVector3D> &_vertexData,
+                                                   const std::vector<QVector3D> &_normalData,
+                                                   const std::vector<uint8_t> &_materialData)
 {
-    m_pathData = _pathData;
+    m_vertexData = _vertexData;
+
+    if (_normalData.size() == m_vertexData.size())
+        m_normalData = _normalData;
+    else
+        m_normalData.clear();
+
+    if (_materialData.size() == m_vertexData.size())
+        m_materialData = _materialData;
+    else
+        m_materialData.clear();
+
     if (isInit())
         rebuild();
     emit changed();
+}
+
+/*!
+ * \brief Setup path data
+ * \param _vertexData New vertex positions
+ * \param _materialData New vertex materials
+ */
+void Universe1::OpenGL::Models::ModelPath::setPath(const std::vector<QVector3D> &_vertexData,
+                                                   const std::vector<uint8_t> &_materialData)
+{
+    setPath(_vertexData, {}, _materialData);
+}
+
+/*!
+ * \brief Setup path data
+ * \param _vertexData New vertex positions
+ * \param _normalData New vertex normals
+ */
+void Universe1::OpenGL::Models::ModelPath::setPath(const std::vector<QVector3D> &_vertexData,
+                                                   const std::vector<QVector3D> &_normalData)
+{
+    setPath(_vertexData, _normalData, {});
+}
+
+/*!
+ * \brief Setup path data
+ * \param _vertexData New vertex positions
+ */
+void Universe1::OpenGL::Models::ModelPath::setPath(const std::vector<QVector3D> &_vertexData)
+{
+    setPath(_vertexData, {}, {});
 }

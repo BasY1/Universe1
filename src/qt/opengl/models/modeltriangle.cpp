@@ -93,9 +93,9 @@ void Universe1::OpenGL::Models::ModelTriangle::rebuild()
     const std::vector<uint> linesData = {0U, 1U, 1U, 2U, 2U, 0U};
 
     if (m_ccw)
-        initBuffers(vertexData, normalData, {0U, 1U, 2U}, linesData);
+        initBuffers(vertexData, normalData, {}, {0U, 1U, 2U}, linesData);
     else
-        initBuffers(vertexData, normalData, {0U, 2U, 1U}, linesData);
+        initBuffers(vertexData, normalData, {}, {0U, 2U, 1U}, linesData);
 }
 
 /*!

@@ -20,17 +20,34 @@ class ModelPath : public GLModel
 {
     Q_OBJECT
  public:
-    ModelPath(const std::vector<QVector3D> &_pathData, const Material &_material, QObject *_parent = nullptr);
+    ModelPath(const std::vector<Material> &_materials,
+              const std::vector<QVector3D> &_vertexData,
+              const std::vector<QVector3D> &_normalData,
+              const std::vector<uint8_t> &_materialData,
+              QObject *_parent = nullptr);
+
+    inline ModelPath(const std::vector<Material> &_materials,
+                     const std::vector<QVector3D> &_vertexData,
+                     const std::vector<uint8_t> &_materialData,
+                     QObject *_parent = nullptr);
+
+    inline ModelPath(const Material &_material,
+                     const std::vector<QVector3D> &_vertexData,
+                     const std::vector<QVector3D> &_normalData,
+                     QObject *_parent = nullptr);
+
+    inline ModelPath(const Material &_material, const std::vector<QVector3D> &_vertexData, QObject *_parent = nullptr);
+
+    inline ModelPath(const std::vector<Material> &_materials, QObject *_parent = nullptr);
     inline ModelPath(const Material &_material, QObject *_parent = nullptr);
 
     ~ModelPath();
 
     bool isInit() const override;
 
-    size_t memoryUsage() const override;
-    std::pair<QVector3D, QVector3D> range() const override;
-
-    inline const std::vector<QVector3D> &pathData() const;
+    inline const std::vector<QVector3D> &vertexData() const;
+    inline const std::vector<QVector3D> &normalData() const;
+    inline const std::vector<uint8_t> &materialData() const;
 
  protected:
     void initGLImlp() override;
@@ -39,21 +56,82 @@ class ModelPath : public GLModel
     virtual void rebuild();
 
  public slots:
-    void setPath(const std::vector<QVector3D> &_pathData);
+    void setPath(const std::vector<QVector3D> &_vertexData,
+                 const std::vector<QVector3D> &_normalData,
+                 const std::vector<uint8_t> &_materialData);
+
+    void setPath(const std::vector<QVector3D> &_vertexData, const std::vector<uint8_t> &_materialData);
+    void setPath(const std::vector<QVector3D> &_vertexData, const std::vector<QVector3D> &_normalData);
+    void setPath(const std::vector<QVector3D> &_vertexData);
 
  protected:
     bool m_isInit;  //!< OpenGL buffers initialized flag
 
-    std::vector<QVector3D> m_pathData;  //!< Path vertex position data
+    std::vector<QVector3D> m_vertexData;  //!< Path vertex position data
+    std::vector<QVector3D> m_normalData;  //!< Path vertex normal data
+    std::vector<uint8_t> m_materialData;  //!< Path vertex material data
 
  private:
-    size_t m_memoryUsage;            //!< Memory usage sum
-    QVector3D m_minimum;             //!< Minimum scene range [x, y, z] values
-    QVector3D m_maximum;             //!< Maximum scene range [x, y, z] values
-    QOpenGLBuffer m_vertexBuffer;    //!< Vertex normal buffer
+    QOpenGLBuffer m_vertexBuffer;    //!< Vertex position buffer
     QOpenGLBuffer m_normalBuffer;    //!< Vertex normal buffer
+    QOpenGLBuffer m_materialBuffer;  //!< Vertex material buffer
     GLsizei m_linesCount;            //!< Line item count
 };
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Constructor
+ * \param _materials Initial materials
+ * \param _vertexData Initial vertex positions
+ * \param _materialData Initial vertex materials
+ * \param _parent Parent \c QObject
+ */
+inline ModelPath::ModelPath(const std::vector<Material> &_materials,
+                            const std::vector<QVector3D> &_vertexData,
+                            const std::vector<uint8_t> &_materialData,
+                            QObject *_parent)
+    : ModelPath(_materials, _vertexData, {}, _materialData, _parent)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _material Initial material
+ * \param _vertexData Initial vertex positions
+ * \param _normalData Initial vertex normals
+ * \param _parent Parent \c QObject
+ */
+inline ModelPath::ModelPath(const Material &_material,
+                            const std::vector<QVector3D> &_vertexData,
+                            const std::vector<QVector3D> &_normalData,
+                            QObject *_parent)
+    : ModelPath({_material}, _vertexData, _normalData, {}, _parent)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _material Initial material object with values
+ * \param _vertexData Initial vertex positions
+ * \param _parent Parent \c QObject
+ */
+inline ModelPath::ModelPath(const Material &_material, const std::vector<QVector3D> &_vertexData, QObject *_parent)
+    : ModelPath({_material}, _vertexData, {}, {}, _parent)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _materials Initial materials
+ * \param _parent Parent \c QObject
+ */
+inline ModelPath::ModelPath(const std::vector<Material> &_materials, QObject *_parent)
+    : ModelPath(_materials, {}, {}, {}, _parent)
+{
+}
 
 /*!
  * \brief Constructor
@@ -61,7 +139,7 @@ class ModelPath : public GLModel
  * \param _parent Parent \c QObject
  */
 inline ModelPath::ModelPath(const Material &_material, QObject *_parent)
-    : ModelPath({}, _material, _parent)
+    : ModelPath({_material}, {}, {}, {}, _parent)
 {
 }
 
@@ -69,9 +147,27 @@ inline ModelPath::ModelPath(const Material &_material, QObject *_parent)
  * \brief Getter for path vertex position data
  * \returns Path vertex position data
  */
-inline const std::vector<QVector3D> &ModelPath::pathData() const
+inline const std::vector<QVector3D> &ModelPath::vertexData() const
 {
-    return m_pathData;
+    return m_vertexData;
+}
+
+/*!
+ * \brief Getter for path vertex normal data
+ * \returns Path vertex normal data
+ */
+inline const std::vector<QVector3D> &ModelPath::normalData() const
+{
+    return m_normalData;
+}
+
+/*!
+ * \brief Getter for path vertex material data
+ * \returns Path vertex material data
+ */
+inline const std::vector<uint8_t> &ModelPath::materialData() const
+{
+    return m_materialData;
 }
 
 }  // namespace Models

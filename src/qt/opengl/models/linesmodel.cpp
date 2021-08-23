@@ -8,18 +8,16 @@
 
 /*!
  * \brief Constructor
- * \param _material Initial material object with values
+ * \param _materials Initial materials collection
  * \param _parent Parent \c QObject
  */
-Universe1::OpenGL::Models::LinesModel::LinesModel(const Material &_material, QObject *_parent)
-    : GLModel(_material, _parent)
+Universe1::OpenGL::Models::LinesModel::LinesModel(const std::vector<Material> &_materials, QObject *_parent)
+    : GLModel(_materials, _parent)
     , m_isInit(false)
     , m_hasIndexes(false)
-    , m_memoryUsage(0U)
-    , m_minimum()
-    , m_maximum()
     , m_vertexBuffer()
     , m_normalBuffer()
+    , m_materialBuffer()
     , m_linesIndexes(QOpenGLBuffer::IndexBuffer)
     , m_linesCount(0)
 {
@@ -34,6 +32,8 @@ Universe1::OpenGL::Models::LinesModel::~LinesModel()
         m_vertexBuffer.destroy();
     if (m_normalBuffer.isCreated())
         m_normalBuffer.destroy();
+    if (m_materialBuffer.isCreated())
+        m_materialBuffer.destroy();
     if (m_linesIndexes.isCreated())
         m_linesIndexes.destroy();
 }
@@ -48,38 +48,23 @@ bool Universe1::OpenGL::Models::LinesModel::isInit() const
 }
 
 /*!
- * \brief Returns size of allocated memory within OpenGL context
- * \returns Size of allocated memory within OpenGL context
- */
-size_t Universe1::OpenGL::Models::LinesModel::memoryUsage() const
-{
-    return m_memoryUsage;
-}
-
-/*!
- * \brief Returns object range
- * \returns Object range (pair of 3D vectors minimum [x, y, z] and maximum [x, y, z])
- */
-std::pair<QVector3D, QVector3D> Universe1::OpenGL::Models::LinesModel::range() const
-{
-    return {m_minimum, m_maximum};
-}
-
-/*!
  * \brief Initialize buffers
  * \param _vertexData Vertex buffer
  * \param _normalData Normal buffer
+ * \param _materialData material buffer
  * \param _linesData Line index buffer
  * \returns Success flag
  */
 bool Universe1::OpenGL::Models::LinesModel::initBuffers(const std::vector<QVector3D> &_vertexData,
                                                         const std::vector<QVector3D> &_normalData,
+                                                        const std::vector<uint8_t> &_materialData,
                                                         const std::vector<uint> &_linesData)
 {
     m_isInit = false;
     m_linesCount = 0;
-    m_minimum = QVector3D();
-    m_maximum = QVector3D();
+    clearRange();
+    m_memoryUsage = 0U;
+
     m_hasIndexes = !_linesData.empty();
 
     if (!m_vertexBuffer.isCreated())
@@ -91,6 +76,12 @@ bool Universe1::OpenGL::Models::LinesModel::initBuffers(const std::vector<QVecto
     if (!m_normalBuffer.isCreated())
     {
         if (!m_normalBuffer.create())
+            return false;
+    }
+
+    if (!m_materialBuffer.isCreated())
+    {
+        if (!m_materialBuffer.create())
             return false;
     }
 
@@ -106,32 +97,34 @@ bool Universe1::OpenGL::Models::LinesModel::initBuffers(const std::vector<QVecto
     m_vertexBuffer.bind();
     m_vertexBuffer.allocate(_vertexData.data(), _vertexData.size() * sizeof(QVector3D));
     m_vertexBuffer.release();
-    if (!_vertexData.empty())
-    {
-        m_minimum = _vertexData.front();
-        m_maximum = m_minimum;
-        for (const QVector3D &v : _vertexData)
-        {
-            if (m_minimum.x() > v.x())
-                m_minimum.setX(v.x());
-            if (m_minimum.y() > v.y())
-                m_minimum.setY(v.y());
-            if (m_minimum.z() > v.z())
-                m_minimum.setZ(v.z());
-            if (m_maximum.x() < v.x())
-                m_maximum.setX(v.x());
-            if (m_maximum.y() < v.y())
-                m_maximum.setY(v.y());
-            if (m_maximum.z() < v.z())
-                m_maximum.setZ(v.z());
-        }
-    }
+    prepareRange(_vertexData);
     m_memoryUsage += _vertexData.size() * sizeof(QVector3D);
 
     m_normalBuffer.bind();
     m_normalBuffer.allocate(_normalData.data(), _normalData.size() * sizeof(QVector3D));
     m_normalBuffer.release();
     m_memoryUsage += _normalData.size() * sizeof(QVector3D);
+
+    if (_materialData.empty())
+    {
+        const std::vector<float> materialData(_vertexData.size(), 0.1F);
+        m_materialBuffer.bind();
+        m_materialBuffer.allocate(materialData.data(), materialData.size() * sizeof(float));
+        m_materialBuffer.release();
+        m_memoryUsage += materialData.size() * sizeof(float);
+    }
+    else
+    {
+        std::vector<float> materialData;
+        materialData.reserve(_vertexData.size());
+        for (const uint8_t md : _materialData)
+            materialData.push_back(static_cast<float>(md) + 0.1F);
+
+        m_materialBuffer.bind();
+        m_materialBuffer.allocate(materialData.data(), materialData.size() * sizeof(float));
+        m_materialBuffer.release();
+        m_memoryUsage += materialData.size() * sizeof(float);
+    }
 
     if (m_hasIndexes)
     {
@@ -173,6 +166,10 @@ void Universe1::OpenGL::Models::LinesModel::paintGLImlp(ShaderProgram *_program)
     _program->enableAttributeArray(_program->attrNormal());
     _program->setAttributeBuffer(_program->attrNormal(), GL_FLOAT, 0, 3);
 
+    m_materialBuffer.bind();
+    _program->enableAttributeArray(_program->attrMaterial());
+    _program->setAttributeBuffer(_program->attrMaterial(), GL_FLOAT, 0, 1);
+
     if (m_hasIndexes)
     {
         m_linesIndexes.bind();
@@ -184,6 +181,7 @@ void Universe1::OpenGL::Models::LinesModel::paintGLImlp(ShaderProgram *_program)
         glDrawArrays(GL_LINES, 0, m_linesCount);
     }
 
+    m_materialBuffer.release();
     m_normalBuffer.release();
     m_vertexBuffer.release();
 }

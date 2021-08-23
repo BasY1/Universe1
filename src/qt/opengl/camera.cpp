@@ -404,9 +404,9 @@ void Universe1::OpenGL::Camera::handleMouseMove(QMouseEvent *_event)
         const std::pair<QVector3D, QVector3D> spin = spinByYawPitch(forward, sideRight, up, angleYaw, anglePitch);
 
         if (m_lockedCenterOfView)
-            setCamera(m_centerOfView - spin.first * forwardLength, m_centerOfView);  //, spin.second);
+            setCamera(m_centerOfView - spin.first * forwardLength, m_centerOfView, spin.second);
         else
-            setCamera(m_position, m_position + spin.first * forwardLength);  //, spin.second);
+            setCamera(m_position, m_position + spin.first * forwardLength, spin.second);
 
         m_lastMousePos = _event->pos();
     }

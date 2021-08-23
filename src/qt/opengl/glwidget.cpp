@@ -180,9 +180,10 @@ void Universe1::OpenGL::GLWidget::initializeGL()
     {
         m_camera->resizeGL(width(), height());
         glEnable(GL_DEPTH_TEST);
-        emit contextInitialized(context());
 
         initializeGLImpl();
+
+        emit contextInitialized(context());
     }
 }
 

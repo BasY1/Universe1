@@ -14,18 +14,27 @@ Universe1::OpenGL::ShaderProgram::ShaderProgram(QObject *_parent)
     : QOpenGLShaderProgram(_parent)
     , m_attrVertex(-1)
     , m_attrNormal(-1)
+    , m_attrMaterial(-1)
+
+    , m_attrModel(-1)
     , m_attrProjXview(-1)
     , m_attrCameraPosition(-1)
-    , m_attrMaterialShininess(-1)
-    , m_attrMaterialAmbient(-1)
-    , m_attrMaterialDiffuse(-1)
-    , m_attrMaterialSpecular(-1)
+
     , m_attrDirectionLightMode(-1)
     , m_attrDirectionLightDirection(-1)
     , m_attrDirectionLightAmbient(-1)
     , m_attrDirectionLightDiffuse(-1)
     , m_attrDirectionLightSpecular(-1)
 {
+    for (int i = 0; i < materialCount; ++i)
+    {
+        m_attrMaterialAlpha[i] = -1;
+        m_attrMaterialShininess[i] = -1;
+        m_attrMaterialAmbient[i] = -1;
+        m_attrMaterialDiffuse[i] = -1;
+        m_attrMaterialSpecular[i] = -1;
+    }
+
     for (int i = 0; i < pointLightsCount; ++i)
     {
         m_attrPointLightMode[i] = -1;
@@ -49,126 +58,140 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
                             "#version 330 core                                      \n"
                             "layout (location = 0) in vec3 vertex;                  \n"
                             "layout (location = 1) in vec3 normal;                  \n"
+                            "layout (location = 2) in float materialID;             \n"
                             "                                                       \n"
                             "uniform mat4 model;                                    \n"
                             "uniform mat4 projXview;                                \n"
                             "                                                       \n"
                             "out vec3 vertOut;                                      \n"
                             "out vec3 normOut;                                      \n"
+                            "out float materialIndex;                               \n"
                             "                                                       \n"
                             "void main(void)                                        \n"
                             "{                                                      \n"
                             "    vertOut = vec3(model * vec4(vertex, 1.0));         \n"
                             "    normOut = mat3(transpose(inverse(model))) * normal;\n"
+                            "    materialIndex = materialID;                        \n"
                             "                                                       \n"
                             "    gl_Position = projXview * vec4(vertOut, 1.0);      \n"
                             "}                                                      \n");
 
     addShaderFromSourceCode(QOpenGLShader::Fragment,
-                            ("#version 330 core                                                          \n"
-                             "                                                                           \n"
-                             "out vec4 FragColor;                                                        \n"
-                             "                                                                           \n"
+                            ("#version 330 core\n"
                              "#define POINT_LIGHT_COUNT " +
                              QString::number(pointLightsCount) +
                              "\n"
-                             "                                                                           \n"
-                             "struct Material {                                                          \n"
-                             "    float alpha;                                                           \n"
-                             "    float shininess;                                                       \n"
-                             "                                                                           \n"
-                             "    vec3 ambient;                                                          \n"
-                             "    vec3 diffuse;                                                          \n"
-                             "    vec3 specular;                                                         \n"
-                             "};                                                                         \n"
-                             "                                                                           \n"
-                             "struct DirectionLight {                                                    \n"
-                             "    int mode;                                                              \n"
-                             "    vec3 direction;                                                        \n"
-                             "                                                                           \n"
-                             "    vec3 ambient;                                                          \n"
-                             "    vec3 diffuse;                                                          \n"
-                             "    vec3 specular;                                                         \n"
-                             "};                                                                         \n"
-                             "                                                                           \n"
-                             "struct PointLight {                                                        \n"
-                             "    int mode;                                                              \n"
-                             "    vec3 position;                                                         \n"
-                             "                                                                           \n"
-                             "    float constant;                                                        \n"
-                             "    float linear;                                                          \n"
-                             "    float quadratic;                                                       \n"
-                             "                                                                           \n"
-                             "    vec3 ambient;                                                          \n"
-                             "    vec3 diffuse;                                                          \n"
-                             "    vec3 specular;                                                         \n"
-                             "};                                                                         \n"
-                             "                                                                           \n"
-                             "uniform vec3 cameraPosition;                                               \n"
-                             "uniform Material material;                                                 \n"
-                             "uniform DirectionLight directionLight;                                     \n"
-                             "uniform PointLight pointLight[POINT_LIGHT_COUNT];                          \n"
-                             "uniform float ambientFactor;                                               \n"
-                             "                                                                           \n"
-                             "in vec3 vertOut;                                                           \n"
-                             "in vec3 normOut;                                                           \n"
-                             "                                                                           \n"
-                             "void main(void)                                                            \n"
-                             "{                                                                          \n"
-                             "    vec3 usedAmbient = ambientFactor * material.ambient;                   \n"
-                             "    vec3 result = usedAmbient;                                             \n"
-                             "    vec3 norm = normalize(normOut);                                        \n"
-                             "    vec3 viewDir = normalize(cameraPosition - vertOut);                    \n"
-                             "    if (directionLight.mode != 0)                                          \n"
-                             "    {                                                                      \n"
-                             "        vec3 lightDir = normalize(-directionLight.direction);              \n"
-                             "        vec3 reflDir = reflect(-lightDir, norm);                           \n"
-                             "                                                                           \n"
-                             "        float d = max(dot(norm, lightDir), 0.0);                           \n"
-                             "        float s = pow(max(dot(viewDir, reflDir), 0.0), material.shininess);\n"
-                             "                                                                           \n"
-                             "        result += directionLight.ambient * usedAmbient;                    \n"
-                             "        result += d * directionLight.diffuse * material.diffuse;           \n"
-                             "        result += s * directionLight.specular * material.specular;         \n"
-                             "    }                                                                      \n"
-                             "                                                                           \n"
-                             "    for (int i = 0 ; i < POINT_LIGHT_COUNT ; ++i)                          \n"
-                             "    {                                                                      \n"
-                             "        if (pointLight[i].mode == 0)                                       \n"
-                             "            continue;                                                      \n"
-                             "                                                                           \n"
-                             "        vec3 lightDir = normalize(pointLight[i].position - vertOut);       \n"
-                             "        vec3 reflDir = reflect(-lightDir, norm);                           \n"
-                             "                                                                           \n"
-                             "        float d = max(dot(norm, lightDir), 0.0);                           \n"
-                             "        float s = pow(max(dot(viewDir, reflDir), 0.0), material.shininess);\n"
-                             "                                                                           \n"
-                             "        float dist = length(pointLight[i].position - vertOut);             \n"
-                             "        float a = 1.0;                                                     \n"
-                             "        switch (pointLight[i].mode)                                        \n"
-                             "        {                                                                  \n"
-                             "        case 2: a = 1.0 / pointLight[i].constant;                          \n"
-                             "                break;                                                     \n"
-                             "                                                                           \n"
-                             "        case 3: a = 1.0 / (pointLight[i].constant +                        \n"
-                             "                           pointLight[i].linear * dist);                   \n"
-                             "                break;                                                     \n"
-                             "                                                                           \n"
-                             "        case 4: a = 1.0 / (pointLight[i].constant +                        \n"
-                             "                           pointLight[i].linear * dist +                   \n"
-                             "                           pointLight[i].quadratic * dist * dist);         \n"
-                             "                break;                                                     \n"
-                             "                                                                           \n"
-                             "        default: break;                                                    \n"
-                             "        }                                                                  \n"
-                             "                                                                           \n"
-                             "        result += a * pointLight[i].ambient * usedAmbient;                 \n"
-                             "        result += a * d * pointLight[i].diffuse * material.diffuse;        \n"
-                             "        result += a * s *  pointLight[i].specular * material.specular;     \n"
-                             "    }                                                                      \n"
-                             "                                                                           \n"
-                             "    FragColor = vec4(result, material.alpha);                              \n"
-                             "}                                                                          \n"));
+                             "#define MATERIAL_COUNT " +
+                             QString::number(materialCount) +
+                             "\n"
+                             "                                                                     \n"
+                             "out vec4 FragColor;                                                  \n"
+                             "                                                                     \n"
+                             "struct Material {                                                    \n"
+                             "    float alpha;                                                     \n"
+                             "    float shininess;                                                 \n"
+                             "                                                                     \n"
+                             "    vec3 ambient;                                                    \n"
+                             "    vec3 diffuse;                                                    \n"
+                             "    vec3 specular;                                                   \n"
+                             "};                                                                   \n"
+                             "                                                                     \n"
+                             "struct DirectionLight {                                              \n"
+                             "    int mode;                                                        \n"
+                             "    vec3 direction;                                                  \n"
+                             "                                                                     \n"
+                             "    vec3 ambient;                                                    \n"
+                             "    vec3 diffuse;                                                    \n"
+                             "    vec3 specular;                                                   \n"
+                             "};                                                                   \n"
+                             "                                                                     \n"
+                             "struct PointLight {                                                  \n"
+                             "    int mode;                                                        \n"
+                             "    vec3 position;                                                   \n"
+                             "                                                                     \n"
+                             "    float constant;                                                  \n"
+                             "    float linear;                                                    \n"
+                             "    float quadratic;                                                 \n"
+                             "                                                                     \n"
+                             "    vec3 ambient;                                                    \n"
+                             "    vec3 diffuse;                                                    \n"
+                             "    vec3 specular;                                                   \n"
+                             "};                                                                   \n"
+                             "                                                                     \n"
+                             "uniform vec3 cameraPosition;                                         \n"
+                             "uniform Material material[MATERIAL_COUNT];                           \n"
+                             "uniform DirectionLight directionLight;                               \n"
+                             "uniform PointLight pointLight[POINT_LIGHT_COUNT];                    \n"
+                             "uniform float ambientFactor;                                         \n"
+                             "                                                                     \n"
+                             "in vec3 vertOut;                                                     \n"
+                             "in vec3 normOut;                                                     \n"
+                             "in float materialIndex;                                              \n"
+                             "                                                                     \n"
+                             "void main(void)                                                      \n"
+                             "{                                                                    \n"
+                             "    int usedMaterialIndex = int(materialIndex);                      \n"
+                             "                                                                     \n"
+                             "    float matAlpha = material[usedMaterialIndex].alpha;              \n"
+                             "    float matShininess = material[usedMaterialIndex].shininess;      \n"
+                             "    vec3 matAmbient = material[usedMaterialIndex].ambient;           \n"
+                             "    vec3 matDiffuse = material[usedMaterialIndex].diffuse;           \n"
+                             "    vec3 matSpecular = material[usedMaterialIndex].specular;         \n"
+                             "                                                                     \n"
+                             "    vec3 usedAmbient = ambientFactor * matAmbient;                   \n"
+                             "    vec3 result = usedAmbient;                                       \n"
+                             "    vec3 norm = normalize(normOut);                                  \n"
+                             "    vec3 viewDir = normalize(cameraPosition - vertOut);              \n"
+                             "    if (directionLight.mode != 0)                                    \n"
+                             "    {                                                                \n"
+                             "        vec3 lightDir = normalize(-directionLight.direction);        \n"
+                             "        vec3 reflDir = reflect(-lightDir, norm);                     \n"
+                             "                                                                     \n"
+                             "        float d = max(dot(norm, lightDir), 0.0);                     \n"
+                             "        float s = pow(max(dot(viewDir, reflDir), 0.0), matShininess);\n"
+                             "                                                                     \n"
+                             "        result += directionLight.ambient * usedAmbient;              \n"
+                             "        result += d * directionLight.diffuse * matDiffuse;           \n"
+                             "        result += s * directionLight.specular * matSpecular;         \n"
+                             "    }                                                                \n"
+                             "                                                                     \n"
+                             "    for (int i = 0 ; i < POINT_LIGHT_COUNT ; ++i)                    \n"
+                             "    {                                                                \n"
+                             "        if (pointLight[i].mode == 0)                                 \n"
+                             "            continue;                                                \n"
+                             "                                                                     \n"
+                             "        vec3 lightDir = normalize(pointLight[i].position - vertOut); \n"
+                             "        vec3 reflDir = reflect(-lightDir, norm);                     \n"
+                             "                                                                     \n"
+                             "        float d = max(dot(norm, lightDir), 0.0);                     \n"
+                             "        float s = pow(max(dot(viewDir, reflDir), 0.0), matShininess);\n"
+                             "                                                                     \n"
+                             "        float dist = length(pointLight[i].position - vertOut);       \n"
+                             "        float a = 1.0;                                               \n"
+                             "        switch (pointLight[i].mode)                                  \n"
+                             "        {                                                            \n"
+                             "        case 2: a = 1.0 / pointLight[i].constant;                    \n"
+                             "                break;                                               \n"
+                             "                                                                     \n"
+                             "        case 3: a = 1.0 / (pointLight[i].constant +                  \n"
+                             "                           pointLight[i].linear * dist);             \n"
+                             "                break;                                               \n"
+                             "                                                                     \n"
+                             "        case 4: a = 1.0 / (pointLight[i].constant +                  \n"
+                             "                           pointLight[i].linear * dist +             \n"
+                             "                           pointLight[i].quadratic * dist * dist);   \n"
+                             "                break;                                               \n"
+                             "                                                                     \n"
+                             "        default: break;                                              \n"
+                             "        }                                                            \n"
+                             "                                                                     \n"
+                             "        result += a * pointLight[i].ambient * usedAmbient;           \n"
+                             "        result += a * d * pointLight[i].diffuse * matDiffuse;        \n"
+                             "        result += a * s *  pointLight[i].specular * matSpecular;     \n"
+                             "    }                                                                \n"
+                             "                                                                     \n"
+                             "    FragColor = vec4(result, matAlpha);                              \n"
+                             "}                                                                    \n"));
 
     if (!link())
     {
@@ -182,10 +205,13 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
 
     m_attrVertex = attributeLocation("vertex");
     m_attrNormal = attributeLocation("normal");
+    m_attrMaterial = attributeLocation("materialID");
 
     if (m_attrVertex < 0)
         result = false;
     if (m_attrNormal < 0)
+        result = false;
+    if (m_attrMaterial < 0)
         result = false;
 
     m_attrModel = uniformLocation("model");
@@ -208,22 +234,26 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
     if (m_attrCameraPosition < 0)
         result = false;
 
-    m_attrMaterialAlpha = uniformLocation("material.alpha");
-    m_attrMaterialShininess = uniformLocation("material.shininess");
-    m_attrMaterialAmbient = uniformLocation("material.ambient");
-    m_attrMaterialDiffuse = uniformLocation("material.diffuse");
-    m_attrMaterialSpecular = uniformLocation("material.specular");
+    for (int i = 0; i < materialCount; ++i)
+    {
+        const QString key = QString("material[%1].").arg(i);
+        m_attrMaterialAlpha[i] = uniformLocation(key + "alpha");
+        m_attrMaterialShininess[i] = uniformLocation(key + "shininess");
+        m_attrMaterialAmbient[i] = uniformLocation(key + "ambient");
+        m_attrMaterialDiffuse[i] = uniformLocation(key + "diffuse");
+        m_attrMaterialSpecular[i] = uniformLocation(key + "specular");
 
-    if (m_attrMaterialAlpha < 0)
-        result = false;
-    if (m_attrMaterialShininess < 0)
-        result = false;
-    if (m_attrMaterialAmbient < 0)
-        result = false;
-    if (m_attrMaterialDiffuse < 0)
-        result = false;
-    if (m_attrMaterialSpecular < 0)
-        result = false;
+        if (m_attrMaterialAlpha[i] < 0)
+            result = false;
+        if (m_attrMaterialShininess[i] < 0)
+            result = false;
+        if (m_attrMaterialAmbient[i] < 0)
+            result = false;
+        if (m_attrMaterialDiffuse[i] < 0)
+            result = false;
+        if (m_attrMaterialSpecular[i] < 0)
+            result = false;
+    }
 
     m_attrDirectionLightMode = uniformLocation("directionLight.mode");
     m_attrDirectionLightDirection = uniformLocation("directionLight.direction");
@@ -291,16 +321,39 @@ void Universe1::OpenGL::ShaderProgram::setupCamera(const Camera *_camera)
 }
 
 /*!
+ * \brief Setup materials from given collection
+ * \param _materials Collection of materials
+ * \note Maximum material count is \a GLShaderProgram::materialCount
+ */
+void Universe1::OpenGL::ShaderProgram::setupMaterials(const std::vector<Material> &_materials)
+{
+    int i = 0;
+    for (const Material &material : _materials)
+    {
+        setUniformValue(m_attrMaterialAlpha[i], material.alpha);
+        setUniformValue(m_attrMaterialShininess[i], material.shininess);
+        setUniformValue(m_attrMaterialAmbient[i], material.ambientVector());
+        setUniformValue(m_attrMaterialDiffuse[i], material.diffuseVector());
+        setUniformValue(m_attrMaterialSpecular[i], material.specularVector());
+        ++i;
+        if (i == materialCount)
+            break;
+    }
+}
+/*!
  * \brief Setup material uniform values
+ * \param _materialIndex Material index
  * \param _material Material properties
  */
-void Universe1::OpenGL::ShaderProgram::setupMaterial(const Material &_material)
+void Universe1::OpenGL::ShaderProgram::setupMaterial(const int _materialIndex, const Material &_material)
 {
-    setUniformValue(m_attrMaterialAlpha, _material.alpha);
-    setUniformValue(m_attrMaterialShininess, _material.shininess);
-    setUniformValue(m_attrMaterialAmbient, _material.ambientVector());
-    setUniformValue(m_attrMaterialDiffuse, _material.diffuseVector());
-    setUniformValue(m_attrMaterialSpecular, _material.specularVector());
+    if (_materialIndex < 0 || _materialIndex >= materialCount)
+        return;
+    setUniformValue(m_attrMaterialAlpha[_materialIndex], _material.alpha);
+    setUniformValue(m_attrMaterialShininess[_materialIndex], _material.shininess);
+    setUniformValue(m_attrMaterialAmbient[_materialIndex], _material.ambientVector());
+    setUniformValue(m_attrMaterialDiffuse[_materialIndex], _material.diffuseVector());
+    setUniformValue(m_attrMaterialSpecular[_materialIndex], _material.specularVector());
 }
 
 /*!

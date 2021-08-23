@@ -20,18 +20,18 @@ class LinesModel : public GLModel
 {
     Q_OBJECT
  public:
-    LinesModel(const Material &_material, QObject *_parent = nullptr);
+    LinesModel(const std::vector<Material> &_materials, QObject *_parent = nullptr);
+    inline LinesModel(const Material &_material, QObject *_parent = nullptr);
+
     ~LinesModel();
 
     bool isInit() const override;
 
-    size_t memoryUsage() const override;
-    std::pair<QVector3D, QVector3D> range() const override;
-
  protected:
     virtual bool initBuffers(const std::vector<QVector3D> &_vertexData,
                              const std::vector<QVector3D> &_normalData,
-                             const std::vector<uint> &_linesData = {}) final;
+                             const std::vector<uint8_t> &_materialData,
+                             const std::vector<uint> &_linesData) final;
 
     void initGLImlp() override;
     void paintGLImlp(ShaderProgram *_program) override;
@@ -43,18 +43,26 @@ class LinesModel : public GLModel
     virtual void rebuild() = 0;
 
  protected:
-    bool m_isInit;                  //!< OpenGL buffers initialized flag
+    bool m_isInit;  //!< OpenGL buffers initialized flag
 
  private:
     bool m_hasIndexes;               //!< Using line index buffer flag
-    size_t m_memoryUsage;            //!< Memory usage sum
-    QVector3D m_minimum;             //!< Minimum scene range [x, y, z] values
-    QVector3D m_maximum;             //!< Maximum scene range [x, y, z] values
-    QOpenGLBuffer m_vertexBuffer;    //!< Vertex normal buffer
+    QOpenGLBuffer m_vertexBuffer;    //!< Vertex position buffer
     QOpenGLBuffer m_normalBuffer;    //!< Vertex normal buffer
+    QOpenGLBuffer m_materialBuffer;  //!< Vertex material buffer
     QOpenGLBuffer m_linesIndexes;    //!< Line index buffer
     GLsizei m_linesCount;            //!< Line item count
 };
+
+/*!
+ * \brief Constructor
+ * \param _material Initial material
+ * \param _parent Parent \c QObject
+ */
+inline LinesModel::LinesModel(const Material &_material, QObject *_parent)
+    : LinesModel(std::vector<Material>({_material}), _parent)
+{
+}
 
 }  // namespace Models
 }  // namespace OpenGL

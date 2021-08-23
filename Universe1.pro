@@ -59,15 +59,18 @@ SOURCES += \
     src/qt/opengl/glwidget.cpp \
     \
     src/qt/opengl/models/glmodel.cpp \
-    src/qt/opengl/models/meshmodel.cpp \
-    src/qt/opengl/models/linesmodel.cpp \
-    src/qt/opengl/models/modelpath.cpp \
+    \
     src/qt/opengl/models/modeldots.cpp \
+    src/qt/opengl/models/modelpath.cpp \
+    \
+    src/qt/opengl/models/linesmodel.cpp \
+    src/qt/opengl/models/modelpointlight.cpp \
+    \
+    src/qt/opengl/models/meshmodel.cpp \
     src/qt/opengl/models/modeltriangle.cpp \
     src/qt/opengl/models/modelplane.cpp \
     src/qt/opengl/models/modelbox.cpp \
     src/qt/opengl/models/modelsphere.cpp \
-    src/qt/opengl/models/modelpointlight.cpp \
     src/qt/opengl/models/modelarrow.cpp \
     \
     src/qt/widgets/horizontallinespacer.cpp \
@@ -101,15 +104,18 @@ HEADERS += \
     src/qt/opengl/glwidget.h \
     \
     src/qt/opengl/models/glmodel.h \
-    src/qt/opengl/models/meshmodel.h \
-    src/qt/opengl/models/linesmodel.h \
-    src/qt/opengl/models/modelpath.h \
+    \
     src/qt/opengl/models/modeldots.h \
+    src/qt/opengl/models/modelpath.h \
+    \
+    src/qt/opengl/models/linesmodel.h \
+    src/qt/opengl/models/modelpointlight.h \
+    \
+    src/qt/opengl/models/meshmodel.h \
     src/qt/opengl/models/modeltriangle.h \
     src/qt/opengl/models/modelplane.h \
     src/qt/opengl/models/modelbox.h \
     src/qt/opengl/models/modelsphere.h \
-    src/qt/opengl/models/modelpointlight.h \
     src/qt/opengl/models/modelarrow.h \
     \
     src/qt/widgets/horizontallinespacer.h \

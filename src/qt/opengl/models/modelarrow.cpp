@@ -69,10 +69,6 @@ void Universe1::OpenGL::Models::ModelArrow::setToPosition(const QVector3D &_valu
     setArrow(m_fromPosition, _value);
 }
 
-// void setRatioRadiusLine(float _value);
-// void setRatioRadiusHeader(float _value);
-// void setRatioLengthHeader(float _value);
-
 /*!
  * \brief Setter for line radius ratio
  * \param _value New line radius ratio
@@ -152,7 +148,7 @@ void Universe1::OpenGL::Models::ModelArrow::rebuild()
 
     if (qFuzzyCompare(m_fromPosition, m_toPosition))
     {
-        initBuffers(vertexData, normalData, triangData, linesData);
+        initBuffers(vertexData, normalData, {}, triangData, linesData);
         return;
     }
 
@@ -291,30 +287,18 @@ void Universe1::OpenGL::Models::ModelArrow::rebuild()
     triangData.push_back(m_circlePointCount * 7U - 5U);
     triangData.push_back(2U);
     triangData.push_back(3U);
-    // triangData.push_back(j + 1U);
-    // triangData.push_back(j + 8U);
-    // triangData.push_back(j + 9U);
 
     triangData.push_back(m_circlePointCount * 7U - 3U);
     triangData.push_back(5U);
     triangData.push_back(m_circlePointCount * 7U - 2U);
-    // triangData.push_back(j + 3U);
-    // triangData.push_back(j + 11U);
-    // triangData.push_back(j + 4U);
 
     triangData.push_back(m_circlePointCount * 7U - 3U);
     triangData.push_back(4U);
     triangData.push_back(5U);
-    // triangData.push_back(j + 3U);
-    // triangData.push_back(j + 10U);
-    // triangData.push_back(j + 11U);
 
     triangData.push_back(m_circlePointCount * 7U - 1U);
     triangData.push_back(6U);
     triangData.push_back(m_circlePointCount * 7U);
-    // triangData.push_back(j + 5U);
-    // triangData.push_back(j + 12U);
-    // triangData.push_back(j + 6U);
 
     linesData.push_back(m_circlePointCount * 7U - 6U);
     linesData.push_back(1U);
@@ -325,5 +309,5 @@ void Universe1::OpenGL::Models::ModelArrow::rebuild()
     linesData.push_back(m_circlePointCount * 7U - 2U);
     linesData.push_back(5U);
 
-    initBuffers(vertexData, normalData, triangData, linesData);
+    initBuffers(vertexData, normalData, {}, triangData, linesData);
 }

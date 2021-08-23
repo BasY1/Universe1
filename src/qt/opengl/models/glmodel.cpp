@@ -8,14 +8,27 @@
 
 /*!
  * \brief Constructor
- * \param _material Initial material object with values
+ * \param _materials Initial materials collection
  * \param _parent Parent \c QObject
  */
-Universe1::OpenGL::Models::GLModel::GLModel(const Material &_material, QObject *_parent)
+Universe1::OpenGL::Models::GLModel::GLModel(const std::vector<Material> &_materials, QObject *_parent)
     : QObject(_parent)
     , m_enabled(true)
-    , m_material(_material)
+    , m_memoryUsage(0U)
+    , m_minimum()
+    , m_maximum()
+    , m_materials()
 {
+    if (_materials.empty())
+        m_materials = {Material()};
+    else if (_materials.size() <= ShaderProgram::materialCount)
+        m_materials = _materials;
+    else
+    {
+        m_materials.reserve(ShaderProgram::materialCount);
+        for (int i = 0; i < ShaderProgram::materialCount; ++i)
+            m_materials.push_back(_materials.at(i));
+    }
 }
 
 /*!
@@ -37,8 +50,7 @@ void Universe1::OpenGL::Models::GLModel::paintGL(ShaderProgram *_program)
 {
     if (m_enabled && isInit())
     {
-        _program->setupMaterial(m_material);
-
+        _program->setupMaterials(m_materials);
         paintGLImlp(_program);
     }
 }
@@ -59,7 +71,43 @@ void Universe1::OpenGL::Models::GLModel::setEnabled(bool _value)
  */
 void Universe1::OpenGL::Models::GLModel::setMaterial(const Material &_value)
 {
-    m_material = _value;
+    setMaterial(0, _value);
+}
+
+/*!
+ * \brief Setter for specific material
+ * \param _materialIndex Material index
+ * \param _material Material data
+ */
+void Universe1::OpenGL::Models::GLModel::setMaterial(int _materialIndex, const Material &_material)
+{
+    if (_materialIndex >= 0 && _materialIndex < static_cast<int>(m_materials.size()))
+    {
+        m_materials[_materialIndex] = _material;
+        emit changed();
+    }
+}
+
+/*!
+ * \brief Setter for new material collection
+ * \param _materials New material collection
+ */
+void Universe1::OpenGL::Models::GLModel::setMaterials(const std::vector<Material> &_materials)
+{
+    if (m_materials.size() == _materials.size())
+        m_materials = _materials;
+    else if (m_materials.size() > _materials.size())
+        for (size_t i = 0; i < _materials.size(); ++i)
+            m_materials[i] = _materials[i];
+    else if (_materials.size() <= ShaderProgram::materialCount)  // Keep this if-else order
+        m_materials = _materials;
+    else
+    {
+        m_materials.clear();
+        m_materials.reserve(ShaderProgram::materialCount);
+        for (int i = 0; i < ShaderProgram::materialCount; ++i)
+            m_materials.push_back(_materials.at(i));
+    }
     emit changed();
 }
 
@@ -140,4 +188,45 @@ int Universe1::OpenGL::Models::GLModel::prepareCirclePointCount(const int _count
     if (result % 2 != 0)
         ++result;
     return result;
+}
+
+/*!
+ * \brief Tool function, find point-cloud range
+ * \param _data Point-cloud data
+ */
+void Universe1::OpenGL::Models::GLModel::prepareRange(const std::vector<QVector3D> &_data)
+{
+    if (_data.empty())
+    {
+        clearRange();
+    }
+    else
+    {
+        m_minimum = _data.front();
+        m_maximum = m_minimum;
+        for (const QVector3D &v : _data)
+        {
+            if (m_minimum.x() > v.x())
+                m_minimum.setX(v.x());
+            if (m_minimum.y() > v.y())
+                m_minimum.setY(v.y());
+            if (m_minimum.z() > v.z())
+                m_minimum.setZ(v.z());
+            if (m_maximum.x() < v.x())
+                m_maximum.setX(v.x());
+            if (m_maximum.y() < v.y())
+                m_maximum.setY(v.y());
+            if (m_maximum.z() < v.z())
+                m_maximum.setZ(v.z());
+        }
+    }
+}
+
+/*!
+ * \brief Tool function, clear range
+ */
+void Universe1::OpenGL::Models::GLModel::clearRange()
+{
+    m_minimum = QVector3D();
+    m_maximum = QVector3D();
 }

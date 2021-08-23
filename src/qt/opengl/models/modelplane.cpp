@@ -84,7 +84,7 @@ void Universe1::OpenGL::Models::ModelPlane::rebuild()
         tmp2 += step;
     }
 
-    initBuffers(vertexData, normalData, triangData, linesData);
+    initBuffers(vertexData, normalData, {}, triangData, linesData);
 }
 
 /*!

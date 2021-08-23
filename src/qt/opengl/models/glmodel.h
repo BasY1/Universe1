@@ -21,34 +21,29 @@ namespace Models {
 class GLModel : public QObject, protected QOpenGLFunctions
 {
     Q_OBJECT
- public:
-    GLModel(const Material &_material, QObject *_parent = nullptr);
+ protected:
+    GLModel(const std::vector<Material> &_materials, QObject *_parent = nullptr);
 
+ public:
     inline bool isEnabled() const;
-    inline const Material &material() const;
+
+    inline const std::vector<Material> &materials() const;
+
+    inline size_t memoryUsage() const;
+
+    inline const QVector3D &minimum() const;
+    inline const QVector3D &maximum() const;
+    inline std::pair<QVector3D, QVector3D> range() const;
+    inline QVector3D center() const;
+
+    virtual void initGL();
+    virtual void paintGL(ShaderProgram *_program);
 
     /*!
      * \brief Getter for initialized flag
      * \returns Initialized flag
      */
     virtual bool isInit() const = 0;
-
-    /*!
-     * \brief Memory usage: returns size of allocated memory within OpenGL context
-     * \returns Size of allocated memory within OpenGL context
-     */
-    virtual size_t memoryUsage() const = 0;
-
-    /*!
-     * \brief Returns object range
-     * \returns Object range (pair of 3D vectors minimum [x, y, z] and maximum [x, y, z])
-     */
-    virtual std::pair<QVector3D, QVector3D> range() const = 0;
-
-    inline QVector3D center() const;
-
-    virtual void initGL();
-    virtual void paintGL(ShaderProgram *_program);
 
  protected:
     /*!
@@ -64,17 +59,28 @@ class GLModel : public QObject, protected QOpenGLFunctions
      */
     virtual void paintGLImlp(ShaderProgram *_program) = 0;
 
+    void clearRange();
+    void prepareRange(const std::vector<QVector3D> &_data);
+
  public slots:
     void setEnabled(bool _value);
 
     virtual void setMaterial(const Material &_value);
+    virtual void setMaterial(int _materialIndex, const Material &_material);
+    virtual void setMaterials(const std::vector<Material> &_materials);
 
  signals:
     void changed();  //!< Model changed
 
  protected:
-    bool m_enabled;       //!< Enable within paint process flag
-    Material m_material;  //!< Model material
+    bool m_enabled;  //!< Enable within paint process flag
+
+    size_t m_memoryUsage;  //!< Memory usage sum
+
+    QVector3D m_minimum;  //!< Minimum scene range [x, y, z] values
+    QVector3D m_maximum;  //!< Maximum scene range [x, y, z] values
+
+    std::vector<Material> m_materials;  //!< Used materials
 
  public:
     static QVector3D rotate(const QVector3D &_p, const QVector3D &_n, const float _sa, const float _ca);
@@ -95,12 +101,48 @@ inline bool GLModel::isEnabled() const
 }
 
 /*!
- * \brief Getter for model material
- * \returns Model material
+ * \brief Getter for model materials
+ * \returns Model materials
  */
-inline const OpenGL::Material &GLModel::material() const
+inline const std::vector<Material> &GLModel::materials() const
 {
-    return m_material;
+    return m_materials;
+}
+
+/*!
+ * \brief Getter for model Open GL memory usage in bytes
+ * \returns Model Open GL memory usage
+ */
+inline size_t GLModel::memoryUsage() const
+{
+    return m_memoryUsage;
+}
+
+/*!
+ * \brief Getter for model minimum scene range [x, y, z] values
+ * \returns Minimum model scene range [x, y, z] values
+ */
+inline const QVector3D &GLModel::minimum() const
+{
+    return m_minimum;
+}
+
+/*!
+ * \brief Getter for model maximum scene range [x, y, z] values
+ * \returns Maximum model scene range [x, y, z] values
+ */
+inline const QVector3D &GLModel::maximum() const
+{
+    return m_maximum;
+}
+
+/*!
+ * \brief Getter for model scene range
+ * \returns Model scene range
+ */
+inline std::pair<QVector3D, QVector3D> GLModel::range() const
+{
+    return {m_minimum, m_maximum};
 }
 
 /*!

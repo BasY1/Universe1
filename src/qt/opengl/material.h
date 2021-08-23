@@ -22,15 +22,17 @@ struct Material : public ADSColors
 {
     float shininess;  //!< Material shininess
     float alpha;      //!< Material alpha
-    Material();
     Material(const QColor &_ambient,
              const QColor &_diffuse,
              const QColor &_specular,
              const float _shininess,
              const float _alpha);
 
+    Material(const QColor &_ambient, const QColor &_diffuse, const QColor &_specular);
+
     Material(const ADSColors &_colors, const float _shininess, const float _alpha);
     Material(const ADSColors &_colors);
+    Material();
 
     void saveSettings(QSettings &_settings, const QString &_keyGroup) const;
     void loadSettings(const QSettings &_settings, const QString &_keyGroup);

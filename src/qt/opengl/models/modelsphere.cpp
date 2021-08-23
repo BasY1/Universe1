@@ -212,5 +212,5 @@ void Universe1::OpenGL::Models::ModelSphere::rebuild()
     linesData.push_back(last);
     linesData.push_back(idx);
 
-    initBuffers(vertexData, normalData, triangData, linesData);
+    initBuffers(vertexData, normalData, {}, triangData, linesData);
 }

@@ -157,7 +157,7 @@ void Universe1::OpenGL::Models::ModelBox::rebuild()
         break;
     }
 
-    initBuffers(vertexData, normalData, triangData, linesData);
+    initBuffers(vertexData, normalData, {}, triangData, linesData);
 }
 
 /*!

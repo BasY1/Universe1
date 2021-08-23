@@ -35,6 +35,19 @@ Universe1::OpenGL::Material::Material(
 
 /*!
  * \brief Constructor
+ * \param _ambient Ambient color
+ * \param _diffuse Diffuse color
+ * \param _specular Specular color
+ */
+Universe1::OpenGL::Material::Material(const QColor &_ambient, const QColor &_diffuse, const QColor &_specular)
+    : ADSColors(_ambient, _diffuse, _specular)
+    , shininess(32.0F)
+    , alpha(1.0F)
+{
+}
+
+/*!
+ * \brief Constructor
  * \param _colors Ambient - Diffuse - Specular colors
  * \param _shininess Material shininess
  * \param _alpha Material color alpha
