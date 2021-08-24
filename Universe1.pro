@@ -48,12 +48,12 @@ HEADERS += \
 ########################################################################################################################
 
 SOURCES += \
-    src/qt/qsimulation.cpp \
-    src/qt/qsimulationnewtoncurrent.cpp \
+    src/qt/project/qsimulation.cpp \
+    src/qt/project/qsimulationnewtoncurrent.cpp \
 
 HEADERS += \
-    src/qt/qsimulation.h \
-    src/qt/qsimulationnewtoncurrent.h \
+    src/qt/project/qsimulation.h \
+    src/qt/project/qsimulationnewtoncurrent.h \
 
 ########################################################################################################################
 

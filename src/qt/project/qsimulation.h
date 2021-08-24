@@ -1,17 +1,18 @@
 /*!
- * \file qt/qsimulation.h
+ * \file qt/project/qsimulation.h
  * \author Michal Steller
  * \brief The QT Simulation abstract class declaration
  */
 
-#ifndef UNIVERSE1_QSIMULATION_H
-#define UNIVERSE1_QSIMULATION_H
+#ifndef UNIVERSE1_PROJECT_QSIMULATION_H
+#define UNIVERSE1_PROJECT_QSIMULATION_H
 
-#include "../simulation/simulation.h"
+#include "../../simulation/simulation.h"
 
 #include <QObject>
 
 namespace Universe1 {
+namespace Project {
 
 /*!
  * \brief The QT Simulation abstract class
@@ -250,6 +251,7 @@ inline QSimulation::Precision detectPrecision<long double>()
 
 #endif  // DOXYGEN_SKIP
 
+}  // namespace Project
 }  // namespace Universe1
 
-#endif  // UNIVERSE1_QSIMULATION_H
+#endif  // UNIVERSE1_PROJECT_QSIMULATION_H

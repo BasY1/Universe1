@@ -1,19 +1,20 @@
 /*!
- * \file qt/qsimulationnewtoncurrent.h
+ * \file qt/project/qsimulationnewtoncurrent.h
  * \author Michal Steller
  * \brief Class declaration - QT Simulation for newton \b current physics
  */
 
-#ifndef UNIVERSE1_QSIMULATIONNEWTONCURRENT_H
-#define UNIVERSE1_QSIMULATIONNEWTONCURRENT_H
+#ifndef UNIVERSE1_PROJECT_QSIMULATIONNEWTONCURRENT_H
+#define UNIVERSE1_PROJECT_QSIMULATIONNEWTONCURRENT_H
 
 #include "qsimulation.h"
 
-#include "../simulation/newton/newtonsimulation.h"
+#include "../../simulation/newton/newtonsimulation.h"
 
 #include <QObject>
 
 namespace Universe1 {
+namespace Project {
 
 /*!
  * \brief The QT Simulation abstract class
@@ -169,6 +170,7 @@ class QSimulationNewtonCurrent : public QSimulation
     std::vector<InitObject> m_currentInitObjects;  //!< Collection of starting object's properties
 };
 
+}  // namespace Project
 }  // namespace Universe1
 
-#endif  // UNIVERSE1_QSIMULATIONNEWTONCURRENT_H
+#endif  // UNIVERSE1_PROJECT_QSIMULATIONNEWTONCURRENT_H
