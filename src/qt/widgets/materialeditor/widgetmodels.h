@@ -276,6 +276,8 @@ class WidgetModelArrow : public QWidget
 
     GUI::GuiMaterial *m_guiLine;    //!< Line material GUI
     GUI::GuiMaterial *m_guiBottom;  //!< Header bottom material GUI
+
+    QTabWidget *m_tabs;  //!< Materials tab
 };
 
 }  // namespace MaterialEditor

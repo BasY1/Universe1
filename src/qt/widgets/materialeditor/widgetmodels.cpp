@@ -301,6 +301,7 @@ Universe1::Widgets::MaterialEditor::WidgetModelArrow::WidgetModelArrow(OpenGL::M
     , m_circlePointCount(new GUI::GuiInt(m_model->circlePointCount(), 4, 1024, Qt::Horizontal))
     , m_guiLine(new GUI::GuiMaterial(m_model->materialLine(), Qt::Horizontal))
     , m_guiBottom(new GUI::GuiMaterial(m_model->materialHeaderBottom(), Qt::Horizontal))
+    , m_tabs(new QTabWidget())
 {
     m_wireFrame->setChecked(m_model->drawWireFrame());
 
@@ -316,16 +317,25 @@ Universe1::Widgets::MaterialEditor::WidgetModelArrow::WidgetModelArrow(OpenGL::M
 
     m_circlePointCount->layoutRow(tr("Circle point count"), lay, row);
 
-    lay->addWidget(new HorizontalLineSpacer(), row++, 0, 1, 4);
+    int row2 = 0;
+    QWidget *wid2 = new QWidget();
+    QGridLayout *lay2 = new QGridLayout();
+    m_guiLine->layoutRow(lay2, row2);
+    lay2->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Expanding), row2, 0, 1, 4);
+    wid2->setLayout(lay2);
 
-    m_guiLine->layoutRow(lay, row);
+    int row3 = 0;
+    QWidget *wid3 = new QWidget();
+    QGridLayout *lay3 = new QGridLayout();
+    m_guiBottom->layoutRow(lay3, row3);
+    lay3->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Expanding), row3, 0, 1, 4);
+    wid3->setLayout(lay3);
 
-    lay->addWidget(new HorizontalLineSpacer(), row++, 0, 1, 4);
+    m_tabs->addTab(wid2, tr("Line material"));
+    m_tabs->addTab(wid3, tr("Header bottom material"));
+    m_tabs->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    m_guiBottom->layoutRow(lay, row);
-
-    lay->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Expanding), row, 0, 1, 4);
-
+    lay->addWidget(m_tabs, row, 0, 1, 4);
     setLayout(lay);
 }
 

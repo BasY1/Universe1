@@ -20,6 +20,18 @@ namespace OpenGL {
  */
 struct Material : public ADSColors
 {
+    /*!
+     * \brief Material modes
+     */
+    enum Mode : int
+    {
+        MaterialADS = 0,       //!< Dynamic ambient - diffuse - specular material
+        MaterialAmbient = 1,   //!< Forced ambient color mode (no light calculations)
+        MaterialDiffuse = 2,   //!< Forced diffuse color mode (no light calculations)
+        MaterialSpecular = 3,  //!< Forced specular color mode (no light calculations)
+    };
+
+    Mode mode;        //!< Material mode
     float shininess;  //!< Material shininess
     float alpha;      //!< Material alpha
     Material(const QColor &_ambient,

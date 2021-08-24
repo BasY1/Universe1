@@ -84,6 +84,7 @@ class GLModel : public QObject, protected QOpenGLFunctions
 
  public:
     static QVector3D rotate(const QVector3D &_p, const QVector3D &_n, const float _sa, const float _ca);
+    static QVector3D rotate(const QVector3D &_p, const QVector3D &_n, const float _angleRad);
     static QVector3D perpendicularVector(const QVector3D &_pole);
     static void prepareNormals(QVector3D &_pole, QVector3D &_equator);
     static int prepareCirclePointCount(const int _count);

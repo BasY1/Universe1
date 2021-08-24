@@ -117,7 +117,7 @@ void Universe1::OpenGL::Models::GLModel::setMaterials(const std::vector<Material
  * \param _n Rotation normal (axis)
  * \param _sa Sinus angle in radians
  * \param _ca Cosinus angle in radians
- * \return
+ * \return rotated point around normal by angle (right-handed rotation)
  */
 QVector3D
 Universe1::OpenGL::Models::GLModel::rotate(const QVector3D &_p, const QVector3D &_n, const float _sa, const float _ca)
@@ -128,6 +128,18 @@ Universe1::OpenGL::Models::GLModel::rotate(const QVector3D &_p, const QVector3D 
     return QVector3D(_n.x() * u.x() + _sa * (v.z() - w.y()) + _ca * _p.x() * (_n.y() * _n.y() + _n.z() * _n.z()),
                      _n.y() * v.y() + _sa * (w.x() - u.z()) + _ca * _p.y() * (_n.x() * _n.x() + _n.z() * _n.z()),
                      _n.z() * w.z() + _sa * (u.y() - v.x()) + _ca * _p.z() * (_n.x() * _n.x() + _n.y() * _n.y()));
+}
+
+/*!
+ * \brief Returns rotated point around normal by angle (right-handed rotation)
+ * \param _p Point to rotate
+ * \param _n Rotation normal (axis)
+ * \param _angleRad angle in radians
+ * \return rotated point around normal by angle (right-handed rotation)
+ */
+QVector3D Universe1::OpenGL::Models::GLModel::rotate(const QVector3D &_p, const QVector3D &_n, const float _angleRad)
+{
+    return rotate(_p, _n, std::sin(_angleRad), std::cos(_angleRad));
 }
 
 /*!

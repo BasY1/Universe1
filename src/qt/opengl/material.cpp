@@ -12,6 +12,7 @@
  */
 Universe1::OpenGL::Material::Material()
     : ADSColors()
+    , mode(MaterialADS)
     , shininess(32.0F)
     , alpha(1.0F)
 {
@@ -28,6 +29,7 @@ Universe1::OpenGL::Material::Material()
 Universe1::OpenGL::Material::Material(
     const QColor &_ambient, const QColor &_diffuse, const QColor &_specular, const float _shininess, const float _alpha)
     : ADSColors(_ambient, _diffuse, _specular)
+    , mode(MaterialADS)
     , shininess(_shininess)
     , alpha(_alpha)
 {
@@ -41,6 +43,7 @@ Universe1::OpenGL::Material::Material(
  */
 Universe1::OpenGL::Material::Material(const QColor &_ambient, const QColor &_diffuse, const QColor &_specular)
     : ADSColors(_ambient, _diffuse, _specular)
+    , mode(MaterialADS)
     , shininess(32.0F)
     , alpha(1.0F)
 {
@@ -54,6 +57,7 @@ Universe1::OpenGL::Material::Material(const QColor &_ambient, const QColor &_dif
  */
 Universe1::OpenGL::Material::Material(const ADSColors &_colors, const float _shininess, const float _alpha)
     : ADSColors(_colors)
+    , mode(MaterialADS)
     , shininess(_shininess)
     , alpha(_alpha)
 {
@@ -65,6 +69,7 @@ Universe1::OpenGL::Material::Material(const ADSColors &_colors, const float _shi
  */
 Universe1::OpenGL::Material::Material(const ADSColors &_colors)
     : ADSColors(_colors)
+    , mode(MaterialADS)
     , shininess(32.0F)
     , alpha(1.0F)
 {
@@ -78,6 +83,7 @@ Universe1::OpenGL::Material::Material(const ADSColors &_colors)
 void Universe1::OpenGL::Material::saveSettings(QSettings &_settings, const QString &_keyGroup) const
 {
     const QString key = _keyGroup.isEmpty() ? QString() : (_keyGroup.endsWith('/') ? _keyGroup : (_keyGroup + "/"));
+    _settings.setValue(key + "mode", static_cast<int>(mode));
     _settings.setValue(key + "shininess", shininess);
     _settings.setValue(key + "alpha", alpha);
     ADSColors::saveSettings(_settings, key);
@@ -91,6 +97,7 @@ void Universe1::OpenGL::Material::saveSettings(QSettings &_settings, const QStri
 void Universe1::OpenGL::Material::loadSettings(const QSettings &_settings, const QString &_keyGroup)
 {
     const QString key = _keyGroup.isEmpty() ? QString() : (_keyGroup.endsWith('/') ? _keyGroup : (_keyGroup + "/"));
+    mode = static_cast<Mode>(_settings.value(key + "mode", static_cast<int>(mode)).toInt());
     shininess = _settings.value(key + "shininess", shininess).toFloat();
     alpha = _settings.value(key + "alpha", alpha).toFloat();
     ADSColors::loadSettings(_settings, key);

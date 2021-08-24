@@ -29,8 +29,8 @@ Universe1::Widgets::GUI::GuiPointLight::GuiPointLight(const int _index,
     , m_lightMode(new QComboBox())
     , m_position(new GuiVector3D(m_light.position, _sceneRange, _decimals, _orientation))
     , m_constantWidgets(new GuiFloat(m_light.constant, 0, 2, 3, _orientation))
-    , m_linearWidgets(new GuiFloat(m_light.linear, 0, 2, 3, _orientation))
-    , m_quadraticWidgets(new GuiFloat(m_light.quadratic, 0, 2, 3, _orientation))
+    , m_linearWidgets(new GuiFloat(m_light.linear, 0, 2, 4, _orientation))
+    , m_quadraticWidgets(new GuiFloat(m_light.quadratic, 0, 2, 5, _orientation))
     , m_colors(new GuiColorADS(m_light, _orientation))
 {
     m_position->setToolTip(tr("Light position"));

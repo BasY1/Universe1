@@ -10,6 +10,7 @@
 #include "../gui/guidirectionlight.h"
 #include "../gui/guimaterial.h"
 #include "../gui/guipointlight.h"
+#include "../gui/guispotlight.h"
 
 #include "../widgetglsettings.h"
 
@@ -46,6 +47,7 @@ class WidgetMaterialEditor : public QSplitter
     void delClicked();
 
     void pointLightChanged(int _idx, const OpenGL::PointLight &_pointLight);
+    void spotLightChanged(int _idx, const OpenGL::SpotLight &_spotLight);
 
  protected:
     OpenGL::MaterialDB *m_materialDB;  //!< Processing material database
@@ -61,6 +63,7 @@ class WidgetMaterialEditor : public QSplitter
 
     GUI::GuiDirectionLight *m_guiDirectionLight;                                   //!< Direction light GUI widgets
     GUI::GuiPointLight *m_guiPointLight[OpenGL::ShaderProgram::pointLightsCount];  //!< Point light GUI widgets
+    GUI::GuiSpotLight *m_guiSpotLight[OpenGL::ShaderProgram::spotLightsCount];     //!< Spot light GUI widgets
 
     WidgetGLSettings *m_widgetGLSettings;  //!< Open GL settings widget
 
@@ -72,6 +75,7 @@ class WidgetMaterialEditor : public QSplitter
 
     QTabWidget *m_tabModels;       //!< Tab for model widgets and current model selection
     QTabWidget *m_tabPointLights;  //!< Tab for point lights collection
+    QTabWidget *m_tabSpotLights;   //!< Tab for spot lights collection
     QTabWidget *m_tabSettings;     //!< Main setting tab
 };
 

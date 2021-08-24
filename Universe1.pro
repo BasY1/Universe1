@@ -65,6 +65,7 @@ SOURCES += \
     \
     src/qt/opengl/models/linesmodel.cpp \
     src/qt/opengl/models/modelpointlight.cpp \
+    src/qt/opengl/models/modelspotlight.cpp \
     \
     src/qt/opengl/models/meshmodel.cpp \
     src/qt/opengl/models/modeltriangle.cpp \
@@ -85,6 +86,7 @@ SOURCES += \
     src/qt/widgets/gui/guimaterial.cpp \
     src/qt/widgets/gui/guidirectionlight.cpp \
     src/qt/widgets/gui/guipointlight.cpp \
+    src/qt/widgets/gui/guispotlight.cpp \
     \
     src/qt/widgets/materialeditor/widgetview.cpp \
     src/qt/widgets/materialeditor/widgetmodels.cpp \
@@ -110,6 +112,7 @@ HEADERS += \
     \
     src/qt/opengl/models/linesmodel.h \
     src/qt/opengl/models/modelpointlight.h \
+    src/qt/opengl/models/modelspotlight.h \
     \
     src/qt/opengl/models/meshmodel.h \
     src/qt/opengl/models/modeltriangle.h \
@@ -130,6 +133,7 @@ HEADERS += \
     src/qt/widgets/gui/guimaterial.h \
     src/qt/widgets/gui/guidirectionlight.h \
     src/qt/widgets/gui/guipointlight.h \
+    src/qt/widgets/gui/guispotlight.h \
     \
     src/qt/widgets/materialeditor/widgetview.h \
     src/qt/widgets/materialeditor/widgetmodels.h \

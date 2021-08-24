@@ -27,6 +27,7 @@ class ShaderProgram : public QOpenGLShaderProgram
     Q_OBJECT
  public:
     static const int pointLightsCount{8};  //!< Maximum point light count
+    static const int spotLightsCount{8};   //!< Maximum spot light count
     static const int materialCount{8};     //!< Maximum material count
 
     ShaderProgram(QObject *_parent = nullptr);
@@ -42,6 +43,8 @@ class ShaderProgram : public QOpenGLShaderProgram
     void setupDirectionLight(const DirectionLight &_light);
     void setupPointLights(const std::vector<PointLight> &_lights);
     void setupPointLight(const int _lightIndex, const PointLight &_light);
+    void setupSpotLights(const std::vector<SpotLight> &_lights);
+    void setupSpotLight(const int _lightIndex, const SpotLight &_light);
     void setupSceneAmbientFactor(const float _value);
 
  protected:
@@ -53,6 +56,7 @@ class ShaderProgram : public QOpenGLShaderProgram
     int m_attrProjXview;       //!< Camera projection x camera view matrix attribute location
     int m_attrCameraPosition;  //!< Camera position attribute location
 
+    int m_attrMaterialMode[materialCount];       //!< Materials mode attribute locations
     int m_attrMaterialAlpha[materialCount];      //!< Materials alpha attribute locations
     int m_attrMaterialShininess[materialCount];  //!< Materials shininess attribute locations
     int m_attrMaterialAmbient[materialCount];    //!< Materials ambient color attribute locations
@@ -73,6 +77,18 @@ class ShaderProgram : public QOpenGLShaderProgram
     int m_attrPointLightAmbient[pointLightsCount];    //!< Direction lights ambient color attribute locations
     int m_attrPointLightDiffuse[pointLightsCount];    //!< Direction lights diffuse color attribute locations
     int m_attrPointLightSpecular[pointLightsCount];   //!< Direction lights specular color attribute locations
+
+    int m_attrSpotLightMode[spotLightsCount];         //!< Spot lights mode factor attribute locations
+    int m_attrSpotLightPosition[spotLightsCount];     //!< Spot lights position attribute locations
+    int m_attrSpotLightDirection[spotLightsCount];    //!< Spot lights position direction locations
+    int m_attrSpotLightCutOff[spotLightsCount];       //!< Spot lights position cut-off locations
+    int m_attrSpotLightOuterCutOff[spotLightsCount];  //!< Spot lights position outer cut-off locations
+    int m_attrSpotLightConstant[spotLightsCount];     //!< Spot lights constant factor attribute locations
+    int m_attrSpotLightLinear[spotLightsCount];       //!< Spot lights linear factor attribute locations
+    int m_attrSpotLightQuadratic[spotLightsCount];    //!< Spot lights quadratic factor attribute locations
+    int m_attrSpotLightAmbient[spotLightsCount];      //!< Spot lights ambient color attribute locations
+    int m_attrSpotLightDiffuse[spotLightsCount];      //!< Spot lights diffuse color attribute locations
+    int m_attrSpotLightSpecular[spotLightsCount];     //!< Spot lights specular color attribute locations
 
     int m_attrSceneAmbientFactor;  //!< Scene ambient factor attribute location
 };

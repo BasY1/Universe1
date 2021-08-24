@@ -14,6 +14,7 @@
 #include "../../opengl/models/modelplane.h"
 #include "../../opengl/models/modelpointlight.h"
 #include "../../opengl/models/modelsphere.h"
+#include "../../opengl/models/modelspotlight.h"
 #include "../../opengl/models/modeltriangle.h"
 
 namespace Universe1 {
@@ -40,6 +41,7 @@ class WidgetView : public OpenGL::GLWidget
 
     inline const OpenGL::DirectionLight &directionLight() const;
     inline const std::vector<OpenGL::PointLight> &pointLights() const;
+    inline const std::vector<OpenGL::SpotLight> &spotLights() const;
 
     size_t memoryUsage() const override;
 
@@ -49,6 +51,7 @@ class WidgetView : public OpenGL::GLWidget
     void setMaterial(const OpenGL::Material &_material);
     void setDirectionLight(const OpenGL::DirectionLight &_directionLight);
     void setPointLight(int _idx, const OpenGL::PointLight &_pointLight);
+    void setSpotLight(int _idx, const OpenGL::SpotLight &_spotLight);
 
     void sphereWireFrameChanged(bool _value);
     void sphereEquatorPointCountChanged(int _value);
@@ -97,6 +100,9 @@ class WidgetView : public OpenGL::GLWidget
 
     std::vector<OpenGL::PointLight> m_pointLights;                      //!< Scene point lights
     std::vector<OpenGL::Models::ModelPointLight *> m_pointLightModels;  //!< Scene point light models
+
+    std::vector<OpenGL::SpotLight> m_spotLights;                      //!< Scene spot lights
+    std::vector<OpenGL::Models::ModelSpotLight *> m_spotLightModels;  //!< Scene spot light models
 };
 
 /*!
@@ -178,6 +184,15 @@ inline const OpenGL::DirectionLight &WidgetView::directionLight() const
 inline const std::vector<OpenGL::PointLight> &WidgetView::pointLights() const
 {
     return m_pointLights;
+}
+
+/*!
+ * \brief Getter for scene spot lights collection
+ * \returns Scene spot lights
+ */
+inline const std::vector<OpenGL::SpotLight> &WidgetView::spotLights() const
+{
+    return m_spotLights;
 }
 
 }  // namespace MaterialEditor

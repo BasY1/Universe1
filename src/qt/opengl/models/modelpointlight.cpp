@@ -24,6 +24,10 @@ Universe1::OpenGL::Models::ModelPointLight::ModelPointLight(const PointLight &_l
     , m_radius(_radius)
 {
     m_enabled = _light.mode != PointLight::LightOff;
+
+    GLModel::m_materials.at(0).mode = Material::MaterialAmbient;
+    GLModel::m_materials.at(1).mode = Material::MaterialAmbient;
+    GLModel::m_materials.at(2).mode = Material::MaterialAmbient;
 }
 
 /*!

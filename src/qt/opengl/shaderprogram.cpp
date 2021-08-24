@@ -81,6 +81,9 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
                              "#define POINT_LIGHT_COUNT " +
                              QString::number(pointLightsCount) +
                              "\n"
+                             "#define SPOT_LIGHT_COUNT " +
+                             QString::number(spotLightsCount) +
+                             "\n"
                              "#define MATERIAL_COUNT " +
                              QString::number(materialCount) +
                              "\n"
@@ -88,6 +91,7 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
                              "out vec4 FragColor;                                                  \n"
                              "                                                                     \n"
                              "struct Material {                                                    \n"
+                             "    int mode;                                                        \n"
                              "    float alpha;                                                     \n"
                              "    float shininess;                                                 \n"
                              "                                                                     \n"
@@ -118,10 +122,27 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
                              "    vec3 specular;                                                   \n"
                              "};                                                                   \n"
                              "                                                                     \n"
+                             "struct SpotLight {                                                   \n"
+                             "    int mode;                                                        \n"
+                             "    vec3 position;                                                   \n"
+                             "    vec3 direction;                                                  \n"
+                             "    float cutOff;                                                    \n"
+                             "    float outerCutOff;                                               \n"
+                             "                                                                     \n"
+                             "    float constant;                                                  \n"
+                             "    float linear;                                                    \n"
+                             "    float quadratic;                                                 \n"
+                             "                                                                     \n"
+                             "    vec3 ambient;                                                    \n"
+                             "    vec3 diffuse;                                                    \n"
+                             "    vec3 specular;                                                   \n"
+                             "};                                                                   \n"
+                             "                                                                     \n"
                              "uniform vec3 cameraPosition;                                         \n"
                              "uniform Material material[MATERIAL_COUNT];                           \n"
                              "uniform DirectionLight directionLight;                               \n"
                              "uniform PointLight pointLight[POINT_LIGHT_COUNT];                    \n"
+                             "uniform SpotLight spotLight[SPOT_LIGHT_COUNT];                       \n"
                              "uniform float ambientFactor;                                         \n"
                              "                                                                     \n"
                              "in vec3 vertOut;                                                     \n"
@@ -131,17 +152,35 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
                              "void main(void)                                                      \n"
                              "{                                                                    \n"
                              "    int usedMaterialIndex = int(materialIndex);                      \n"
-                             "                                                                     \n"
                              "    float matAlpha = material[usedMaterialIndex].alpha;              \n"
                              "    float matShininess = material[usedMaterialIndex].shininess;      \n"
                              "    vec3 matAmbient = material[usedMaterialIndex].ambient;           \n"
                              "    vec3 matDiffuse = material[usedMaterialIndex].diffuse;           \n"
                              "    vec3 matSpecular = material[usedMaterialIndex].specular;         \n"
                              "                                                                     \n"
+                             "    if (material[usedMaterialIndex].mode == 1)                       \n"
+                             "    {                                                                \n"
+                             "        FragColor = vec4(matAmbient, matAlpha);                      \n"
+                             "        return;                                                      \n"
+                             "    }                                                                \n"
+                             "                                                                     \n"
+                             "    if (material[usedMaterialIndex].mode == 2)                       \n"
+                             "    {                                                                \n"
+                             "        FragColor = vec4(matDiffuse, matAlpha);                      \n"
+                             "        return;                                                      \n"
+                             "    }                                                                \n"
+                             "                                                                     \n"
+                             "    if (material[usedMaterialIndex].mode == 3)                       \n"
+                             "    {                                                                \n"
+                             "        FragColor = vec4(matSpecular, matAlpha);                     \n"
+                             "        return;                                                      \n"
+                             "    }                                                                \n"
+                             "                                                                     \n"
                              "    vec3 usedAmbient = ambientFactor * matAmbient;                   \n"
                              "    vec3 result = usedAmbient;                                       \n"
                              "    vec3 norm = normalize(normOut);                                  \n"
                              "    vec3 viewDir = normalize(cameraPosition - vertOut);              \n"
+                             "                                                                     \n"
                              "    if (directionLight.mode != 0)                                    \n"
                              "    {                                                                \n"
                              "        vec3 lightDir = normalize(-directionLight.direction);        \n"
@@ -188,6 +227,47 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
                              "        result += a * pointLight[i].ambient * usedAmbient;           \n"
                              "        result += a * d * pointLight[i].diffuse * matDiffuse;        \n"
                              "        result += a * s *  pointLight[i].specular * matSpecular;     \n"
+                             "    }                                                                \n"
+                             "                                                                     \n"
+                             "    for (int i = 0 ; i < SPOT_LIGHT_COUNT ; ++i)                     \n"
+                             "    {                                                                \n"
+                             "        if (spotLight[i].mode == 0)                                  \n"
+                             "            continue;                                                \n"
+                             "                                                                     \n"
+                             "        vec3 lightDir = normalize(spotLight[i].position - vertOut);  \n"
+                             "        float d = dot(norm, lightDir);                               \n"
+                             "        if (d < 0.0)                                                 \n"
+                             "            continue;                                                \n"
+                             "                                                                     \n"
+                             "        vec3 reflDir = reflect(-lightDir, norm);                     \n"
+                             "                                                                     \n"
+                             "        float s = pow(max(dot(viewDir, reflDir), 0.0), matShininess);\n"
+                             "        float t = dot(lightDir, normalize(-spotLight[i].direction)); \n"
+                             "        float e = spotLight[i].cutOff - spotLight[i].outerCutOff;    \n"
+                             "        float n = clamp((t - spotLight[i].outerCutOff)/e, 0.0, 1.0); \n"
+                             "                                                                     \n"
+                             "        float dist = length(spotLight[i].position - vertOut);        \n"
+                             "        float a = 1.0;                                               \n"
+                             "        switch (spotLight[i].mode)                                   \n"
+                             "        {                                                            \n"
+                             "        case 2: a = 1.0 / spotLight[i].constant;                     \n"
+                             "                break;                                               \n"
+                             "                                                                     \n"
+                             "        case 3: a = 1.0 / (spotLight[i].constant +                   \n"
+                             "                           spotLight[i].linear * dist);              \n"
+                             "                break;                                               \n"
+                             "                                                                     \n"
+                             "        case 4: a = 1.0 / (spotLight[i].constant +                   \n"
+                             "                           spotLight[i].linear * dist +              \n"
+                             "                           spotLight[i].quadratic * dist * dist);    \n"
+                             "                break;                                               \n"
+                             "                                                                     \n"
+                             "        default: break;                                              \n"
+                             "        }                                                            \n"
+                             "                                                                     \n"
+                             "        result += n * a * spotLight[i].ambient * usedAmbient;        \n"
+                             "        result += n * a * d * spotLight[i].diffuse * matDiffuse;     \n"
+                             "        result += n * a * s *  spotLight[i].specular * matSpecular;  \n"
                              "    }                                                                \n"
                              "                                                                     \n"
                              "    FragColor = vec4(result, matAlpha);                              \n"
@@ -237,12 +317,15 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
     for (int i = 0; i < materialCount; ++i)
     {
         const QString key = QString("material[%1].").arg(i);
+        m_attrMaterialMode[i] = uniformLocation(key + "mode");
         m_attrMaterialAlpha[i] = uniformLocation(key + "alpha");
         m_attrMaterialShininess[i] = uniformLocation(key + "shininess");
         m_attrMaterialAmbient[i] = uniformLocation(key + "ambient");
         m_attrMaterialDiffuse[i] = uniformLocation(key + "diffuse");
         m_attrMaterialSpecular[i] = uniformLocation(key + "specular");
 
+        if (m_attrMaterialMode[i] < 0)
+            result = false;
         if (m_attrMaterialAlpha[i] < 0)
             result = false;
         if (m_attrMaterialShininess[i] < 0)
@@ -300,6 +383,45 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
             result = false;
     }
 
+    for (int i = 0; i < spotLightsCount; ++i)
+    {
+        const QString key = QString("spotLight[%1].").arg(i);
+        m_attrSpotLightMode[i] = uniformLocation(key + "mode");
+        m_attrSpotLightPosition[i] = uniformLocation(key + "position");
+        m_attrSpotLightDirection[i] = uniformLocation(key + "direction");
+        m_attrSpotLightCutOff[i] = uniformLocation(key + "cutOff");
+        m_attrSpotLightOuterCutOff[i] = uniformLocation(key + "outerCutOff");
+        m_attrSpotLightConstant[i] = uniformLocation(key + "constant");
+        m_attrSpotLightLinear[i] = uniformLocation(key + "linear");
+        m_attrSpotLightQuadratic[i] = uniformLocation(key + "quadratic");
+        m_attrSpotLightAmbient[i] = uniformLocation(key + "ambient");
+        m_attrSpotLightDiffuse[i] = uniformLocation(key + "diffuse");
+        m_attrSpotLightSpecular[i] = uniformLocation(key + "specular");
+
+        if (m_attrSpotLightMode[i] < 0)
+            result = false;
+        if (m_attrSpotLightPosition[i] < 0)
+            result = false;
+        if (m_attrSpotLightDirection[i] < 0)
+            result = false;
+        if (m_attrSpotLightCutOff[i] < 0)
+            result = false;
+        if (m_attrSpotLightOuterCutOff[i] < 0)
+            result = false;
+        if (m_attrSpotLightConstant[i] < 0)
+            result = false;
+        if (m_attrSpotLightLinear[i] < 0)
+            result = false;
+        if (m_attrSpotLightQuadratic[i] < 0)
+            result = false;
+        if (m_attrSpotLightAmbient[i] < 0)
+            result = false;
+        if (m_attrSpotLightDiffuse[i] < 0)
+            result = false;
+        if (m_attrSpotLightSpecular[i] < 0)
+            result = false;
+    }
+
     m_attrSceneAmbientFactor = uniformLocation("ambientFactor");
     if (m_attrSceneAmbientFactor < 0)
         result = false;
@@ -330,6 +452,7 @@ void Universe1::OpenGL::ShaderProgram::setupMaterials(const std::vector<Material
     int i = 0;
     for (const Material &material : _materials)
     {
+        setUniformValue(m_attrMaterialMode[i], static_cast<int>(material.mode));
         setUniformValue(m_attrMaterialAlpha[i], material.alpha);
         setUniformValue(m_attrMaterialShininess[i], material.shininess);
         setUniformValue(m_attrMaterialAmbient[i], material.ambientVector());
@@ -349,6 +472,7 @@ void Universe1::OpenGL::ShaderProgram::setupMaterial(const int _materialIndex, c
 {
     if (_materialIndex < 0 || _materialIndex >= materialCount)
         return;
+    setUniformValue(m_attrMaterialMode[_materialIndex], static_cast<int>(_material.mode));
     setUniformValue(m_attrMaterialAlpha[_materialIndex], _material.alpha);
     setUniformValue(m_attrMaterialShininess[_materialIndex], _material.shininess);
     setUniformValue(m_attrMaterialAmbient[_materialIndex], _material.ambientVector());
@@ -411,6 +535,56 @@ void Universe1::OpenGL::ShaderProgram::setupPointLight(const int _lightIndex, co
     setUniformValue(m_attrPointLightAmbient[_lightIndex], _light.ambientVector());
     setUniformValue(m_attrPointLightDiffuse[_lightIndex], _light.diffuseVector());
     setUniformValue(m_attrPointLightSpecular[_lightIndex], _light.specularVector());
+}
+
+/*!
+ * \brief Setup spot lights from given collection
+ * \param _lights Collection of spot lights
+ * \note Maximum light count is \a GLShaderProgram::spotLightsCount
+ */
+void Universe1::OpenGL::ShaderProgram::setupSpotLights(const std::vector<SpotLight> &_lights)
+{
+    int i = 0;
+    for (const SpotLight &light : _lights)
+    {
+        setUniformValue(m_attrSpotLightMode[i], static_cast<int>(light.mode));
+        setUniformValue(m_attrSpotLightPosition[i], light.position);
+        setUniformValue(m_attrSpotLightDirection[i], light.direction);
+        setUniformValue(m_attrSpotLightCutOff[i], std::cos(light.cutOffRad));
+        setUniformValue(m_attrSpotLightOuterCutOff[i], std::cos(light.outerCutOffRad));
+        setUniformValue(m_attrSpotLightConstant[i], light.constant);
+        setUniformValue(m_attrSpotLightLinear[i], light.linear);
+        setUniformValue(m_attrSpotLightQuadratic[i], light.quadratic);
+        setUniformValue(m_attrSpotLightAmbient[i], light.ambientVector());
+        setUniformValue(m_attrSpotLightDiffuse[i], light.diffuseVector());
+        setUniformValue(m_attrSpotLightSpecular[i], light.specularVector());
+        ++i;
+        if (i == pointLightsCount)
+            break;
+    }
+}
+
+/*!
+ * \brief Setup spot light at given index
+ * \param _lightIndex Light index
+ * \param _light Spot lights
+ * \note Also checks and updates active light count if is lower then given index
+ */
+void Universe1::OpenGL::ShaderProgram::setupSpotLight(const int _lightIndex, const SpotLight &_light)
+{
+    if (_lightIndex < 0 || _lightIndex >= pointLightsCount)
+        return;
+    setUniformValue(m_attrSpotLightMode[_lightIndex], static_cast<int>(_light.mode));
+    setUniformValue(m_attrSpotLightPosition[_lightIndex], _light.position);
+    setUniformValue(m_attrSpotLightDirection[_lightIndex], _light.direction);
+    setUniformValue(m_attrSpotLightCutOff[_lightIndex], std::cos(_light.cutOffRad));
+    setUniformValue(m_attrSpotLightOuterCutOff[_lightIndex], std::cos(_light.outerCutOffRad));
+    setUniformValue(m_attrSpotLightConstant[_lightIndex], _light.constant);
+    setUniformValue(m_attrSpotLightLinear[_lightIndex], _light.linear);
+    setUniformValue(m_attrSpotLightQuadratic[_lightIndex], _light.quadratic);
+    setUniformValue(m_attrSpotLightAmbient[_lightIndex], _light.ambientVector());
+    setUniformValue(m_attrSpotLightDiffuse[_lightIndex], _light.diffuseVector());
+    setUniformValue(m_attrSpotLightSpecular[_lightIndex], _light.specularVector());
 }
 
 /*!
