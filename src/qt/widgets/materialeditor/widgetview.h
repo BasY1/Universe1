@@ -31,7 +31,6 @@ class WidgetView : public OpenGL::GLWidget
     WidgetView(const OpenGL::Material &_material, QWidget *parent = nullptr);
     ~WidgetView();
 
-    inline float sceneAmbientFactor() const;
     inline OpenGL::Models::ModelSphere *modelSphere();
     inline OpenGL::Models::ModelBox *modelBox();
     inline OpenGL::Models::ModelArrow *modelArrow();
@@ -39,19 +38,14 @@ class WidgetView : public OpenGL::GLWidget
     inline OpenGL::Models::ModelPlane *modelPlane();
     inline int currentModel() const;
 
-    inline const OpenGL::DirectionLight &directionLight() const;
-    inline const std::vector<OpenGL::PointLight> &pointLights() const;
-    inline const std::vector<OpenGL::SpotLight> &spotLights() const;
-
     size_t memoryUsage() const override;
 
  public slots:
+    void setPointLight(int _idx, const OpenGL::PointLight &_pointLight) override;
+    void setSpotLight(int _idx, const OpenGL::SpotLight &_spotLight) override;
+
     void setCurrentModel(int _modelIndex);
-    void setSceneAmbientFactor(float _value);
     void setMaterial(const OpenGL::Material &_material);
-    void setDirectionLight(const OpenGL::DirectionLight &_directionLight);
-    void setPointLight(int _idx, const OpenGL::PointLight &_pointLight);
-    void setSpotLight(int _idx, const OpenGL::SpotLight &_spotLight);
 
     void sphereWireFrameChanged(bool _value);
     void sphereEquatorPointCountChanged(int _value);
@@ -86,7 +80,6 @@ class WidgetView : public OpenGL::GLWidget
     void paintGLImpl() override;
 
  protected:
-    float m_sceneAmbientFactor;                      //!< Scene ambient factor
     OpenGL::Models::ModelSphere *m_modelSphere;      //!< Sphere Open GL model
     OpenGL::Models::ModelBox *m_modelBox;            //!< Box Open GL model
     OpenGL::Models::ModelArrow *m_modelArrow;        //!< Arrow Open GL model
@@ -96,23 +89,9 @@ class WidgetView : public OpenGL::GLWidget
     std::vector<OpenGL::Models::GLModel *> m_models;  //!< Open GL Model collection
     int m_currentModel;                               //!< Current Open GL model index
 
-    OpenGL::DirectionLight m_directionLight;  //!< Scene directional light
-
-    std::vector<OpenGL::PointLight> m_pointLights;                      //!< Scene point lights
     std::vector<OpenGL::Models::ModelPointLight *> m_pointLightModels;  //!< Scene point light models
-
-    std::vector<OpenGL::SpotLight> m_spotLights;                      //!< Scene spot lights
     std::vector<OpenGL::Models::ModelSpotLight *> m_spotLightModels;  //!< Scene spot light models
 };
-
-/*!
- * \brief Getter for scene ambient factor
- * \returns Scene ambient factor
- */
-inline float WidgetView::sceneAmbientFactor() const
-{
-    return m_sceneAmbientFactor;
-}
 
 /*!
  * \brief Getter for triangle Open GL model
@@ -166,33 +145,6 @@ inline OpenGL::Models::ModelArrow *WidgetView::modelArrow()
 inline int WidgetView::currentModel() const
 {
     return m_currentModel;
-}
-
-/*!
- * \brief Getter for scene directional light
- * \returns Scene directional light
- */
-inline const OpenGL::DirectionLight &WidgetView::directionLight() const
-{
-    return m_directionLight;
-}
-
-/*!
- * \brief Getter for scene point lights collection
- * \returns Scene point lights
- */
-inline const std::vector<OpenGL::PointLight> &WidgetView::pointLights() const
-{
-    return m_pointLights;
-}
-
-/*!
- * \brief Getter for scene spot lights collection
- * \returns Scene spot lights
- */
-inline const std::vector<OpenGL::SpotLight> &WidgetView::spotLights() const
-{
-    return m_spotLights;
 }
 
 }  // namespace MaterialEditor

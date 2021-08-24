@@ -153,12 +153,21 @@ void Universe1::OpenGL::Models::ModelSpotLight::rebuild()
 
     static const float starRatio = 0.1F;
 
+    const int vCnt = 17 + 2 * m_circlePointCount;
+    const int lCnt = 24 + 4 * m_circlePointCount;
+
     const float angle = 2.0 * M_PI / static_cast<float>(m_circlePointCount);
     const float sa = std::sin(angle);
     const float ca = std::cos(angle);
 
-    const int vCnt = 17 + 2 * m_circlePointCount;
-    const int lCnt = 24 + 4 * m_circlePointCount;
+    const float radiusCircle1 = std::sin(0.5F * m_cutOffRad) * m_radius;
+    const float radiusCircle2 = std::sin(0.5F * m_outerCutOffRad) * m_radius;
+
+    const QVector3D _perp1 = perpendicularVector(m_direction);
+    const QVector3D _perp2 = QVector3D::crossProduct(m_direction, _perp1).normalized();
+
+    const QVector3D circleCenter1 = m_position + m_direction * m_radius * std::cos(0.5F * m_cutOffRad);
+    const QVector3D circleCenter2 = m_position + m_direction * m_radius * std::cos(0.5F * m_outerCutOffRad);
 
     std::vector<QVector3D> vertexData;
     std::vector<QVector3D> normalData;
@@ -169,17 +178,6 @@ void Universe1::OpenGL::Models::ModelSpotLight::rebuild()
     normalData.reserve(vCnt);
     materialData.reserve(vCnt);
     linesData.reserve(lCnt);
-
-    const QVector3D _perp1 = perpendicularVector(m_direction);
-    const QVector3D _perp2 = QVector3D::crossProduct(m_direction, _perp1).normalized();
-
-    const float radiusCircle1 = std::sin(0.5F * m_cutOffRad) * m_radius;
-    const float radiusCircle2 = std::sin(0.5F * m_outerCutOffRad) * m_radius;
-
-    const QVector3D circleCenter1 = m_position + m_direction * m_radius * std::cos(0.5F * m_cutOffRad);
-    const QVector3D circleCenter2 = m_position + m_direction * m_radius * std::cos(0.5F * m_outerCutOffRad);
-
-    QVector3D circleArm = _perp1;
 
 #ifndef DOXYGEN_SKIP
 #define __SET_VERTEX(COL, NORM, POS)                                                                                   \
@@ -207,6 +205,7 @@ void Universe1::OpenGL::Models::ModelSpotLight::rebuild()
     __SET_VERTEX(1U, m_direction, m_position + m_radius * rotate(m_direction, _perp2, 0.5F * m_outerCutOffRad));
     __SET_VERTEX(1U, m_direction, m_position + m_radius * rotate(m_direction, _perp2, -0.5F * m_outerCutOffRad));
 
+    QVector3D circleArm = _perp1;
     for (int i = 0; i < m_circlePointCount; ++i)
     {
         __SET_VERTEX(2U, m_direction, circleCenter1 + circleArm * radiusCircle1);
@@ -233,24 +232,19 @@ void Universe1::OpenGL::Models::ModelSpotLight::rebuild()
     }
 
     idx = 17U;
-    for (int i = 0; i < m_circlePointCount - 1; ++i)
+    for (int j = 0; j < 2; ++j)
     {
-        linesData.push_back(idx + i);
-        linesData.push_back(idx + i + 1);
+        for (int i = 0; i < m_circlePointCount - 1; ++i)
+        {
+            linesData.push_back(idx + i);
+            linesData.push_back(idx + i + 1);
+        }
+
+        linesData.push_back(idx + m_circlePointCount - 1);
+        linesData.push_back(idx);
+
+        idx += m_circlePointCount;
     }
-
-    linesData.push_back(idx + m_circlePointCount - 1);
-    linesData.push_back(idx);
-
-    idx += m_circlePointCount;
-    for (int i = 0; i < m_circlePointCount - 1; ++i)
-    {
-        linesData.push_back(idx + i);
-        linesData.push_back(idx + i + 1);
-    }
-
-    linesData.push_back(idx + m_circlePointCount - 1);
-    linesData.push_back(idx);
 
     initBuffers(vertexData, normalData, materialData, linesData);
 }

@@ -13,7 +13,6 @@
  */
 Universe1::Widgets::MaterialEditor::WidgetView::WidgetView(const OpenGL::Material &_material, QWidget *_parent)
     : OpenGL::GLWidget("MaterialEditor/View/", true, _parent)
-    , m_sceneAmbientFactor(0.1F)
     , m_modelSphere(new OpenGL::Models::ModelSphere(_material))
     , m_modelBox(new OpenGL::Models::ModelBox(_material))
     , m_modelArrow(new OpenGL::Models::ModelArrow(
@@ -69,46 +68,6 @@ Universe1::Widgets::MaterialEditor::WidgetView::WidgetView(const OpenGL::Materia
     m_modelPlane->setDots1(settings.value(m_settingsKey + "Plane/dots1", m_modelPlane->dots1()).toInt());
     m_modelPlane->setDots2(settings.value(m_settingsKey + "Plane/dots2", m_modelPlane->dots2()).toInt());
 
-    m_directionLight.loadSettings(settings, m_settingsKey + "DirectionLight/");
-
-    static const std::vector<QVector3D> lightPos = {QVector3D(+1.0F, +1.0F, +1.0F),
-                                                    QVector3D(+1.0F, +1.0F, -1.0F),
-                                                    QVector3D(-1.0F, +1.0F, +1.0F),
-                                                    QVector3D(-1.0F, +1.0F, -1.0F),
-                                                    QVector3D(+1.0F, -1.0F, +1.0F),
-                                                    QVector3D(+1.0F, -1.0F, -1.0F),
-                                                    QVector3D(-1.0F, -1.0F, +1.0F),
-                                                    QVector3D(-1.0F, -1.0F, -1.0F)};
-
-    m_pointLights.reserve(OpenGL::ShaderProgram::pointLightsCount);
-    for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
-        m_pointLights.push_back(OpenGL::PointLight(lightPos[i]));
-
-    for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
-        m_pointLights[i].mode = OpenGL::PointLight::LightOff;
-
-    m_pointLights[1].mode = OpenGL::PointLight::LightQuadratic;
-
-    for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
-        m_pointLights[i].loadSettings(settings, m_settingsKey + "PointLight_" + QString::number(i) + "_/");
-
-    //
-
-    m_spotLights.reserve(OpenGL::ShaderProgram::spotLightsCount);
-    for (int i = 0; i < OpenGL::ShaderProgram::spotLightsCount; ++i)
-        m_spotLights.push_back(OpenGL::SpotLight(
-            2.0F * lightPos[i], (-lightPos[i]).normalized(), qDegreesToRadians(20.0F), qDegreesToRadians(30.0F)));
-
-    for (int i = 0; i < OpenGL::ShaderProgram::spotLightsCount; ++i)
-        m_spotLights[i].mode = OpenGL::PointLight::LightOff;
-
-    m_spotLights[0].mode = OpenGL::PointLight::LightQuadratic;
-
-    for (int i = 0; i < OpenGL::ShaderProgram::spotLightsCount; ++i)
-        m_spotLights[i].loadSettings(settings, m_settingsKey + "SpotLight_" + QString::number(i) + "_/");
-
-    //
-
     m_pointLightModels.reserve(OpenGL::ShaderProgram::pointLightsCount);
     for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
         m_pointLightModels.push_back(new OpenGL::Models::ModelPointLight(m_pointLights[i], 0.1F));
@@ -117,7 +76,6 @@ Universe1::Widgets::MaterialEditor::WidgetView::WidgetView(const OpenGL::Materia
     for (int i = 0; i < OpenGL::ShaderProgram::spotLightsCount; ++i)
         m_spotLightModels.push_back(new OpenGL::Models::ModelSpotLight(m_spotLights[i], 0.2F));
 
-    m_sceneAmbientFactor = settings.value(m_settingsKey + "sceneAmbientFactor", m_sceneAmbientFactor).toFloat();
     m_currentModel = settings.value(m_settingsKey + "currentModel", m_currentModel).toInt();
 }
 
@@ -149,14 +107,7 @@ Universe1::Widgets::MaterialEditor::WidgetView::~WidgetView()
     settings.setValue(m_settingsKey + "Plane/dots1", m_modelPlane->dots1());
     settings.setValue(m_settingsKey + "Plane/dots2", m_modelPlane->dots2());
 
-    settings.setValue(m_settingsKey + "sceneAmbientFactor", m_sceneAmbientFactor);
     settings.setValue(m_settingsKey + "currentModel", m_currentModel);
-
-    m_directionLight.saveSettings(settings, m_settingsKey + "DirectionLight/");
-    for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
-        m_pointLights[i].saveSettings(settings, m_settingsKey + "PointLight_" + QString::number(i) + "_/");
-    for (int i = 0; i < OpenGL::ShaderProgram::spotLightsCount; ++i)
-        m_spotLights[i].saveSettings(settings, m_settingsKey + "SpotLight_" + QString::number(i) + "_/");
 
     disconnect(m_models.at(m_currentModel),
                &OpenGL::Models::GLModel::changed,
@@ -219,16 +170,6 @@ void Universe1::Widgets::MaterialEditor::WidgetView::setCurrentModel(int _modelI
 }
 
 /*!
- * \brief Setter for scene ambient factor
- * \param _value New Scene ambient factor value
- */
-void Universe1::Widgets::MaterialEditor::WidgetView::setSceneAmbientFactor(float _value)
-{
-    m_sceneAmbientFactor = _value;
-    update();
-}
-
-/*!
  * \brief Setter for material, update all models
  * \param _material New material
  */
@@ -239,16 +180,6 @@ void Universe1::Widgets::MaterialEditor::WidgetView::setMaterial(const OpenGL::M
     m_modelArrow->setMaterialHeader(_material);
     m_modelTriangle->setMaterial(_material);
     m_modelPlane->setMaterial(_material);
-    update();
-}
-
-/*!
- * \brief Setter for directional light
- * \param _directionLight New directional light object with values
- */
-void Universe1::Widgets::MaterialEditor::WidgetView::setDirectionLight(const OpenGL::DirectionLight &_directionLight)
-{
-    m_directionLight = _directionLight;
     update();
 }
 
@@ -326,12 +257,6 @@ void Universe1::Widgets::MaterialEditor::WidgetView::initializeGLImpl()
  */
 void Universe1::Widgets::MaterialEditor::WidgetView::paintGLImpl()
 {
-    m_program->setupDirectionLight(m_directionLight);
-    m_program->setupPointLights(m_pointLights);
-    m_program->setupSpotLights(m_spotLights);
-
-    m_program->setupSceneAmbientFactor(m_sceneAmbientFactor);
-
     for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
         m_pointLightModels[i]->paintGL(m_program);
 

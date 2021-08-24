@@ -52,6 +52,11 @@ class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
 
     inline QColor bgColor() const;
 
+    inline float sceneAmbientFactor() const;
+    inline const OpenGL::DirectionLight &directionLight() const;
+    inline const std::vector<OpenGL::PointLight> &pointLights() const;
+    inline const std::vector<OpenGL::SpotLight> &spotLights() const;
+
     /*!
      * \brief Memory usage: returns size of allocated memory within OpenGL context
      * \returns Size of allocated memory within OpenGL context
@@ -100,6 +105,12 @@ class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
     void setBGColorBlue(const float _value);
     void setBGColorAlpha(const float _value);
 
+    void setSceneAmbientFactor(float _value);
+
+    virtual void setDirectionLight(const OpenGL::DirectionLight &_directionLight);
+    virtual void setPointLight(int _idx, const OpenGL::PointLight &_pointLight);
+    virtual void setSpotLight(int _idx, const OpenGL::SpotLight &_spotLight);
+
  signals:
     /*!
      * \brief Open GL context initialized
@@ -143,6 +154,12 @@ class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
 
     GLfloat m_pointSize;  //!< Open GL point size
     GLfloat m_lineWidth;  //!< Open GL line width
+
+    float m_sceneAmbientFactor;  //!< Scene ambient factor
+
+    OpenGL::DirectionLight m_directionLight;        //!< Scene directional light
+    std::vector<OpenGL::PointLight> m_pointLights;  //!< Scene point lights
+    std::vector<OpenGL::SpotLight> m_spotLights;    //!< Scene spot lights
 
     Camera *m_camera;  //!< Camera
 
@@ -257,6 +274,41 @@ inline QColor GLWidget::bgColor() const
     return QColor(m_bgColorRed * 255.0F, m_bgColorGreen * 255.0F, m_bgColorBlue * 255.0F, m_bgColorAlpha * 255.0F);
 }
 
+/*!
+ * \brief Getter for scene ambient factor
+ * \returns Scene ambient factor
+ */
+inline float GLWidget::sceneAmbientFactor() const
+{
+    return m_sceneAmbientFactor;
+}
+
+/*!
+ * \brief Getter for scene directional light
+ * \returns Scene directional light
+ */
+inline const OpenGL::DirectionLight &GLWidget::directionLight() const
+{
+    return m_directionLight;
+}
+
+/*!
+ * \brief Getter for scene point lights collection
+ * \returns Scene point lights
+ */
+inline const std::vector<OpenGL::PointLight> &GLWidget::pointLights() const
+{
+    return m_pointLights;
+}
+
+/*!
+ * \brief Getter for scene spot lights collection
+ * \returns Scene spot lights
+ */
+inline const std::vector<OpenGL::SpotLight> &GLWidget::spotLights() const
+{
+    return m_spotLights;
+}
 }  // namespace OpenGL
 }  // namespace Universe1
 

@@ -50,14 +50,32 @@ HEADERS += \
 SOURCES += \
     src/qt/qsimulation.cpp \
     src/qt/qsimulationnewtoncurrent.cpp \
-    \
+
+HEADERS += \
+    src/qt/qsimulation.h \
+    src/qt/qsimulationnewtoncurrent.h \
+
+########################################################################################################################
+
+SOURCES += \
     src/qt/opengl/camera.cpp \
     src/qt/opengl/adscolors.cpp \
     src/qt/opengl/material.cpp \
     src/qt/opengl/lights.cpp \
     src/qt/opengl/shaderprogram.cpp \
     src/qt/opengl/glwidget.cpp \
-    \
+
+HEADERS += \
+    src/qt/opengl/camera.h \
+    src/qt/opengl/adscolors.h \
+    src/qt/opengl/material.h \
+    src/qt/opengl/lights.h \
+    src/qt/opengl/shaderprogram.h \
+    src/qt/opengl/glwidget.h \
+
+########################################################################################################################
+
+SOURCES += \
     src/qt/opengl/models/glmodel.cpp \
     \
     src/qt/opengl/models/modeldots.cpp \
@@ -73,38 +91,8 @@ SOURCES += \
     src/qt/opengl/models/modelbox.cpp \
     src/qt/opengl/models/modelsphere.cpp \
     src/qt/opengl/models/modelarrow.cpp \
-    \
-    src/qt/widgets/horizontallinespacer.cpp \
-    src/qt/widgets/widgetbgcolor.cpp \
-    src/qt/widgets/widgetglsettings.cpp \
-    \
-    src/qt/widgets/gui/guiint.cpp \
-    src/qt/widgets/gui/guifloat.cpp \
-    src/qt/widgets/gui/guivector3d.cpp \
-    src/qt/widgets/gui/guicolor.cpp \
-    src/qt/widgets/gui/guicolorads.cpp \
-    src/qt/widgets/gui/guimaterial.cpp \
-    src/qt/widgets/gui/guidirectionlight.cpp \
-    src/qt/widgets/gui/guipointlight.cpp \
-    src/qt/widgets/gui/guispotlight.cpp \
-    \
-    src/qt/widgets/materialeditor/widgetview.cpp \
-    src/qt/widgets/materialeditor/widgetmodels.cpp \
-    src/qt/widgets/materialeditor/widgetmaterialeditor.cpp \
-    src/qt/widgets/materialeditor/dialogmaterialeditor.cpp \
-
 
 HEADERS += \
-    src/qt/qsimulation.h \
-    src/qt/qsimulationnewtoncurrent.h \
-    \
-    src/qt/opengl/camera.h \
-    src/qt/opengl/adscolors.h \
-    src/qt/opengl/material.h \
-    src/qt/opengl/lights.h \
-    src/qt/opengl/shaderprogram.h \
-    src/qt/opengl/glwidget.h \
-    \
     src/qt/opengl/models/glmodel.h \
     \
     src/qt/opengl/models/modeldots.h \
@@ -120,11 +108,33 @@ HEADERS += \
     src/qt/opengl/models/modelbox.h \
     src/qt/opengl/models/modelsphere.h \
     src/qt/opengl/models/modelarrow.h \
-    \
+
+########################################################################################################################
+
+SOURCES += \
+    src/qt/widgets/horizontallinespacer.cpp \
+    src/qt/widgets/widgetbgcolor.cpp \
+    src/qt/widgets/widgetglsettings.cpp \
+
+HEADERS += \
     src/qt/widgets/horizontallinespacer.h \
     src/qt/widgets/widgetbgcolor.h \
     src/qt/widgets/widgetglsettings.h \
-    \
+
+########################################################################################################################
+
+SOURCES += \
+    src/qt/widgets/gui/guiint.cpp \
+    src/qt/widgets/gui/guifloat.cpp \
+    src/qt/widgets/gui/guivector3d.cpp \
+    src/qt/widgets/gui/guicolor.cpp \
+    src/qt/widgets/gui/guicolorads.cpp \
+    src/qt/widgets/gui/guimaterial.cpp \
+    src/qt/widgets/gui/guidirectionlight.cpp \
+    src/qt/widgets/gui/guipointlight.cpp \
+    src/qt/widgets/gui/guispotlight.cpp \
+
+HEADERS += \
     src/qt/widgets/gui/guiint.h \
     src/qt/widgets/gui/guifloat.h \
     src/qt/widgets/gui/guivector3d.h \
@@ -134,7 +144,16 @@ HEADERS += \
     src/qt/widgets/gui/guidirectionlight.h \
     src/qt/widgets/gui/guipointlight.h \
     src/qt/widgets/gui/guispotlight.h \
-    \
+
+########################################################################################################################
+
+SOURCES += \
+    src/qt/widgets/materialeditor/widgetview.cpp \
+    src/qt/widgets/materialeditor/widgetmodels.cpp \
+    src/qt/widgets/materialeditor/widgetmaterialeditor.cpp \
+    src/qt/widgets/materialeditor/dialogmaterialeditor.cpp \
+
+HEADERS += \
     src/qt/widgets/materialeditor/widgetview.h \
     src/qt/widgets/materialeditor/widgetmodels.h \
     src/qt/widgets/materialeditor/widgetmaterialeditor.h \

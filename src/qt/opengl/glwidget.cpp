@@ -30,9 +30,35 @@ Universe1::OpenGL::GLWidget::GLWidget(const QString &_settingsKey, const bool _s
     , m_bgColorAlpha(0.0F)
     , m_pointSize(1.0F)
     , m_lineWidth(1.0F)
+    , m_sceneAmbientFactor(0.1F)
     , m_camera(new Camera(m_settingsKey.isEmpty() ? QString() : (m_settingsKey + "Camera"), _storePosition, this))
     , m_program(new ShaderProgram())
 {
+    static const std::vector<QVector3D> lightPos = {QVector3D(+1.0F, +1.0F, +1.0F),
+                                                    QVector3D(+1.0F, +1.0F, -1.0F),
+                                                    QVector3D(-1.0F, +1.0F, +1.0F),
+                                                    QVector3D(-1.0F, +1.0F, -1.0F),
+                                                    QVector3D(+1.0F, -1.0F, +1.0F),
+                                                    QVector3D(+1.0F, -1.0F, -1.0F),
+                                                    QVector3D(-1.0F, -1.0F, +1.0F),
+                                                    QVector3D(-1.0F, -1.0F, -1.0F)};
+
+    m_pointLights.reserve(OpenGL::ShaderProgram::pointLightsCount);
+    m_spotLights.reserve(OpenGL::ShaderProgram::spotLightsCount);
+
+    for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
+        m_pointLights.push_back(OpenGL::PointLight(lightPos[i]));
+
+    for (int i = 0; i < OpenGL::ShaderProgram::spotLightsCount; ++i)
+        m_spotLights.push_back(OpenGL::SpotLight(
+            2.0F * lightPos[i], (-lightPos[i]).normalized(), qDegreesToRadians(20.0F), qDegreesToRadians(30.0F)));
+
+    for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
+        m_pointLights[i].mode = OpenGL::PointLight::LightOff;
+
+    for (int i = 0; i < OpenGL::ShaderProgram::spotLightsCount; ++i)
+        m_spotLights[i].mode = OpenGL::PointLight::LightOff;
+
     if (!m_settingsKey.isEmpty())
     {
         const QSettings settings;
@@ -52,6 +78,16 @@ Universe1::OpenGL::GLWidget::GLWidget(const QString &_settingsKey, const bool _s
 
         m_pointSize = settings.value(m_settingsKey + "pointSize", m_pointSize).toFloat();
         m_lineWidth = settings.value(m_settingsKey + "lineWidth", m_lineWidth).toFloat();
+
+        m_sceneAmbientFactor = settings.value(m_settingsKey + "sceneAmbientFactor", m_sceneAmbientFactor).toFloat();
+
+        m_directionLight.loadSettings(settings, m_settingsKey + "DirectionLight/");
+
+        for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
+            m_pointLights[i].loadSettings(settings, m_settingsKey + "PointLight_" + QString::number(i) + "_/");
+
+        for (int i = 0; i < OpenGL::ShaderProgram::spotLightsCount; ++i)
+            m_spotLights[i].loadSettings(settings, m_settingsKey + "SpotLight_" + QString::number(i) + "_/");
     }
 
     QSurfaceFormat format;
@@ -90,6 +126,16 @@ Universe1::OpenGL::GLWidget::~GLWidget()
 
         settings.setValue(m_settingsKey + "pointSize", m_pointSize);
         settings.setValue(m_settingsKey + "lineWidth", m_lineWidth);
+
+        settings.setValue(m_settingsKey + "sceneAmbientFactor", m_sceneAmbientFactor);
+
+        m_directionLight.saveSettings(settings, m_settingsKey + "DirectionLight/");
+
+        for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
+            m_pointLights[i].saveSettings(settings, m_settingsKey + "PointLight_" + QString::number(i) + "_/");
+
+        for (int i = 0; i < OpenGL::ShaderProgram::spotLightsCount; ++i)
+            m_spotLights[i].saveSettings(settings, m_settingsKey + "SpotLight_" + QString::number(i) + "_/");
     }
     disconnect(m_camera, &Camera::changed, this, static_cast<void (QOpenGLWidget::*)()>(&QOpenGLWidget::update));
 
@@ -268,6 +314,12 @@ void Universe1::OpenGL::GLWidget::paintGL()
     glPointSize(m_pointSize);
     glLineWidth(m_lineWidth);
 
+    m_program->setupSceneAmbientFactor(m_sceneAmbientFactor);
+
+    m_program->setupDirectionLight(m_directionLight);
+    m_program->setupPointLights(m_pointLights);
+    m_program->setupSpotLights(m_spotLights);
+
     paintGLImpl();
 
     m_program->release();
@@ -412,4 +464,52 @@ void Universe1::OpenGL::GLWidget::setBGColor(const QColor &_color)
     m_bgColorBlue = _color.blueF();
     m_bgColorAlpha = _color.alphaF();
     update();
+}
+
+/*!
+ * \brief Setter for scene ambient factor
+ * \param _value New Scene ambient factor value
+ */
+void Universe1::OpenGL::GLWidget::setSceneAmbientFactor(float _value)
+{
+    m_sceneAmbientFactor = _value;
+    update();
+}
+
+/*!
+ * \brief Setter for directional light
+ * \param _directionLight New directional light object with values
+ */
+void Universe1::OpenGL::GLWidget::setDirectionLight(const OpenGL::DirectionLight &_directionLight)
+{
+    m_directionLight = _directionLight;
+    update();
+}
+
+/*!
+ * \brief Setter for point light
+ * \param _idx Point light index
+ * \param _pointLight New point light object with values
+ */
+void Universe1::OpenGL::GLWidget::setPointLight(int _idx, const OpenGL::PointLight &_pointLight)
+{
+    if (_idx >= 0 && _idx < OpenGL::ShaderProgram::pointLightsCount)
+    {
+        m_pointLights.at(_idx) = _pointLight;
+        update();
+    }
+}
+
+/*!
+ * \brief Setter for spot light
+ * \param _idx Spot light index
+ * \param _spotLight New spot light object with values
+ */
+void Universe1::OpenGL::GLWidget::setSpotLight(int _idx, const OpenGL::SpotLight &_spotLight)
+{
+    if (_idx >= 0 && _idx < OpenGL::ShaderProgram::spotLightsCount)
+    {
+        m_spotLights.at(_idx) = _spotLight;
+        update();
+    }
 }
