@@ -12,7 +12,7 @@
  * \param _parent Parent \c QWidget
  */
 Universe1::Widgets::MaterialEditor::WidgetView::WidgetView(const OpenGL::Material &_material, QWidget *_parent)
-    : OpenGL::GLWidget("MaterialEditor/View/", true, _parent)
+    : OpenGL::GLWidget(new OpenGL::ShaderProgram(8, 8, 3), "MaterialEditor/View/", true, _parent)
     , m_modelSphere(new OpenGL::Models::ModelSphere(_material))
     , m_modelCylinder(new OpenGL::Models::ModelCylinder(_material, QVector3D(), 0.25F, 1.0F))
     , m_modelTorus(new OpenGL::Models::ModelTorus(_material, QVector3D(), 1.0F, 0.25F))
@@ -101,12 +101,12 @@ Universe1::Widgets::MaterialEditor::WidgetView::WidgetView(const OpenGL::Materia
     m_modelPlane->setDots1(settings.value(m_settingsKey + "Plane/dots1", m_modelPlane->dots1()).toInt());
     m_modelPlane->setDots2(settings.value(m_settingsKey + "Plane/dots2", m_modelPlane->dots2()).toInt());
 
-    m_pointLightModels.reserve(OpenGL::ShaderProgram::pointLightsCount);
-    for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
+    m_pointLightModels.reserve(m_program->pointLightsCount());
+    for (int i = 0; i < m_program->pointLightsCount(); ++i)
         m_pointLightModels.push_back(new OpenGL::Models::ModelPointLight(m_pointLights[i], 0.1F));
 
-    m_spotLightModels.reserve(OpenGL::ShaderProgram::spotLightsCount);
-    for (int i = 0; i < OpenGL::ShaderProgram::spotLightsCount; ++i)
+    m_spotLightModels.reserve(m_program->spotLightsCount());
+    for (int i = 0; i < m_program->spotLightsCount(); ++i)
         m_spotLightModels.push_back(new OpenGL::Models::ModelSpotLight(m_spotLights[i], 0.2F));
 
     m_currentModel = settings.value(m_settingsKey + "currentModel", m_currentModel).toInt();
@@ -166,11 +166,11 @@ Universe1::Widgets::MaterialEditor::WidgetView::~WidgetView()
     delete m_modelTriangle;
     delete m_modelPlane;
 
-    for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
+    for (int i = 0; i < m_program->pointLightsCount(); ++i)
         delete m_pointLightModels[i];
     m_pointLightModels.clear();
 
-    for (int i = 0; i < OpenGL::ShaderProgram::spotLightsCount; ++i)
+    for (int i = 0; i < m_program->spotLightsCount(); ++i)
         delete m_spotLightModels[i];
     m_spotLightModels.clear();
 
@@ -237,7 +237,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::setMaterial(const OpenGL::M
  */
 void Universe1::Widgets::MaterialEditor::WidgetView::setPointLight(int _idx, const OpenGL::PointLight &_pointLight)
 {
-    if (_idx >= 0 && _idx < OpenGL::ShaderProgram::pointLightsCount)
+    if (_idx >= 0 && _idx < m_program->pointLightsCount())
     {
         m_pointLights.at(_idx) = _pointLight;
         makeCurrent();
@@ -254,7 +254,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::setPointLight(int _idx, con
  */
 void Universe1::Widgets::MaterialEditor::WidgetView::setSpotLight(int _idx, const OpenGL::SpotLight &_spotLight)
 {
-    if (_idx >= 0 && _idx < OpenGL::ShaderProgram::spotLightsCount)
+    if (_idx >= 0 && _idx < m_program->spotLightsCount())
     {
         m_spotLights.at(_idx) = _spotLight;
         makeCurrent();
@@ -284,10 +284,10 @@ void Universe1::Widgets::MaterialEditor::WidgetView::mouseDoubleClickEvent(QMous
  */
 void Universe1::Widgets::MaterialEditor::WidgetView::initializeGLImpl()
 {
-    for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
+    for (int i = 0; i < m_program->pointLightsCount(); ++i)
         m_pointLightModels[i]->initGL();
 
-    for (int i = 0; i < OpenGL::ShaderProgram::spotLightsCount; ++i)
+    for (int i = 0; i < m_program->spotLightsCount(); ++i)
         m_spotLightModels[i]->initGL();
 
     for (OpenGL::Models::GLModel *m : m_models)
@@ -304,10 +304,10 @@ void Universe1::Widgets::MaterialEditor::WidgetView::initializeGLImpl()
  */
 void Universe1::Widgets::MaterialEditor::WidgetView::paintGLImpl()
 {
-    for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
+    for (int i = 0; i < m_program->pointLightsCount(); ++i)
         m_pointLightModels[i]->paintGL(m_program);
 
-    for (int i = 0; i < OpenGL::ShaderProgram::spotLightsCount; ++i)
+    for (int i = 0; i < m_program->spotLightsCount(); ++i)
         m_spotLightModels[i]->paintGL(m_program);
 
     m_models.at(m_currentModel)->paintGL(m_program);

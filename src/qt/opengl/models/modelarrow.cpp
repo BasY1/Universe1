@@ -155,7 +155,7 @@ void Universe1::OpenGL::Models::ModelArrow::prepareRatio(float &_ratioRadiusLine
                                                          float &_ratioLengthHeader)
 {
     _ratioRadiusLine = std::min(std::max(_ratioRadiusLine, 0.00001F), 0.2F);
-    _ratioRadiusHeader = std::min(std::max(_ratioRadiusHeader, _ratioRadiusLine * 1.1F), 0.75F);
+    _ratioRadiusHeader = std::min(std::max(_ratioRadiusHeader, _ratioRadiusLine), 0.75F);
     _ratioLengthHeader = std::min(std::max(_ratioLengthHeader, 0.00001F), 0.9F);
 }
 

@@ -63,9 +63,9 @@ class WidgetMaterialEditor : public QSplitter
     QPushButton *m_delMaterial;       //!< Delete material button
     QTableWidget *m_tableDB;          //!< Material names table
 
-    GUI::GuiDirectionLight *m_guiDirectionLight;                                   //!< Direction light GUI widgets
-    GUI::GuiPointLight *m_guiPointLight[OpenGL::ShaderProgram::pointLightsCount];  //!< Point light GUI widgets
-    GUI::GuiSpotLight *m_guiSpotLight[OpenGL::ShaderProgram::spotLightsCount];     //!< Spot light GUI widgets
+    GUI::GuiDirectionLight *m_guiDirectionLight;        //!< Direction light GUI widgets
+    std::vector<GUI::GuiPointLight *> m_guiPointLight;  //!< Point light GUI widgets
+    std::vector<GUI::GuiSpotLight *> m_guiSpotLight;    //!< Spot light GUI widgets
 
     WidgetGLSettings *m_widgetGLSettings;  //!< Open GL settings widget
 

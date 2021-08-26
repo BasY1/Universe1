@@ -124,9 +124,10 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(P
 
     QWidget *widMaterial = new QWidget();
     widMaterial->setLayout(layMaterial);
+    m_guiPointLight.resize(m_view->program()->pointLightsCount());
 
     static const std::pair<QVector3D, QVector3D> range = {QVector3D(-2, -2, -2), QVector3D(2, 2, 2)};
-    for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
+    for (int i = 0; i < m_view->program()->pointLightsCount(); ++i)
     {
         const OpenGL::PointLight &pl = m_view->pointLights().at(i);
         m_guiPointLight[i] = new GUI::GuiPointLight(i, pl, range, 2, Qt::Horizontal);
@@ -147,7 +148,8 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(P
     m_tabPointLights->setCurrentIndex(
         settings.value("MaterialEditor/tabPointLights", m_tabPointLights->currentIndex()).toInt());
 
-    for (int i = 0; i < OpenGL::ShaderProgram::spotLightsCount; ++i)
+    m_guiSpotLight.resize(m_view->program()->spotLightsCount());
+    for (int i = 0; i < m_view->program()->spotLightsCount(); ++i)
     {
         const OpenGL::SpotLight &sl = m_view->spotLights().at(i);
         m_guiSpotLight[i] = new GUI::GuiSpotLight(i, sl, range, 2, Qt::Horizontal);
@@ -207,10 +209,10 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(P
 
     connect(m_guiMaterial, &GUI::GuiMaterial::changed, m_view, &WidgetView::setMaterial);
     connect(m_guiDirectionLight, &GUI::GuiDirectionLight::changed, m_view, &WidgetView::setDirectionLight);
-    for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
+    for (int i = 0; i < m_view->program()->pointLightsCount(); ++i)
         connect(m_guiPointLight[i], &GUI::GuiPointLight::changed, this, &WidgetMaterialEditor::pointLightChanged);
 
-    for (int i = 0; i < OpenGL::ShaderProgram::spotLightsCount; ++i)
+    for (int i = 0; i < m_view->program()->spotLightsCount(); ++i)
         connect(m_guiSpotLight[i], &GUI::GuiSpotLight::changed, this, &WidgetMaterialEditor::spotLightChanged);
 
     connect(m_sceneAmbient, &GUI::GuiFloat::changed, m_view, &WidgetView::setSceneAmbientFactor);
@@ -289,9 +291,9 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::~WidgetMaterialEditor(
 
     disconnect(m_guiMaterial, &GUI::GuiMaterial::changed, m_view, &WidgetView::setMaterial);
     disconnect(m_guiDirectionLight, &GUI::GuiDirectionLight::changed, m_view, &WidgetView::setDirectionLight);
-    for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
+    for (int i = 0; i < m_view->program()->pointLightsCount(); ++i)
         disconnect(m_guiPointLight[i], &GUI::GuiPointLight::changed, this, &WidgetMaterialEditor::pointLightChanged);
-    for (int i = 0; i < OpenGL::ShaderProgram::spotLightsCount; ++i)
+    for (int i = 0; i < m_view->program()->spotLightsCount(); ++i)
         disconnect(m_guiSpotLight[i], &GUI::GuiSpotLight::changed, this, &WidgetMaterialEditor::spotLightChanged);
 
     disconnect(m_sceneAmbient, &GUI::GuiFloat::changed, m_view, &WidgetView::setSceneAmbientFactor);
@@ -355,9 +357,9 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::~WidgetMaterialEditor(
     delete m_sceneAmbient;
     delete m_guiMaterial;
     delete m_guiDirectionLight;
-    for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
+    for (int i = 0; i < m_view->program()->pointLightsCount(); ++i)
         delete m_guiPointLight[i];
-    for (int i = 0; i < OpenGL::ShaderProgram::spotLightsCount; ++i)
+    for (int i = 0; i < m_view->program()->spotLightsCount(); ++i)
         delete m_guiSpotLight[i];
 }
 

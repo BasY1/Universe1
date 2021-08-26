@@ -21,14 +21,8 @@ Universe1::OpenGL::Models::GLModel::GLModel(const std::vector<Material> &_materi
 {
     if (_materials.empty())
         m_materials = {Material()};
-    else if (_materials.size() <= ShaderProgram::materialCount)
-        m_materials = _materials;
     else
-    {
-        m_materials.reserve(ShaderProgram::materialCount);
-        for (int i = 0; i < ShaderProgram::materialCount; ++i)
-            m_materials.push_back(_materials.at(i));
-    }
+        m_materials = _materials;
 }
 
 /*!
@@ -94,20 +88,10 @@ void Universe1::OpenGL::Models::GLModel::setMaterial(int _materialIndex, const M
  */
 void Universe1::OpenGL::Models::GLModel::setMaterials(const std::vector<Material> &_materials)
 {
-    if (m_materials.size() == _materials.size())
-        m_materials = _materials;
-    else if (m_materials.size() > _materials.size())
-        for (size_t i = 0; i < _materials.size(); ++i)
-            m_materials[i] = _materials[i];
-    else if (_materials.size() <= ShaderProgram::materialCount)  // Keep this if-else order
-        m_materials = _materials;
+    if (_materials.empty())
+        m_materials = {Material()};
     else
-    {
-        m_materials.clear();
-        m_materials.reserve(ShaderProgram::materialCount);
-        for (int i = 0; i < ShaderProgram::materialCount; ++i)
-            m_materials.push_back(_materials.at(i));
-    }
+        m_materials = _materials;
     emit changed();
 }
 

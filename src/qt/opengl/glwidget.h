@@ -35,12 +35,16 @@ class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
     };
     Q_ENUM(CullFaceMode)
 
-    GLWidget(const QString &_settingsKey, const bool _storePosition, QWidget *_parent = nullptr);
-    inline GLWidget(QWidget *_parent = nullptr);
+    GLWidget(ShaderProgram *_program,
+             const QString &_settingsKey,
+             const bool _storePosition,
+             QWidget *_parent = nullptr);
+    inline GLWidget(ShaderProgram *_program, QWidget *_parent = nullptr);
 
     ~GLWidget();
 
     inline Camera *camera();
+    inline ShaderProgram *program();
 
     inline bool emitContextPainted() const;
     inline bool blending() const;
@@ -175,10 +179,11 @@ class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
 
 /*!
  * \brief Constructor
+ * \param _program Shader program
  * \param _parent Parent \c QWidget
  */
-inline GLWidget::GLWidget(QWidget *_parent)
-    : GLWidget(QString(), false, _parent)
+inline GLWidget::GLWidget(ShaderProgram *_program, QWidget *_parent)
+    : GLWidget(_program, QString(), false, _parent)
 {
 }
 
@@ -189,6 +194,15 @@ inline GLWidget::GLWidget(QWidget *_parent)
 inline Camera *Universe1::OpenGL::GLWidget::camera()
 {
     return m_camera;
+}
+
+/*!
+ * \brief Getter for shader program
+ * \returns Shader program
+ */
+inline ShaderProgram *Universe1::OpenGL::GLWidget::program()
+{
+    return m_program;
 }
 
 /*!

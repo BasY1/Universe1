@@ -8,10 +8,20 @@
 
 /*!
  * \brief Constructor
+ * \param _pointLightsCount Maximum point light count
+ * \param _spotLightsCount Maximum spot light count
+ * \param _materialCount Maximum material count
  * \param _parent Parent \c QObject
  */
-Universe1::OpenGL::ShaderProgram::ShaderProgram(QObject *_parent)
+Universe1::OpenGL::ShaderProgram::ShaderProgram(const int _pointLightsCount,
+                                                const int _spotLightsCount,
+                                                const int _materialCount,
+                                                QObject *_parent)
     : QOpenGLShaderProgram(_parent)
+    , m_pointLightsCount(std::max(1, _pointLightsCount))
+    , m_spotLightsCount(std::max(1, _spotLightsCount))
+    , m_materialCount(std::max(1, _materialCount))
+
     , m_attrVertex(-1)
     , m_attrNormal(-1)
     , m_attrMaterial(-1)
@@ -26,8 +36,16 @@ Universe1::OpenGL::ShaderProgram::ShaderProgram(QObject *_parent)
     , m_attrDirectionLightDiffuse(-1)
     , m_attrDirectionLightSpecular(-1)
 {
-    for (int i = 0; i < materialCount; ++i)
+    m_attrMaterialMode.reserve(m_materialCount);
+    m_attrMaterialAlpha.reserve(m_materialCount);
+    m_attrMaterialShininess.reserve(m_materialCount);
+    m_attrMaterialAmbient.reserve(m_materialCount);
+    m_attrMaterialDiffuse.reserve(m_materialCount);
+    m_attrMaterialSpecular.reserve(m_materialCount);
+
+    for (int i = 0; i < m_materialCount; ++i)
     {
+        m_attrMaterialMode[i] = -1;
         m_attrMaterialAlpha[i] = -1;
         m_attrMaterialShininess[i] = -1;
         m_attrMaterialAmbient[i] = -1;
@@ -35,7 +53,15 @@ Universe1::OpenGL::ShaderProgram::ShaderProgram(QObject *_parent)
         m_attrMaterialSpecular[i] = -1;
     }
 
-    for (int i = 0; i < pointLightsCount; ++i)
+    m_attrPointLightMode.reserve(m_pointLightsCount);
+    m_attrPointLightPosition.reserve(m_pointLightsCount);
+    m_attrPointLightConstant.reserve(m_pointLightsCount);
+    m_attrPointLightLinear.reserve(m_pointLightsCount);
+    m_attrPointLightQuadratic.reserve(m_pointLightsCount);
+    m_attrPointLightAmbient.reserve(m_pointLightsCount);
+    m_attrPointLightDiffuse.reserve(m_pointLightsCount);
+    m_attrPointLightSpecular.reserve(m_pointLightsCount);
+    for (int i = 0; i < m_pointLightsCount; ++i)
     {
         m_attrPointLightMode[i] = -1;
         m_attrPointLightPosition[i] = -1;
@@ -45,6 +71,32 @@ Universe1::OpenGL::ShaderProgram::ShaderProgram(QObject *_parent)
         m_attrPointLightAmbient[i] = -1;
         m_attrPointLightDiffuse[i] = -1;
         m_attrPointLightSpecular[i] = -1;
+    }
+
+    m_attrSpotLightMode.reserve(m_spotLightsCount);
+    m_attrSpotLightPosition.reserve(m_spotLightsCount);
+    m_attrSpotLightDirection.reserve(m_spotLightsCount);
+    m_attrSpotLightCutOff.reserve(m_spotLightsCount);
+    m_attrSpotLightOuterCutOff.reserve(m_spotLightsCount);
+    m_attrSpotLightConstant.reserve(m_spotLightsCount);
+    m_attrSpotLightLinear.reserve(m_spotLightsCount);
+    m_attrSpotLightQuadratic.reserve(m_spotLightsCount);
+    m_attrSpotLightAmbient.reserve(m_spotLightsCount);
+    m_attrSpotLightDiffuse.reserve(m_spotLightsCount);
+    m_attrSpotLightSpecular.reserve(m_spotLightsCount);
+    for (int i = 0; i < m_spotLightsCount; ++i)
+    {
+        m_attrSpotLightMode[i] = -1;
+        m_attrSpotLightPosition[i] = -1;
+        m_attrSpotLightDirection[i] = -1;
+        m_attrSpotLightCutOff[i] = -1;
+        m_attrSpotLightOuterCutOff[i] = -1;
+        m_attrSpotLightConstant[i] = -1;
+        m_attrSpotLightLinear[i] = -1;
+        m_attrSpotLightQuadratic[i] = -1;
+        m_attrSpotLightAmbient[i] = -1;
+        m_attrSpotLightDiffuse[i] = -1;
+        m_attrSpotLightSpecular[i] = -1;
     }
 }
 
@@ -79,13 +131,13 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
     addShaderFromSourceCode(QOpenGLShader::Fragment,
                             ("#version 330 core\n"
                              "#define POINT_LIGHT_COUNT " +
-                             QString::number(pointLightsCount) +
+                             QString::number(m_pointLightsCount) +
                              "\n"
                              "#define SPOT_LIGHT_COUNT " +
-                             QString::number(spotLightsCount) +
+                             QString::number(m_spotLightsCount) +
                              "\n"
                              "#define MATERIAL_COUNT " +
-                             QString::number(materialCount) +
+                             QString::number(m_materialCount) +
                              "\n"
                              "                                                                     \n"
                              "out vec4 FragColor;                                                  \n"
@@ -332,7 +384,7 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
     if (m_attrCameraPosition < 0)
         result = false;
 
-    for (int i = 0; i < materialCount; ++i)
+    for (int i = 0; i < m_materialCount; ++i)
     {
         const QString key = QString("material[%1].").arg(i);
         m_attrMaterialMode[i] = uniformLocation(key + "mode");
@@ -371,7 +423,7 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
     if (m_attrDirectionLightSpecular < 0)
         result = false;
 
-    for (int i = 0; i < pointLightsCount; ++i)
+    for (int i = 0; i < m_pointLightsCount; ++i)
     {
         const QString key = QString("pointLight[%1].").arg(i);
         m_attrPointLightMode[i] = uniformLocation(key + "mode");
@@ -401,7 +453,7 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
             result = false;
     }
 
-    for (int i = 0; i < spotLightsCount; ++i)
+    for (int i = 0; i < m_spotLightsCount; ++i)
     {
         const QString key = QString("spotLight[%1].").arg(i);
         m_attrSpotLightMode[i] = uniformLocation(key + "mode");
@@ -463,22 +515,24 @@ void Universe1::OpenGL::ShaderProgram::setupCamera(const Camera *_camera)
 /*!
  * \brief Setup materials from given collection
  * \param _materials Collection of materials
- * \note Maximum material count is \a GLShaderProgram::materialCount
  */
 void Universe1::OpenGL::ShaderProgram::setupMaterials(const std::vector<Material> &_materials)
 {
     int i = 0;
-    for (const Material &material : _materials)
+    if (i < m_materialCount)
     {
-        setUniformValue(m_attrMaterialMode[i], static_cast<int>(material.mode));
-        setUniformValue(m_attrMaterialAlpha[i], material.alpha);
-        setUniformValue(m_attrMaterialShininess[i], material.shininess);
-        setUniformValue(m_attrMaterialAmbient[i], material.ambientVector());
-        setUniformValue(m_attrMaterialDiffuse[i], material.diffuseVector());
-        setUniformValue(m_attrMaterialSpecular[i], material.specularVector());
-        ++i;
-        if (i == materialCount)
-            break;
+        for (const Material &material : _materials)
+        {
+            setUniformValue(m_attrMaterialMode[i], static_cast<int>(material.mode));
+            setUniformValue(m_attrMaterialAlpha[i], material.alpha);
+            setUniformValue(m_attrMaterialShininess[i], material.shininess);
+            setUniformValue(m_attrMaterialAmbient[i], material.ambientVector());
+            setUniformValue(m_attrMaterialDiffuse[i], material.diffuseVector());
+            setUniformValue(m_attrMaterialSpecular[i], material.specularVector());
+            ++i;
+            if (i >= m_materialCount)
+                break;
+        }
     }
 }
 /*!
@@ -488,7 +542,7 @@ void Universe1::OpenGL::ShaderProgram::setupMaterials(const std::vector<Material
  */
 void Universe1::OpenGL::ShaderProgram::setupMaterial(const int _materialIndex, const Material &_material)
 {
-    if (_materialIndex < 0 || _materialIndex >= materialCount)
+    if (_materialIndex < 0 || _materialIndex >= m_materialCount)
         return;
     setUniformValue(m_attrMaterialMode[_materialIndex], static_cast<int>(_material.mode));
     setUniformValue(m_attrMaterialAlpha[_materialIndex], _material.alpha);
@@ -514,24 +568,26 @@ void Universe1::OpenGL::ShaderProgram::setupDirectionLight(const DirectionLight 
 /*!
  * \brief Setup point lights from given collection
  * \param _lights Collection of point lights
- * \note Maximum light count is \a GLShaderProgram::pointLightsCount
  */
 void Universe1::OpenGL::ShaderProgram::setupPointLights(const std::vector<PointLight> &_lights)
 {
     int i = 0;
-    for (const PointLight &light : _lights)
+    if (i < m_pointLightsCount)
     {
-        setUniformValue(m_attrPointLightMode[i], static_cast<int>(light.mode));
-        setUniformValue(m_attrPointLightPosition[i], light.position);
-        setUniformValue(m_attrPointLightConstant[i], light.constant);
-        setUniformValue(m_attrPointLightLinear[i], light.linear);
-        setUniformValue(m_attrPointLightQuadratic[i], light.quadratic);
-        setUniformValue(m_attrPointLightAmbient[i], light.ambientVector());
-        setUniformValue(m_attrPointLightDiffuse[i], light.diffuseVector());
-        setUniformValue(m_attrPointLightSpecular[i], light.specularVector());
-        ++i;
-        if (i == pointLightsCount)
-            break;
+        for (const PointLight &light : _lights)
+        {
+            setUniformValue(m_attrPointLightMode[i], static_cast<int>(light.mode));
+            setUniformValue(m_attrPointLightPosition[i], light.position);
+            setUniformValue(m_attrPointLightConstant[i], light.constant);
+            setUniformValue(m_attrPointLightLinear[i], light.linear);
+            setUniformValue(m_attrPointLightQuadratic[i], light.quadratic);
+            setUniformValue(m_attrPointLightAmbient[i], light.ambientVector());
+            setUniformValue(m_attrPointLightDiffuse[i], light.diffuseVector());
+            setUniformValue(m_attrPointLightSpecular[i], light.specularVector());
+            ++i;
+            if (i >= m_pointLightsCount)
+                break;
+        }
     }
 }
 
@@ -543,7 +599,7 @@ void Universe1::OpenGL::ShaderProgram::setupPointLights(const std::vector<PointL
  */
 void Universe1::OpenGL::ShaderProgram::setupPointLight(const int _lightIndex, const PointLight &_light)
 {
-    if (_lightIndex < 0 || _lightIndex >= pointLightsCount)
+    if (_lightIndex < 0 || _lightIndex >= m_pointLightsCount)
         return;
     setUniformValue(m_attrPointLightMode[_lightIndex], static_cast<int>(_light.mode));
     setUniformValue(m_attrPointLightPosition[_lightIndex], _light.position);
@@ -558,27 +614,29 @@ void Universe1::OpenGL::ShaderProgram::setupPointLight(const int _lightIndex, co
 /*!
  * \brief Setup spot lights from given collection
  * \param _lights Collection of spot lights
- * \note Maximum light count is \a GLShaderProgram::spotLightsCount
  */
 void Universe1::OpenGL::ShaderProgram::setupSpotLights(const std::vector<SpotLight> &_lights)
 {
     int i = 0;
-    for (const SpotLight &light : _lights)
+    if (i < m_spotLightsCount)
     {
-        setUniformValue(m_attrSpotLightMode[i], static_cast<int>(light.mode));
-        setUniformValue(m_attrSpotLightPosition[i], light.position);
-        setUniformValue(m_attrSpotLightDirection[i], light.direction);
-        setUniformValue(m_attrSpotLightCutOff[i], std::cos(light.cutOffRad));
-        setUniformValue(m_attrSpotLightOuterCutOff[i], std::cos(light.outerCutOffRad));
-        setUniformValue(m_attrSpotLightConstant[i], light.constant);
-        setUniformValue(m_attrSpotLightLinear[i], light.linear);
-        setUniformValue(m_attrSpotLightQuadratic[i], light.quadratic);
-        setUniformValue(m_attrSpotLightAmbient[i], light.ambientVector());
-        setUniformValue(m_attrSpotLightDiffuse[i], light.diffuseVector());
-        setUniformValue(m_attrSpotLightSpecular[i], light.specularVector());
-        ++i;
-        if (i == pointLightsCount)
-            break;
+        for (const SpotLight &light : _lights)
+        {
+            setUniformValue(m_attrSpotLightMode[i], static_cast<int>(light.mode));
+            setUniformValue(m_attrSpotLightPosition[i], light.position);
+            setUniformValue(m_attrSpotLightDirection[i], light.direction);
+            setUniformValue(m_attrSpotLightCutOff[i], std::cos(light.cutOffRad));
+            setUniformValue(m_attrSpotLightOuterCutOff[i], std::cos(light.outerCutOffRad));
+            setUniformValue(m_attrSpotLightConstant[i], light.constant);
+            setUniformValue(m_attrSpotLightLinear[i], light.linear);
+            setUniformValue(m_attrSpotLightQuadratic[i], light.quadratic);
+            setUniformValue(m_attrSpotLightAmbient[i], light.ambientVector());
+            setUniformValue(m_attrSpotLightDiffuse[i], light.diffuseVector());
+            setUniformValue(m_attrSpotLightSpecular[i], light.specularVector());
+            ++i;
+            if (i >= m_spotLightsCount)
+                break;
+        }
     }
 }
 
@@ -590,7 +648,7 @@ void Universe1::OpenGL::ShaderProgram::setupSpotLights(const std::vector<SpotLig
  */
 void Universe1::OpenGL::ShaderProgram::setupSpotLight(const int _lightIndex, const SpotLight &_light)
 {
-    if (_lightIndex < 0 || _lightIndex >= pointLightsCount)
+    if (_lightIndex < 0 || _lightIndex >= m_spotLightsCount)
         return;
     setUniformValue(m_attrSpotLightMode[_lightIndex], static_cast<int>(_light.mode));
     setUniformValue(m_attrSpotLightPosition[_lightIndex], _light.position);

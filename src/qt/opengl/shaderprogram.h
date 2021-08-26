@@ -26,12 +26,15 @@ class ShaderProgram : public QOpenGLShaderProgram
 {
     Q_OBJECT
  public:
-    static const int pointLightsCount{8};  //!< Maximum point light count
-    static const int spotLightsCount{8};   //!< Maximum spot light count
-    static const int materialCount{8};     //!< Maximum material count
-
-    ShaderProgram(QObject *_parent = nullptr);
+    ShaderProgram(const int _pointLightsCount,
+                  const int _spotLightsCount,
+                  const int _materialCount,
+                  QObject *_parent = nullptr);
     bool initGL();
+
+    inline int pointLightsCount() const;
+    inline int spotLightsCount() const;
+    inline int materialCount() const;
 
     inline int attrVertex() const;
     inline int attrNormal() const;
@@ -48,6 +51,10 @@ class ShaderProgram : public QOpenGLShaderProgram
     void setupSceneAmbientFactor(const float _value);
 
  protected:
+    const int m_pointLightsCount;  //!< Maximum point light count
+    const int m_spotLightsCount;   //!< Maximum spot light count
+    const int m_materialCount;     //!< Maximum material count
+
     int m_attrVertex;    //!< Vertex position attribute location
     int m_attrNormal;    //!< Vertex normal attribute location
     int m_attrMaterial;  //!< Vertex material index attribute location
@@ -56,12 +63,12 @@ class ShaderProgram : public QOpenGLShaderProgram
     int m_attrProjXview;       //!< Camera projection x camera view matrix attribute location
     int m_attrCameraPosition;  //!< Camera position attribute location
 
-    int m_attrMaterialMode[materialCount];       //!< Materials mode attribute locations
-    int m_attrMaterialAlpha[materialCount];      //!< Materials alpha attribute locations
-    int m_attrMaterialShininess[materialCount];  //!< Materials shininess attribute locations
-    int m_attrMaterialAmbient[materialCount];    //!< Materials ambient color attribute locations
-    int m_attrMaterialDiffuse[materialCount];    //!< Materials diffuse color attribute locations
-    int m_attrMaterialSpecular[materialCount];   //!< Materials specular color attribute locations
+    std::vector<int> m_attrMaterialMode;       //!< Materials mode attribute locations
+    std::vector<int> m_attrMaterialAlpha;      //!< Materials alpha attribute locations
+    std::vector<int> m_attrMaterialShininess;  //!< Materials shininess attribute locations
+    std::vector<int> m_attrMaterialAmbient;    //!< Materials ambient color attribute locations
+    std::vector<int> m_attrMaterialDiffuse;    //!< Materials diffuse color attribute locations
+    std::vector<int> m_attrMaterialSpecular;   //!< Materials specular color attribute locations
 
     int m_attrDirectionLightMode;       //!< Material mode attribute location
     int m_attrDirectionLightDirection;  //!< Direction light direction attribute location
@@ -69,29 +76,56 @@ class ShaderProgram : public QOpenGLShaderProgram
     int m_attrDirectionLightDiffuse;    //!< Direction light diffuse color attribute location
     int m_attrDirectionLightSpecular;   //!< Direction light specular color attribute location
 
-    int m_attrPointLightMode[pointLightsCount];       //!< Direction lights mode factor attribute locations
-    int m_attrPointLightPosition[pointLightsCount];   //!< Direction lights position attribute locations
-    int m_attrPointLightConstant[pointLightsCount];   //!< Direction lights constant factor attribute locations
-    int m_attrPointLightLinear[pointLightsCount];     //!< Direction lights linear factor attribute locations
-    int m_attrPointLightQuadratic[pointLightsCount];  //!< Direction lights quadratic factor attribute locations
-    int m_attrPointLightAmbient[pointLightsCount];    //!< Direction lights ambient color attribute locations
-    int m_attrPointLightDiffuse[pointLightsCount];    //!< Direction lights diffuse color attribute locations
-    int m_attrPointLightSpecular[pointLightsCount];   //!< Direction lights specular color attribute locations
+    std::vector<int> m_attrPointLightMode;       //!< Direction lights mode factor attribute locations
+    std::vector<int> m_attrPointLightPosition;   //!< Direction lights position attribute locations
+    std::vector<int> m_attrPointLightConstant;   //!< Direction lights constant factor attribute locations
+    std::vector<int> m_attrPointLightLinear;     //!< Direction lights linear factor attribute locations
+    std::vector<int> m_attrPointLightQuadratic;  //!< Direction lights quadratic factor attribute locations
+    std::vector<int> m_attrPointLightAmbient;    //!< Direction lights ambient color attribute locations
+    std::vector<int> m_attrPointLightDiffuse;    //!< Direction lights diffuse color attribute locations
+    std::vector<int> m_attrPointLightSpecular;   //!< Direction lights specular color attribute locations
 
-    int m_attrSpotLightMode[spotLightsCount];         //!< Spot lights mode factor attribute locations
-    int m_attrSpotLightPosition[spotLightsCount];     //!< Spot lights position attribute locations
-    int m_attrSpotLightDirection[spotLightsCount];    //!< Spot lights position direction locations
-    int m_attrSpotLightCutOff[spotLightsCount];       //!< Spot lights position cut-off locations
-    int m_attrSpotLightOuterCutOff[spotLightsCount];  //!< Spot lights position outer cut-off locations
-    int m_attrSpotLightConstant[spotLightsCount];     //!< Spot lights constant factor attribute locations
-    int m_attrSpotLightLinear[spotLightsCount];       //!< Spot lights linear factor attribute locations
-    int m_attrSpotLightQuadratic[spotLightsCount];    //!< Spot lights quadratic factor attribute locations
-    int m_attrSpotLightAmbient[spotLightsCount];      //!< Spot lights ambient color attribute locations
-    int m_attrSpotLightDiffuse[spotLightsCount];      //!< Spot lights diffuse color attribute locations
-    int m_attrSpotLightSpecular[spotLightsCount];     //!< Spot lights specular color attribute locations
+    std::vector<int> m_attrSpotLightMode;         //!< Spot lights mode factor attribute locations
+    std::vector<int> m_attrSpotLightPosition;     //!< Spot lights position attribute locations
+    std::vector<int> m_attrSpotLightDirection;    //!< Spot lights position direction locations
+    std::vector<int> m_attrSpotLightCutOff;       //!< Spot lights position cut-off locations
+    std::vector<int> m_attrSpotLightOuterCutOff;  //!< Spot lights position outer cut-off locations
+    std::vector<int> m_attrSpotLightConstant;     //!< Spot lights constant factor attribute locations
+    std::vector<int> m_attrSpotLightLinear;       //!< Spot lights linear factor attribute locations
+    std::vector<int> m_attrSpotLightQuadratic;    //!< Spot lights quadratic factor attribute locations
+    std::vector<int> m_attrSpotLightAmbient;      //!< Spot lights ambient color attribute locations
+    std::vector<int> m_attrSpotLightDiffuse;      //!< Spot lights diffuse color attribute locations
+    std::vector<int> m_attrSpotLightSpecular;     //!< Spot lights specular color attribute locations
 
     int m_attrSceneAmbientFactor;  //!< Scene ambient factor attribute location
 };
+
+/*!
+ * \brief Getter for maximum point light count
+ * \returns Maximum point light count
+ */
+inline int ShaderProgram::pointLightsCount() const
+{
+    return m_pointLightsCount;
+}
+
+/*!
+ * \brief Getter for maximum spot light count
+ * \returns Maximum spot light count
+ */
+inline int ShaderProgram::spotLightsCount() const
+{
+    return m_spotLightsCount;
+}
+
+/*!
+ * \brief Getter for maximum material count
+ * \returns Maximum material count
+ */
+inline int ShaderProgram::materialCount() const
+{
+    return m_materialCount;
+}
 
 /*!
  * \brief Getter for vertex attribute location

@@ -378,11 +378,12 @@ void Universe1::Widgets::MaterialEditor::WidgetModelPlane::normal2ZChanged(float
 
 const std::vector<std::tuple<float, float, float>> Universe1::Widgets::MaterialEditor::WidgetModelArrow::m_usedRatios =
     {
-        {0.025F, 0.1F, 0.2F},  //
-        {0.05F, 0.2F, 0.2F},   //
-        {0.05F, 0.3F, 0.2F},   //
-        {0.05F, 0.2F, 0.5F},   //
-        {0.05F, 0.3F, 0.5F},   //
+        {0.025F, 0.1F, 0.2F},   //
+        {0.05F, 0.2F, 0.2F},    //
+        {0.05F, 0.3F, 0.2F},    //
+        {0.05F, 0.2F, 0.5F},    //
+        {0.05F, 0.3F, 0.5F},    //
+        {0.025F, 0.03F, 0.1F},  //
 };
 
 /*!

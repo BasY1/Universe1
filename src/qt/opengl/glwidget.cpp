@@ -10,11 +10,15 @@
 
 /*!
  * \brief Constructor
+ * \param _program Shader program
  * \param _settingsKey Key for storing in QSettings
  * \param _storePosition Store position flag
  * \param _parent Parent \c QWidget
  */
-Universe1::OpenGL::GLWidget::GLWidget(const QString &_settingsKey, const bool _storePosition, QWidget *_parent)
+Universe1::OpenGL::GLWidget::GLWidget(ShaderProgram *_program,
+                                      const QString &_settingsKey,
+                                      const bool _storePosition,
+                                      QWidget *_parent)
     : QOpenGLWidget(_parent)
     , m_settingsKey(_settingsKey.isEmpty() ? QString()
                                            : (_settingsKey.endsWith('/') ? _settingsKey : (_settingsKey + '/')))
@@ -32,7 +36,7 @@ Universe1::OpenGL::GLWidget::GLWidget(const QString &_settingsKey, const bool _s
     , m_lineWidth(1.0F)
     , m_sceneAmbientFactor(0.1F)
     , m_camera(new Camera(m_settingsKey.isEmpty() ? QString() : (m_settingsKey + "Camera"), _storePosition, this))
-    , m_program(new ShaderProgram())
+    , m_program(_program)
 {
     static const std::vector<QVector3D> lightPos = {QVector3D(+1.0F, +1.0F, +1.0F),
                                                     QVector3D(+1.0F, +1.0F, -1.0F),
@@ -43,21 +47,21 @@ Universe1::OpenGL::GLWidget::GLWidget(const QString &_settingsKey, const bool _s
                                                     QVector3D(-1.0F, -1.0F, +1.0F),
                                                     QVector3D(-1.0F, -1.0F, -1.0F)};
 
-    m_pointLights.reserve(OpenGL::ShaderProgram::pointLightsCount);
-    m_spotLights.reserve(OpenGL::ShaderProgram::spotLightsCount);
+    m_pointLights.reserve(m_program->pointLightsCount());
+    m_spotLights.reserve(m_program->spotLightsCount());
 
-    for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
+    for (int i = 0; i < m_program->pointLightsCount(); ++i)
+    {
         m_pointLights.push_back(OpenGL::PointLight(lightPos[i]));
+        m_pointLights[i].mode = OpenGL::PointLight::LightOff;
+    }
 
-    for (int i = 0; i < OpenGL::ShaderProgram::spotLightsCount; ++i)
+    for (int i = 0; i < m_program->spotLightsCount(); ++i)
+    {
         m_spotLights.push_back(OpenGL::SpotLight(
             2.0F * lightPos[i], (-lightPos[i]).normalized(), qDegreesToRadians(20.0F), qDegreesToRadians(30.0F)));
-
-    for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
-        m_pointLights[i].mode = OpenGL::PointLight::LightOff;
-
-    for (int i = 0; i < OpenGL::ShaderProgram::spotLightsCount; ++i)
         m_spotLights[i].mode = OpenGL::PointLight::LightOff;
+    }
 
     if (!m_settingsKey.isEmpty())
     {
@@ -83,10 +87,10 @@ Universe1::OpenGL::GLWidget::GLWidget(const QString &_settingsKey, const bool _s
 
         m_directionLight.loadSettings(settings, m_settingsKey + "DirectionLight/");
 
-        for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
+        for (int i = 0; i < m_program->pointLightsCount(); ++i)
             m_pointLights[i].loadSettings(settings, m_settingsKey + "PointLight_" + QString::number(i) + "_/");
 
-        for (int i = 0; i < OpenGL::ShaderProgram::spotLightsCount; ++i)
+        for (int i = 0; i < m_program->spotLightsCount(); ++i)
             m_spotLights[i].loadSettings(settings, m_settingsKey + "SpotLight_" + QString::number(i) + "_/");
     }
 
@@ -131,10 +135,10 @@ Universe1::OpenGL::GLWidget::~GLWidget()
 
         m_directionLight.saveSettings(settings, m_settingsKey + "DirectionLight/");
 
-        for (int i = 0; i < OpenGL::ShaderProgram::pointLightsCount; ++i)
+        for (int i = 0; i < m_program->pointLightsCount(); ++i)
             m_pointLights[i].saveSettings(settings, m_settingsKey + "PointLight_" + QString::number(i) + "_/");
 
-        for (int i = 0; i < OpenGL::ShaderProgram::spotLightsCount; ++i)
+        for (int i = 0; i < m_program->spotLightsCount(); ++i)
             m_spotLights[i].saveSettings(settings, m_settingsKey + "SpotLight_" + QString::number(i) + "_/");
     }
     disconnect(m_camera, &Camera::changed, this, static_cast<void (QOpenGLWidget::*)()>(&QOpenGLWidget::update));
@@ -517,7 +521,7 @@ void Universe1::OpenGL::GLWidget::setDirectionLight(const OpenGL::DirectionLight
  */
 void Universe1::OpenGL::GLWidget::setPointLight(int _idx, const OpenGL::PointLight &_pointLight)
 {
-    if (_idx >= 0 && _idx < OpenGL::ShaderProgram::pointLightsCount)
+    if (_idx >= 0 && _idx < m_program->pointLightsCount())
     {
         m_pointLights.at(_idx) = _pointLight;
         update();
@@ -531,7 +535,7 @@ void Universe1::OpenGL::GLWidget::setPointLight(int _idx, const OpenGL::PointLig
  */
 void Universe1::OpenGL::GLWidget::setSpotLight(int _idx, const OpenGL::SpotLight &_spotLight)
 {
-    if (_idx >= 0 && _idx < OpenGL::ShaderProgram::spotLightsCount)
+    if (_idx >= 0 && _idx < m_program->spotLightsCount())
     {
         m_spotLights.at(_idx) = _spotLight;
         update();
