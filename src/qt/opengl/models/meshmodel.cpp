@@ -9,13 +9,20 @@
 /*!
  * \brief Constructor
  * \param _materials Initial materials collection
+ * \param _renderMode Initial render mode
+ * \param _invertedFaces Initial inverted faces flag
  * \param _parent Parent \c QObject
  */
-Universe1::OpenGL::Models::MeshModel::MeshModel(const std::vector<Material> &_materials, QObject *_parent)
+Universe1::OpenGL::Models::MeshModel::MeshModel(const std::vector<Material> &_materials,
+                                                const RenderMode _renderMode,
+                                                const bool _invertedFaces,
+                                                QObject *_parent)
     : GLModel(_materials, _parent)
     , m_isInit(false)
     , m_canSwitchDrawWireFrame(false)
     , m_drawWireFrame(false)
+    , m_invertedFaces(_invertedFaces)
+    , m_renderMode(_renderMode)
     , m_materials()
     , m_vertexBuffer()
     , m_normalBuffer()
@@ -143,33 +150,66 @@ bool Universe1::OpenGL::Models::MeshModel::initBuffers(const std::vector<QVector
         m_memoryUsage += _materialData.size() * sizeof(float);
     }
 
-    if (!_triangsData.empty())
+    m_triangsIndexes.bind();
+    if (!_triangsData.empty() && (m_renderMode == RenderBoth || m_renderMode == RenderTriangles))
     {
-        m_triangsIndexes.bind();
-        m_triangsIndexes.allocate(_triangsData.data(), _triangsData.size() * sizeof(uint));
-        m_triangsIndexes.release();
+        if (m_invertedFaces && ((_triangsData.size() % 3U) == 0U))
+        {
+            std::vector<uint> triangsInverted;
+            triangsInverted.reserve(_triangsData.size());
+
+            for (size_t i = 0U; i < _triangsData.size(); i += 3U)
+            {
+                triangsInverted.push_back(_triangsData.at(i));
+                triangsInverted.push_back(_triangsData.at(i + 2U));
+                triangsInverted.push_back(_triangsData.at(i + 1U));
+            }
+
+            m_triangsIndexes.allocate(triangsInverted.data(), triangsInverted.size() * sizeof(uint));
+        }
+        else
+        {
+            m_triangsIndexes.allocate(_triangsData.data(), _triangsData.size() * sizeof(uint));
+        }
+
         m_memoryUsage += _triangsData.size() * sizeof(uint);
         m_triangsCount = _triangsData.size();
     }
-
-    if (!_linesData.empty())
+    else
     {
-        m_linesIndexes.bind();
+        m_triangsIndexes.allocate(_triangsData.data(), 0);
+    }
+    m_triangsIndexes.release();
+
+    m_linesIndexes.bind();
+    if (!_linesData.empty() && (m_renderMode == RenderBoth || m_renderMode == RenderLines))
+    {
         m_linesIndexes.allocate(_linesData.data(), _linesData.size() * sizeof(uint));
-        m_linesIndexes.release();
         m_memoryUsage += _linesData.size() * sizeof(uint);
         m_linesCount = _linesData.size();
     }
+    else
+    {
+        m_linesIndexes.allocate(_linesData.data(), 0);
+    }
+    m_linesIndexes.release();
 
     m_isInit = !_vertexData.empty() && _vertexData.size() == _normalData.size() &&
         (_triangsData.size() > 2 || _linesData.size() > 1);
 
     m_canSwitchDrawWireFrame = (!_triangsData.empty() && !_linesData.empty());
 
-    if (!_triangsData.empty() && _linesData.empty())
-        m_drawWireFrame = false;
-    else if (_triangsData.empty() && !_linesData.empty())
-        m_drawWireFrame = true;
+    switch (m_renderMode)
+    {
+    case RenderBoth:
+        if (!_triangsData.empty() && _linesData.empty())
+            m_drawWireFrame = false;
+        else if (_triangsData.empty() && !_linesData.empty())
+            m_drawWireFrame = true;
+        break;
+    case RenderTriangles: m_drawWireFrame = false; break;
+    case RenderLines: m_drawWireFrame = true; break;
+    }
 
     return true;
 }
@@ -230,4 +270,28 @@ void Universe1::OpenGL::Models::MeshModel::setDrawWireFrame(bool _value)
         m_drawWireFrame = _value;
         emit changed();
     }
+}
+
+/*!
+ * \brief Setter for inverted faces flag
+ * \param _value New inverted faces flag value
+ */
+void Universe1::OpenGL::Models::MeshModel::setInvertedFaces(bool _value)
+{
+    m_invertedFaces = _value;
+    if (isInit())
+        rebuild();
+    emit changed();
+}
+
+/*!
+ * \brief Setter for render mode
+ * \param _value New render mode
+ */
+void Universe1::OpenGL::Models::MeshModel::setRenderMode(RenderMode _value)
+{
+    m_renderMode = _value;
+    if (isInit())
+        rebuild();
+    emit changed();
 }

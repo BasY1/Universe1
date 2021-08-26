@@ -14,13 +14,15 @@
 Universe1::Widgets::MaterialEditor::WidgetView::WidgetView(const OpenGL::Material &_material, QWidget *_parent)
     : OpenGL::GLWidget("MaterialEditor/View/", true, _parent)
     , m_modelSphere(new OpenGL::Models::ModelSphere(_material))
+    , m_modelCylinder(new OpenGL::Models::ModelCylinder(_material, QVector3D(), 0.25F, 1.0F))
+    , m_modelTorus(new OpenGL::Models::ModelTorus(_material, QVector3D(), 1.0F, 0.25F))
     , m_modelBox(new OpenGL::Models::ModelBox(_material))
     , m_modelArrow(new OpenGL::Models::ModelArrow(
           _material, _material, _material, QVector3D(0.0F, 0.0F, -0.5F), QVector3D(0.0F, 0.0F, 0.5F)))
     , m_modelTriangle(new OpenGL::Models::ModelTriangle(_material))
     , m_modelPlane(new OpenGL::Models::ModelPlane(
           _material, QVector3D(), QVector3D(0.5F, 0.0F, 0.0F), QVector3D(0.0F, 0.0F, 0.5F)))
-    , m_models({m_modelSphere, m_modelBox, m_modelArrow, m_modelTriangle, m_modelPlane})
+    , m_models({m_modelSphere, m_modelCylinder, m_modelTorus, m_modelBox, m_modelArrow, m_modelTriangle, m_modelPlane})
     , m_currentModel(0)
 {
     const QSettings settings;
@@ -28,6 +30,16 @@ Universe1::Widgets::MaterialEditor::WidgetView::WidgetView(const OpenGL::Materia
         settings.value(m_settingsKey + "Sphere/drawWireFrame", m_modelSphere->drawWireFrame()).toBool());
     m_modelSphere->setEquatorPointCount(
         settings.value(m_settingsKey + "Sphere/equatorPointCount", m_modelSphere->equatorPointCount()).toInt());
+
+    m_modelCylinder->setDrawWireFrame(
+        settings.value(m_settingsKey + "Cylinder/drawWireFrame", m_modelCylinder->drawWireFrame()).toBool());
+    m_modelCylinder->setEquatorPointCount(
+        settings.value(m_settingsKey + "Cylinder/equatorPointCount", m_modelCylinder->equatorPointCount()).toInt());
+
+    m_modelTorus->setDrawWireFrame(
+        settings.value(m_settingsKey + "Torus/drawWireFrame", m_modelTorus->drawWireFrame()).toBool());
+    m_modelTorus->setCirclePointCount(
+        settings.value(m_settingsKey + "Torus/circlePointCount", m_modelTorus->circlePointCount()).toInt());
 
     m_modelBox->setDrawWireFrame(
         settings.value(m_settingsKey + "Box/drawWireFrame", m_modelBox->drawWireFrame()).toBool());
@@ -46,12 +58,13 @@ Universe1::Widgets::MaterialEditor::WidgetView::WidgetView(const OpenGL::Materia
     tmpMaterial.loadSettings(settings, m_settingsKey + "Arrow/MaterialLine/");
     m_modelArrow->setMaterialLine(tmpMaterial);
 
-    tmpMaterial.loadSettings(settings, m_settingsKey + "Arrow/MaterialHeaderBottom/");
-    m_modelArrow->setMaterialHeaderBottom(tmpMaterial);
+    tmpMaterial.loadSettings(settings, m_settingsKey + "Arrow/MaterialBottom/");
+    m_modelArrow->setMaterialBottom(tmpMaterial);
 
     m_modelTriangle->setDrawWireFrame(
         settings.value(m_settingsKey + "Triangle/drawWireFrame", m_modelTriangle->drawWireFrame()).toBool());
-    m_modelTriangle->setCcw(settings.value(m_settingsKey + "Triangle/ccw", m_modelTriangle->ccw()).toBool());
+    m_modelTriangle->setInvertedFaces(
+        settings.value(m_settingsKey + "Triangle/invertedFaces", m_modelTriangle->invertedFaces()).toBool());
     m_modelTriangle->setNormal1(
         settings.value(m_settingsKey + "Triangle/normal1", m_modelTriangle->normal1()).value<QVector3D>());
     m_modelTriangle->setNormal2(
@@ -87,6 +100,10 @@ Universe1::Widgets::MaterialEditor::WidgetView::~WidgetView()
     QSettings settings;
     settings.setValue(m_settingsKey + "Sphere/drawWireFrame", m_modelSphere->drawWireFrame());
     settings.setValue(m_settingsKey + "Sphere/equatorPointCount", m_modelSphere->equatorPointCount());
+    settings.setValue(m_settingsKey + "Cylinder/drawWireFrame", m_modelCylinder->drawWireFrame());
+    settings.setValue(m_settingsKey + "Cylinder/equatorPointCount", m_modelCylinder->equatorPointCount());
+    settings.setValue(m_settingsKey + "Torus/drawWireFrame", m_modelTorus->drawWireFrame());
+    settings.setValue(m_settingsKey + "Torus/circlePointCount", m_modelTorus->circlePointCount());
     settings.setValue(m_settingsKey + "Box/drawWireFrame", m_modelBox->drawWireFrame());
     settings.setValue(m_settingsKey + "Box/normalSetup", static_cast<int>(m_modelBox->normalSetup()));
     settings.setValue(m_settingsKey + "Box/boxSize1", m_modelBox->boxSize1());
@@ -95,9 +112,9 @@ Universe1::Widgets::MaterialEditor::WidgetView::~WidgetView()
     settings.setValue(m_settingsKey + "Arrow/drawWireFrame", m_modelArrow->drawWireFrame());
     settings.setValue(m_settingsKey + "Arrow/circlePointCount", m_modelArrow->circlePointCount());
     m_modelArrow->materialLine().saveSettings(settings, m_settingsKey + "Arrow/MaterialLine/");
-    m_modelArrow->materialHeaderBottom().saveSettings(settings, m_settingsKey + "Arrow/MaterialHeaderBottom/");
+    m_modelArrow->materialBottom().saveSettings(settings, m_settingsKey + "Arrow/MaterialBottom/");
     settings.setValue(m_settingsKey + "Triangle/drawWireFrame", m_modelTriangle->drawWireFrame());
-    settings.setValue(m_settingsKey + "Triangle/ccw", m_modelTriangle->ccw());
+    settings.setValue(m_settingsKey + "Triangle/invertedFaces", m_modelTriangle->invertedFaces());
     settings.setValue(m_settingsKey + "Triangle/normal1", m_modelTriangle->normal1());
     settings.setValue(m_settingsKey + "Triangle/normal2", m_modelTriangle->normal2());
     settings.setValue(m_settingsKey + "Triangle/normal3", m_modelTriangle->normal3());
@@ -117,6 +134,8 @@ Universe1::Widgets::MaterialEditor::WidgetView::~WidgetView()
 
     makeCurrent();
     delete m_modelSphere;
+    delete m_modelCylinder;
+    delete m_modelTorus;
     delete m_modelBox;
     delete m_modelArrow;
     delete m_modelTriangle;
@@ -176,6 +195,8 @@ void Universe1::Widgets::MaterialEditor::WidgetView::setCurrentModel(int _modelI
 void Universe1::Widgets::MaterialEditor::WidgetView::setMaterial(const OpenGL::Material &_material)
 {
     m_modelSphere->setMaterial(_material);
+    m_modelCylinder->setMaterial(_material);
+    m_modelTorus->setMaterial(_material);
     m_modelBox->setMaterial(_material);
     m_modelArrow->setMaterialHeader(_material);
     m_modelTriangle->setMaterial(_material);
@@ -288,7 +309,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::triangleWireFrameChanged(bo
 void Universe1::Widgets::MaterialEditor::WidgetView::triangleCcwChanged(bool _value)
 {
     makeCurrent();
-    m_modelTriangle->setCcw(_value);
+    m_modelTriangle->setInvertedFaces(_value);
     doneCurrent();
 }
 
@@ -348,6 +369,58 @@ void Universe1::Widgets::MaterialEditor::WidgetView::sphereEquatorPointCountChan
 {
     makeCurrent();
     m_modelSphere->setEquatorPointCount(_value);
+    doneCurrent();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Cylinder widget changed draw wire-frame flag
+ * \param _value New flag value
+ */
+void Universe1::Widgets::MaterialEditor::WidgetView::cylinderWireFrameChanged(bool _value)
+{
+    makeCurrent();
+    m_modelCylinder->setDrawWireFrame(_value);
+    doneCurrent();
+}
+
+/*!
+ * \brief Cylinder widget changed point count
+ * \param _value New flag value
+ */
+void Universe1::Widgets::MaterialEditor::WidgetView::cylinderEquatorPointCountChanged(int _value)
+{
+    makeCurrent();
+    m_modelCylinder->setEquatorPointCount(_value);
+    doneCurrent();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Torus widget changed draw wire-frame flag
+ * \param _value New flag value
+ */
+void Universe1::Widgets::MaterialEditor::WidgetView::torusWireFrameChanged(bool _value)
+{
+    makeCurrent();
+    m_modelTorus->setDrawWireFrame(_value);
+    doneCurrent();
+}
+
+/*!
+ * \brief Torus widget changed point count
+ * \param _value New flag value
+ */
+void Universe1::Widgets::MaterialEditor::WidgetView::torusCirclePointCountChanged(int _value)
+{
+    makeCurrent();
+    m_modelTorus->setCirclePointCount(_value);
     doneCurrent();
 }
 
@@ -451,7 +524,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::arrowMaterialLineChanged(co
  */
 void Universe1::Widgets::MaterialEditor::WidgetView::arrowMaterialBottomChanged(const OpenGL::Material &_value)
 {
-    m_modelArrow->setMaterialHeaderBottom(_value);
+    m_modelArrow->setMaterialBottom(_value);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

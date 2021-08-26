@@ -28,8 +28,9 @@ struct DirectionLight : public ADSColors
      */
     enum Mode : int
     {
-        LightOff = 0,  //!< Light disabled
-        LightOn = 1,   //!< Light enabled
+        LightOff = 0,         //!< Light disabled
+        LightNormalised = 1,  //!< Light enabled, vertices with normal away from direction not illuminated
+        LightFull = 2,        //!< Light enabled, all vertices illuminated
     };
 
     Mode mode;            //!< Light mode

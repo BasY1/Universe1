@@ -22,7 +22,7 @@ class DialogMaterialEditor : public QDialog
 {
     Q_OBJECT
  public:
-    explicit DialogMaterialEditor(OpenGL::MaterialDB *_materialDB, QWidget *_parent = nullptr);
+    explicit DialogMaterialEditor(Project::MaterialDB *_materialDB, QWidget *_parent = nullptr);
     ~DialogMaterialEditor();
 
     inline const OpenGL::Material &material() const;

@@ -23,12 +23,18 @@ Universe1::Widgets::GUI::GuiDirectionLight::GuiDirectionLight(const OpenGL::Dire
     , m_direction(new GuiVector3D(m_light.direction, 3, _orientation))
     , m_colors(new GuiColorADS(m_light, _orientation))
 {
-    m_lightOnOff->setChecked(m_light.mode == OpenGL::DirectionLight::LightOn);
+    m_lightOnOff->setTristate(true);
+    switch (m_light.mode)
+    {
+    case OpenGL::DirectionLight::LightOff: m_lightOnOff->setCheckState(Qt::Unchecked); break;
+    case OpenGL::DirectionLight::LightNormalised: m_lightOnOff->setCheckState(Qt::PartiallyChecked); break;
+    case OpenGL::DirectionLight::LightFull: m_lightOnOff->setCheckState(Qt::Checked); break;
+    }
 
     m_direction->setEnabled(m_lightOnOff->isChecked());
     m_colors->setEnabled(m_lightOnOff->isChecked());
 
-    connect(m_lightOnOff, &QCheckBox::toggled, this, &GuiDirectionLight::onOffChanged);
+    connect(m_lightOnOff, &QCheckBox::stateChanged, this, &GuiDirectionLight::onOffChanged);
     connect(m_direction, &GuiVector3D::changed, this, &GuiDirectionLight::directionChanged);
     connect(m_colors, &GuiColorADS::changed, this, &GuiDirectionLight::adsChanged);
 }
@@ -38,7 +44,7 @@ Universe1::Widgets::GUI::GuiDirectionLight::GuiDirectionLight(const OpenGL::Dire
  */
 Universe1::Widgets::GUI::GuiDirectionLight::~GuiDirectionLight()
 {
-    disconnect(m_lightOnOff, &QCheckBox::toggled, this, &GuiDirectionLight::onOffChanged);
+    disconnect(m_lightOnOff, &QCheckBox::stateChanged, this, &GuiDirectionLight::onOffChanged);
     disconnect(m_direction, &GuiVector3D::changed, this, &GuiDirectionLight::directionChanged);
     disconnect(m_colors, &GuiColorADS::changed, this, &GuiDirectionLight::adsChanged);
 
@@ -80,7 +86,13 @@ void Universe1::Widgets::GUI::GuiDirectionLight::setLight(const OpenGL::Directio
     disconnect(m_direction, &GuiVector3D::changed, this, &GuiDirectionLight::directionChanged);
     disconnect(m_colors, &GuiColorADS::changed, this, &GuiDirectionLight::adsChanged);
 
-    m_lightOnOff->setChecked(m_light.mode == OpenGL::DirectionLight::LightOn);
+    switch (m_light.mode)
+    {
+    case OpenGL::DirectionLight::LightOff: m_lightOnOff->setCheckState(Qt::Unchecked); break;
+    case OpenGL::DirectionLight::LightNormalised: m_lightOnOff->setCheckState(Qt::PartiallyChecked); break;
+    case OpenGL::DirectionLight::LightFull: m_lightOnOff->setCheckState(Qt::Checked); break;
+    }
+
     m_colors->setColorsADS(m_light);
     m_direction->setValue(m_light.direction);
     m_direction->setEnabled(m_lightOnOff->isChecked());
@@ -140,10 +152,16 @@ void Universe1::Widgets::GUI::GuiDirectionLight::directionChanged(const QVector3
  * \brief On/off changed value
  * \param _value New enabled value
  */
-void Universe1::Widgets::GUI::GuiDirectionLight::onOffChanged(bool _value)
+void Universe1::Widgets::GUI::GuiDirectionLight::onOffChanged(int _value)
 {
-    m_light.mode = _value ? OpenGL::DirectionLight::LightOn : OpenGL::DirectionLight::LightOff;
-    m_direction->setEnabled(m_lightOnOff->isEnabled() && _value);
-    m_colors->setEnabled(m_lightOnOff->isEnabled() && _value);
+    switch (_value)
+    {
+    case Qt::Checked: m_light.mode = OpenGL::DirectionLight::LightFull; break;
+    case Qt::PartiallyChecked: m_light.mode = OpenGL::DirectionLight::LightNormalised; break;
+    default: m_light.mode = OpenGL::DirectionLight::LightOff; break;
+    }
+
+    m_direction->setEnabled(m_lightOnOff->isEnabled() && m_light.mode != OpenGL::DirectionLight::LightOff);
+    m_colors->setEnabled(m_lightOnOff->isEnabled() && m_light.mode != OpenGL::DirectionLight::LightOff);
     emit changed(m_light);
 }

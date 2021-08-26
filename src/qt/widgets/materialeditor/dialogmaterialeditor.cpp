@@ -14,7 +14,7 @@
  * \param _materialDB Processing material database
  * \param _parent Parent \c QWidget
  */
-Universe1::Widgets::MaterialEditor::DialogMaterialEditor::DialogMaterialEditor(OpenGL::MaterialDB *_materialDB,
+Universe1::Widgets::MaterialEditor::DialogMaterialEditor::DialogMaterialEditor(Project::MaterialDB *_materialDB,
                                                                                QWidget *_parent)
     : QDialog(_parent)
     , m_rootWidget(new WidgetMaterialEditor(_materialDB))

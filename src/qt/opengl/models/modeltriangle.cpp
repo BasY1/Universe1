@@ -17,7 +17,6 @@ const QVector3D Universe1::OpenGL::Models::ModelTriangle::defaultVertex3(0.0F, 0
  */
 Universe1::OpenGL::Models::ModelTriangle::ModelTriangle(const Material &_material, QObject *_parent)
     : MeshModel(_material, _parent)
-    , m_ccw(true)
     , m_vertex1(defaultVertex1)
     , m_vertex2(defaultVertex2)
     , m_vertex3(defaultVertex3)
@@ -43,7 +42,6 @@ Universe1::OpenGL::Models::ModelTriangle::ModelTriangle(QVector3D _vertex1,
                                                         const Material &_material,
                                                         QObject *_parent)
     : MeshModel(_material, _parent)
-    , m_ccw(true)
     , m_vertex1(_vertex1)
     , m_vertex2(_vertex2)
     , m_vertex3(_vertex3)
@@ -73,7 +71,6 @@ Universe1::OpenGL::Models::ModelTriangle::ModelTriangle(QVector3D _vertex1,
                                                         const Material &_material,
                                                         QObject *_parent)
     : MeshModel(_material, _parent)
-    , m_ccw(true)
     , m_vertex1(_vertex1)
     , m_vertex2(_vertex2)
     , m_vertex3(_vertex3)
@@ -88,26 +85,11 @@ Universe1::OpenGL::Models::ModelTriangle::ModelTriangle(QVector3D _vertex1,
  */
 void Universe1::OpenGL::Models::ModelTriangle::rebuild()
 {
-    const std::vector<QVector3D> vertexData = {m_vertex1, m_vertex2, m_vertex3};
-    const std::vector<QVector3D> normalData = {m_normal1, m_normal2, m_normal3};
-    const std::vector<uint> linesData = {0U, 1U, 1U, 2U, 2U, 0U};
-
-    if (m_ccw)
-        initBuffers(vertexData, normalData, {}, {0U, 1U, 2U}, linesData);
-    else
-        initBuffers(vertexData, normalData, {}, {0U, 2U, 1U}, linesData);
-}
-
-/*!
- * \brief Setter for counter-clockwise flag
- * \param _value New counter-clockwise flag value
- */
-void Universe1::OpenGL::Models::ModelTriangle::setCcw(bool _value)
-{
-    m_ccw = _value;
-    if (isInit())
-        rebuild();
-    emit changed();
+    initBuffers({m_vertex1, m_vertex2, m_vertex3},
+                {m_normal1, m_normal2, m_normal3},
+                {},
+                {0U, 2U, 1U},
+                {0U, 1U, 1U, 2U, 2U, 0U});
 }
 
 /*!

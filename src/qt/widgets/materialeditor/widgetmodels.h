@@ -9,8 +9,10 @@
 
 #include "../../opengl/models/modelarrow.h"
 #include "../../opengl/models/modelbox.h"
+#include "../../opengl/models/modelcylinder.h"
 #include "../../opengl/models/modelplane.h"
 #include "../../opengl/models/modelsphere.h"
+#include "../../opengl/models/modeltorus.h"
 #include "../../opengl/models/modeltriangle.h"
 
 #include "../gui/guiint.h"
@@ -107,6 +109,74 @@ class WidgetModelSphere : public QWidget
 
     QCheckBox *m_wireFrame;            //!< Draw wire-frame check-box
     GUI::GuiInt *m_equatorPointCount;  //!< Point count on equator widget
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Cylinder model widget
+ */
+class WidgetModelCylinder : public QWidget
+{
+    Q_OBJECT
+ public:
+    explicit WidgetModelCylinder(OpenGL::Models::ModelCylinder *_model, QWidget *_parent = nullptr);
+    ~WidgetModelCylinder();
+
+ signals:
+    /*!
+     * \brief Wire-frame changed
+     * \param _value New flag value
+     */
+    void wireFrameChanged(bool _value);
+
+    /*!
+     * \brief Point count on equator changed
+     * \param _value New point count
+     */
+    void equatorPointCountChanged(int _value);
+
+ protected:
+    OpenGL::Models::ModelCylinder *m_model;  //!< Cylinder model
+
+    QCheckBox *m_wireFrame;            //!< Draw wire-frame check-box
+    GUI::GuiInt *m_equatorPointCount;  //!< Point count on equator widget
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Torus model widget
+ */
+class WidgetModelTorus : public QWidget
+{
+    Q_OBJECT
+ public:
+    explicit WidgetModelTorus(OpenGL::Models::ModelTorus *_model, QWidget *_parent = nullptr);
+    ~WidgetModelTorus();
+
+ signals:
+    /*!
+     * \brief Wire-frame changed
+     * \param _value New flag value
+     */
+    void wireFrameChanged(bool _value);
+
+    /*!
+     * \brief Point count on circle changed
+     * \param _value New point count
+     */
+    void circlePointCountChanged(int _value);
+
+ protected:
+    OpenGL::Models::ModelTorus *m_model;  //!< Torus model
+
+    QCheckBox *m_wireFrame;           //!< Draw wire-frame check-box
+    GUI::GuiInt *m_circlePointCount;  //!< Point count on circle widget
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

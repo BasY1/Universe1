@@ -27,7 +27,7 @@ Universe1::Widgets::MaterialEditor::WidgetModelTriangle::WidgetModelTriangle(Ope
     , m_guiNormal3(new GUI::GuiVector3D(m_model->normal3()))
 {
     m_wireFrame->setChecked(m_model->drawWireFrame());
-    m_boxCWW->setChecked(m_model->ccw());
+    m_boxCWW->setChecked(m_model->invertedFaces());
     m_boxCWW->setToolTip(tr("Counter-clockwise point order"));
 
     connect(m_wireFrame, &QCheckBox::toggled, this, &WidgetModelTriangle::wireFrameChanged);
@@ -42,7 +42,7 @@ Universe1::Widgets::MaterialEditor::WidgetModelTriangle::WidgetModelTriangle(Ope
     lay->addWidget(new QLabel(tr("Wire-frame")), row, 0, 1, 2);
     lay->addWidget(m_wireFrame, row++, 2, 1, 2);
 
-    lay->addWidget(new QLabel(tr("Point order")), row, 0, 1, 2);
+    lay->addWidget(new QLabel(tr("Invert faces")), row, 0, 1, 2);
     lay->addWidget(m_boxCWW, row++, 2, 1, 2);
 
     lay->addWidget(new HorizontalLineSpacer(), row++, 0, 1, 4);
@@ -87,7 +87,7 @@ Universe1::Widgets::MaterialEditor::WidgetModelSphere::WidgetModelSphere(OpenGL:
     : QWidget(_parent)
     , m_model(_model)
     , m_wireFrame(new QCheckBox())
-    , m_equatorPointCount(new GUI::GuiInt(m_model->equatorPointCount(), 4, 1024, Qt::Horizontal))
+    , m_equatorPointCount(new GUI::GuiInt(m_model->equatorPointCount(), 4, 128, Qt::Horizontal))
 {
     m_wireFrame->setChecked(m_model->drawWireFrame());
 
@@ -115,6 +115,94 @@ Universe1::Widgets::MaterialEditor::WidgetModelSphere::~WidgetModelSphere()
     disconnect(m_equatorPointCount, &GUI::GuiInt::changed, this, &WidgetModelSphere::equatorPointCountChanged);
 
     delete m_equatorPointCount;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Constructor
+ * \param _model Cylinder Open GL model
+ * \param _parent Parent \c QWidget
+ */
+Universe1::Widgets::MaterialEditor::WidgetModelCylinder::WidgetModelCylinder(OpenGL::Models::ModelCylinder *_model,
+                                                                             QWidget *_parent)
+    : QWidget(_parent)
+    , m_model(_model)
+    , m_wireFrame(new QCheckBox())
+    , m_equatorPointCount(new GUI::GuiInt(m_model->equatorPointCount(), 4, 128, Qt::Horizontal))
+{
+    m_wireFrame->setChecked(m_model->drawWireFrame());
+
+    connect(m_wireFrame, &QCheckBox::toggled, this, &WidgetModelCylinder::wireFrameChanged);
+    connect(m_equatorPointCount, &GUI::GuiInt::changed, this, &WidgetModelCylinder::equatorPointCountChanged);
+
+    QGridLayout *lay = new QGridLayout();
+    int row = 0;
+    lay->addWidget(new QLabel(tr("Wire-frame")), row, 0, 1, 2);
+    lay->addWidget(m_wireFrame, row++, 2, 1, 2);
+
+    m_equatorPointCount->layoutRow(tr("Equator point count"), lay, row);
+
+    lay->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Expanding), row, 0, 1, 4);
+
+    setLayout(lay);
+}
+
+/*!
+ * \brief Destructor
+ */
+Universe1::Widgets::MaterialEditor::WidgetModelCylinder::~WidgetModelCylinder()
+{
+    disconnect(m_wireFrame, &QCheckBox::toggled, this, &WidgetModelCylinder::wireFrameChanged);
+    disconnect(m_equatorPointCount, &GUI::GuiInt::changed, this, &WidgetModelCylinder::equatorPointCountChanged);
+
+    delete m_equatorPointCount;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Constructor
+ * \param _model Torus Open GL model
+ * \param _parent Parent \c QWidget
+ */
+Universe1::Widgets::MaterialEditor::WidgetModelTorus::WidgetModelTorus(OpenGL::Models::ModelTorus *_model,
+                                                                       QWidget *_parent)
+    : QWidget(_parent)
+    , m_model(_model)
+    , m_wireFrame(new QCheckBox())
+    , m_circlePointCount(new GUI::GuiInt(m_model->circlePointCount(), 4, 128, Qt::Horizontal))
+{
+    m_wireFrame->setChecked(m_model->drawWireFrame());
+
+    connect(m_wireFrame, &QCheckBox::toggled, this, &WidgetModelTorus::wireFrameChanged);
+    connect(m_circlePointCount, &GUI::GuiInt::changed, this, &WidgetModelTorus::circlePointCountChanged);
+
+    QGridLayout *lay = new QGridLayout();
+    int row = 0;
+    lay->addWidget(new QLabel(tr("Wire-frame")), row, 0, 1, 2);
+    lay->addWidget(m_wireFrame, row++, 2, 1, 2);
+
+    m_circlePointCount->layoutRow(tr("Circle point count"), lay, row);
+
+    lay->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Expanding), row, 0, 1, 4);
+
+    setLayout(lay);
+}
+
+/*!
+ * \brief Destructor
+ */
+Universe1::Widgets::MaterialEditor::WidgetModelTorus::~WidgetModelTorus()
+{
+    disconnect(m_wireFrame, &QCheckBox::toggled, this, &WidgetModelTorus::wireFrameChanged);
+    disconnect(m_circlePointCount, &GUI::GuiInt::changed, this, &WidgetModelTorus::circlePointCountChanged);
+
+    delete m_circlePointCount;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -298,9 +386,9 @@ Universe1::Widgets::MaterialEditor::WidgetModelArrow::WidgetModelArrow(OpenGL::M
     : QWidget(_parent)
     , m_model(_model)
     , m_wireFrame(new QCheckBox())
-    , m_circlePointCount(new GUI::GuiInt(m_model->circlePointCount(), 4, 1024, Qt::Horizontal))
+    , m_circlePointCount(new GUI::GuiInt(m_model->circlePointCount(), 4, 128, Qt::Horizontal))
     , m_guiLine(new GUI::GuiMaterial(m_model->materialLine(), Qt::Horizontal))
-    , m_guiBottom(new GUI::GuiMaterial(m_model->materialHeaderBottom(), Qt::Horizontal))
+    , m_guiBottom(new GUI::GuiMaterial(m_model->materialBottom(), Qt::Horizontal))
     , m_tabs(new QTabWidget())
 {
     m_wireFrame->setChecked(m_model->drawWireFrame());

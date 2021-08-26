@@ -18,7 +18,7 @@ Universe1::OpenGL::DirectionLight::DirectionLight(const QVector3D &_direction,
                                                   const QColor &_diffuse,
                                                   const QColor &_specular)
     : ADSColors(_ambient, _diffuse, _specular)
-    , mode(LightOn)
+    , mode(LightFull)
     , direction(_direction)
 {
 }

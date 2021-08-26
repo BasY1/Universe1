@@ -11,10 +11,12 @@
 #include "../../opengl/lights.h"
 #include "../../opengl/models/modelarrow.h"
 #include "../../opengl/models/modelbox.h"
+#include "../../opengl/models/modelcylinder.h"
 #include "../../opengl/models/modelplane.h"
 #include "../../opengl/models/modelpointlight.h"
 #include "../../opengl/models/modelsphere.h"
 #include "../../opengl/models/modelspotlight.h"
+#include "../../opengl/models/modeltorus.h"
 #include "../../opengl/models/modeltriangle.h"
 
 namespace Universe1 {
@@ -32,6 +34,8 @@ class WidgetView : public OpenGL::GLWidget
     ~WidgetView();
 
     inline OpenGL::Models::ModelSphere *modelSphere();
+    inline OpenGL::Models::ModelCylinder *modelCylinder();
+    inline OpenGL::Models::ModelTorus *modelTorus();
     inline OpenGL::Models::ModelBox *modelBox();
     inline OpenGL::Models::ModelArrow *modelArrow();
     inline OpenGL::Models::ModelTriangle *modelTriangle();
@@ -49,6 +53,12 @@ class WidgetView : public OpenGL::GLWidget
 
     void sphereWireFrameChanged(bool _value);
     void sphereEquatorPointCountChanged(int _value);
+
+    void cylinderWireFrameChanged(bool _value);
+    void cylinderEquatorPointCountChanged(int _value);
+
+    void torusWireFrameChanged(bool _value);
+    void torusCirclePointCountChanged(int _value);
 
     void boxWireFrameChanged(bool _value);
     void boxNormalSetupChanged(OpenGL::Models::ModelBox::NormalSetup _value);
@@ -81,6 +91,8 @@ class WidgetView : public OpenGL::GLWidget
 
  protected:
     OpenGL::Models::ModelSphere *m_modelSphere;      //!< Sphere Open GL model
+    OpenGL::Models::ModelCylinder *m_modelCylinder;  //!< Cylinder Open GL model
+    OpenGL::Models::ModelTorus *m_modelTorus;        //!< Torus Open GL model
     OpenGL::Models::ModelBox *m_modelBox;            //!< Box Open GL model
     OpenGL::Models::ModelArrow *m_modelArrow;        //!< Arrow Open GL model
     OpenGL::Models::ModelTriangle *m_modelTriangle;  //!< Triangle Open GL model
@@ -118,6 +130,24 @@ inline OpenGL::Models::ModelPlane *WidgetView::modelPlane()
 inline OpenGL::Models::ModelSphere *WidgetView::modelSphere()
 {
     return m_modelSphere;
+}
+
+/*!
+ * \brief Getter for sphere Open GL model
+ * \returns Cylinder Open GL model
+ */
+inline OpenGL::Models::ModelCylinder *WidgetView::modelCylinder()
+{
+    return m_modelCylinder;
+}
+
+/*!
+ * \brief Getter for sphere Open GL model
+ * \returns Torus Open GL model
+ */
+inline OpenGL::Models::ModelTorus *WidgetView::modelTorus()
+{
+    return m_modelTorus;
 }
 
 /*!

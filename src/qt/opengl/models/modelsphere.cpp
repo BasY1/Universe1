@@ -8,7 +8,9 @@
 
 /*!
  * \brief Constructor
- * \param _material Material
+ * \param _material Initial material
+ * \param _renderMode Initial render mode
+ * \param _invertedFaces Initial inverted faces flag
  * \param _position Sphere position
  * \param _toPole Sphere normal 1 (direction from center to pole)
  * \param _toEquator Sphere normal 2 (direction from center to equator)
@@ -17,13 +19,15 @@
  * \param _parent Parent \c QObject
  */
 Universe1::OpenGL::Models::ModelSphere::ModelSphere(const Material &_material,
+                                                    const RenderMode _renderMode,
+                                                    const bool _invertedFaces,
                                                     const QVector3D &_position,
                                                     const QVector3D &_toPole,
                                                     const QVector3D &_toEquator,
                                                     const float _radius,
                                                     const int _equatorPointCount,
                                                     QObject *_parent)
-    : MeshModel(_material, _parent)
+    : MeshModel(_material, _renderMode, _invertedFaces, _parent)
     , m_position(_position)
     , m_toPole(_toPole)
     , m_toEquator(_toEquator)

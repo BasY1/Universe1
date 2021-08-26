@@ -10,7 +10,7 @@
  * \brief Constructor
  * \param _materialLine Initial line material
  * \param _materialHeader Initial header material
- * \param _materialHeaderBottom Initial header bottom material
+ * \param _materialBottom Initial header bottom material
  * \param _fromPosition Initial from point position
  * \param _toPosition Initial to point position (Header peak)
  * \param _ratioRadiusLine Initial arrow line radius as ratio to full arrow length
@@ -21,7 +21,7 @@
  */
 Universe1::OpenGL::Models::ModelArrow::ModelArrow(const Material &_materialLine,
                                                   const Material &_materialHeader,
-                                                  const Material &_materialHeaderBottom,
+                                                  const Material &_materialBottom,
                                                   const QVector3D &_fromPosition,
                                                   const QVector3D &_toPosition,
                                                   float _ratioRadiusLine,
@@ -29,7 +29,7 @@ Universe1::OpenGL::Models::ModelArrow::ModelArrow(const Material &_materialLine,
                                                   float _ratioLengthHeader,
                                                   int _circlePointCount,
                                                   QObject *_parent)
-    : MeshModel(std::vector<Material>({_materialLine, _materialHeader, _materialHeaderBottom}), _parent)
+    : MeshModel(std::vector<Material>({_materialLine, _materialHeader, _materialBottom}), _parent)
     , m_fromPosition(_fromPosition)
     , m_toPosition(_toPosition)
     , m_ratioRadiusLine(_ratioRadiusLine)
@@ -157,11 +157,11 @@ void Universe1::OpenGL::Models::ModelArrow::rebuild()
         return;
     }
 
-    const float lf = lengthFull();
-    const float rl = m_ratioRadiusLine * lf;
-    const float rh = m_ratioRadiusHeader * lf;
-    const float lh = m_ratioLengthHeader * lf;
-    const float ll = lf - lh;
+    const float lFull = lengthFull();
+    const float rLine = m_ratioRadiusLine * lFull;
+    const float rHeader = m_ratioRadiusHeader * lFull;
+    const float lHeader = m_ratioLengthHeader * lFull;
+    const float lLine = lFull - lHeader;
     const float angle = 2.0 * M_PI / static_cast<float>(m_circlePointCount);
     const float sa = std::sin(angle);
     const float ca = std::cos(angle);
@@ -176,9 +176,9 @@ void Universe1::OpenGL::Models::ModelArrow::rebuild()
     const QVector3D normalArm = perpendicularVector(normalDir);
     const QVector3D normalSide = QVector3D::crossProduct(normalArm, normalDir).normalized();
 
-    const QVector3D headerAdd = normalDir * ll;
+    const QVector3D headerAdd = normalDir * lLine;
 
-    const float headAngle = std::atan(rh / lh);
+    const float headAngle = std::atan(rHeader / lHeader);
     const float sinHeadAngle = std::sin(headAngle);
     const float cosHeadAngle = std::cos(headAngle);
 
@@ -192,9 +192,9 @@ void Universe1::OpenGL::Models::ModelArrow::rebuild()
 
     for (int i = 0; i < m_circlePointCount; ++i)
     {
-        const QVector3D posBack = m_fromPosition + arm1 * rl;
-        const QVector3D posH1 = m_fromPosition + headerAdd + arm1 * rl;
-        const QVector3D posH2 = m_fromPosition + headerAdd + arm1 * rh;
+        const QVector3D posBack = m_fromPosition + arm1 * rLine;
+        const QVector3D posH1 = m_fromPosition + headerAdd + arm1 * rLine;
+        const QVector3D posH2 = m_fromPosition + headerAdd + arm1 * rHeader;
 
         vertexData.push_back(posBack);
         normalData.push_back(normalBack);
@@ -333,8 +333,8 @@ void Universe1::OpenGL::Models::ModelArrow::rebuild()
 void Universe1::OpenGL::Models::ModelArrow::setMaterial(const Material &_value)
 {
     GLModel::setMaterial(0, _value);
-    GLModel::setMaterial(1, _value);
-    GLModel::setMaterial(2, _value);
+    GLModel::setMaterial(1, _value.lighter());
+    GLModel::setMaterial(2, _value.darker());
 }
 
 /*!
@@ -359,7 +359,7 @@ void Universe1::OpenGL::Models::ModelArrow::setMaterialHeader(const Material &_v
  * \brief Setter for header bottom material
  * \param _value New material object with values
  */
-void Universe1::OpenGL::Models::ModelArrow::setMaterialHeaderBottom(const Material &_value)
+void Universe1::OpenGL::Models::ModelArrow::setMaterialBottom(const Material &_value)
 {
     GLModel::setMaterial(1, _value);
 }

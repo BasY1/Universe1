@@ -23,13 +23,15 @@ bool runTests();
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+    QCoreApplication::setOrganizationName("BasY");
+    QCoreApplication::setApplicationName("Universe1");
 
     // QSettings().clear();
 
     // if (!runTests())
     //    return EXIT_FAILURE;
 
-    Universe1::OpenGL::MaterialDB db(Universe1::OpenGL::Material(Qt::red, Qt::green, Qt::blue, 32.0F, 1.0F));
+    Universe1::Project::MaterialDB db(Universe1::OpenGL::Material(Qt::red, Qt::green, Qt::blue, 32.0F, 1.0F));
     Universe1::Widgets::MaterialEditor::DialogMaterialEditor dialog(&db);
     return dialog.exec();
 

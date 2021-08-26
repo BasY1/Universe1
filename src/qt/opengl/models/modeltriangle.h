@@ -38,7 +38,6 @@ class ModelTriangle : public MeshModel
                   const Material &_material,
                   QObject *_parent = nullptr);
 
-    inline bool ccw() const;
     inline const QVector3D &vertex1() const;
     inline const QVector3D &vertex2() const;
     inline const QVector3D &vertex3() const;
@@ -50,8 +49,6 @@ class ModelTriangle : public MeshModel
     void rebuild() override;
 
  public slots:
-    void setCcw(bool _value);
-
     void setTriangle(QVector3D _vertex1, QVector3D _vertex2, QVector3D _vertex3, QVector3D _normalAll);
     void setTriangle(QVector3D _vertex1,
                      QVector3D _vertex2,
@@ -72,16 +69,6 @@ class ModelTriangle : public MeshModel
     void setNormals(QVector3D _normal1, QVector3D _normal2, QVector3D _normal3);
 
  protected:
-    /*!
-     * \brief Counter-clockwise flag
-     * \details
-     * | Flag value | Vertex order |
-     * | :--------- | :----------- |
-     * | \c true    | 1 - 2 - 3    |
-     * | \c false   | 1 - 3 - 2    |
-     */
-    bool m_ccw;
-
     QVector3D m_vertex1;  //!< Vertex 1 position
     QVector3D m_vertex2;  //!< Vertex 2 position
     QVector3D m_vertex3;  //!< Vertex 3 position
@@ -94,15 +81,6 @@ class ModelTriangle : public MeshModel
     static const QVector3D defaultVertex2;  //!< Default vertex 2 position
     static const QVector3D defaultVertex3;  //!< Default vertex 3 position
 };
-
-/*!
- * \brief Getter for counter-clockwise flag
- * \returns Counter-clockwise flag
- */
-inline bool ModelTriangle::ccw() const
-{
-    return m_ccw;
-}
 
 /*!
  * \brief Getter for vertex 1 position

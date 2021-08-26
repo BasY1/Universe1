@@ -10,6 +10,7 @@
 #include "shaderprogram.h"
 
 #include <QOpenGLWidget>
+#include <QPainter>
 #include <QSettings>
 
 namespace Universe1 {
@@ -88,6 +89,8 @@ class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
      * \returns Void
      */
     virtual void paintGLImpl() = 0;
+
+    virtual void paintAfterGL(QPainter &_painter);
 
  public slots:
     void setEmitContextPainted(const bool _value);

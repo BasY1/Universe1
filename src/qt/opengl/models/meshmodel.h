@@ -20,12 +20,38 @@ class MeshModel : public GLModel
 {
     Q_OBJECT
  public:
-    MeshModel(const std::vector<Material> &_materials, QObject *_parent = nullptr);
+    /*!
+     * \brief Model render mode
+     */
+    enum RenderMode
+    {
+        RenderBoth,       //!< Render triangles and lines
+        RenderTriangles,  //!< Render triangles
+        RenderLines       //!< Render lines
+    };
+
+    MeshModel(const std::vector<Material> &_materials,
+              const RenderMode _renderMode,
+              const bool _invertedFaces,
+              QObject *_parent = nullptr);
+    inline MeshModel(const std::vector<Material> &_materials, const RenderMode _renderMode, QObject *_parent = nullptr);
+    inline MeshModel(const std::vector<Material> &_materials, const bool _invertedFaces, QObject *_parent = nullptr);
+    inline MeshModel(const std::vector<Material> &_materials, QObject *_parent = nullptr);
+
+    inline MeshModel(const Material &_material,
+                     const RenderMode _renderMode,
+                     const bool _invertedFaces,
+                     QObject *_parent = nullptr);
+    inline MeshModel(const Material &_material, const RenderMode _renderMode, QObject *_parent = nullptr);
+    inline MeshModel(const Material &_material, const bool _invertedFaces, QObject *_parent = nullptr);
     inline MeshModel(const Material &_material, QObject *_parent = nullptr);
+
     ~MeshModel();
 
     inline bool canSwitchDrawWireFrame() const;
     inline bool drawWireFrame() const;
+    inline bool invertedFaces() const;
+    inline RenderMode renderMode() const;
 
     bool isInit() const override;
 
@@ -47,11 +73,25 @@ class MeshModel : public GLModel
 
  public slots:
     void setDrawWireFrame(bool _value);
+    void setInvertedFaces(bool _value);
+    void setRenderMode(RenderMode _value);
 
  protected:
     bool m_isInit;                  //!< OpenGL buffers initialized flag
     bool m_canSwitchDrawWireFrame;  //!< Is possible to switch value of draw wire-framed flag
     bool m_drawWireFrame;           //!< Draw wire-framed flag
+
+    /*!
+     * \brief Inverted faces flag
+     * \details
+     * | Value              | Expected triangle order          |
+     * | :----------------- | :------------------------------- |
+     * | \c false (default) | Counter-clockwise triangle order |
+     * | \c true            | Clockwise triangle order         |
+     */
+    bool m_invertedFaces;
+
+    RenderMode m_renderMode;  //!< Render mode
 
     std::vector<Material> m_materials;  //!< Used materials
 
@@ -65,6 +105,79 @@ class MeshModel : public GLModel
     GLsizei m_linesCount;            //!< Line index buffer item count
 };
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Constructor
+ * \param _materials Initial materials collection
+ * \param _renderMode Initial render mode
+ * \param _parent Parent \c QObject
+ */
+inline MeshModel::MeshModel(const std::vector<Material> &_materials, const RenderMode _renderMode, QObject *_parent)
+    : MeshModel(_materials, _renderMode, false, _parent)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _materials Initial materials collection
+ * \param _invertedFaces Initial inverted faces flag
+ * \param _parent Parent \c QObject
+ */
+inline MeshModel::MeshModel(const std::vector<Material> &_materials, const bool _invertedFaces, QObject *_parent)
+    : MeshModel(_materials, RenderBoth, _invertedFaces, _parent)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _materials Initial materials collection
+ * \param _parent Parent \c QObject
+ */
+inline MeshModel::MeshModel(const std::vector<Material> &_materials, QObject *_parent)
+    : MeshModel(_materials, RenderBoth, false, _parent)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _material Initial material
+ * \param _renderMode Initial render mode
+ * \param _invertedFaces Initial inverted faces flag
+ * \param _parent Parent \c QObject
+ */
+inline MeshModel::MeshModel(const Material &_material,
+                            const RenderMode _renderMode,
+                            const bool _invertedFaces,
+                            QObject *_parent)
+    : MeshModel(std::vector<Material>({_material}), _renderMode, _invertedFaces, _parent)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _material Initial material
+ * \param _renderMode Initial render mode
+ * \param _parent Parent \c QObject
+ */
+inline MeshModel::MeshModel(const Material &_material, const RenderMode _renderMode, QObject *_parent)
+    : MeshModel(std::vector<Material>({_material}), _renderMode, _parent)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _material Initial material
+ * \param _invertedFaces Initial inverted faces flag
+ * \param _parent Parent \c QObject
+ */
+inline MeshModel::MeshModel(const Material &_material, const bool _invertedFaces, QObject *_parent)
+    : MeshModel(std::vector<Material>({_material}), _invertedFaces, _parent)
+{
+}
+
 /*!
  * \brief Constructor
  * \param _material Initial material
@@ -74,6 +187,10 @@ inline MeshModel::MeshModel(const Material &_material, QObject *_parent)
     : MeshModel(std::vector<Material>({_material}), _parent)
 {
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
  * \brief Getter for is possible to switch value of draw wire-framed flag
@@ -85,12 +202,30 @@ inline bool MeshModel::canSwitchDrawWireFrame() const
 }
 
 /*!
- * \brief Getter draw wire-framed flag
+ * \brief Getter for draw wire-framed flag
  * \returns Draw wire-framed flag
  */
 inline bool MeshModel::drawWireFrame() const
 {
     return m_drawWireFrame;
+}
+
+/*!
+ * \brief Getter for inverted faces flag
+ * \returns Inverted faces flag
+ */
+inline bool MeshModel::invertedFaces() const
+{
+    return m_invertedFaces;
+}
+
+/*!
+ * \brief Getter for render mode
+ * \returns Render mode
+ */
+inline MeshModel::RenderMode MeshModel::renderMode() const
+{
+    return m_renderMode;
 }
 
 }  // namespace Models

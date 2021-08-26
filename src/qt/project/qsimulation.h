@@ -90,6 +90,11 @@ class QSimulation : public QObject
     /*!
      * \brief Getter for using history flag (Simulation uses objects history position for forces calculations)
      * \returns Using history flag
+     * \details
+     * | Value    | Simulation type                                  |
+     * | :------- | :----------------------------------------------- |
+     * | \c true  | Current time position based simulation           |
+     * | \c false | History time - information wave based simulation |
      */
     virtual bool usesHistory() const = 0;
 
@@ -97,6 +102,10 @@ class QSimulation : public QObject
      * \brief Getter for using element radius flag (\c true - Elements are spheres with radius,
      *        or \c false - Elements are singularities)
      * \returns Using element radius flag
+     * | Value    | Simulation type                            |
+     * | :------- | :----------------------------------------- |
+     * | \c true  | Elements are spherical objects with radius |
+     * | \c false | Elements are singularity objects           |
      */
     virtual bool usesRadius() const = 0;
 

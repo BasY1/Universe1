@@ -17,7 +17,7 @@ namespace Universe1 {
 namespace Project {
 
 /*!
- * \brief The QT Simulation abstract class
+ * \brief The QT Simulation using Newton current method
  */
 class QSimulationNewtonCurrent : public QSimulation
 {

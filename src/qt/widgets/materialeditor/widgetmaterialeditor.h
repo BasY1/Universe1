@@ -17,6 +17,8 @@
 #include "widgetmodels.h"
 #include "widgetview.h"
 
+#include "../../project/materialdb.h"
+
 #include <QLineEdit>
 #include <QPushButton>
 #include <QSplitter>
@@ -34,7 +36,7 @@ class WidgetMaterialEditor : public QSplitter
 {
     Q_OBJECT
  public:
-    explicit WidgetMaterialEditor(OpenGL::MaterialDB *_materialDB, QWidget *_parent = nullptr);
+    explicit WidgetMaterialEditor(Project::MaterialDB *_materialDB, QWidget *_parent = nullptr);
     ~WidgetMaterialEditor();
 
     inline const OpenGL::Material &material() const;
@@ -50,7 +52,7 @@ class WidgetMaterialEditor : public QSplitter
     void spotLightChanged(int _idx, const OpenGL::SpotLight &_spotLight);
 
  protected:
-    OpenGL::MaterialDB *m_materialDB;  //!< Processing material database
+    Project::MaterialDB *m_materialDB;  //!< Processing material database
 
     WidgetView *m_view;  //!< Editor's Open GL view
 
@@ -68,6 +70,8 @@ class WidgetMaterialEditor : public QSplitter
     WidgetGLSettings *m_widgetGLSettings;  //!< Open GL settings widget
 
     WidgetModelSphere *m_widgetSphere;      //!< Sphere model widget
+    WidgetModelCylinder *m_widgetCylinder;  //!< Cylinder model widget
+    WidgetModelTorus *m_widgetTorus;        //!< Torus model widget
     WidgetModelBox *m_widgetBox;            //!< Box model widget
     WidgetModelArrow *m_widgetArrow;        //!< Arrow model widget
     WidgetModelTriangle *m_widgetTriangle;  //!< Triangle model widget

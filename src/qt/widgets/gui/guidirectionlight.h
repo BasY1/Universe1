@@ -46,7 +46,7 @@ class GuiDirectionLight : public QObject
  protected slots:
     void adsChanged(const OpenGL::ADSColors &_value);
     void directionChanged(const QVector3D &_value);
-    void onOffChanged(bool _value);
+    void onOffChanged(int _value);
 
  signals:
     /*!

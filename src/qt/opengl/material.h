@@ -34,6 +34,7 @@ struct Material : public ADSColors
     Mode mode;        //!< Material mode
     float shininess;  //!< Material shininess
     float alpha;      //!< Material alpha
+
     Material(const QColor &_ambient,
              const QColor &_diffuse,
              const QColor &_specular,
@@ -46,115 +47,36 @@ struct Material : public ADSColors
     Material(const ADSColors &_colors);
     Material();
 
+    inline Material darker(int _factor = 200) const;
+    inline Material lighter(int _factor = 150) const;
+
     void saveSettings(QSettings &_settings, const QString &_keyGroup) const;
     void loadSettings(const QSettings &_settings, const QString &_keyGroup);
 };
+
+/*!
+ * \brief Returns material with darker colors and same shininess and alpha
+ * \param _factor Darker factor
+ * \returns Darker colors material
+ */
+inline Material Material::darker(int _factor) const
+{
+    return Material(ambient.darker(_factor), diffuse.darker(_factor), specular.darker(_factor), shininess, alpha);
+}
+
+/*!
+ * \brief Returns material with lighter colors and same shininess and alpha
+ * \param _factor Lighter factor
+ * \returns Lighter colors material
+ */
+inline Material Material::lighter(int _factor) const
+{
+    return Material(ambient.lighter(_factor), diffuse.lighter(_factor), specular.lighter(_factor), shininess, alpha);
+}
 
 }  // namespace OpenGL
 }  // namespace Universe1
 
 Q_DECLARE_METATYPE(Universe1::OpenGL::Material)
-
-namespace Universe1 {
-namespace OpenGL {
-
-/*!
- * \brief Material database
- */
-class MaterialDB : public QObject
-{
-    Q_OBJECT
- public:
-    MaterialDB(const Material &_material, QObject *_parent = nullptr);
-
-    inline const Material &defaultMaterial() const;
-    inline const std::map<QString, Material> &map() const;
-
-    inline const Material &get(const QString &_name) const;
-    inline bool contains(const QString &_name) const;
-
-    QStringList names() const;
-
-    inline void setDefaultMaterial(const Material &_material);
-
-    inline bool add(const QString &_name, const Material &_material);
-    inline bool remove(const QString &_name);
-
- protected:
-    Material m_defaultMaterial;         //!< Default material
-    std::map<QString, Material> m_map;  //!< Hash map buffer
-};
-
-/*!
- * \brief Getter for default material
- * \returns Default material
- */
-inline const Material &MaterialDB::defaultMaterial() const
-{
-    return m_defaultMaterial;
-}
-
-/*!
- * \brief Getter for material map
- * \returns Material map
- */
-inline const std::map<QString, Material> &MaterialDB::map() const
-{
-    return m_map;
-}
-
-/*!
- * \brief Test if given name already exists in database
- * \param _name Name to test
- * \returns \c true if given name already exists in database
- */
-inline bool MaterialDB::contains(const QString &_name) const
-{
-    return m_map.find(_name) != m_map.cend();
-}
-
-/*!
- * \brief Get material by name
- * \param _name Name to find
- * \returns Found material or \a m_defaultMaterial
- */
-inline const Material &MaterialDB::get(const QString &_name) const
-{
-    std::map<QString, Material>::const_iterator it = m_map.find(_name);
-    return it == m_map.cend() ? m_defaultMaterial : it->second;
-}
-
-/*!
- * \brief Setter for default material
- * \param _material New default material object with values
- */
-inline void MaterialDB::setDefaultMaterial(const Material &_material)
-{
-    m_defaultMaterial = _material;
-}
-
-/*!
- * \brief Insert material into database
- * \param _name New material name
- * \param _material New material object with values
- * \returns \c true if insert success
- */
-inline bool Universe1::OpenGL::MaterialDB::add(const QString &_name, const Material &_material)
-{
-    return m_map.insert({_name, _material}).second;
-}
-
-/*!
- * \brief Remove material from database
- * \param _name Material name
- * \returns \c true if erase success
- */
-inline bool Universe1::OpenGL::MaterialDB::remove(const QString &_name)
-{
-    return m_map.erase(_name) > 0;
-}
-
-}  // namespace OpenGL
-}  // namespace Universe1
 
 #endif  // UNIVERSE1_OPENGL_MATERIAL_H

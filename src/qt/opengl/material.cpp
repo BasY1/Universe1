@@ -102,26 +102,3 @@ void Universe1::OpenGL::Material::loadSettings(const QSettings &_settings, const
     alpha = _settings.value(key + "alpha", alpha).toFloat();
     ADSColors::loadSettings(_settings, key);
 }
-
-/*!
- * \brief Constructor
- * \param _material Default material
- * \param _parent parent \c QObject
- */
-Universe1::OpenGL::MaterialDB::MaterialDB(const Material &_material, QObject *_parent)
-    : QObject(_parent)
-    , m_defaultMaterial(_material)
-{
-}
-
-/*!
- * \brief Getter for present names
- * \returns Names collection
- */
-QStringList Universe1::OpenGL::MaterialDB::names() const
-{
-    QStringList result;
-    for (const std::pair<const QString, Material> &p : m_map)
-        result.push_back(p.first);
-    return result;
-}

@@ -21,12 +21,119 @@ class ModelSphere : public MeshModel
     Q_OBJECT
  public:
     ModelSphere(const Material &_material,
+                const RenderMode _renderMode,
+                const bool _invertedFaces,
                 const QVector3D &_position,
                 const QVector3D &_toPole,
                 const QVector3D &_toEquator,
                 const float _radius,
                 const int _equatorPointCount,
                 QObject *_parent = nullptr);
+
+    inline ModelSphere(const Material &_material,
+                       const RenderMode _renderMode,
+                       const bool _invertedFaces,
+                       const QVector3D &_position,
+                       const QVector3D &_toPole,
+                       const QVector3D &_toEquator,
+                       const float _radius,
+                       QObject *_parent = nullptr);
+
+    inline ModelSphere(const Material &_material,
+                       const RenderMode _renderMode,
+                       const bool _invertedFaces,
+                       const QVector3D &_position,
+                       const QVector3D &_toPole,
+                       const float _radius,
+                       const int _equatorPointCount,
+                       QObject *_parent = nullptr);
+
+    inline ModelSphere(const Material &_material,
+                       const RenderMode _renderMode,
+                       const bool _invertedFaces,
+                       const QVector3D &_position,
+                       const QVector3D &_toPole,
+                       const float _radius,
+                       QObject *_parent = nullptr);
+
+    inline ModelSphere(const Material &_material,
+                       const RenderMode _renderMode,
+                       const bool _invertedFaces,
+                       const QVector3D &_position,
+                       const float _radius,
+                       const int _equatorPointCount,
+                       QObject *_parent = nullptr);
+
+    inline ModelSphere(const Material &_material,
+                       const RenderMode _renderMode,
+                       const bool _invertedFaces,
+                       const QVector3D &_position,
+                       const float _radius,
+                       QObject *_parent = nullptr);
+
+    inline ModelSphere(const Material &_material,
+                       const RenderMode _renderMode,
+                       const bool _invertedFaces,
+                       QObject *_parent = nullptr);
+
+    //
+
+    inline ModelSphere(const Material &_material,
+                       const RenderMode _renderMode,
+                       const QVector3D &_position,
+                       const QVector3D &_toPole,
+                       const QVector3D &_toEquator,
+                       const float _radius,
+                       const int _equatorPointCount,
+                       QObject *_parent = nullptr);
+
+    inline ModelSphere(const Material &_material,
+                       const RenderMode _renderMode,
+                       const QVector3D &_position,
+                       const QVector3D &_toPole,
+                       const QVector3D &_toEquator,
+                       const float _radius,
+                       QObject *_parent = nullptr);
+
+    inline ModelSphere(const Material &_material,
+                       const RenderMode _renderMode,
+                       const QVector3D &_position,
+                       const QVector3D &_toPole,
+                       const float _radius,
+                       const int _equatorPointCount,
+                       QObject *_parent = nullptr);
+
+    inline ModelSphere(const Material &_material,
+                       const RenderMode _renderMode,
+                       const QVector3D &_position,
+                       const QVector3D &_toPole,
+                       const float _radius,
+                       QObject *_parent = nullptr);
+
+    inline ModelSphere(const Material &_material,
+                       const RenderMode _renderMode,
+                       const QVector3D &_position,
+                       const float _radius,
+                       const int _equatorPointCount,
+                       QObject *_parent = nullptr);
+
+    inline ModelSphere(const Material &_material,
+                       const RenderMode _renderMode,
+                       const QVector3D &_position,
+                       const float _radius,
+                       QObject *_parent = nullptr);
+
+    inline ModelSphere(const Material &_material, const RenderMode _renderMode, QObject *_parent = nullptr);
+
+    //
+
+    inline ModelSphere(const Material &_material,
+                       const QVector3D &_position,
+                       const QVector3D &_toPole,
+                       const QVector3D &_toEquator,
+                       const float _radius,
+                       const int _equatorPointCount,
+                       QObject *_parent = nullptr);
 
     inline ModelSphere(const Material &_material,
                        const QVector3D &_position,
@@ -61,6 +168,8 @@ class ModelSphere : public MeshModel
 
     inline ModelSphere(const Material &_material, QObject *_parent = nullptr);
 
+    //
+
     inline const QVector3D &position() const;
     inline const QVector3D &toPole() const;
     inline const QVector3D &toEquator() const;
@@ -90,26 +199,41 @@ class ModelSphere : public MeshModel
 
 /*!
  * \brief Constructor
- * \param _material Material
+ * \param _material Initial material
+ * \param _renderMode Initial render mode
+ * \param _invertedFaces Initial inverted faces flag
  * \param _position Sphere position
  * \param _toPole Sphere normal 1 (direction from center to pole)
  * \param _toEquator Sphere normal 2 (direction from center to equator)
  * \param _radius Sphere radius
  * \param _parent Parent \c QObject
+ * \note Default point count on equator
  */
 inline ModelSphere::ModelSphere(const Material &_material,
+                                const RenderMode _renderMode,
+                                const bool _invertedFaces,
                                 const QVector3D &_position,
                                 const QVector3D &_toPole,
                                 const QVector3D &_toEquator,
                                 const float _radius,
                                 QObject *_parent)
-    : ModelSphere(_material, _position, _toPole, _toEquator, _radius, defaultCirclePointCount, _parent)
+    : ModelSphere(_material,
+                  _renderMode,
+                  _invertedFaces,
+                  _position,
+                  _toPole,
+                  _toEquator,
+                  _radius,
+                  defaultCirclePointCount,
+                  _parent)
 {
 }
 
 /*!
  * \brief Constructor
- * \param _material Material
+ * \param _material Initial material
+ * \param _renderMode Initial render mode
+ * \param _invertedFaces Initial inverted faces flag
  * \param _position Sphere position
  * \param _toPole Sphere normal 1 (direction from center to pole)
  * \param _radius Sphere radius
@@ -117,47 +241,75 @@ inline ModelSphere::ModelSphere(const Material &_material,
  * \param _parent Parent \c QObject
  */
 inline ModelSphere::ModelSphere(const Material &_material,
+                                const RenderMode _renderMode,
+                                const bool _invertedFaces,
                                 const QVector3D &_position,
                                 const QVector3D &_toPole,
                                 const float _radius,
                                 const int _equatorPointCount,
                                 QObject *_parent)
-    : ModelSphere(_material, _position, _toPole, perpendicularVector(_toPole), _radius, _equatorPointCount, _parent)
+    : ModelSphere(_material,
+                  _renderMode,
+                  _invertedFaces,
+                  _position,
+                  _toPole,
+                  perpendicularVector(_toPole),
+                  _radius,
+                  _equatorPointCount,
+                  _parent)
 {
 }
 
 /*!
  * \brief Constructor
- * \param _material Material
+ * \param _material Initial material
+ * \param _renderMode Initial render mode
+ * \param _invertedFaces Initial inverted faces flag
  * \param _position Sphere position
  * \param _toPole Sphere normal 1 (direction from center to pole)
  * \param _radius Sphere radius
  * \param _parent Parent \c QObject
+ * \note Default point count on equator
  */
 inline ModelSphere::ModelSphere(const Material &_material,
+                                const RenderMode _renderMode,
+                                const bool _invertedFaces,
                                 const QVector3D &_position,
                                 const QVector3D &_toPole,
                                 const float _radius,
                                 QObject *_parent)
-    : ModelSphere(
-          _material, _position, _toPole, perpendicularVector(_toPole), _radius, defaultCirclePointCount, _parent)
+    : ModelSphere(_material,
+                  _renderMode,
+                  _invertedFaces,
+                  _position,
+                  _toPole,
+                  perpendicularVector(_toPole),
+                  _radius,
+                  defaultCirclePointCount,
+                  _parent)
 {
 }
 
 /*!
  * \brief Constructor
- * \param _material Material
+ * \param _material Initial material
+ * \param _renderMode Initial render mode
+ * \param _invertedFaces Initial inverted faces flag
  * \param _position Sphere position
  * \param _radius Sphere radius
  * \param _equatorPointCount Point count on equator
  * \param _parent Parent \c QObject
  */
 inline ModelSphere::ModelSphere(const Material &_material,
+                                const RenderMode _renderMode,
+                                const bool _invertedFaces,
                                 const QVector3D &_position,
                                 const float _radius,
                                 const int _equatorPointCount,
                                 QObject *_parent)
     : ModelSphere(_material,
+                  _renderMode,
+                  _invertedFaces,
                   _position,
                   QVector3D(0.0F, 0.0F, 1.0F),
                   QVector3D(1.0F, 0.0F, 0.0F),
@@ -169,39 +321,291 @@ inline ModelSphere::ModelSphere(const Material &_material,
 
 /*!
  * \brief Constructor
- * \param _material Material
+ * \param _material Initial material
+ * \param _renderMode Initial render mode
+ * \param _invertedFaces Initial inverted faces flag
  * \param _position Sphere position
  * \param _radius Sphere radius
  * \param _parent Parent \c QObject
+ * \note Default point count on equator
  */
 inline ModelSphere::ModelSphere(const Material &_material,
+                                const RenderMode _renderMode,
+                                const bool _invertedFaces,
                                 const QVector3D &_position,
                                 const float _radius,
                                 QObject *_parent)
-    : ModelSphere(_material,
-                  _position,
-                  QVector3D(0.0F, 0.0F, 1.0F),
-                  QVector3D(1.0F, 0.0F, 0.0F),
-                  _radius,
-                  defaultCirclePointCount,
-                  _parent)
+    : ModelSphere(_material, _renderMode, _invertedFaces, _position, _radius, defaultCirclePointCount, _parent)
 {
 }
 
 /*!
  * \brief Constructor
- * \param _material Material
+ * \param _material Initial material
+ * \param _renderMode Initial render mode
+ * \param _invertedFaces Initial inverted faces flag
  * \param _parent Parent \c QObject
- * \note Position [0, 0, 0], radius 1
+ */
+inline ModelSphere::ModelSphere(const Material &_material,
+                                const RenderMode _renderMode,
+                                const bool _invertedFaces,
+                                QObject *_parent)
+    : ModelSphere(_material, _renderMode, _invertedFaces, QVector3D(), 1.0F, _parent)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _material Initial material
+ * \param _renderMode Initial render mode
+ * \param _position Sphere position
+ * \param _toPole Sphere normal 1 (direction from center to pole)
+ * \param _toEquator Sphere normal 2 (direction from center to equator)
+ * \param _radius Sphere radius
+ * \param _equatorPointCount Point count on equator
+ * \param _parent Parent \c QObject
+ */
+inline ModelSphere::ModelSphere(const Material &_material,
+                                const RenderMode _renderMode,
+                                const QVector3D &_position,
+                                const QVector3D &_toPole,
+                                const QVector3D &_toEquator,
+                                const float _radius,
+                                const int _equatorPointCount,
+                                QObject *_parent)
+    : ModelSphere(_material, _renderMode, false, _position, _toPole, _toEquator, _radius, _equatorPointCount, _parent)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _material Initial material
+ * \param _renderMode Initial render mode
+ * \param _position Sphere position
+ * \param _toPole Sphere normal 1 (direction from center to pole)
+ * \param _toEquator Sphere normal 2 (direction from center to equator)
+ * \param _radius Sphere radius
+ * \param _parent Parent \c QObject
+ * \note Default point count on equator
+ */
+inline ModelSphere::ModelSphere(const Material &_material,
+                                const RenderMode _renderMode,
+                                const QVector3D &_position,
+                                const QVector3D &_toPole,
+                                const QVector3D &_toEquator,
+                                const float _radius,
+                                QObject *_parent)
+    : ModelSphere(_material, _renderMode, false, _position, _toPole, _toEquator, _radius, _parent)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _material Initial material
+ * \param _renderMode Initial render mode
+ * \param _position Sphere position
+ * \param _toPole Sphere normal 1 (direction from center to pole)
+ * \param _radius Sphere radius
+ * \param _equatorPointCount Point count on equator
+ * \param _parent Parent \c QObject
+ */
+inline ModelSphere::ModelSphere(const Material &_material,
+                                const RenderMode _renderMode,
+                                const QVector3D &_position,
+                                const QVector3D &_toPole,
+                                const float _radius,
+                                const int _equatorPointCount,
+                                QObject *_parent)
+    : ModelSphere(_material, _renderMode, false, _position, _toPole, _radius, _equatorPointCount, _parent)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _material Initial material
+ * \param _renderMode Initial render mode
+ * \param _position Sphere position
+ * \param _toPole Sphere normal 1 (direction from center to pole)
+ * \param _radius Sphere radius
+ * \param _parent Parent \c QObject
+ * \note Default point count on equator
+ */
+inline ModelSphere::ModelSphere(const Material &_material,
+                                const RenderMode _renderMode,
+                                const QVector3D &_position,
+                                const QVector3D &_toPole,
+                                const float _radius,
+                                QObject *_parent)
+    : ModelSphere(_material, _renderMode, false, _position, _toPole, _radius, _parent)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _material Initial material
+ * \param _renderMode Initial render mode
+ * \param _position Sphere position
+ * \param _radius Sphere radius
+ * \param _equatorPointCount Point count on equator
+ * \param _parent Parent \c QObject
+ */
+inline ModelSphere::ModelSphere(const Material &_material,
+                                const RenderMode _renderMode,
+                                const QVector3D &_position,
+                                const float _radius,
+                                const int _equatorPointCount,
+                                QObject *_parent)
+    : ModelSphere(_material, _renderMode, false, _position, _radius, _equatorPointCount, _parent)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _material Initial material
+ * \param _renderMode Initial render mode
+ * \param _position Sphere position
+ * \param _radius Sphere radius
+ * \param _parent Parent \c QObject
+ * \note Default point count on equator
+ */
+inline ModelSphere::ModelSphere(const Material &_material,
+                                const RenderMode _renderMode,
+                                const QVector3D &_position,
+                                const float _radius,
+                                QObject *_parent)
+    : ModelSphere(_material, _renderMode, false, _position, _radius, _parent)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _material Initial material
+ * \param _renderMode Initial render mode
+ * \param _parent Parent \c QObject
+ */
+inline ModelSphere::ModelSphere(const Material &_material, const RenderMode _renderMode, QObject *_parent)
+    : ModelSphere(_material, _renderMode, false, _parent)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _material Initial material
+ * \param _position Sphere position
+ * \param _toPole Sphere normal 1 (direction from center to pole)
+ * \param _toEquator Sphere normal 2 (direction from center to equator)
+ * \param _radius Sphere radius
+ * \param _equatorPointCount Point count on equator
+ * \param _parent Parent \c QObject
+ */
+inline ModelSphere::ModelSphere(const Material &_material,
+                                const QVector3D &_position,
+                                const QVector3D &_toPole,
+                                const QVector3D &_toEquator,
+                                const float _radius,
+                                const int _equatorPointCount,
+                                QObject *_parent)
+    : ModelSphere(_material, RenderBoth, _position, _toPole, _toEquator, _radius, _equatorPointCount, _parent)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _material Initial material
+ * \param _position Sphere position
+ * \param _toPole Sphere normal 1 (direction from center to pole)
+ * \param _toEquator Sphere normal 2 (direction from center to equator)
+ * \param _radius Sphere radius
+ * \param _parent Parent \c QObject
+ * \note Default point count on equator
+ */
+inline ModelSphere::ModelSphere(const Material &_material,
+                                const QVector3D &_position,
+                                const QVector3D &_toPole,
+                                const QVector3D &_toEquator,
+                                const float _radius,
+                                QObject *_parent)
+    : ModelSphere(_material, RenderBoth, _position, _toPole, _toEquator, _radius, _parent)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _material Initial material
+ * \param _position Sphere position
+ * \param _toPole Sphere normal 1 (direction from center to pole)
+ * \param _radius Sphere radius
+ * \param _equatorPointCount Point count on equator
+ * \param _parent Parent \c QObject
+ */
+inline ModelSphere::ModelSphere(const Material &_material,
+                                const QVector3D &_position,
+                                const QVector3D &_toPole,
+                                const float _radius,
+                                const int _equatorPointCount,
+                                QObject *_parent)
+    : ModelSphere(_material, RenderBoth, _position, _toPole, _radius, _equatorPointCount, _parent)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _material Initial material
+ * \param _position Sphere position
+ * \param _toPole Sphere normal 1 (direction from center to pole)
+ * \param _radius Sphere radius
+ * \param _parent Parent \c QObject
+ * \note Default point count on equator
+ */
+inline ModelSphere::ModelSphere(const Material &_material,
+                                const QVector3D &_position,
+                                const QVector3D &_toPole,
+                                const float _radius,
+                                QObject *_parent)
+    : ModelSphere(_material, RenderBoth, _position, _toPole, _radius, _parent)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _material Initial material
+ * \param _position Sphere position
+ * \param _radius Sphere radius
+ * \param _equatorPointCount Point count on equator
+ * \param _parent Parent \c QObject
+ */
+inline ModelSphere::ModelSphere(const Material &_material,
+                                const QVector3D &_position,
+                                const float _radius,
+                                const int _equatorPointCount,
+                                QObject *_parent)
+    : ModelSphere(_material, RenderBoth, _position, _radius, _equatorPointCount, _parent)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _material Initial material
+ * \param _position Sphere position
+ * \param _radius Sphere radius
+ * \param _parent Parent \c QObject
+ * \note Default point count on equator
+ */
+inline ModelSphere::ModelSphere(const Material &_material,
+                                const QVector3D &_position,
+                                const float _radius,
+                                QObject *_parent)
+    : ModelSphere(_material, RenderBoth, _position, _radius, _parent)
+{
+}
+
+/*!
+ * \brief Constructor
+ * \param _material Initial material
+ * \param _parent Parent \c QObject
  */
 inline ModelSphere::ModelSphere(const Material &_material, QObject *_parent)
-    : ModelSphere(_material,
-                  QVector3D(),
-                  QVector3D(0.0F, 0.0F, 1.0F),
-                  QVector3D(1.0F, 0.0F, 0.0F),
-                  1.0F,
-                  defaultCirclePointCount,
-                  _parent)
+    : ModelSphere(_material, RenderBoth, _parent)
 {
 }
 

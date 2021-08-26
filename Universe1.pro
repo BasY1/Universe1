@@ -57,10 +57,14 @@ HEADERS += \
 SOURCES += \
     src/qt/project/qsimulation.cpp \
     src/qt/project/qsimulationnewtoncurrent.cpp \
+    src/qt/project/materialdb.cpp \
+    src/qt/project/project.cpp \
 
 HEADERS += \
     src/qt/project/qsimulation.h \
     src/qt/project/qsimulationnewtoncurrent.h \
+    src/qt/project/materialdb.h \
+    src/qt/project/project.h \
 
 ########################################################################################################################
 
@@ -97,7 +101,10 @@ SOURCES += \
     src/qt/opengl/models/modelplane.cpp \
     src/qt/opengl/models/modelbox.cpp \
     src/qt/opengl/models/modelsphere.cpp \
+    src/qt/opengl/models/modelcylinder.cpp \
+    src/qt/opengl/models/modeltorus.cpp \
     src/qt/opengl/models/modelarrow.cpp \
+    #src/qt/opengl/models/modelspinarrow.cpp \
 
 HEADERS += \
     src/qt/opengl/models/glmodel.h \
@@ -114,7 +121,10 @@ HEADERS += \
     src/qt/opengl/models/modelplane.h \
     src/qt/opengl/models/modelbox.h \
     src/qt/opengl/models/modelsphere.h \
+    src/qt/opengl/models/modelcylinder.h \
+    src/qt/opengl/models/modeltorus.h \
     src/qt/opengl/models/modelarrow.h \
+    #src/qt/opengl/models/modelspinarrow.h \
 
 ########################################################################################################################
 

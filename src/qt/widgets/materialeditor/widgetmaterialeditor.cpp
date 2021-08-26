@@ -52,7 +52,7 @@ inline void initTableMaterial(QTableWidget *_table,
  * \param _materialDB Processing material database
  * \param _parent Parent \c QWidget
  */
-Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(OpenGL::MaterialDB *_materialDB,
+Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(Project::MaterialDB *_materialDB,
                                                                                QWidget *_parent)
     : QSplitter(Qt::Horizontal, _parent)
     , m_materialDB(_materialDB)
@@ -66,6 +66,8 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(O
     , m_guiDirectionLight(new GUI::GuiDirectionLight(m_view->directionLight()))
     , m_widgetGLSettings(new WidgetGLSettings(m_view))
     , m_widgetSphere(new WidgetModelSphere(m_view->modelSphere()))
+    , m_widgetCylinder(new WidgetModelCylinder(m_view->modelCylinder()))
+    , m_widgetTorus(new WidgetModelTorus(m_view->modelTorus()))
     , m_widgetBox(new WidgetModelBox(m_view->modelBox()))
     , m_widgetArrow(new WidgetModelArrow(m_view->modelArrow()))
     , m_widgetTriangle(new WidgetModelTriangle(m_view->modelTriangle()))
@@ -172,6 +174,8 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(O
     widDirLight->setLayout(layDirLight);
 
     m_tabModels->addTab(m_widgetSphere, tr("Sphere"));
+    m_tabModels->addTab(m_widgetCylinder, tr("Cylinder"));
+    m_tabModels->addTab(m_widgetTorus, tr("Torus"));
     m_tabModels->addTab(m_widgetBox, tr("Box"));
     m_tabModels->addTab(m_widgetArrow, tr("Arrow"));
     m_tabModels->addTab(m_widgetTriangle, tr("Triangle"));
@@ -215,6 +219,16 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(O
             &WidgetModelSphere::equatorPointCountChanged,
             m_view,
             &WidgetView::sphereEquatorPointCountChanged);
+
+    connect(m_widgetCylinder, &WidgetModelCylinder::wireFrameChanged, m_view, &WidgetView::cylinderWireFrameChanged);
+    connect(m_widgetCylinder,
+            &WidgetModelCylinder::equatorPointCountChanged,
+            m_view,
+            &WidgetView::cylinderEquatorPointCountChanged);
+
+    connect(m_widgetTorus, &WidgetModelTorus::wireFrameChanged, m_view, &WidgetView::torusWireFrameChanged);
+    connect(
+        m_widgetTorus, &WidgetModelTorus::circlePointCountChanged, m_view, &WidgetView::torusCirclePointCountChanged);
 
     connect(m_widgetBox, &WidgetModelBox::wireFrameChanged, m_view, &WidgetView::boxWireFrameChanged);
     connect(m_widgetBox, &WidgetModelBox::normalSetupChanged, m_view, &WidgetView::boxNormalSetupChanged);
@@ -272,6 +286,16 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::~WidgetMaterialEditor(
                &WidgetModelSphere::equatorPointCountChanged,
                m_view,
                &WidgetView::sphereEquatorPointCountChanged);
+
+    disconnect(m_widgetCylinder, &WidgetModelCylinder::wireFrameChanged, m_view, &WidgetView::cylinderWireFrameChanged);
+    disconnect(m_widgetCylinder,
+               &WidgetModelCylinder::equatorPointCountChanged,
+               m_view,
+               &WidgetView::cylinderEquatorPointCountChanged);
+
+    disconnect(m_widgetTorus, &WidgetModelTorus::wireFrameChanged, m_view, &WidgetView::torusWireFrameChanged);
+    disconnect(
+        m_widgetTorus, &WidgetModelTorus::circlePointCountChanged, m_view, &WidgetView::torusCirclePointCountChanged);
 
     disconnect(m_widgetBox, &WidgetModelBox::wireFrameChanged, m_view, &WidgetView::boxWireFrameChanged);
     disconnect(m_widgetBox, &WidgetModelBox::normalSetupChanged, m_view, &WidgetView::boxNormalSetupChanged);

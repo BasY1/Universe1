@@ -19,8 +19,8 @@ Universe1::OpenGL::GLWidget::GLWidget(const QString &_settingsKey, const bool _s
     , m_settingsKey(_settingsKey.isEmpty() ? QString()
                                            : (_settingsKey.endsWith('/') ? _settingsKey : (_settingsKey + '/')))
     , m_emitContextPainted(false)
-    , m_antialiasing(false)
-    , m_blending(false)
+    , m_antialiasing(true)
+    , m_blending(true)
     , m_blendFunc(true)
     , m_cullFaceCcw(true)
     , m_cullFaceMode(CullBack)
@@ -248,6 +248,14 @@ void Universe1::OpenGL::GLWidget::resizeGL(int _w, int _h)
  */
 void Universe1::OpenGL::GLWidget::paintGL()
 {
+    QPainter painter;
+    painter.begin(this);
+
+    painter.beginNativePainting();
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+
     glClearColor(m_bgColorRed, m_bgColorGreen, m_bgColorBlue, m_bgColorAlpha);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -326,6 +334,22 @@ void Universe1::OpenGL::GLWidget::paintGL()
 
     if (m_emitContextPainted)
         emit contextPainted(context());
+
+    painter.endNativePainting();
+
+    paintAfterGL(painter);
+
+    painter.end();
+}
+
+/*!
+ * \brief Classic paint after Open GL paint
+ * \param _painter Qt painter
+ * \returns
+ */
+void Universe1::OpenGL::GLWidget::paintAfterGL(QPainter &_painter)
+{
+    Q_UNUSED(_painter)
 }
 
 /*!
