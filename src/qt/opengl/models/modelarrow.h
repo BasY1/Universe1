@@ -115,6 +115,8 @@ class ModelArrow : public MeshModel
     void setRatioRadiusHeader(float _value);
     void setRatioLengthHeader(float _value);
 
+    void setRatios(float _ratioRadiusLine, float _ratioRadiusHeader, float _ratioLengthHeader);
+
     void setCirclePointCount(int _value);
 
     void setMaterial(const Material &_value) override;

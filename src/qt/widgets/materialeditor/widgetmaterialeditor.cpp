@@ -70,6 +70,7 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(P
     , m_widgetTorus(new WidgetModelTorus(m_view->modelTorus()))
     , m_widgetBox(new WidgetModelBox(m_view->modelBox()))
     , m_widgetArrow(new WidgetModelArrow(m_view->modelArrow()))
+    , m_widgetSpinArrow(new WidgetModelArrow(m_view->modelSpinArrow()))
     , m_widgetTriangle(new WidgetModelTriangle(m_view->modelTriangle()))
     , m_widgetPlane(new WidgetModelPlane(m_view->modelPlane()))
     , m_tabModels(new QTabWidget())
@@ -178,6 +179,7 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(P
     m_tabModels->addTab(m_widgetTorus, tr("Torus"));
     m_tabModels->addTab(m_widgetBox, tr("Box"));
     m_tabModels->addTab(m_widgetArrow, tr("Arrow"));
+    m_tabModels->addTab(m_widgetSpinArrow, tr("Spin arrow"));
     m_tabModels->addTab(m_widgetTriangle, tr("Triangle"));
     m_tabModels->addTab(m_widgetPlane, tr("Plane"));
     m_tabModels->setCurrentIndex(m_view->currentModel());
@@ -241,6 +243,20 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(P
         m_widgetArrow, &WidgetModelArrow::circlePointCountChanged, m_view, &WidgetView::arrowCirclePointCountChanged);
     connect(m_widgetArrow, &WidgetModelArrow::materialLineChanged, m_view, &WidgetView::arrowMaterialLineChanged);
     connect(m_widgetArrow, &WidgetModelArrow::materialBottomChanged, m_view, &WidgetView::arrowMaterialBottomChanged);
+    connect(m_widgetArrow, &WidgetModelArrow::arrowRatioChanged, m_view, &WidgetView::arrowRatioChanged);
+
+    connect(m_widgetSpinArrow, &WidgetModelArrow::wireFrameChanged, m_view, &WidgetView::spinArrowWireFrameChanged);
+    connect(m_widgetSpinArrow,
+            &WidgetModelArrow::circlePointCountChanged,
+            m_view,
+            &WidgetView::spinArrowCirclePointCountChanged);
+    connect(
+        m_widgetSpinArrow, &WidgetModelArrow::materialLineChanged, m_view, &WidgetView::spinArrowMaterialLineChanged);
+    connect(m_widgetSpinArrow,
+            &WidgetModelArrow::materialBottomChanged,
+            m_view,
+            &WidgetView::spinArrowMaterialBottomChanged);
+    connect(m_widgetSpinArrow, &WidgetModelArrow::arrowRatioChanged, m_view, &WidgetView::spinArrowRatioChanged);
 
     connect(m_widgetTriangle, &WidgetModelTriangle::wireFrameChanged, m_view, &WidgetView::triangleWireFrameChanged);
     connect(m_widgetTriangle, &WidgetModelTriangle::ccwChanged, m_view, &WidgetView::triangleCcwChanged);
@@ -309,6 +325,20 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::~WidgetMaterialEditor(
     disconnect(m_widgetArrow, &WidgetModelArrow::materialLineChanged, m_view, &WidgetView::arrowMaterialLineChanged);
     disconnect(
         m_widgetArrow, &WidgetModelArrow::materialBottomChanged, m_view, &WidgetView::arrowMaterialBottomChanged);
+    disconnect(m_widgetArrow, &WidgetModelArrow::arrowRatioChanged, m_view, &WidgetView::arrowRatioChanged);
+
+    disconnect(m_widgetSpinArrow, &WidgetModelArrow::wireFrameChanged, m_view, &WidgetView::spinArrowWireFrameChanged);
+    disconnect(m_widgetSpinArrow,
+               &WidgetModelArrow::circlePointCountChanged,
+               m_view,
+               &WidgetView::spinArrowCirclePointCountChanged);
+    disconnect(
+        m_widgetSpinArrow, &WidgetModelArrow::materialLineChanged, m_view, &WidgetView::spinArrowMaterialLineChanged);
+    disconnect(m_widgetSpinArrow,
+               &WidgetModelArrow::materialBottomChanged,
+               m_view,
+               &WidgetView::spinArrowMaterialBottomChanged);
+    disconnect(m_widgetSpinArrow, &WidgetModelArrow::arrowRatioChanged, m_view, &WidgetView::spinArrowRatioChanged);
 
     disconnect(m_widgetTriangle, &WidgetModelTriangle::wireFrameChanged, m_view, &WidgetView::triangleWireFrameChanged);
     disconnect(m_widgetTriangle, &WidgetModelTriangle::ccwChanged, m_view, &WidgetView::triangleCcwChanged);

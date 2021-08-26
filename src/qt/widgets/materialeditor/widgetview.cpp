@@ -19,10 +19,19 @@ Universe1::Widgets::MaterialEditor::WidgetView::WidgetView(const OpenGL::Materia
     , m_modelBox(new OpenGL::Models::ModelBox(_material))
     , m_modelArrow(new OpenGL::Models::ModelArrow(
           _material, _material, _material, QVector3D(0.0F, 0.0F, -0.5F), QVector3D(0.0F, 0.0F, 0.5F)))
+    , m_modelSpinArrow(new OpenGL::Models::ModelSpinArrow(
+          _material, _material, _material, QVector3D(0.0F, 0.0F, -0.5F), QVector3D(0.0F, 0.0F, 0.5F)))
     , m_modelTriangle(new OpenGL::Models::ModelTriangle(_material))
     , m_modelPlane(new OpenGL::Models::ModelPlane(
           _material, QVector3D(), QVector3D(0.5F, 0.0F, 0.0F), QVector3D(0.0F, 0.0F, 0.5F)))
-    , m_models({m_modelSphere, m_modelCylinder, m_modelTorus, m_modelBox, m_modelArrow, m_modelTriangle, m_modelPlane})
+    , m_models({m_modelSphere,
+                m_modelCylinder,
+                m_modelTorus,
+                m_modelBox,
+                m_modelArrow,
+                m_modelSpinArrow,
+                m_modelTriangle,
+                m_modelPlane})
     , m_currentModel(0)
 {
     const QSettings settings;
@@ -49,17 +58,28 @@ Universe1::Widgets::MaterialEditor::WidgetView::WidgetView(const OpenGL::Materia
     m_modelBox->setBoxSize2(settings.value(m_settingsKey + "Box/boxSize2", m_modelBox->boxSize2()).toFloat());
     m_modelBox->setBoxSize3(settings.value(m_settingsKey + "Box/boxSize3", m_modelBox->boxSize3()).toFloat());
 
+    OpenGL::Material tmpMaterial;
     m_modelArrow->setDrawWireFrame(
         settings.value(m_settingsKey + "Arrow/drawWireFrame", m_modelArrow->drawWireFrame()).toBool());
     m_modelArrow->setCirclePointCount(
         settings.value(m_settingsKey + "Arrow/circlePointCount", m_modelArrow->circlePointCount()).toInt());
 
-    OpenGL::Material tmpMaterial;
     tmpMaterial.loadSettings(settings, m_settingsKey + "Arrow/MaterialLine/");
     m_modelArrow->setMaterialLine(tmpMaterial);
 
     tmpMaterial.loadSettings(settings, m_settingsKey + "Arrow/MaterialBottom/");
     m_modelArrow->setMaterialBottom(tmpMaterial);
+
+    m_modelSpinArrow->setDrawWireFrame(
+        settings.value(m_settingsKey + "SpinArrow/drawWireFrame", m_modelSpinArrow->drawWireFrame()).toBool());
+    m_modelSpinArrow->setCirclePointCount(
+        settings.value(m_settingsKey + "SpinArrow/circlePointCount", m_modelSpinArrow->circlePointCount()).toInt());
+
+    tmpMaterial.loadSettings(settings, m_settingsKey + "SpinArrow/MaterialLine/");
+    m_modelSpinArrow->setMaterialLine(tmpMaterial);
+
+    tmpMaterial.loadSettings(settings, m_settingsKey + "SpinArrow/MaterialBottom/");
+    m_modelSpinArrow->setMaterialBottom(tmpMaterial);
 
     m_modelTriangle->setDrawWireFrame(
         settings.value(m_settingsKey + "Triangle/drawWireFrame", m_modelTriangle->drawWireFrame()).toBool());
@@ -113,6 +133,10 @@ Universe1::Widgets::MaterialEditor::WidgetView::~WidgetView()
     settings.setValue(m_settingsKey + "Arrow/circlePointCount", m_modelArrow->circlePointCount());
     m_modelArrow->materialLine().saveSettings(settings, m_settingsKey + "Arrow/MaterialLine/");
     m_modelArrow->materialBottom().saveSettings(settings, m_settingsKey + "Arrow/MaterialBottom/");
+    settings.setValue(m_settingsKey + "SpinArrow/drawWireFrame", m_modelSpinArrow->drawWireFrame());
+    settings.setValue(m_settingsKey + "SpinArrow/circlePointCount", m_modelSpinArrow->circlePointCount());
+    m_modelSpinArrow->materialLine().saveSettings(settings, m_settingsKey + "SpinArrow/MaterialLine/");
+    m_modelSpinArrow->materialBottom().saveSettings(settings, m_settingsKey + "SpinArrow/MaterialBottom/");
     settings.setValue(m_settingsKey + "Triangle/drawWireFrame", m_modelTriangle->drawWireFrame());
     settings.setValue(m_settingsKey + "Triangle/invertedFaces", m_modelTriangle->invertedFaces());
     settings.setValue(m_settingsKey + "Triangle/normal1", m_modelTriangle->normal1());
@@ -138,6 +162,7 @@ Universe1::Widgets::MaterialEditor::WidgetView::~WidgetView()
     delete m_modelTorus;
     delete m_modelBox;
     delete m_modelArrow;
+    delete m_modelSpinArrow;
     delete m_modelTriangle;
     delete m_modelPlane;
 
@@ -199,6 +224,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::setMaterial(const OpenGL::M
     m_modelTorus->setMaterial(_material);
     m_modelBox->setMaterial(_material);
     m_modelArrow->setMaterialHeader(_material);
+    m_modelSpinArrow->setMaterialHeader(_material);
     m_modelTriangle->setMaterial(_material);
     m_modelPlane->setMaterial(_material);
     update();
@@ -525,6 +551,80 @@ void Universe1::Widgets::MaterialEditor::WidgetView::arrowMaterialLineChanged(co
 void Universe1::Widgets::MaterialEditor::WidgetView::arrowMaterialBottomChanged(const OpenGL::Material &_value)
 {
     m_modelArrow->setMaterialBottom(_value);
+}
+
+/*!
+ * \brief Arrow widget changed ratios
+ * \param _ratioRadiusLine New ratio for line radius
+ * \param _ratioRadiusHeader New ratio for header radius
+ * \param _ratioLengthHeader New ratio for header length
+ */
+void Universe1::Widgets::MaterialEditor::WidgetView::arrowRatioChanged(float _ratioRadiusLine,
+                                                                       float _ratioRadiusHeader,
+                                                                       float _ratioLengthHeader)
+{
+    makeCurrent();
+    m_modelArrow->setRatios(_ratioRadiusLine, _ratioRadiusHeader, _ratioLengthHeader);
+    doneCurrent();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Spin arrow widget changed draw wire-frame flag
+ * \param _value New flag value
+ */
+void Universe1::Widgets::MaterialEditor::WidgetView::spinArrowWireFrameChanged(bool _value)
+{
+    makeCurrent();
+    m_modelSpinArrow->setDrawWireFrame(_value);
+    doneCurrent();
+}
+
+/*!
+ * \brief Spin arrow widget changed point count
+ * \param _value New flag value
+ */
+void Universe1::Widgets::MaterialEditor::WidgetView::spinArrowCirclePointCountChanged(int _value)
+{
+    makeCurrent();
+    m_modelSpinArrow->setCirclePointCount(_value);
+    doneCurrent();
+}
+
+/*!
+ * \brief Spin arrow widget changed line material
+ * \param _value New line material
+ */
+void Universe1::Widgets::MaterialEditor::WidgetView::spinArrowMaterialLineChanged(const OpenGL::Material &_value)
+{
+    m_modelSpinArrow->setMaterialLine(_value);
+}
+
+/*!
+ * \brief Spin arrow widget changed header bottom material
+ * \param _value New header bottom material
+ */
+void Universe1::Widgets::MaterialEditor::WidgetView::spinArrowMaterialBottomChanged(const OpenGL::Material &_value)
+{
+    m_modelSpinArrow->setMaterialBottom(_value);
+}
+
+/*!
+ * \brief Spin arrow widget changed ratios
+ * \param _ratioRadiusLine New ratio for line radius
+ * \param _ratioRadiusHeader New ratio for header radius
+ * \param _ratioLengthHeader New ratio for header length
+ */
+void Universe1::Widgets::MaterialEditor::WidgetView::spinArrowRatioChanged(float _ratioRadiusLine,
+                                                                           float _ratioRadiusHeader,
+                                                                           float _ratioLengthHeader)
+{
+    makeCurrent();
+    m_modelSpinArrow->setRatios(_ratioRadiusLine, _ratioRadiusHeader, _ratioLengthHeader);
+    doneCurrent();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

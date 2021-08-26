@@ -104,7 +104,7 @@ SOURCES += \
     src/qt/opengl/models/modelcylinder.cpp \
     src/qt/opengl/models/modeltorus.cpp \
     src/qt/opengl/models/modelarrow.cpp \
-    #src/qt/opengl/models/modelspinarrow.cpp \
+    src/qt/opengl/models/modelspinarrow.cpp \
 
 HEADERS += \
     src/qt/opengl/models/glmodel.h \
@@ -124,7 +124,7 @@ HEADERS += \
     src/qt/opengl/models/modelcylinder.h \
     src/qt/opengl/models/modeltorus.h \
     src/qt/opengl/models/modelarrow.h \
-    #src/qt/opengl/models/modelspinarrow.h \
+    src/qt/opengl/models/modelspinarrow.h \
 
 ########################################################################################################################
 

@@ -376,6 +376,15 @@ void Universe1::Widgets::MaterialEditor::WidgetModelPlane::normal2ZChanged(float
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+const std::vector<std::tuple<float, float, float>> Universe1::Widgets::MaterialEditor::WidgetModelArrow::m_usedRatios =
+    {
+        {0.025F, 0.1F, 0.2F},  //
+        {0.05F, 0.2F, 0.2F},   //
+        {0.05F, 0.3F, 0.2F},   //
+        {0.05F, 0.2F, 0.5F},   //
+        {0.05F, 0.3F, 0.5F},   //
+};
+
 /*!
  * \brief Constructor
  * \param _model Arrow Open GL model
@@ -386,6 +395,7 @@ Universe1::Widgets::MaterialEditor::WidgetModelArrow::WidgetModelArrow(OpenGL::M
     : QWidget(_parent)
     , m_model(_model)
     , m_wireFrame(new QCheckBox())
+    , m_ratios(new QComboBox())
     , m_circlePointCount(new GUI::GuiInt(m_model->circlePointCount(), 4, 128, Qt::Horizontal))
     , m_guiLine(new GUI::GuiMaterial(m_model->materialLine(), Qt::Horizontal))
     , m_guiBottom(new GUI::GuiMaterial(m_model->materialBottom(), Qt::Horizontal))
@@ -393,7 +403,17 @@ Universe1::Widgets::MaterialEditor::WidgetModelArrow::WidgetModelArrow(OpenGL::M
 {
     m_wireFrame->setChecked(m_model->drawWireFrame());
 
+    for (const std::tuple<float, float, float> &t : m_usedRatios)
+        m_ratios->addItem(
+            tr("Line R[%1] Head R[%2] Head L[%3]").arg(std::get<0>(t)).arg(std::get<1>(t)).arg(std::get<2>(t)));
+
     connect(m_wireFrame, &QCheckBox::toggled, this, &WidgetModelArrow::wireFrameChanged);
+
+    connect(m_ratios,
+            static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+            this,
+            &WidgetModelArrow::ratioComboChanged);
+
     connect(m_circlePointCount, &GUI::GuiInt::changed, this, &WidgetModelArrow::circlePointCountChanged);
     connect(m_guiLine, &GUI::GuiMaterial::changed, this, &WidgetModelArrow::materialLineChanged);
     connect(m_guiBottom, &GUI::GuiMaterial::changed, this, &WidgetModelArrow::materialBottomChanged);
@@ -402,6 +422,9 @@ Universe1::Widgets::MaterialEditor::WidgetModelArrow::WidgetModelArrow(OpenGL::M
     int row = 0;
     lay->addWidget(new QLabel(tr("Wire-frame")), row, 0, 1, 2);
     lay->addWidget(m_wireFrame, row++, 2, 1, 2);
+
+    lay->addWidget(new QLabel(tr("Ratios")), row, 0, 1, 2);
+    lay->addWidget(m_ratios, row++, 2, 1, 2);
 
     m_circlePointCount->layoutRow(tr("Circle point count"), lay, row);
 
@@ -433,6 +456,12 @@ Universe1::Widgets::MaterialEditor::WidgetModelArrow::WidgetModelArrow(OpenGL::M
 Universe1::Widgets::MaterialEditor::WidgetModelArrow::~WidgetModelArrow()
 {
     disconnect(m_wireFrame, &QCheckBox::toggled, this, &WidgetModelArrow::wireFrameChanged);
+
+    disconnect(m_ratios,
+               static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+               this,
+               &WidgetModelArrow::ratioComboChanged);
+
     disconnect(m_circlePointCount, &GUI::GuiInt::changed, this, &WidgetModelArrow::circlePointCountChanged);
     disconnect(m_guiLine, &GUI::GuiMaterial::changed, this, &WidgetModelArrow::materialLineChanged);
     disconnect(m_guiBottom, &GUI::GuiMaterial::changed, this, &WidgetModelArrow::materialBottomChanged);
@@ -440,4 +469,17 @@ Universe1::Widgets::MaterialEditor::WidgetModelArrow::~WidgetModelArrow()
     delete m_circlePointCount;
     delete m_guiLine;
     delete m_guiBottom;
+}
+
+/*!
+ * \brief Ratio combo-box change handler
+ * \param _idx New selected combo-box index
+ */
+void Universe1::Widgets::MaterialEditor::WidgetModelArrow::ratioComboChanged(int _idx)
+{
+    if (_idx >= 0 && _idx < static_cast<int>(m_usedRatios.size()))
+    {
+        const std::tuple<float, float, float> &t = m_usedRatios.at(_idx);
+        emit arrowRatioChanged(std::get<0>(t), std::get<1>(t), std::get<2>(t));
+    }
 }

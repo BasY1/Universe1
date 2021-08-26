@@ -12,6 +12,7 @@
 #include "../../opengl/models/modelcylinder.h"
 #include "../../opengl/models/modelplane.h"
 #include "../../opengl/models/modelsphere.h"
+#include "../../opengl/models/modelspinarrow.h"
 #include "../../opengl/models/modeltorus.h"
 #include "../../opengl/models/modeltriangle.h"
 
@@ -338,16 +339,30 @@ class WidgetModelArrow : public QWidget
      */
     void materialBottomChanged(const OpenGL::Material &_value);
 
+    /*!
+     * \brief Arrow ratios changed
+     * \param _ratioRadiusLine New ratio for line radius
+     * \param _ratioRadiusHeader New ratio for header radius
+     * \param _ratioLengthHeader New ratio for header length
+     */
+    void arrowRatioChanged(float _ratioRadiusLine, float _ratioRadiusHeader, float _ratioLengthHeader);
+
+ protected slots:
+    void ratioComboChanged(int _idx);
+
  protected:
     OpenGL::Models::ModelArrow *m_model;  //!< Arrow model
 
     QCheckBox *m_wireFrame;           //!< Draw wire-frame check-box
+    QComboBox *m_ratios;              //!< Arrow ratios check box
     GUI::GuiInt *m_circlePointCount;  //!< Point count on circle widget
 
     GUI::GuiMaterial *m_guiLine;    //!< Line material GUI
     GUI::GuiMaterial *m_guiBottom;  //!< Header bottom material GUI
 
     QTabWidget *m_tabs;  //!< Materials tab
+
+    static const std::vector<std::tuple<float, float, float>> m_usedRatios;  //!< Used sets of ratios
 };
 
 }  // namespace MaterialEditor

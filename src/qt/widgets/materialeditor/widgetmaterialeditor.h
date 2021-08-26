@@ -74,6 +74,7 @@ class WidgetMaterialEditor : public QSplitter
     WidgetModelTorus *m_widgetTorus;        //!< Torus model widget
     WidgetModelBox *m_widgetBox;            //!< Box model widget
     WidgetModelArrow *m_widgetArrow;        //!< Arrow model widget
+    WidgetModelArrow *m_widgetSpinArrow;    //!< Spin arrow model widget
     WidgetModelTriangle *m_widgetTriangle;  //!< Triangle model widget
     WidgetModelPlane *m_widgetPlane;        //!< Plane model widget
 

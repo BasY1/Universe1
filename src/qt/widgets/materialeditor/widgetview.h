@@ -15,6 +15,7 @@
 #include "../../opengl/models/modelplane.h"
 #include "../../opengl/models/modelpointlight.h"
 #include "../../opengl/models/modelsphere.h"
+#include "../../opengl/models/modelspinarrow.h"
 #include "../../opengl/models/modelspotlight.h"
 #include "../../opengl/models/modeltorus.h"
 #include "../../opengl/models/modeltriangle.h"
@@ -38,6 +39,7 @@ class WidgetView : public OpenGL::GLWidget
     inline OpenGL::Models::ModelTorus *modelTorus();
     inline OpenGL::Models::ModelBox *modelBox();
     inline OpenGL::Models::ModelArrow *modelArrow();
+    inline OpenGL::Models::ModelSpinArrow *modelSpinArrow();
     inline OpenGL::Models::ModelTriangle *modelTriangle();
     inline OpenGL::Models::ModelPlane *modelPlane();
     inline int currentModel() const;
@@ -70,6 +72,13 @@ class WidgetView : public OpenGL::GLWidget
     void arrowCirclePointCountChanged(int _value);
     void arrowMaterialLineChanged(const OpenGL::Material &_value);
     void arrowMaterialBottomChanged(const OpenGL::Material &_value);
+    void arrowRatioChanged(float _ratioRadiusLine, float _ratioRadiusHeader, float _ratioLengthHeader);
+
+    void spinArrowWireFrameChanged(bool _value);
+    void spinArrowCirclePointCountChanged(int _value);
+    void spinArrowMaterialLineChanged(const OpenGL::Material &_value);
+    void spinArrowMaterialBottomChanged(const OpenGL::Material &_value);
+    void spinArrowRatioChanged(float _ratioRadiusLine, float _ratioRadiusHeader, float _ratioLengthHeader);
 
     void triangleWireFrameChanged(bool _value);
     void triangleCcwChanged(bool _value);
@@ -90,13 +99,14 @@ class WidgetView : public OpenGL::GLWidget
     void paintGLImpl() override;
 
  protected:
-    OpenGL::Models::ModelSphere *m_modelSphere;      //!< Sphere Open GL model
-    OpenGL::Models::ModelCylinder *m_modelCylinder;  //!< Cylinder Open GL model
-    OpenGL::Models::ModelTorus *m_modelTorus;        //!< Torus Open GL model
-    OpenGL::Models::ModelBox *m_modelBox;            //!< Box Open GL model
-    OpenGL::Models::ModelArrow *m_modelArrow;        //!< Arrow Open GL model
-    OpenGL::Models::ModelTriangle *m_modelTriangle;  //!< Triangle Open GL model
-    OpenGL::Models::ModelPlane *m_modelPlane;        //!< Plane Open GL model
+    OpenGL::Models::ModelSphere *m_modelSphere;        //!< Sphere Open GL model
+    OpenGL::Models::ModelCylinder *m_modelCylinder;    //!< Cylinder Open GL model
+    OpenGL::Models::ModelTorus *m_modelTorus;          //!< Torus Open GL model
+    OpenGL::Models::ModelBox *m_modelBox;              //!< Box Open GL model
+    OpenGL::Models::ModelArrow *m_modelArrow;          //!< Arrow Open GL model
+    OpenGL::Models::ModelSpinArrow *m_modelSpinArrow;  //!< Spin arrow Open GL model
+    OpenGL::Models::ModelTriangle *m_modelTriangle;    //!< Triangle Open GL model
+    OpenGL::Models::ModelPlane *m_modelPlane;          //!< Plane Open GL model
 
     std::vector<OpenGL::Models::GLModel *> m_models;  //!< Open GL Model collection
     int m_currentModel;                               //!< Current Open GL model index
@@ -166,6 +176,15 @@ inline OpenGL::Models::ModelBox *WidgetView::modelBox()
 inline OpenGL::Models::ModelArrow *WidgetView::modelArrow()
 {
     return m_modelArrow;
+}
+
+/*!
+ * \brief Getter for arrow Open GL model
+ * \returns Arrow Open GL model
+ */
+inline OpenGL::Models::ModelSpinArrow *WidgetView::modelSpinArrow()
+{
+    return m_modelSpinArrow;
 }
 
 /*!

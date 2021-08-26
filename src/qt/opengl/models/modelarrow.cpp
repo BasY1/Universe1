@@ -113,6 +113,25 @@ void Universe1::OpenGL::Models::ModelArrow::setRatioLengthHeader(float _value)
 }
 
 /*!
+ * \brief Setter for header length ratio
+ * \param _ratioRadiusLine New ratio for line radius
+ * \param _ratioRadiusHeader New ratio for header radius
+ * \param _ratioLengthHeader New ratio for header length
+ */
+void Universe1::OpenGL::Models::ModelArrow::setRatios(float _ratioRadiusLine,
+                                                      float _ratioRadiusHeader,
+                                                      float _ratioLengthHeader)
+{
+    m_ratioRadiusLine = _ratioRadiusLine;
+    m_ratioRadiusHeader = _ratioRadiusHeader;
+    m_ratioLengthHeader = _ratioLengthHeader;
+    prepareRatio(m_ratioRadiusLine, m_ratioRadiusHeader, m_ratioLengthHeader);
+    if (isInit())
+        rebuild();
+    emit changed();
+}
+
+/*!
  * \brief Setter for circle point count
  * \param _value New circle point count
  */
@@ -210,19 +229,19 @@ void Universe1::OpenGL::Models::ModelArrow::rebuild()
 
         vertexData.push_back(posH1);
         normalData.push_back(normalBack);
-        materialData.push_back(1U);
+        materialData.push_back(2U);
 
         vertexData.push_back(posH2);
         normalData.push_back(normalBack);
-        materialData.push_back(1U);
+        materialData.push_back(2U);
 
         vertexData.push_back(posH2);
         normalData.push_back(arm2);
-        materialData.push_back(2U);
+        materialData.push_back(1U);
 
         vertexData.push_back(m_toPosition);
         normalData.push_back(arm3);
-        materialData.push_back(2U);
+        materialData.push_back(1U);
 
         arm1 = rotate(arm1, normalDir, sa, ca);
         arm2 = rotate(arm2, normalDir, sa, ca);
@@ -352,7 +371,7 @@ void Universe1::OpenGL::Models::ModelArrow::setMaterialLine(const Material &_val
  */
 void Universe1::OpenGL::Models::ModelArrow::setMaterialHeader(const Material &_value)
 {
-    GLModel::setMaterial(2, _value);
+    GLModel::setMaterial(1, _value);
 }
 
 /*!
@@ -361,5 +380,5 @@ void Universe1::OpenGL::Models::ModelArrow::setMaterialHeader(const Material &_v
  */
 void Universe1::OpenGL::Models::ModelArrow::setMaterialBottom(const Material &_value)
 {
-    GLModel::setMaterial(1, _value);
+    GLModel::setMaterial(2, _value);
 }
