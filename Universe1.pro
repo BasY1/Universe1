@@ -55,20 +55,6 @@ HEADERS += \
 ########################################################################################################################
 
 SOURCES += \
-    src/qt/project/qsimulation.cpp \
-    src/qt/project/qsimulationnewtoncurrent.cpp \
-    src/qt/project/materialdb.cpp \
-    src/qt/project/project.cpp \
-
-HEADERS += \
-    src/qt/project/qsimulation.h \
-    src/qt/project/qsimulationnewtoncurrent.h \
-    src/qt/project/materialdb.h \
-    src/qt/project/project.h \
-
-########################################################################################################################
-
-SOURCES += \
     src/qt/opengl/camera.cpp \
     src/qt/opengl/adscolors.cpp \
     src/qt/opengl/material.cpp \
@@ -83,6 +69,31 @@ HEADERS += \
     src/qt/opengl/lights.h \
     src/qt/opengl/shaderprogram.h \
     src/qt/opengl/glwidget.h \
+
+########################################################################################################################
+
+SOURCES += \
+    src/qt/project/qsimulation.cpp \
+    src/qt/project/qsimulationnewtoncurrent.cpp \
+    src/qt/project/speechdb.cpp \
+    src/qt/project/arrowsetup.cpp \
+    src/qt/project/spectrumarrowsetup.cpp \
+    src/qt/project/spacesetup.cpp \
+    src/qt/project/scenesetup.cpp \
+    src/qt/project/materialdb.cpp \
+    src/qt/project/project.cpp \
+
+HEADERS += \
+    src/qt/project/qsimulation.h \
+    src/qt/project/qsimulationnewtoncurrent.h \
+    src/qt/project/speechdb.h \
+    src/qt/project/arrowsetup.h \
+    src/qt/project/spectrumarrowsetup.h \
+    src/qt/project/spacesetup.h \
+    src/qt/project/scenesetup.h \
+    src/qt/project/materialdb.h \
+    src/qt/project/project.h \
+
 
 ########################################################################################################################
 

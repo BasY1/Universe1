@@ -50,13 +50,13 @@ Universe1::OpenGL::GLWidget::GLWidget(ShaderProgram *_program,
     m_pointLights.reserve(m_program->pointLightsCount());
     m_spotLights.reserve(m_program->spotLightsCount());
 
-    for (int i = 0; i < m_program->pointLightsCount(); ++i)
+    for (int i = 0; i < m_program->pointLightsCount() && i < static_cast<int>(lightPos.size()); ++i)
     {
         m_pointLights.push_back(OpenGL::PointLight(lightPos[i]));
         m_pointLights[i].mode = OpenGL::PointLight::LightOff;
     }
 
-    for (int i = 0; i < m_program->spotLightsCount(); ++i)
+    for (int i = 0; i < m_program->spotLightsCount() && i < static_cast<int>(lightPos.size()); ++i)
     {
         m_spotLights.push_back(OpenGL::SpotLight(
             2.0F * lightPos[i], (-lightPos[i]).normalized(), qDegreesToRadians(20.0F), qDegreesToRadians(30.0F)));

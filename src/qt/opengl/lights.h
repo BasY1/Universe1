@@ -1029,7 +1029,7 @@ inline SpotLight::SpotLight()
 
 /*!
  * \brief Getter for cut-off angle in degrees
- * \return Cut-off angle in degrees
+ * \returns Cut-off angle in degrees
  */
 inline float SpotLight::cutOffDeg() const
 {
@@ -1038,7 +1038,7 @@ inline float SpotLight::cutOffDeg() const
 
 /*!
  * \brief Getter for outer cut-off angle in degrees
- * \return Outer cut-off angle in degrees
+ * \returns Outer cut-off angle in degrees
  */
 inline float SpotLight::outerCutOffDeg() const
 {

@@ -101,7 +101,7 @@ void Universe1::OpenGL::Models::GLModel::setMaterials(const std::vector<Material
  * \param _n Rotation normal (axis)
  * \param _sa Sinus angle in radians
  * \param _ca Cosinus angle in radians
- * \return rotated point around normal by angle (right-handed rotation)
+ * \returns rotated point around normal by angle (right-handed rotation)
  */
 QVector3D
 Universe1::OpenGL::Models::GLModel::rotate(const QVector3D &_p, const QVector3D &_n, const float _sa, const float _ca)
@@ -119,7 +119,7 @@ Universe1::OpenGL::Models::GLModel::rotate(const QVector3D &_p, const QVector3D 
  * \param _p Point to rotate
  * \param _n Rotation normal (axis)
  * \param _angleRad angle in radians
- * \return rotated point around normal by angle (right-handed rotation)
+ * \returns rotated point around normal by angle (right-handed rotation)
  */
 QVector3D Universe1::OpenGL::Models::GLModel::rotate(const QVector3D &_p, const QVector3D &_n, const float _angleRad)
 {
