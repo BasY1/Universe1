@@ -79,6 +79,13 @@ struct NewtonObject : public ObjectHistory<T, NewtonTimeStamp<T>>
      */
     std::pair<bool, QVector3D> loadAccel(const T _timeStamp) const;
 
+    /*!
+     * \brief Getter for object's force (acceleration x mass)
+     * \param _timeStamp Time-stamp of required position
+     * \returns Pair, where \c first item is success flag, and \c second item is object's force (as \c QVector3D)
+     */
+    std::pair<bool, QVector3D> loadForce(const T _timeStamp) const;
+
  protected:
     /*!
      * \brief Calculate acceleration using Newton gravitational law
@@ -133,6 +140,15 @@ std::pair<bool, QVector3D> NewtonObject<T>::loadAccel(const T _timeStamp) const
         return {true, result->moveAccel.toQVector3D()};
 
     return {true, result->moved(timeDelta).moveAccel.toQVector3D()};
+}
+
+template <typename T>
+std::pair<bool, QVector3D> NewtonObject<T>::loadForce(const T _timeStamp) const
+{
+    const std::pair<bool, QVector3D> tmp = loadAccel(_timeStamp);
+    if (tmp.first)
+        return {true, tmp.second * m_mass};
+    return tmp;
 }
 
 template <typename T>

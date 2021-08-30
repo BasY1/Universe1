@@ -76,3 +76,6 @@ doc/
 
 # Shadow build directory
 shadowBuild/
+
+# Project working directory
+projectWorkingDirectory/

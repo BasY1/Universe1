@@ -172,6 +172,7 @@ struct Vec3
     inline Vec3<T> rotated(const Vec3<T> &normal, const T angleRad) const;
 
     inline QVector3D toQVector3D() const;
+    static Vec3<T> fromQVector3D(const QVector3D &_value);
 
     /*!
      * \brief Conversion to different precision
@@ -917,6 +918,17 @@ template <typename T>
 inline QVector3D Vec3<T>::toQVector3D() const
 {
     return QVector3D(x, y, z);
+}
+
+/*!
+ * \brief Conversion from \c QVector3D
+ * \param _value Input \c QVector3D vector
+ * \returns 3D vector from \c QVector3D
+ */
+template <typename T>
+Vec3<T> Vec3<T>::fromQVector3D(const QVector3D &_value)
+{
+    return Vec3<T>(_value.x(), _value.y(), _value.z());
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

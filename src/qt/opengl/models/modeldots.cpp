@@ -306,3 +306,29 @@ void Universe1::OpenGL::Models::ModelDots::setDots(const std::vector<QVector3D> 
         rebuild();
     emit changed();
 }
+
+/*!
+ * \brief Setup dots in X-Y plane
+ * \param minX Minimum X
+ * \param minY Minimum Y
+ * \param maxX Maximum X
+ * \param maxY Maximum Y
+ */
+void Universe1::OpenGL::Models::ModelDots::setPlaneXY(const int minX, const int minY, const int maxX, const int maxY)
+{
+    m_vertexData.clear();
+    m_normalData.clear();
+    m_materialData.clear();
+
+    if (minX <= maxX && minY <= maxY)
+    {
+        m_vertexData.reserve((maxX - minX + 1) * (maxY - minY + 1));
+        for (int x = minX; x <= maxX; ++x)
+            for (int y = minY; y <= maxY; ++y)
+                m_vertexData.push_back(QVector3D(x, y, 0.0F));
+    }
+
+    if (isInit())
+        rebuild();
+    emit changed();
+}

@@ -1,11 +1,11 @@
 /*!
- * \file qt/widgets/materialeditor/widgetview.h
+ * \file qt/widgets/materialeditor/widgetmaterialeditorview.h
  * \author Michal Steller
  * \brief Material editor Open GL view class declaration
  */
 
-#ifndef UNIVERSE1_WIDGETS_MATERIALEDITOR_WIDGETVIEW_H
-#define UNIVERSE1_WIDGETS_MATERIALEDITOR_WIDGETVIEW_H
+#ifndef UNIVERSE1_WIDGETS_MATERIALEDITOR_WIDGETMATERIALEDITORVIEW_H
+#define UNIVERSE1_WIDGETS_MATERIALEDITOR_WIDGETMATERIALEDITORVIEW_H
 
 #include "../../opengl/glwidget.h"
 #include "../../opengl/lights.h"
@@ -27,12 +27,12 @@ namespace MaterialEditor {
 /*!
  * \brief Base QT Open GL widget
  */
-class WidgetView : public OpenGL::GLWidget
+class WidgetMaterialEditorView : public OpenGL::GLWidget
 {
     Q_OBJECT
  public:
-    WidgetView(const OpenGL::Material &_material, QWidget *parent = nullptr);
-    ~WidgetView();
+    WidgetMaterialEditorView(const OpenGL::Material &_material, QWidget *parent = nullptr);
+    ~WidgetMaterialEditorView();
 
     inline OpenGL::Models::ModelSphere *modelSphere();
     inline OpenGL::Models::ModelCylinder *modelCylinder();
@@ -119,7 +119,7 @@ class WidgetView : public OpenGL::GLWidget
  * \brief Getter for triangle Open GL model
  * \returns Triangle Open GL model
  */
-inline OpenGL::Models::ModelTriangle *WidgetView::modelTriangle()
+inline OpenGL::Models::ModelTriangle *WidgetMaterialEditorView::modelTriangle()
 {
     return m_modelTriangle;
 }
@@ -128,7 +128,7 @@ inline OpenGL::Models::ModelTriangle *WidgetView::modelTriangle()
  * \brief Getter for plane Open GL model
  * \returns Plane Open GL model
  */
-inline OpenGL::Models::ModelPlane *WidgetView::modelPlane()
+inline OpenGL::Models::ModelPlane *WidgetMaterialEditorView::modelPlane()
 {
     return m_modelPlane;
 }
@@ -137,7 +137,7 @@ inline OpenGL::Models::ModelPlane *WidgetView::modelPlane()
  * \brief Getter for sphere Open GL model
  * \returns Sphere Open GL model
  */
-inline OpenGL::Models::ModelSphere *WidgetView::modelSphere()
+inline OpenGL::Models::ModelSphere *WidgetMaterialEditorView::modelSphere()
 {
     return m_modelSphere;
 }
@@ -146,7 +146,7 @@ inline OpenGL::Models::ModelSphere *WidgetView::modelSphere()
  * \brief Getter for sphere Open GL model
  * \returns Cylinder Open GL model
  */
-inline OpenGL::Models::ModelCylinder *WidgetView::modelCylinder()
+inline OpenGL::Models::ModelCylinder *WidgetMaterialEditorView::modelCylinder()
 {
     return m_modelCylinder;
 }
@@ -155,7 +155,7 @@ inline OpenGL::Models::ModelCylinder *WidgetView::modelCylinder()
  * \brief Getter for sphere Open GL model
  * \returns Torus Open GL model
  */
-inline OpenGL::Models::ModelTorus *WidgetView::modelTorus()
+inline OpenGL::Models::ModelTorus *WidgetMaterialEditorView::modelTorus()
 {
     return m_modelTorus;
 }
@@ -164,7 +164,7 @@ inline OpenGL::Models::ModelTorus *WidgetView::modelTorus()
  * \brief Getter for box Open GL model
  * \returns Box Open GL model
  */
-inline OpenGL::Models::ModelBox *WidgetView::modelBox()
+inline OpenGL::Models::ModelBox *WidgetMaterialEditorView::modelBox()
 {
     return m_modelBox;
 }
@@ -173,7 +173,7 @@ inline OpenGL::Models::ModelBox *WidgetView::modelBox()
  * \brief Getter for arrow Open GL model
  * \returns Arrow Open GL model
  */
-inline OpenGL::Models::ModelArrow *WidgetView::modelArrow()
+inline OpenGL::Models::ModelArrow *WidgetMaterialEditorView::modelArrow()
 {
     return m_modelArrow;
 }
@@ -182,7 +182,7 @@ inline OpenGL::Models::ModelArrow *WidgetView::modelArrow()
  * \brief Getter for arrow Open GL model
  * \returns Arrow Open GL model
  */
-inline OpenGL::Models::ModelSpinArrow *WidgetView::modelSpinArrow()
+inline OpenGL::Models::ModelSpinArrow *WidgetMaterialEditorView::modelSpinArrow()
 {
     return m_modelSpinArrow;
 }
@@ -191,7 +191,7 @@ inline OpenGL::Models::ModelSpinArrow *WidgetView::modelSpinArrow()
  * \brief Getter for current Open GL model index
  * \returns Current Open GL model index
  */
-inline int WidgetView::currentModel() const
+inline int WidgetMaterialEditorView::currentModel() const
 {
     return m_currentModel;
 }
@@ -200,4 +200,4 @@ inline int WidgetView::currentModel() const
 }  // namespace Widgets
 }  // namespace Universe1
 
-#endif  // UNIVERSE1_WIDGETS_MATERIALEDITOR_WIDGETVIEW_H
+#endif  // UNIVERSE1_WIDGETS_MATERIALEDITOR_WIDGETMATERIALEDITORVIEW_H

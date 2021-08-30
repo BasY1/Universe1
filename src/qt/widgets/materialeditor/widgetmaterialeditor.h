@@ -14,8 +14,8 @@
 
 #include "../widgetglsettings.h"
 
+#include "widgetmaterialeditorview.h"
 #include "widgetmodels.h"
-#include "widgetview.h"
 
 #include "../../project/materialdb.h"
 
@@ -54,7 +54,7 @@ class WidgetMaterialEditor : public QSplitter
  protected:
     Project::MaterialDB *m_materialDB;  //!< Processing material database
 
-    WidgetView *m_view;  //!< Editor's Open GL view
+    WidgetMaterialEditorView *m_view;  //!< Editor's Open GL view
 
     GUI::GuiFloat *m_sceneAmbient;    //!< Scene ambient factor
     GUI::GuiMaterial *m_guiMaterial;  //!< Material GUI widgets

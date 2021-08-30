@@ -36,8 +36,8 @@ static int pow10(int _exponent)
  * \param _parent Parent \c QObject
  */
 Universe1::Widgets::GUI::GuiFloat::GuiFloat(const float _value,
-                                            const int _minimum,
-                                            const int _maximum,
+                                            const float _minimum,
+                                            const float _maximum,
                                             const int _decimals,
                                             const Qt::Orientation _orientation,
                                             QObject *_parent)
@@ -48,13 +48,14 @@ Universe1::Widgets::GUI::GuiFloat::GuiFloat(const float _value,
     , m_minimum(_minimum)
     , m_maximum(_maximum)
     , m_rangeF(m_maximum - m_minimum)
-    , m_sliderRangeF((_maximum - _minimum) * m_mult)
+    , m_sliderRangeF(0.0F)
     , m_value(std::min(m_maximum, std::max(m_minimum, _value)))
     , m_slider(new QSlider(_orientation))
     , m_box(new QDoubleSpinBox())
 {
-    m_slider->setRange(_minimum * m_mult, _maximum * m_mult);
+    m_slider->setRange(static_cast<int>(_minimum * m_multF), static_cast<int>(_maximum * m_multF));
     m_slider->setValue(static_cast<int>(m_multF * m_value));
+    m_sliderRangeF = static_cast<float>(m_slider->maximum() - m_slider->minimum());
 
     m_box->setDecimals(m_decimals);
     m_box->setRange(m_minimum, m_maximum);
@@ -197,4 +198,20 @@ void Universe1::Widgets::GUI::GuiFloat::boxChanged(double _value)
     connect(m_slider, &QSlider::valueChanged, this, &GuiFloat::sliderChanged);
 
     emit changed(m_value);
+}
+
+/*!
+ * \brief Setup new range for widgets
+ * \param _minimum Minimum value (If higher then current value, then current value is used)
+ * \param _maximum Maximum value (If lower then current value, then current value is used)
+ */
+void Universe1::Widgets::GUI::GuiFloat::setRange(const float _minimum, const float _maximum)
+{
+    m_minimum = std::min(_minimum, m_value);
+    m_maximum = std::max(_maximum, m_value);
+    m_rangeF = m_maximum - m_minimum;
+
+    m_box->setRange(m_minimum, m_maximum);
+    m_slider->setRange(static_cast<int>(m_minimum * m_multF), static_cast<int>(m_maximum * m_multF));
+    m_sliderRangeF = static_cast<float>(m_slider->maximum() - m_slider->minimum());
 }

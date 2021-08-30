@@ -1,17 +1,18 @@
 /*!
- * \file qt/widgets/materialeditor/widgetview.cpp
+ * \file qt/widgets/materialeditor/widgetmaterialeditorview.cpp
  * \author Michal Steller
  * \brief Material editor Open GL view class implementation
  */
 
-#include "widgetview.h"
+#include "widgetmaterialeditorview.h"
 
 /*!
  * \brief Constructor
  * \param _material Material
  * \param _parent Parent \c QWidget
  */
-Universe1::Widgets::MaterialEditor::WidgetView::WidgetView(const OpenGL::Material &_material, QWidget *_parent)
+Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::WidgetMaterialEditorView(
+    const OpenGL::Material &_material, QWidget *_parent)
     : OpenGL::GLWidget(new OpenGL::ShaderProgram(8, 8, 3), "MaterialEditor/View/", true, _parent)
     , m_modelSphere(new OpenGL::Models::ModelSphere(_material))
     , m_modelCylinder(new OpenGL::Models::ModelCylinder(_material, QVector3D(), 0.25F, 1.0F))
@@ -115,7 +116,7 @@ Universe1::Widgets::MaterialEditor::WidgetView::WidgetView(const OpenGL::Materia
 /*!
  * \brief Destructor
  */
-Universe1::Widgets::MaterialEditor::WidgetView::~WidgetView()
+Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::~WidgetMaterialEditorView()
 {
     QSettings settings;
     settings.setValue(m_settingsKey + "Sphere/drawWireFrame", m_modelSphere->drawWireFrame());
@@ -181,7 +182,7 @@ Universe1::Widgets::MaterialEditor::WidgetView::~WidgetView()
  * \brief Returns size of allocated memory within OpenGL context
  * \returns Size of allocated memory within OpenGL context
  */
-size_t Universe1::Widgets::MaterialEditor::WidgetView::memoryUsage() const
+size_t Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::memoryUsage() const
 {
     size_t result = 0U;
     for (const OpenGL::Models::GLModel *m : m_models)
@@ -193,7 +194,7 @@ size_t Universe1::Widgets::MaterialEditor::WidgetView::memoryUsage() const
  * \brief Setter for new current model
  * \param _modelIndex Model index
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::setCurrentModel(int _modelIndex)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::setCurrentModel(int _modelIndex)
 {
     if (m_currentModel != _modelIndex && _modelIndex >= 0 && _modelIndex < static_cast<int>(m_models.size()))
     {
@@ -217,7 +218,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::setCurrentModel(int _modelI
  * \brief Setter for material, update all models
  * \param _material New material
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::setMaterial(const OpenGL::Material &_material)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::setMaterial(const OpenGL::Material &_material)
 {
     m_modelSphere->setMaterial(_material);
     m_modelCylinder->setMaterial(_material);
@@ -235,7 +236,8 @@ void Universe1::Widgets::MaterialEditor::WidgetView::setMaterial(const OpenGL::M
  * \param _idx Point light index
  * \param _pointLight New point light object with values
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::setPointLight(int _idx, const OpenGL::PointLight &_pointLight)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::setPointLight(int _idx,
+                                                                                 const OpenGL::PointLight &_pointLight)
 {
     if (_idx >= 0 && _idx < m_program->pointLightsCount())
     {
@@ -252,7 +254,8 @@ void Universe1::Widgets::MaterialEditor::WidgetView::setPointLight(int _idx, con
  * \param _idx Spot light index
  * \param _spotLight New spot light object with values
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::setSpotLight(int _idx, const OpenGL::SpotLight &_spotLight)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::setSpotLight(int _idx,
+                                                                                const OpenGL::SpotLight &_spotLight)
 {
     if (_idx >= 0 && _idx < m_program->spotLightsCount())
     {
@@ -268,7 +271,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::setSpotLight(int _idx, cons
  * \brief Mouse double click event handler - switch camera locked center of view flag
  * \param _event Event data
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::mouseDoubleClickEvent(QMouseEvent *_event)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::mouseDoubleClickEvent(QMouseEvent *_event)
 {
     if (_event->buttons().testFlag(Qt::RightButton))
     {
@@ -282,7 +285,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::mouseDoubleClickEvent(QMous
 /*!
  * \brief Initialize Open GL models
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::initializeGLImpl()
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::initializeGLImpl()
 {
     for (int i = 0; i < m_program->pointLightsCount(); ++i)
         m_pointLightModels[i]->initGL();
@@ -302,7 +305,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::initializeGLImpl()
 /*!
  * \brief Paint current Open GL model
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::paintGLImpl()
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::paintGLImpl()
 {
     for (int i = 0; i < m_program->pointLightsCount(); ++i)
         m_pointLightModels[i]->paintGL(m_program);
@@ -321,7 +324,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::paintGLImpl()
  * \brief Triangle widget changed draw wire-frame flag
  * \param _value New flag value
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::triangleWireFrameChanged(bool _value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::triangleWireFrameChanged(bool _value)
 {
     makeCurrent();
     m_modelTriangle->setDrawWireFrame(_value);
@@ -332,7 +335,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::triangleWireFrameChanged(bo
  * \brief Triangle widget changed CCW flag
  * \param _value New flag value
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::triangleCcwChanged(bool _value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::triangleCcwChanged(bool _value)
 {
     makeCurrent();
     m_modelTriangle->setInvertedFaces(_value);
@@ -343,7 +346,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::triangleCcwChanged(bool _va
  * \brief Triangle widget changed normal 1
  * \param _value New value
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::triangleNormal1Changed(const QVector3D &_value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::triangleNormal1Changed(const QVector3D &_value)
 {
     makeCurrent();
     m_modelTriangle->setNormal1(_value);
@@ -354,7 +357,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::triangleNormal1Changed(cons
  * \brief Triangle widget changed normal 3
  * \param _value New value
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::triangleNormal2Changed(const QVector3D &_value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::triangleNormal2Changed(const QVector3D &_value)
 {
     makeCurrent();
     m_modelTriangle->setNormal2(_value);
@@ -365,7 +368,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::triangleNormal2Changed(cons
  * \brief Triangle widget changed normal 3
  * \param _value New value
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::triangleNormal3Changed(const QVector3D &_value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::triangleNormal3Changed(const QVector3D &_value)
 {
     makeCurrent();
     m_modelTriangle->setNormal3(_value);
@@ -380,7 +383,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::triangleNormal3Changed(cons
  * \brief Sphere widget changed draw wire-frame flag
  * \param _value New flag value
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::sphereWireFrameChanged(bool _value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::sphereWireFrameChanged(bool _value)
 {
     makeCurrent();
     m_modelSphere->setDrawWireFrame(_value);
@@ -391,7 +394,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::sphereWireFrameChanged(bool
  * \brief Sphere widget changed point count
  * \param _value New flag value
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::sphereEquatorPointCountChanged(int _value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::sphereEquatorPointCountChanged(int _value)
 {
     makeCurrent();
     m_modelSphere->setEquatorPointCount(_value);
@@ -406,7 +409,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::sphereEquatorPointCountChan
  * \brief Cylinder widget changed draw wire-frame flag
  * \param _value New flag value
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::cylinderWireFrameChanged(bool _value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::cylinderWireFrameChanged(bool _value)
 {
     makeCurrent();
     m_modelCylinder->setDrawWireFrame(_value);
@@ -417,7 +420,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::cylinderWireFrameChanged(bo
  * \brief Cylinder widget changed point count
  * \param _value New flag value
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::cylinderEquatorPointCountChanged(int _value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::cylinderEquatorPointCountChanged(int _value)
 {
     makeCurrent();
     m_modelCylinder->setEquatorPointCount(_value);
@@ -432,7 +435,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::cylinderEquatorPointCountCh
  * \brief Torus widget changed draw wire-frame flag
  * \param _value New flag value
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::torusWireFrameChanged(bool _value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::torusWireFrameChanged(bool _value)
 {
     makeCurrent();
     m_modelTorus->setDrawWireFrame(_value);
@@ -443,7 +446,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::torusWireFrameChanged(bool 
  * \brief Torus widget changed point count
  * \param _value New flag value
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::torusCirclePointCountChanged(int _value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::torusCirclePointCountChanged(int _value)
 {
     makeCurrent();
     m_modelTorus->setCirclePointCount(_value);
@@ -458,7 +461,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::torusCirclePointCountChange
  * \brief Box widget changed draw wire-frame flag
  * \param _value New flag value
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::boxWireFrameChanged(bool _value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::boxWireFrameChanged(bool _value)
 {
     makeCurrent();
     m_modelBox->setDrawWireFrame(_value);
@@ -469,7 +472,8 @@ void Universe1::Widgets::MaterialEditor::WidgetView::boxWireFrameChanged(bool _v
  * \brief Box widget changed normal setup
  * \param _value New normal setup value
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::boxNormalSetupChanged(OpenGL::Models::ModelBox::NormalSetup _value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::boxNormalSetupChanged(
+    OpenGL::Models::ModelBox::NormalSetup _value)
 {
     makeCurrent();
     m_modelBox->setNormalSetup(_value);
@@ -480,7 +484,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::boxNormalSetupChanged(OpenG
  * \brief Box widget changed box size 1
  * \param _value New box size 1 value
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::boxBoxSize1Changed(float _value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::boxBoxSize1Changed(float _value)
 {
     makeCurrent();
     m_modelBox->setBoxSize1(_value);
@@ -491,7 +495,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::boxBoxSize1Changed(float _v
  * \brief Box widget changed box size 2
  * \param _value New box size 2 value
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::boxBoxSize2Changed(float _value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::boxBoxSize2Changed(float _value)
 {
     makeCurrent();
     m_modelBox->setBoxSize2(_value);
@@ -502,7 +506,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::boxBoxSize2Changed(float _v
  * \brief Box widget changed box size 3
  * \param _value New box size 3 value
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::boxBoxSize3Changed(float _value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::boxBoxSize3Changed(float _value)
 {
     makeCurrent();
     m_modelBox->setBoxSize3(_value);
@@ -517,7 +521,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::boxBoxSize3Changed(float _v
  * \brief Arrow widget changed draw wire-frame flag
  * \param _value New flag value
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::arrowWireFrameChanged(bool _value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::arrowWireFrameChanged(bool _value)
 {
     makeCurrent();
     m_modelArrow->setDrawWireFrame(_value);
@@ -528,7 +532,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::arrowWireFrameChanged(bool 
  * \brief Arrow widget changed point count
  * \param _value New flag value
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::arrowCirclePointCountChanged(int _value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::arrowCirclePointCountChanged(int _value)
 {
     makeCurrent();
     m_modelArrow->setCirclePointCount(_value);
@@ -539,7 +543,8 @@ void Universe1::Widgets::MaterialEditor::WidgetView::arrowCirclePointCountChange
  * \brief Arrow widget changed line material
  * \param _value New line material
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::arrowMaterialLineChanged(const OpenGL::Material &_value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::arrowMaterialLineChanged(
+    const OpenGL::Material &_value)
 {
     m_modelArrow->setMaterialLine(_value);
 }
@@ -548,7 +553,8 @@ void Universe1::Widgets::MaterialEditor::WidgetView::arrowMaterialLineChanged(co
  * \brief Arrow widget changed header bottom material
  * \param _value New header bottom material
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::arrowMaterialBottomChanged(const OpenGL::Material &_value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::arrowMaterialBottomChanged(
+    const OpenGL::Material &_value)
 {
     m_modelArrow->setMaterialBottom(_value);
 }
@@ -559,9 +565,9 @@ void Universe1::Widgets::MaterialEditor::WidgetView::arrowMaterialBottomChanged(
  * \param _ratioRadiusHeader New ratio for header radius
  * \param _ratioLengthHeader New ratio for header length
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::arrowRatioChanged(float _ratioRadiusLine,
-                                                                       float _ratioRadiusHeader,
-                                                                       float _ratioLengthHeader)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::arrowRatioChanged(float _ratioRadiusLine,
+                                                                                     float _ratioRadiusHeader,
+                                                                                     float _ratioLengthHeader)
 {
     makeCurrent();
     m_modelArrow->setRatios(_ratioRadiusLine, _ratioRadiusHeader, _ratioLengthHeader);
@@ -576,7 +582,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::arrowRatioChanged(float _ra
  * \brief Spin arrow widget changed draw wire-frame flag
  * \param _value New flag value
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::spinArrowWireFrameChanged(bool _value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::spinArrowWireFrameChanged(bool _value)
 {
     makeCurrent();
     m_modelSpinArrow->setDrawWireFrame(_value);
@@ -587,7 +593,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::spinArrowWireFrameChanged(b
  * \brief Spin arrow widget changed point count
  * \param _value New flag value
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::spinArrowCirclePointCountChanged(int _value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::spinArrowCirclePointCountChanged(int _value)
 {
     makeCurrent();
     m_modelSpinArrow->setCirclePointCount(_value);
@@ -598,7 +604,8 @@ void Universe1::Widgets::MaterialEditor::WidgetView::spinArrowCirclePointCountCh
  * \brief Spin arrow widget changed line material
  * \param _value New line material
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::spinArrowMaterialLineChanged(const OpenGL::Material &_value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::spinArrowMaterialLineChanged(
+    const OpenGL::Material &_value)
 {
     m_modelSpinArrow->setMaterialLine(_value);
 }
@@ -607,7 +614,8 @@ void Universe1::Widgets::MaterialEditor::WidgetView::spinArrowMaterialLineChange
  * \brief Spin arrow widget changed header bottom material
  * \param _value New header bottom material
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::spinArrowMaterialBottomChanged(const OpenGL::Material &_value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::spinArrowMaterialBottomChanged(
+    const OpenGL::Material &_value)
 {
     m_modelSpinArrow->setMaterialBottom(_value);
 }
@@ -618,9 +626,9 @@ void Universe1::Widgets::MaterialEditor::WidgetView::spinArrowMaterialBottomChan
  * \param _ratioRadiusHeader New ratio for header radius
  * \param _ratioLengthHeader New ratio for header length
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::spinArrowRatioChanged(float _ratioRadiusLine,
-                                                                           float _ratioRadiusHeader,
-                                                                           float _ratioLengthHeader)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::spinArrowRatioChanged(float _ratioRadiusLine,
+                                                                                         float _ratioRadiusHeader,
+                                                                                         float _ratioLengthHeader)
 {
     makeCurrent();
     m_modelSpinArrow->setRatios(_ratioRadiusLine, _ratioRadiusHeader, _ratioLengthHeader);
@@ -635,7 +643,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::spinArrowRatioChanged(float
  * \brief Plane widget changed draw wire-frame flag
  * \param _value New flag value
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::planeWireFrameChanged(bool _value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::planeWireFrameChanged(bool _value)
 {
     makeCurrent();
     m_modelPlane->setDrawWireFrame(_value);
@@ -646,7 +654,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::planeWireFrameChanged(bool 
  * \brief Plane widget changed normal 1
  * \param _value New value
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::planeNormal1Changed(const QVector3D &_value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::planeNormal1Changed(const QVector3D &_value)
 {
     makeCurrent();
     m_modelPlane->setNormal1(_value);
@@ -657,7 +665,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::planeNormal1Changed(const Q
  * \brief Plane widget changed normal 2
  * \param _value New value
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::planeNormal2Changed(const QVector3D &_value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::planeNormal2Changed(const QVector3D &_value)
 {
     makeCurrent();
     m_modelPlane->setNormal2(_value);
@@ -668,7 +676,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::planeNormal2Changed(const Q
  * \brief Plane widget changed dot 1 count
  * \param _value New value
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::planeDots1Changed(int _value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::planeDots1Changed(int _value)
 {
     makeCurrent();
     m_modelPlane->setDots1(_value);
@@ -679,7 +687,7 @@ void Universe1::Widgets::MaterialEditor::WidgetView::planeDots1Changed(int _valu
  * \brief Plane widget changed dot 2 count
  * \param _value New value
  */
-void Universe1::Widgets::MaterialEditor::WidgetView::planeDots2Changed(int _value)
+void Universe1::Widgets::MaterialEditor::WidgetMaterialEditorView::planeDots2Changed(int _value)
 {
     makeCurrent();
     m_modelPlane->setDots2(_value);

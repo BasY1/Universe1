@@ -23,21 +23,24 @@ class GuiFloat : public QObject
     Q_OBJECT
  public:
     GuiFloat(const float _value,
-             const int _minimum,
-             const int _maximum,
+             const float _minimum,
+             const float _maximum,
              const int _decimals,
              const Qt::Orientation _orientation,
              QObject *_parent = nullptr);
 
     inline GuiFloat(const float _value,
-                    const int _minimum,
-                    const int _maximum,
+                    const float _minimum,
+                    const float _maximum,
                     const Qt::Orientation _orientation,
                     QObject *_parent = nullptr);
 
-    inline GuiFloat(
-        const float _value, const int _minimum, const int _maximum, const int _decimals, QObject *_parent = nullptr);
-    inline GuiFloat(const float _value, const int _minimum, const int _maximum, QObject *_parent = nullptr);
+    inline GuiFloat(const float _value,
+                    const float _minimum,
+                    const float _maximum,
+                    const int _decimals,
+                    QObject *_parent = nullptr);
+    inline GuiFloat(const float _value, const float _minimum, const float _maximum, QObject *_parent = nullptr);
 
     ~GuiFloat();
 
@@ -52,6 +55,7 @@ class GuiFloat : public QObject
     void setOrientation(Qt::Orientation _orientation);
     void setEnabled(bool _value);
     void setToolTip(QString _toolTip);
+    void setRange(const float _minimum, const float _maximum);
 
  protected slots:
     void sliderChanged(int _value);
@@ -65,13 +69,13 @@ class GuiFloat : public QObject
     void changed(float _value);
 
  protected:
-    const int m_decimals;        //!< Used decimal count
-    const int m_mult;            //!< Slider integral value multiplication
-    const float m_multF;         //!< Slider integral value multiplication as \c float holder
-    const float m_minimum;       //!< Minimum possible value
-    const float m_maximum;       //!< Maximum possible value
-    const float m_rangeF;        //!< Maximum possible value
-    const float m_sliderRangeF;  //!< Slider integral range as \c float holder
+    const int m_decimals;  //!< Used decimal count
+    const int m_mult;      //!< Slider integral value multiplication
+    const float m_multF;   //!< Slider integral value multiplication as \c float holder
+    float m_minimum;       //!< Minimum possible value
+    float m_maximum;       //!< Maximum possible value
+    float m_rangeF;        //!< Maximum possible value
+    float m_sliderRangeF;  //!< Slider integral range as \c float holder
 
     float m_value;  //!< Current value
 
@@ -89,7 +93,7 @@ class GuiFloat : public QObject
  * \note Default horizontal orientation
  */
 inline GuiFloat::GuiFloat(
-    const float _value, const int _minimum, const int _maximum, const int _decimals, QObject *_parent)
+    const float _value, const float _minimum, const float _maximum, const int _decimals, QObject *_parent)
     : GuiFloat(_value, _minimum, _maximum, _decimals, Qt::Horizontal, _parent)
 {
 }
@@ -103,8 +107,11 @@ inline GuiFloat::GuiFloat(
  * \param _parent Parent \c QObject
  * \note Default decimal count 3
  */
-inline GuiFloat::GuiFloat(
-    const float _value, const int _minimum, const int _maximum, const Qt::Orientation _orientation, QObject *_parent)
+inline GuiFloat::GuiFloat(const float _value,
+                          const float _minimum,
+                          const float _maximum,
+                          const Qt::Orientation _orientation,
+                          QObject *_parent)
     : GuiFloat(_value, _minimum, _maximum, 3, _orientation, _parent)
 {
 }
@@ -118,7 +125,7 @@ inline GuiFloat::GuiFloat(
  * \note Default horizontal orientation
  * \note Default decimal count 3
  */
-inline GuiFloat::GuiFloat(const float _value, const int _minimum, const int _maximum, QObject *_parent)
+inline GuiFloat::GuiFloat(const float _value, const float _minimum, const float _maximum, QObject *_parent)
     : GuiFloat(_value, _minimum, _maximum, 3, Qt::Horizontal, _parent)
 {
 }

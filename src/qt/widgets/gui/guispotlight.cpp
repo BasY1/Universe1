@@ -120,6 +120,21 @@ void Universe1::Widgets::GUI::GuiSpotLight::layoutRow(QGridLayout *_lay, int &_r
 }
 
 /*!
+ * \brief Create widget with this GUI
+ * \return Widget with spot light GUI
+ */
+QWidget *Universe1::Widgets::GUI::GuiSpotLight::createWidget()
+{
+    QGridLayout *lay = new QGridLayout();
+    int row = 0;
+    layoutRow(lay, row, true);
+    lay->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Expanding), row, 0, 1, 4);
+    QWidget *result = new QWidget();
+    result->setLayout(lay);
+    return result;
+}
+
+/*!
  * \brief Tool function, connect all widgets
  */
 void Universe1::Widgets::GUI::GuiSpotLight::connectAll()

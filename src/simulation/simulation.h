@@ -29,8 +29,8 @@ struct Simulation
     T m_startTime;             //!< Simulation start time (first calculated time-stamp) [s]
     size_t m_calculatedSteps;  //!< Calculated step count
 
-    std::list<ObjectClass> m_initObjects;  //!< Object list for initialization phase
-    std::vector<ObjectClass> m_objects;    //!< Object vector for calculation phase
+    std::vector<ObjectClass> m_initObjects;  //!< Object vector for initialization phase
+    std::vector<ObjectClass> m_objects;      //!< Object vector for calculation phase
 
  public:
     /*!
@@ -68,6 +68,12 @@ struct Simulation
     inline const Constants<T> &physics() const;
 
     /*!
+     * \brief Getter for universe physics constants
+     * \returns Universe physics constants
+     */
+    inline Constants<T> &physics();
+
+    /*!
      * \brief Getter for maximum step time duration
      * \returns Maximum step time duration
      */
@@ -78,6 +84,12 @@ struct Simulation
      * \returns Maximum curve angle within step
      */
     inline T maximumCurveAngleRad() const;
+
+    /*!
+     * \brief Getter for maximum curve angle within step [in degrees]
+     * \returns Maximum curve angle within step [in degrees]
+     */
+    inline T maximumCurveAngleDeg() const;
 
     /*!
      * \brief Getter for simulation start time (time of first calculated time-stamp)
@@ -92,16 +104,16 @@ struct Simulation
     inline size_t calculatedSteps() const;
 
     /*!
-     * \brief Getter for initialization object list
-     * \returns Object list for initialization phase
+     * \brief Getter for initialization object vector
+     * \returns Object vector for initialization phase
      */
-    inline std::list<ObjectClass> &initObjects();
+    inline std::vector<ObjectClass> &initObjects();
 
     /*!
-     * \brief Getter for initialization object list
-     * \returns Object list for initialization phase
+     * \brief Getter for initialization object vector
+     * \returns Object vector for initialization phase
      */
-    inline const std::list<ObjectClass> &initObjects() const;
+    inline const std::vector<ObjectClass> &initObjects() const;
 
     /*!
      * \brief Getter for calculation object vector
@@ -145,8 +157,8 @@ struct Simulation
     uint32_t testStart() const;
 
     /*!
-     * \brief Test if all objects are correctly initialized within \a m_initObjects list
-     * \param _invalid Output list: Invalid object indexes (Index of invalid object in \a m_initObjects list, not the
+     * \brief Test if all objects are correctly initialized within \a m_initObjects vector
+     * \param _invalid Output list: Invalid object indexes (Index of invalid object in \a m_initObjects vector, not the
      *                  object ID!)
      * \returns \c true if all object within \a m_initObjects are correctly initialized
      */
@@ -154,7 +166,7 @@ struct Simulation
 
     /*!
      * \brief Test if all objects histories are correctly continuous
-     * \param _invalid Output list: Invalid object indexes (Index of invalid object in \a m_initObjects list, not the
+     * \param _invalid Output list: Invalid object indexes (Index of invalid object in \a m_initObjects vector, not the
      *                  object ID!)
      * \returns \c true if all object histories within \a m_initObjects are correctly continuous
      */
@@ -178,8 +190,8 @@ struct Simulation
      * \brief Initialize calculation
      * \param _objectHistorySize History size of calculation object
      *                           (if equals zero object keeps initialization history size)
-     * \returns \c true if initialization success \details Initialize vector of calculation objects \a m_objects
-     * from initialization object list \a m_initObjects
+     * \returns \c true if initialization success
+     * \details Initialize vector of calculation objects \a m_objects from initialization objects \a m_initObjects
      */
     bool initialize(const size_t _objectHistorySize = 0U);
 
@@ -217,18 +229,6 @@ struct Simulation
      * \returns \c true if success
      */
     inline bool loadCalcPath(std::vector<std::pair<double, QVector3D>> &_out, const size_t _objectID) const;
-
-    /*!
-     * \brief Fill output vector with initialization object IDs
-     * \param _out Output vector
-     */
-    void loadInitObjectIDs(std::vector<size_t> &_out) const;
-
-    /*!
-     * \brief Returns initialization object ID that is last in \a m_initObjects list
-     * \returns Last initialization object ID
-     */
-    inline size_t lastInitObjectID() const;
 
     /*!
      * \brief Getter for initialization object's position
@@ -303,6 +303,12 @@ inline const Constants<T> &Simulation<T, ObjectClass, TimeStampClass>::physics()
 }
 
 template <typename T, typename ObjectClass, typename TimeStampClass>
+inline Constants<T> &Simulation<T, ObjectClass, TimeStampClass>::physics()
+{
+    return m_physics;
+}
+
+template <typename T, typename ObjectClass, typename TimeStampClass>
 inline T Simulation<T, ObjectClass, TimeStampClass>::maximumStepTime() const
 {
     return m_maximumStepTime;
@@ -312,6 +318,12 @@ template <typename T, typename ObjectClass, typename TimeStampClass>
 inline T Simulation<T, ObjectClass, TimeStampClass>::maximumCurveAngleRad() const
 {
     return m_maximumCurveAngleRad;
+}
+
+template <typename T, typename ObjectClass, typename TimeStampClass>
+inline T Simulation<T, ObjectClass, TimeStampClass>::maximumCurveAngleDeg() const
+{
+    return Math::toDeg<T>(m_maximumCurveAngleRad);
 }
 
 template <typename T, typename ObjectClass, typename TimeStampClass>
@@ -327,13 +339,13 @@ inline size_t Simulation<T, ObjectClass, TimeStampClass>::calculatedSteps() cons
 }
 
 template <typename T, typename ObjectClass, typename TimeStampClass>
-inline std::list<ObjectClass> &Simulation<T, ObjectClass, TimeStampClass>::initObjects()
+inline std::vector<ObjectClass> &Simulation<T, ObjectClass, TimeStampClass>::initObjects()
 {
     return m_initObjects;
 }
 
 template <typename T, typename ObjectClass, typename TimeStampClass>
-inline const std::list<ObjectClass> &Simulation<T, ObjectClass, TimeStampClass>::initObjects() const
+inline const std::vector<ObjectClass> &Simulation<T, ObjectClass, TimeStampClass>::initObjects() const
 {
     return m_initObjects;
 }
@@ -608,41 +620,14 @@ inline bool Simulation<T, ObjectClass, TimeStampClass>::loadCalcPath(std::vector
     return _objectID < m_objects.size() && m_objects.at(_objectID).loadPath(_out);
 }
 
-template <typename T, typename ObjectClass, typename TimeStampClass>
-void Simulation<T, ObjectClass, TimeStampClass>::loadInitObjectIDs(std::vector<size_t> &_out) const
-{
-    _out.clear();
-    if (m_initObjects.empty())
-        return;
-    _out.reserve(m_initObjects.size());
-    for (const ObjectClass &obj : m_initObjects)
-        _out.push_back(obj.ID());
-}
-
-template <typename T, typename ObjectClass, typename TimeStampClass>
-inline size_t Simulation<T, ObjectClass, TimeStampClass>::lastInitObjectID() const
-{
-    return m_initObjects.empty() ? 0U : m_initObjects.back().ID();
-}
 
 template <typename T, typename ObjectClass, typename TimeStampClass>
 std::pair<bool, QVector3D> Simulation<T, ObjectClass, TimeStampClass>::loadInitPosition(const size_t _objectID,
                                                                                         const double _timeStamp) const
 {
-    const ObjectClass *foundObj = nullptr;
-    for (const ObjectClass &obj : m_initObjects)
-    {
-        if (obj.ID() == _objectID)
-        {
-            if (foundObj == nullptr)
-                foundObj = &obj;
-            else
-                return {false, QVector3D()};
-        }
-    }
-    if (foundObj == nullptr)
+    if (_objectID < m_initObjects.size())
         return {false, QVector3D()};
-    return foundObj->loadPosition(_timeStamp);
+    return m_initObjects.at(_objectID).loadPosition(_timeStamp);
 }
 
 template <typename T, typename ObjectClass, typename TimeStampClass>

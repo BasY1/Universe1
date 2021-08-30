@@ -75,6 +75,21 @@ void Universe1::Widgets::GUI::GuiDirectionLight::layoutRow(QGridLayout *_lay, in
 }
 
 /*!
+ * \brief Create widget with this GUI
+ * \return Widget with direction light GUI
+ */
+QWidget *Universe1::Widgets::GUI::GuiDirectionLight::createWidget()
+{
+    QGridLayout *lay = new QGridLayout();
+    int row = 0;
+    layoutRow(lay, row, true);
+    lay->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Expanding), row, 0, 1, 4);
+    QWidget *result = new QWidget();
+    result->setLayout(lay);
+    return result;
+}
+
+/*!
  * \brief Setter for light
  * \param _light New light
  */

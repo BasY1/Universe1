@@ -19,7 +19,7 @@ enum ConstantName : uint32_t
 {
     Const_UniverseVelocity = 1U,  //!< Name for speed of the Universe constant
     Const_GravityConstant = 2U,   //!< Name for gravitational constant
-    Const_ElementRadius = 4U,     //!< Name for gravitational constant
+    Const_ElementRadius = 4U,     //!< Name for element radius
 };
 
 /*!
@@ -62,7 +62,43 @@ struct Constants
         , elementRadius(_elementRadius)
     {
     }
+
+    inline T getValue(const ConstantName &_name) const;
+
+    inline void setValue(const ConstantName &_name, const T _value);
 };
+
+/*!
+ * \brief Getter for value by name
+ * \param _name Constant name
+ * \returns Constant value
+ */
+template <typename T>
+inline T Constants<T>::getValue(const ConstantName &_name) const
+{
+    switch (_name)
+    {
+    case Const_UniverseVelocity: return universeVelocity;
+    case Const_GravityConstant: return gravityConstant;
+    case Const_ElementRadius: return elementRadius;
+    }
+}
+
+/*!
+ * \brief Setter for constant value by name
+ * \param _name Constant name
+ * \param _value New constant value
+ */
+template <typename T>
+inline void Constants<T>::setValue(const ConstantName &_name, const T _value)
+{
+    switch (_name)
+    {
+    case Const_UniverseVelocity: universeVelocity = _value; break;
+    case Const_GravityConstant: gravityConstant = _value; break;
+    case Const_ElementRadius: elementRadius = _value; break;
+    }
+}
 
 }  // namespace Simulation
 }  // namespace Universe1

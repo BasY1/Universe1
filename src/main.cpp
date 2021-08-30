@@ -6,7 +6,9 @@
 
 #include <QApplication>
 
+#include "qt/project/project.h"
 #include "qt/widgets/materialeditor/dialogmaterialeditor.h"
+#include "qt/widgets/simulationeditor/dialogsimulationeditor.h"
 
 /*!
  * \brief Run unit tests
@@ -31,8 +33,19 @@ int main(int argc, char *argv[])
     // if (!runTests())
     //    return EXIT_FAILURE;
 
-    Universe1::Project::MaterialDB db(Universe1::OpenGL::Material(Qt::red, Qt::green, Qt::blue, 32.0F, 1.0F));
-    Universe1::Widgets::MaterialEditor::DialogMaterialEditor dialog(&db);
+    // Universe1::Project::Project *p = new
+    // Universe1::Project::Project("/home/basy/Universe1/projectWorkingDirectory/");
+    // p->speech()->setSpeechTool("/home/basy/.local/bin/google_speech", {"-l", "en-us", "-o"});
+    //// qDebug() << p->speech()->isToolValid();
+    //// qDebug() << p->speech()->getAudioFileName("Car is blue !");
+    // delete p;
+
+    // Universe1::Project::MaterialDB db(Universe1::OpenGL::Material(Qt::red, Qt::green, Qt::blue, 32.0F, 1.0F));
+    // Universe1::Widgets::MaterialEditor::DialogMaterialEditor dialog(&db);
+    // return dialog.exec();
+
+    Universe1::Widgets::SimulationEditor::DialogSimulationEditor dialog(
+        new Universe1::Project::QSimulationNewtonCurrent("0"));
     return dialog.exec();
 
     // return EXIT_SUCCESS;

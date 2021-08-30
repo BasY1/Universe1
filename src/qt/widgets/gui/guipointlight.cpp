@@ -102,6 +102,21 @@ void Universe1::Widgets::GUI::GuiPointLight::layoutRow(QGridLayout *_lay, int &_
 }
 
 /*!
+ * \brief Create widget with this GUI
+ * \return Widget with point light GUI
+ */
+QWidget *Universe1::Widgets::GUI::GuiPointLight::createWidget()
+{
+    QGridLayout *lay = new QGridLayout();
+    int row = 0;
+    layoutRow(lay, row, true);
+    lay->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Expanding), row, 0, 1, 4);
+    QWidget *result = new QWidget();
+    result->setLayout(lay);
+    return result;
+}
+
+/*!
  * \brief Tool function, connect all widgets
  */
 void Universe1::Widgets::GUI::GuiPointLight::connectAll()

@@ -61,6 +61,7 @@ class GuiPointLight : public QObject
     inline GuiFloat *quadraticWidgets();
 
     void layoutRow(QGridLayout *_lay, int &_row, const bool _addSingleColor = true);
+    QWidget *createWidget();
 
  public slots:
     void setLight(const OpenGL::PointLight &_light);

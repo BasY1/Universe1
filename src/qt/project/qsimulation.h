@@ -9,7 +9,9 @@
 
 #include "../../simulation/simulation.h"
 
+#include <QMetaEnum>
 #include <QObject>
+#include <set>
 
 namespace Universe1 {
 namespace Project {
@@ -48,20 +50,25 @@ class QSimulation : public QObject
      */
     enum ElementProperty
     {
-        PropertyPosition,  //!< Element's position
-        PropertyVelocity,  //!< Element's velocity
+        PropertyNone = 0b0000000000000000,          //!< Helper zero value for flags
+        PropertyMass = 0b0000000000000001,          //!< Element's mass
+        PropertyVelocity = 0b0000000000000010,      //!< Element's velocity
+        PropertyAcceleration = 0b0000000000000100,  //!< Element's acceleration
+        PropertyForce = 0b0000000000001000,         //!< Element's gravitational force resp. acceleration
+        PropertyForceRed = 0b0000000000010000,      //!< Element's red force
+        PropertyForceGreen = 0b0000000000100000,    //!< Element's green force
+        PropertyForceBlue = 0b0000000001000000,     //!< Element's blue force
+        PropertySpin = 0b0000000010000000,          //!< Element's master (gravity) spin
+        PropertySpinRed = 0b0000000100000000,       //!< Element's red spin
+        PropertySpinGreen = 0b0000001000000000,     //!< Element's green spin
+        PropertySpinBlue = 0b0000010000000000,      //!< Element's blue spin
 
-        PropertySpin,       //!< Element's master (gravity) spin
-        PropertySpinRed,    //!< Element's red spin
-        PropertySpinGreen,  //!< Element's green spin
-        PropertySpinBlue,   //!< Element's blue spin
-
-        PropertyForce,       //!< Element's gravitational force resp. acceleration
-        PropertyForceRed,    //!< Element's red force
-        PropertyForceGreen,  //!< Element's green force
-        PropertyForceBlue,   //!< Element's blue force
     };
-    Q_ENUM(ElementProperty)
+    Q_DECLARE_FLAGS(ElementProperties, ElementProperty)
+    Q_FLAG(ElementProperties)
+
+    static std::list<ElementProperty> parseElementProperties(const ElementProperties _value);
+    static QString getElementPropertyName(const ElementProperty _value);
 
     /*!
      * \brief Constructor
@@ -81,6 +88,9 @@ class QSimulation : public QObject
      */
     virtual SimulationType simulationType() const = 0;
 
+    inline QString simulationTypeName() const;
+    inline int calculationStepCount() const;
+
     /*!
      * \brief Getter for simulation precision
      * \returns The simulation precision
@@ -99,6 +109,17 @@ class QSimulation : public QObject
     virtual bool usesHistory() const = 0;
 
     /*!
+     * \brief Load object historical positions from where wave hits event positions
+     * \param _out Output buffer
+     * \param _eventTimeStamp Time-stamp of event
+     * \param _eventPosition Event location
+     * \returns Success flag
+     */
+    virtual bool loadEventSource(std::vector<std::pair<double, QVector3D>> &_out,
+                                 const double _eventTimeStamp,
+                                 const QVector3D &_eventPosition) const = 0;
+
+    /*!
      * \brief Getter for using element radius flag (\c true - Elements are spheres with radius,
      *        or \c false - Elements are singularities)
      * \returns Using element radius flag
@@ -113,32 +134,48 @@ class QSimulation : public QObject
      * \brief Getter for collection of supported/required physics constants
      * \returns Supported physics constants
      */
-    virtual const std::vector<Universe1::Simulation::ConstantName> &supportedPhysicsConstants() const = 0;
+    virtual const std::set<Universe1::Simulation::ConstantName> &supportedPhysicsConstants() const = 0;
+
+    /*!
+     * \brief Getter for value of universe constant
+     * \param _name Universe constant name
+     * \returns Value of universe constant
+     */
+    virtual double getPhysicsConstant(const Universe1::Simulation::ConstantName &_name) const = 0;
+
+    inline double getConstantUniverseVelocity() const;
+    inline double getConstantGravityConstant() const;
+    inline double getConstantElementRadius() const;
+
+    /*!
+     * \brief Getter for maximum calculation step time duration
+     * \returns Maximum calculation step time duration
+     */
+    virtual double getMaximumStepTime() const = 0;
+
+    /*!
+     * \brief Getter for maximum calculation step curving angle
+     * \returns Maximum calculation step curving angle [degrees]
+     */
+    virtual double getMaximumCurveAngleDeg() const = 0;
 
     /*!
      * \brief Getter for collection of supported element properties
      * \returns Supported element properties
      */
-    virtual const std::vector<ElementProperty> &supportedElementProperties() const = 0;
+    virtual ElementProperties supportedElementProperties() const = 0;
+
+    /*!
+     * \brief Getter for count of object under initialization
+     * \returns Count of object under initialization
+     */
+    virtual size_t objectCountInit() const = 0;
 
     /*!
      * \brief Getter for count of object under calculation
      * \returns Count of object under calculation
      */
     virtual size_t objectCountCalc() const = 0;
-
-    /*!
-     * \brief Returns object ID that is last in initialization list
-     * \returns Last initialization object ID
-     */
-    virtual size_t lastInitObjectID() const = 0;
-
-    /*!
-     * \brief Fill output vector with collection of object IDs under initialization
-     * \param _out Output vector
-     * \returns
-     */
-    virtual void loadInitObjectIDs(std::vector<size_t> &_out) const = 0;
 
     /*!
      * \brief Fill output vector with initialization object time-stamps and positions
@@ -155,6 +192,22 @@ class QSimulation : public QObject
      * \returns \c true if success
      */
     virtual bool loadCalcPath(std::vector<std::pair<double, QVector3D>> &_out, const size_t _objectID) const = 0;
+
+    /*!
+     * \brief Getter for initialization object position at time-stamp
+     * \param _objectID Object's index
+     * \param _timeStamp Time-stamp of required value
+     * \returns Pair, where \c first item is success flag, and \c second item is position (as \c QVector3D)
+     */
+    virtual std::pair<bool, QVector3D> loadInitPosition(const size_t _objectID, const double _timeStamp) const = 0;
+
+    /*!
+     * \brief Getter for calculation object position at time-stamp
+     * \param _objectID Object's index
+     * \param _timeStamp Time-stamp of required value
+     * \returns Pair, where \c first item is success flag, and \c second item is position (as \c QVector3D)
+     */
+    virtual std::pair<bool, QVector3D> loadCalcPosition(const size_t _objectID, const double _timeStamp) const = 0;
 
     /*!
      * \brief Universal getter for initialization object property
@@ -178,11 +231,10 @@ class QSimulation : public QObject
 
     /*!
      * \brief Calculate simulation, filling all object's histories
-     * \param _stepCount Step count to calculate
      * \returns Success flag
      * \sa Universe1::Simulation::Simulation::createSimulation(const size_t)
      */
-    virtual bool createSimulation(int _stepCount) = 0;
+    virtual bool createSimulation() = 0;
 
     /*!
      * \brief Getter simulation ID
@@ -221,14 +273,87 @@ class QSimulation : public QObject
      */
     virtual void setPrecision(Precision _precision) = 0;
 
+    /*!
+     * \brief Setter for universe constant
+     * \param _constantName New constant name
+     * \param _value New constant value
+     */
+    virtual void setUniverseConstant(const Universe1::Simulation::ConstantName _constantName, const double _value) = 0;
+
+    void setConstantUniverseVelocity(double _value);
+    void setConstantGravityConstant(double _value);
+    void setConstantElementRadius(double _value);
+    void setCalculationStepCount(int _value);
+
+    /*!
+     * \brief Setter for maximum calculation step time duration
+     * \param _value New value
+     */
+    virtual void setMaximumStepTime(double _value) = 0;
+
+    /*!
+     * \brief Setter for maximum calculation step curving angle
+     * \param _value New angle value [degrees]
+     */
+    virtual void setMaximumCurveAngleDeg(double _value) = 0;
+
  signals:
     void dataChanged();  //!< Simulation data was changed
 
  protected:
-    const QString m_ID;     //!< Simulation ID
-    QString m_name;         //!< Simulation name
-    QString m_description;  //!< Simulation description
+    const QString m_ID;          //!< Simulation ID
+    int m_calculationStepCount;  //!< Calculation step count
+    QString m_name;              //!< Simulation name
+    QString m_description;       //!< Simulation description
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QSimulation::ElementProperties)
+
+/*!
+ * \brief Tool function - simulation type name
+ * \returns Name of simulation type
+ */
+inline QString QSimulation::simulationTypeName() const
+{
+    const QMetaEnum me = QMetaEnum::fromType<SimulationType>();
+    return me.valueToKey(simulationType());
+}
+
+/*!
+ * \brief Getter for calculation step count
+ * \returns Calculation step count
+ */
+inline int QSimulation::calculationStepCount() const
+{
+    return m_calculationStepCount;
+}
+
+/*!
+ * \brief Getter for speed of the universe constant
+ * \returns Speed of the universe constant
+ */
+inline double QSimulation::getConstantUniverseVelocity() const
+{
+    return getPhysicsConstant(Simulation::Const_UniverseVelocity);
+}
+
+/*!
+ * \brief Getter for gravitational constant
+ * \returns Gravitational constant
+ */
+inline double QSimulation::getConstantGravityConstant() const
+{
+    return getPhysicsConstant(Simulation::Const_GravityConstant);
+}
+
+/*!
+ * \brief Getter for element radius
+ * \returns Element radius
+ */
+inline double QSimulation::getConstantElementRadius() const
+{
+    return getPhysicsConstant(Simulation::Const_ElementRadius);
+}
 
 /*!
  * \brief Tool template function for detecting QSimulation::Precision literal from template parameter

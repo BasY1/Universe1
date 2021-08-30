@@ -103,6 +103,23 @@ struct Material : public ADSColors
     static const Material &materialAntiBlue();        //!< Anti-blue (yellow) material
     static const Material &materialAntiBlueLight();   //!< Anti-blue (yellow) light material
     static const Material &materialAntiBlueDark();    //!< Anti-blue (yellow) dark material
+
+    static const Material &materialAntiCyan();          //!< Anti-red (red) material
+    static const Material &materialAntiCyanLight();     //!< Anti-red (red) light material
+    static const Material &materialAntiCyanDark();      //!< Anti-red (red) dark material
+    static const Material &materialAntiMagenta();       //!< Anti-green (green) material
+    static const Material &materialAntiMagentaLight();  //!< Anti-green (green) light material
+    static const Material &materialAntiMagentaDark();   //!< Anti-green (green) dark material
+    static const Material &materialAntiYellow();        //!< Anti-blue (blue) material
+    static const Material &materialAntiYellowLight();   //!< Anti-blue (blue) light material
+    static const Material &materialAntiYellowDark();    //!< Anti-blue (blue) dark material
+
+    static Material ratioBlackWhite(const float _ratio);
+    static Material ratioWhiteBlack(const float _ratio);
+    static Material ratioGreenRed(const float _ratio);
+    static Material ratioBlueRed(const float _ratio);
+    static Material ratioMagentaRed(const float _ratio);
+    static Material ratioRedMagenta(const float _ratio);
 };
 
 /*!

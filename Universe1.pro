@@ -102,6 +102,7 @@ SOURCES += \
     \
     src/qt/opengl/models/modeldots.cpp \
     src/qt/opengl/models/modelpath.cpp \
+    src/qt/opengl/models/modelsingularity.cpp \
     \
     src/qt/opengl/models/linesmodel.cpp \
     src/qt/opengl/models/modelpointlight.cpp \
@@ -122,6 +123,7 @@ HEADERS += \
     \
     src/qt/opengl/models/modeldots.h \
     src/qt/opengl/models/modelpath.h \
+    src/qt/opengl/models/modelsingularity.h \
     \
     src/qt/opengl/models/linesmodel.h \
     src/qt/opengl/models/modelpointlight.h \
@@ -176,17 +178,30 @@ HEADERS += \
 ########################################################################################################################
 
 SOURCES += \
-    src/qt/widgets/materialeditor/widgetview.cpp \
+    src/qt/widgets/simulationeditor/widgetsimulationeditorview.cpp \
+    src/qt/widgets/simulationeditor/widgetgeneratornewtoncurrent.cpp \
+    src/qt/widgets/simulationeditor/widgetsimulationeditor.cpp \
+    src/qt/widgets/simulationeditor/dialogsimulationeditor.cpp \
+
+HEADERS += \
+    src/qt/widgets/simulationeditor/widgetsimulationeditorview.h \
+    src/qt/widgets/simulationeditor/widgetgeneratornewtoncurrent.h \
+    src/qt/widgets/simulationeditor/widgetsimulationeditor.h \
+    src/qt/widgets/simulationeditor/dialogsimulationeditor.h \
+
+########################################################################################################################
+
+SOURCES += \
+    src/qt/widgets/materialeditor/widgetmaterialeditorview.cpp \
     src/qt/widgets/materialeditor/widgetmodels.cpp \
     src/qt/widgets/materialeditor/widgetmaterialeditor.cpp \
     src/qt/widgets/materialeditor/dialogmaterialeditor.cpp \
 
 HEADERS += \
-    src/qt/widgets/materialeditor/widgetview.h \
+    src/qt/widgets/materialeditor/widgetmaterialeditorview.h \
     src/qt/widgets/materialeditor/widgetmodels.h \
     src/qt/widgets/materialeditor/widgetmaterialeditor.h \
     src/qt/widgets/materialeditor/dialogmaterialeditor.h \
-
 
 ########################################################################################################################
 

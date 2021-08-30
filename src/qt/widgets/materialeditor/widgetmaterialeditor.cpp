@@ -56,7 +56,7 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(P
                                                                                QWidget *_parent)
     : QSplitter(Qt::Horizontal, _parent)
     , m_materialDB(_materialDB)
-    , m_view(new WidgetView(m_materialDB->defaultMaterial()))
+    , m_view(new WidgetMaterialEditorView(m_materialDB->defaultMaterial()))
     , m_sceneAmbient(new GUI::GuiFloat(m_view->sceneAmbientFactor(), 0, 1, 3, Qt::Horizontal))
     , m_guiMaterial(new GUI::GuiMaterial(m_materialDB->defaultMaterial(), Qt::Horizontal))
     , m_materialName(new QLineEdit())
@@ -131,18 +131,9 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(P
     {
         const OpenGL::PointLight &pl = m_view->pointLights().at(i);
         m_guiPointLight[i] = new GUI::GuiPointLight(i, pl, range, 2, Qt::Horizontal);
-
-        QGridLayout *layPointLight = new QGridLayout();
-        rowLay = 0;
-        m_guiPointLight[i]->layoutRow(layPointLight, rowLay, true);
-        layPointLight->addItem(
-            new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Expanding), rowLay++, 0, 1, 4);
-
-        QWidget *widLight = new QWidget();
-        widLight->setLayout(layPointLight);
-
         m_tabPointLights->addTab(
-            widLight, tr("%1 %2").arg(pl.mode == OpenGL::PointLight::LightOff ? tr("Off") : tr("Light")).arg(i + 1));
+            m_guiPointLight[i]->createWidget(),
+            tr("%1 %2").arg(pl.mode == OpenGL::PointLight::LightOff ? tr("Off") : tr("Light")).arg(i + 1));
     }
 
     m_tabPointLights->setCurrentIndex(
@@ -154,27 +145,13 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(P
         const OpenGL::SpotLight &sl = m_view->spotLights().at(i);
         m_guiSpotLight[i] = new GUI::GuiSpotLight(i, sl, range, 2, Qt::Horizontal);
 
-        QGridLayout *laySpotLight = new QGridLayout();
-        rowLay = 0;
-        m_guiSpotLight[i]->layoutRow(laySpotLight, rowLay, true);
-        laySpotLight->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Expanding), rowLay++, 0, 1, 4);
-
-        QWidget *widLight = new QWidget();
-        widLight->setLayout(laySpotLight);
-
         m_tabSpotLights->addTab(
-            widLight, tr("%1 %2").arg(sl.mode == OpenGL::SpotLight::LightOff ? tr("Off") : tr("Light")).arg(i + 1));
+            m_guiSpotLight[i]->createWidget(),
+            tr("%1 %2").arg(sl.mode == OpenGL::SpotLight::LightOff ? tr("Off") : tr("Light")).arg(i + 1));
     }
 
     m_tabSpotLights->setCurrentIndex(
         settings.value("MaterialEditor/tabSpotLights", m_tabSpotLights->currentIndex()).toInt());
-
-    QGridLayout *layDirLight = new QGridLayout();
-    rowLay = 0;
-    m_guiDirectionLight->layoutRow(layDirLight, rowLay, true);
-    layDirLight->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Expanding), rowLay++, 0, 1, 4);
-    QWidget *widDirLight = new QWidget();
-    widDirLight->setLayout(layDirLight);
 
     m_tabModels->addTab(m_widgetSphere, tr("Sphere"));
     m_tabModels->addTab(m_widgetCylinder, tr("Cylinder"));
@@ -187,7 +164,7 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(P
     m_tabModels->setCurrentIndex(m_view->currentModel());
 
     m_tabSettings->addTab(m_tabModels, tr("Models"));
-    m_tabSettings->addTab(widDirLight, tr("Direction light"));
+    m_tabSettings->addTab(m_guiDirectionLight->createWidget(), tr("Direction light"));
     m_tabSettings->addTab(m_tabPointLights, tr("Point lights"));
     m_tabSettings->addTab(m_tabSpotLights, tr("Spot lights"));
     m_tabSettings->addTab(m_widgetGLSettings, tr("Settings"));
@@ -207,70 +184,110 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::WidgetMaterialEditor(P
     connect(m_tableDB, &QTableWidget::currentItemChanged, this, &WidgetMaterialEditor::namesCurrentChanged);
     connect(m_tableDB, &QTableWidget::itemDoubleClicked, this, &WidgetMaterialEditor::namesDoubleClicked);
 
-    connect(m_guiMaterial, &GUI::GuiMaterial::changed, m_view, &WidgetView::setMaterial);
-    connect(m_guiDirectionLight, &GUI::GuiDirectionLight::changed, m_view, &WidgetView::setDirectionLight);
+    connect(m_guiMaterial, &GUI::GuiMaterial::changed, m_view, &WidgetMaterialEditorView::setMaterial);
+    connect(
+        m_guiDirectionLight, &GUI::GuiDirectionLight::changed, m_view, &WidgetMaterialEditorView::setDirectionLight);
     for (int i = 0; i < m_view->program()->pointLightsCount(); ++i)
         connect(m_guiPointLight[i], &GUI::GuiPointLight::changed, this, &WidgetMaterialEditor::pointLightChanged);
 
     for (int i = 0; i < m_view->program()->spotLightsCount(); ++i)
         connect(m_guiSpotLight[i], &GUI::GuiSpotLight::changed, this, &WidgetMaterialEditor::spotLightChanged);
 
-    connect(m_sceneAmbient, &GUI::GuiFloat::changed, m_view, &WidgetView::setSceneAmbientFactor);
-    connect(m_tabModels, &QTabWidget::currentChanged, m_view, &WidgetView::setCurrentModel);
+    connect(m_sceneAmbient, &GUI::GuiFloat::changed, m_view, &WidgetMaterialEditorView::setSceneAmbientFactor);
+    connect(m_tabModels, &QTabWidget::currentChanged, m_view, &WidgetMaterialEditorView::setCurrentModel);
 
-    connect(m_widgetSphere, &WidgetModelSphere::wireFrameChanged, m_view, &WidgetView::sphereWireFrameChanged);
+    connect(m_widgetSphere,
+            &WidgetModelSphere::wireFrameChanged,
+            m_view,
+            &WidgetMaterialEditorView::sphereWireFrameChanged);
     connect(m_widgetSphere,
             &WidgetModelSphere::equatorPointCountChanged,
             m_view,
-            &WidgetView::sphereEquatorPointCountChanged);
+            &WidgetMaterialEditorView::sphereEquatorPointCountChanged);
 
-    connect(m_widgetCylinder, &WidgetModelCylinder::wireFrameChanged, m_view, &WidgetView::cylinderWireFrameChanged);
+    connect(m_widgetCylinder,
+            &WidgetModelCylinder::wireFrameChanged,
+            m_view,
+            &WidgetMaterialEditorView::cylinderWireFrameChanged);
     connect(m_widgetCylinder,
             &WidgetModelCylinder::equatorPointCountChanged,
             m_view,
-            &WidgetView::cylinderEquatorPointCountChanged);
+            &WidgetMaterialEditorView::cylinderEquatorPointCountChanged);
 
-    connect(m_widgetTorus, &WidgetModelTorus::wireFrameChanged, m_view, &WidgetView::torusWireFrameChanged);
     connect(
-        m_widgetTorus, &WidgetModelTorus::circlePointCountChanged, m_view, &WidgetView::torusCirclePointCountChanged);
+        m_widgetTorus, &WidgetModelTorus::wireFrameChanged, m_view, &WidgetMaterialEditorView::torusWireFrameChanged);
+    connect(m_widgetTorus,
+            &WidgetModelTorus::circlePointCountChanged,
+            m_view,
+            &WidgetMaterialEditorView::torusCirclePointCountChanged);
 
-    connect(m_widgetBox, &WidgetModelBox::wireFrameChanged, m_view, &WidgetView::boxWireFrameChanged);
-    connect(m_widgetBox, &WidgetModelBox::normalSetupChanged, m_view, &WidgetView::boxNormalSetupChanged);
-    connect(m_widgetBox, &WidgetModelBox::boxSize1Changed, m_view, &WidgetView::boxBoxSize1Changed);
-    connect(m_widgetBox, &WidgetModelBox::boxSize2Changed, m_view, &WidgetView::boxBoxSize2Changed);
-    connect(m_widgetBox, &WidgetModelBox::boxSize3Changed, m_view, &WidgetView::boxBoxSize3Changed);
+    connect(m_widgetBox, &WidgetModelBox::wireFrameChanged, m_view, &WidgetMaterialEditorView::boxWireFrameChanged);
+    connect(m_widgetBox, &WidgetModelBox::normalSetupChanged, m_view, &WidgetMaterialEditorView::boxNormalSetupChanged);
+    connect(m_widgetBox, &WidgetModelBox::boxSize1Changed, m_view, &WidgetMaterialEditorView::boxBoxSize1Changed);
+    connect(m_widgetBox, &WidgetModelBox::boxSize2Changed, m_view, &WidgetMaterialEditorView::boxBoxSize2Changed);
+    connect(m_widgetBox, &WidgetModelBox::boxSize3Changed, m_view, &WidgetMaterialEditorView::boxBoxSize3Changed);
 
-    connect(m_widgetArrow, &WidgetModelArrow::wireFrameChanged, m_view, &WidgetView::arrowWireFrameChanged);
     connect(
-        m_widgetArrow, &WidgetModelArrow::circlePointCountChanged, m_view, &WidgetView::arrowCirclePointCountChanged);
-    connect(m_widgetArrow, &WidgetModelArrow::materialLineChanged, m_view, &WidgetView::arrowMaterialLineChanged);
-    connect(m_widgetArrow, &WidgetModelArrow::materialBottomChanged, m_view, &WidgetView::arrowMaterialBottomChanged);
-    connect(m_widgetArrow, &WidgetModelArrow::arrowRatioChanged, m_view, &WidgetView::arrowRatioChanged);
+        m_widgetArrow, &WidgetModelArrow::wireFrameChanged, m_view, &WidgetMaterialEditorView::arrowWireFrameChanged);
+    connect(m_widgetArrow,
+            &WidgetModelArrow::circlePointCountChanged,
+            m_view,
+            &WidgetMaterialEditorView::arrowCirclePointCountChanged);
+    connect(m_widgetArrow,
+            &WidgetModelArrow::materialLineChanged,
+            m_view,
+            &WidgetMaterialEditorView::arrowMaterialLineChanged);
+    connect(m_widgetArrow,
+            &WidgetModelArrow::materialBottomChanged,
+            m_view,
+            &WidgetMaterialEditorView::arrowMaterialBottomChanged);
+    connect(m_widgetArrow, &WidgetModelArrow::arrowRatioChanged, m_view, &WidgetMaterialEditorView::arrowRatioChanged);
 
-    connect(m_widgetSpinArrow, &WidgetModelArrow::wireFrameChanged, m_view, &WidgetView::spinArrowWireFrameChanged);
+    connect(m_widgetSpinArrow,
+            &WidgetModelArrow::wireFrameChanged,
+            m_view,
+            &WidgetMaterialEditorView::spinArrowWireFrameChanged);
     connect(m_widgetSpinArrow,
             &WidgetModelArrow::circlePointCountChanged,
             m_view,
-            &WidgetView::spinArrowCirclePointCountChanged);
-    connect(
-        m_widgetSpinArrow, &WidgetModelArrow::materialLineChanged, m_view, &WidgetView::spinArrowMaterialLineChanged);
+            &WidgetMaterialEditorView::spinArrowCirclePointCountChanged);
+    connect(m_widgetSpinArrow,
+            &WidgetModelArrow::materialLineChanged,
+            m_view,
+            &WidgetMaterialEditorView::spinArrowMaterialLineChanged);
     connect(m_widgetSpinArrow,
             &WidgetModelArrow::materialBottomChanged,
             m_view,
-            &WidgetView::spinArrowMaterialBottomChanged);
-    connect(m_widgetSpinArrow, &WidgetModelArrow::arrowRatioChanged, m_view, &WidgetView::spinArrowRatioChanged);
+            &WidgetMaterialEditorView::spinArrowMaterialBottomChanged);
+    connect(m_widgetSpinArrow,
+            &WidgetModelArrow::arrowRatioChanged,
+            m_view,
+            &WidgetMaterialEditorView::spinArrowRatioChanged);
 
-    connect(m_widgetTriangle, &WidgetModelTriangle::wireFrameChanged, m_view, &WidgetView::triangleWireFrameChanged);
-    connect(m_widgetTriangle, &WidgetModelTriangle::ccwChanged, m_view, &WidgetView::triangleCcwChanged);
-    connect(m_widgetTriangle, &WidgetModelTriangle::normal1Changed, m_view, &WidgetView::triangleNormal1Changed);
-    connect(m_widgetTriangle, &WidgetModelTriangle::normal2Changed, m_view, &WidgetView::triangleNormal2Changed);
-    connect(m_widgetTriangle, &WidgetModelTriangle::normal3Changed, m_view, &WidgetView::triangleNormal3Changed);
+    connect(m_widgetTriangle,
+            &WidgetModelTriangle::wireFrameChanged,
+            m_view,
+            &WidgetMaterialEditorView::triangleWireFrameChanged);
+    connect(m_widgetTriangle, &WidgetModelTriangle::ccwChanged, m_view, &WidgetMaterialEditorView::triangleCcwChanged);
+    connect(m_widgetTriangle,
+            &WidgetModelTriangle::normal1Changed,
+            m_view,
+            &WidgetMaterialEditorView::triangleNormal1Changed);
+    connect(m_widgetTriangle,
+            &WidgetModelTriangle::normal2Changed,
+            m_view,
+            &WidgetMaterialEditorView::triangleNormal2Changed);
+    connect(m_widgetTriangle,
+            &WidgetModelTriangle::normal3Changed,
+            m_view,
+            &WidgetMaterialEditorView::triangleNormal3Changed);
 
-    connect(m_widgetPlane, &WidgetModelPlane::wireFrameChanged, m_view, &WidgetView::planeWireFrameChanged);
-    connect(m_widgetPlane, &WidgetModelPlane::normal1Changed, m_view, &WidgetView::planeNormal1Changed);
-    connect(m_widgetPlane, &WidgetModelPlane::normal2Changed, m_view, &WidgetView::planeNormal2Changed);
-    connect(m_widgetPlane, &WidgetModelPlane::dots1Changed, m_view, &WidgetView::planeDots1Changed);
-    connect(m_widgetPlane, &WidgetModelPlane::dots2Changed, m_view, &WidgetView::planeDots2Changed);
+    connect(
+        m_widgetPlane, &WidgetModelPlane::wireFrameChanged, m_view, &WidgetMaterialEditorView::planeWireFrameChanged);
+    connect(m_widgetPlane, &WidgetModelPlane::normal1Changed, m_view, &WidgetMaterialEditorView::planeNormal1Changed);
+    connect(m_widgetPlane, &WidgetModelPlane::normal2Changed, m_view, &WidgetMaterialEditorView::planeNormal2Changed);
+    connect(m_widgetPlane, &WidgetModelPlane::dots1Changed, m_view, &WidgetMaterialEditorView::planeDots1Changed);
+    connect(m_widgetPlane, &WidgetModelPlane::dots2Changed, m_view, &WidgetMaterialEditorView::planeDots2Changed);
 }
 
 /*!
@@ -289,70 +306,114 @@ Universe1::Widgets::MaterialEditor::WidgetMaterialEditor::~WidgetMaterialEditor(
     disconnect(m_tableDB, &QTableWidget::currentItemChanged, this, &WidgetMaterialEditor::namesCurrentChanged);
     disconnect(m_tableDB, &QTableWidget::itemDoubleClicked, this, &WidgetMaterialEditor::namesDoubleClicked);
 
-    disconnect(m_guiMaterial, &GUI::GuiMaterial::changed, m_view, &WidgetView::setMaterial);
-    disconnect(m_guiDirectionLight, &GUI::GuiDirectionLight::changed, m_view, &WidgetView::setDirectionLight);
+    disconnect(m_guiMaterial, &GUI::GuiMaterial::changed, m_view, &WidgetMaterialEditorView::setMaterial);
+    disconnect(
+        m_guiDirectionLight, &GUI::GuiDirectionLight::changed, m_view, &WidgetMaterialEditorView::setDirectionLight);
     for (int i = 0; i < m_view->program()->pointLightsCount(); ++i)
         disconnect(m_guiPointLight[i], &GUI::GuiPointLight::changed, this, &WidgetMaterialEditor::pointLightChanged);
     for (int i = 0; i < m_view->program()->spotLightsCount(); ++i)
         disconnect(m_guiSpotLight[i], &GUI::GuiSpotLight::changed, this, &WidgetMaterialEditor::spotLightChanged);
 
-    disconnect(m_sceneAmbient, &GUI::GuiFloat::changed, m_view, &WidgetView::setSceneAmbientFactor);
-    disconnect(m_tabModels, &QTabWidget::currentChanged, m_view, &WidgetView::setCurrentModel);
+    disconnect(m_sceneAmbient, &GUI::GuiFloat::changed, m_view, &WidgetMaterialEditorView::setSceneAmbientFactor);
+    disconnect(m_tabModels, &QTabWidget::currentChanged, m_view, &WidgetMaterialEditorView::setCurrentModel);
 
-    disconnect(m_widgetSphere, &WidgetModelSphere::wireFrameChanged, m_view, &WidgetView::sphereWireFrameChanged);
+    disconnect(m_widgetSphere,
+               &WidgetModelSphere::wireFrameChanged,
+               m_view,
+               &WidgetMaterialEditorView::sphereWireFrameChanged);
     disconnect(m_widgetSphere,
                &WidgetModelSphere::equatorPointCountChanged,
                m_view,
-               &WidgetView::sphereEquatorPointCountChanged);
+               &WidgetMaterialEditorView::sphereEquatorPointCountChanged);
 
-    disconnect(m_widgetCylinder, &WidgetModelCylinder::wireFrameChanged, m_view, &WidgetView::cylinderWireFrameChanged);
+    disconnect(m_widgetCylinder,
+               &WidgetModelCylinder::wireFrameChanged,
+               m_view,
+               &WidgetMaterialEditorView::cylinderWireFrameChanged);
     disconnect(m_widgetCylinder,
                &WidgetModelCylinder::equatorPointCountChanged,
                m_view,
-               &WidgetView::cylinderEquatorPointCountChanged);
+               &WidgetMaterialEditorView::cylinderEquatorPointCountChanged);
 
-    disconnect(m_widgetTorus, &WidgetModelTorus::wireFrameChanged, m_view, &WidgetView::torusWireFrameChanged);
     disconnect(
-        m_widgetTorus, &WidgetModelTorus::circlePointCountChanged, m_view, &WidgetView::torusCirclePointCountChanged);
+        m_widgetTorus, &WidgetModelTorus::wireFrameChanged, m_view, &WidgetMaterialEditorView::torusWireFrameChanged);
+    disconnect(m_widgetTorus,
+               &WidgetModelTorus::circlePointCountChanged,
+               m_view,
+               &WidgetMaterialEditorView::torusCirclePointCountChanged);
 
-    disconnect(m_widgetBox, &WidgetModelBox::wireFrameChanged, m_view, &WidgetView::boxWireFrameChanged);
-    disconnect(m_widgetBox, &WidgetModelBox::normalSetupChanged, m_view, &WidgetView::boxNormalSetupChanged);
-    disconnect(m_widgetBox, &WidgetModelBox::boxSize1Changed, m_view, &WidgetView::boxBoxSize1Changed);
-    disconnect(m_widgetBox, &WidgetModelBox::boxSize2Changed, m_view, &WidgetView::boxBoxSize2Changed);
-    disconnect(m_widgetBox, &WidgetModelBox::boxSize3Changed, m_view, &WidgetView::boxBoxSize3Changed);
-
-    disconnect(m_widgetArrow, &WidgetModelArrow::wireFrameChanged, m_view, &WidgetView::arrowWireFrameChanged);
+    disconnect(m_widgetBox, &WidgetModelBox::wireFrameChanged, m_view, &WidgetMaterialEditorView::boxWireFrameChanged);
     disconnect(
-        m_widgetArrow, &WidgetModelArrow::circlePointCountChanged, m_view, &WidgetView::arrowCirclePointCountChanged);
-    disconnect(m_widgetArrow, &WidgetModelArrow::materialLineChanged, m_view, &WidgetView::arrowMaterialLineChanged);
-    disconnect(
-        m_widgetArrow, &WidgetModelArrow::materialBottomChanged, m_view, &WidgetView::arrowMaterialBottomChanged);
-    disconnect(m_widgetArrow, &WidgetModelArrow::arrowRatioChanged, m_view, &WidgetView::arrowRatioChanged);
+        m_widgetBox, &WidgetModelBox::normalSetupChanged, m_view, &WidgetMaterialEditorView::boxNormalSetupChanged);
+    disconnect(m_widgetBox, &WidgetModelBox::boxSize1Changed, m_view, &WidgetMaterialEditorView::boxBoxSize1Changed);
+    disconnect(m_widgetBox, &WidgetModelBox::boxSize2Changed, m_view, &WidgetMaterialEditorView::boxBoxSize2Changed);
+    disconnect(m_widgetBox, &WidgetModelBox::boxSize3Changed, m_view, &WidgetMaterialEditorView::boxBoxSize3Changed);
 
-    disconnect(m_widgetSpinArrow, &WidgetModelArrow::wireFrameChanged, m_view, &WidgetView::spinArrowWireFrameChanged);
+    disconnect(
+        m_widgetArrow, &WidgetModelArrow::wireFrameChanged, m_view, &WidgetMaterialEditorView::arrowWireFrameChanged);
+    disconnect(m_widgetArrow,
+               &WidgetModelArrow::circlePointCountChanged,
+               m_view,
+               &WidgetMaterialEditorView::arrowCirclePointCountChanged);
+    disconnect(m_widgetArrow,
+               &WidgetModelArrow::materialLineChanged,
+               m_view,
+               &WidgetMaterialEditorView::arrowMaterialLineChanged);
+    disconnect(m_widgetArrow,
+               &WidgetModelArrow::materialBottomChanged,
+               m_view,
+               &WidgetMaterialEditorView::arrowMaterialBottomChanged);
+    disconnect(
+        m_widgetArrow, &WidgetModelArrow::arrowRatioChanged, m_view, &WidgetMaterialEditorView::arrowRatioChanged);
+
+    disconnect(m_widgetSpinArrow,
+               &WidgetModelArrow::wireFrameChanged,
+               m_view,
+               &WidgetMaterialEditorView::spinArrowWireFrameChanged);
     disconnect(m_widgetSpinArrow,
                &WidgetModelArrow::circlePointCountChanged,
                m_view,
-               &WidgetView::spinArrowCirclePointCountChanged);
-    disconnect(
-        m_widgetSpinArrow, &WidgetModelArrow::materialLineChanged, m_view, &WidgetView::spinArrowMaterialLineChanged);
+               &WidgetMaterialEditorView::spinArrowCirclePointCountChanged);
+    disconnect(m_widgetSpinArrow,
+               &WidgetModelArrow::materialLineChanged,
+               m_view,
+               &WidgetMaterialEditorView::spinArrowMaterialLineChanged);
     disconnect(m_widgetSpinArrow,
                &WidgetModelArrow::materialBottomChanged,
                m_view,
-               &WidgetView::spinArrowMaterialBottomChanged);
-    disconnect(m_widgetSpinArrow, &WidgetModelArrow::arrowRatioChanged, m_view, &WidgetView::spinArrowRatioChanged);
+               &WidgetMaterialEditorView::spinArrowMaterialBottomChanged);
+    disconnect(m_widgetSpinArrow,
+               &WidgetModelArrow::arrowRatioChanged,
+               m_view,
+               &WidgetMaterialEditorView::spinArrowRatioChanged);
 
-    disconnect(m_widgetTriangle, &WidgetModelTriangle::wireFrameChanged, m_view, &WidgetView::triangleWireFrameChanged);
-    disconnect(m_widgetTriangle, &WidgetModelTriangle::ccwChanged, m_view, &WidgetView::triangleCcwChanged);
-    disconnect(m_widgetTriangle, &WidgetModelTriangle::normal1Changed, m_view, &WidgetView::triangleNormal1Changed);
-    disconnect(m_widgetTriangle, &WidgetModelTriangle::normal2Changed, m_view, &WidgetView::triangleNormal2Changed);
-    disconnect(m_widgetTriangle, &WidgetModelTriangle::normal3Changed, m_view, &WidgetView::triangleNormal3Changed);
+    disconnect(m_widgetTriangle,
+               &WidgetModelTriangle::wireFrameChanged,
+               m_view,
+               &WidgetMaterialEditorView::triangleWireFrameChanged);
+    disconnect(
+        m_widgetTriangle, &WidgetModelTriangle::ccwChanged, m_view, &WidgetMaterialEditorView::triangleCcwChanged);
+    disconnect(m_widgetTriangle,
+               &WidgetModelTriangle::normal1Changed,
+               m_view,
+               &WidgetMaterialEditorView::triangleNormal1Changed);
+    disconnect(m_widgetTriangle,
+               &WidgetModelTriangle::normal2Changed,
+               m_view,
+               &WidgetMaterialEditorView::triangleNormal2Changed);
+    disconnect(m_widgetTriangle,
+               &WidgetModelTriangle::normal3Changed,
+               m_view,
+               &WidgetMaterialEditorView::triangleNormal3Changed);
 
-    disconnect(m_widgetPlane, &WidgetModelPlane::wireFrameChanged, m_view, &WidgetView::planeWireFrameChanged);
-    disconnect(m_widgetPlane, &WidgetModelPlane::normal1Changed, m_view, &WidgetView::planeNormal1Changed);
-    disconnect(m_widgetPlane, &WidgetModelPlane::normal2Changed, m_view, &WidgetView::planeNormal2Changed);
-    disconnect(m_widgetPlane, &WidgetModelPlane::dots1Changed, m_view, &WidgetView::planeDots1Changed);
-    disconnect(m_widgetPlane, &WidgetModelPlane::dots2Changed, m_view, &WidgetView::planeDots2Changed);
+    disconnect(
+        m_widgetPlane, &WidgetModelPlane::wireFrameChanged, m_view, &WidgetMaterialEditorView::planeWireFrameChanged);
+    disconnect(
+        m_widgetPlane, &WidgetModelPlane::normal1Changed, m_view, &WidgetMaterialEditorView::planeNormal1Changed);
+    disconnect(
+        m_widgetPlane, &WidgetModelPlane::normal2Changed, m_view, &WidgetMaterialEditorView::planeNormal2Changed);
+    disconnect(m_widgetPlane, &WidgetModelPlane::dots1Changed, m_view, &WidgetMaterialEditorView::planeDots1Changed);
+    disconnect(m_widgetPlane, &WidgetModelPlane::dots2Changed, m_view, &WidgetMaterialEditorView::planeDots2Changed);
 
     delete m_sceneAmbient;
     delete m_guiMaterial;

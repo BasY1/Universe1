@@ -77,6 +77,8 @@ class ModelDots : public GLModel
 
     void setDots(const std::vector<QVector3D> &_vertexData);
 
+    void setPlaneXY(const int minX, const int minY, const int maxX, const int maxY);
+
  protected:
     bool m_isInit;  //!< OpenGL buffers initialized flag
 

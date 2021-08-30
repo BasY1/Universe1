@@ -252,3 +252,150 @@ const Universe1::OpenGL::Material &Universe1::OpenGL::Material::materialAntiBlue
 {
     return materialYellowDark;
 }
+
+/*!
+ * \brief Anti-cyan (red) material
+ * \returns Anti-cyan (red) material
+ */
+const Universe1::OpenGL::Material &Universe1::OpenGL::Material::materialAntiCyan()
+{
+    return materialRed;
+}
+
+/*!
+ * \brief Anti-cyan (red) material - lighter version
+ * \returns Anti-cyan (red) material - lighter version
+ */
+const Universe1::OpenGL::Material &Universe1::OpenGL::Material::materialAntiCyanLight()
+{
+    return materialRedLight;
+}
+
+/*!
+ * \brief Anti-cyan (red) material - darker version
+ * \returns Anti-cyan (red) material - darker version
+ */
+const Universe1::OpenGL::Material &Universe1::OpenGL::Material::materialAntiCyanDark()
+{
+    return materialRedDark;
+}
+
+/*!
+ * \brief Anti-magenta (green) material
+ * \returns Anti-magenta (green) material
+ */
+const Universe1::OpenGL::Material &Universe1::OpenGL::Material::materialAntiMagenta()
+{
+    return materialGreen;
+}
+
+/*!
+ * \brief Anti-magenta (green) material - lighter version
+ * \returns Anti-magenta (green) material - lighter version
+ */
+const Universe1::OpenGL::Material &Universe1::OpenGL::Material::materialAntiMagentaLight()
+{
+    return materialGreenLight;
+}
+
+/*!
+ * \brief Anti-magenta (green) material - darker version
+ * \returns Anti-magenta (green) material - darker version
+ */
+const Universe1::OpenGL::Material &Universe1::OpenGL::Material::materialAntiMagentaDark()
+{
+    return materialGreenDark;
+}
+
+/*!
+ * \brief Anti-yellow (blue) material
+ * \returns Anti-yellow (blue) material
+ */
+const Universe1::OpenGL::Material &Universe1::OpenGL::Material::materialAntiYellow()
+{
+    return materialBlue;
+}
+
+/*!
+ * \brief Anti-yellow (blue) material - lighter version
+ * \returns Anti-yellow (blue) material - lighter version
+ */
+const Universe1::OpenGL::Material &Universe1::OpenGL::Material::materialAntiYellowLight()
+{
+    return materialBlueLight;
+}
+
+/*!
+ * \brief Anti-yellow (blue) material - darker version
+ * \returns Anti-yellow (blue) material - darker version
+ */
+const Universe1::OpenGL::Material &Universe1::OpenGL::Material::materialAntiYellowDark()
+{
+    return materialBlueDark;
+}
+
+/*!
+ * \brief Tool function - gray-scale ratio material
+ * \param _ratio Ratio
+ * \returns Material by ratio
+ */
+Universe1::OpenGL::Material Universe1::OpenGL::Material::ratioBlackWhite(const float _ratio)
+{
+    const QColor color = ratioColorBlackWhite(_ratio);
+    return Material(color.darker(), color, colorSpecular);
+}
+
+/*!
+ * \brief Tool function - inverted gray-scale ratio material
+ * \param _ratio Ratio
+ * \returns Material by ratio
+ */
+Universe1::OpenGL::Material Universe1::OpenGL::Material::ratioWhiteBlack(const float _ratio)
+{
+    const QColor color = ratioColorWhiteBlack(_ratio);
+    return Material(color.darker(), color, colorSpecular);
+}
+
+/*!
+ * \brief Tool function - green-red ratio material
+ * \param _ratio Ratio
+ * \returns Material by ratio
+ */
+Universe1::OpenGL::Material Universe1::OpenGL::Material::ratioGreenRed(const float _ratio)
+{
+    const QColor color = ratioColorGreenRed(_ratio);
+    return Material(color.darker(), color, colorSpecular);
+}
+
+/*!
+ * \brief Tool function - blue-red ratio material
+ * \param _ratio Ratio
+ * \returns Material by ratio
+ */
+Universe1::OpenGL::Material Universe1::OpenGL::Material::ratioBlueRed(const float _ratio)
+{
+    const QColor color = ratioColorBlueRed(_ratio);
+    return Material(color.darker(), color, colorSpecular);
+}
+
+/*!
+ * \brief Tool function - magenta-red ratio material
+ * \param _ratio Ratio
+ * \returns Material by ratio
+ */
+Universe1::OpenGL::Material Universe1::OpenGL::Material::ratioMagentaRed(const float _ratio)
+{
+    const QColor color = ratioColorMagentaRed(_ratio);
+    return Material(color.darker(), color, colorSpecular);
+}
+
+/*!
+ * \brief Tool function - red-magenta ratio material
+ * \param _ratio Ratio
+ * \returns Material by ratio
+ */
+Universe1::OpenGL::Material Universe1::OpenGL::Material::ratioRedMagenta(const float _ratio)
+{
+    const QColor color = ratioColorRedMagenta(_ratio);
+    return Material(color.darker(), color, colorSpecular);
+}
