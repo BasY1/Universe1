@@ -44,8 +44,12 @@ int main(int argc, char *argv[])
     // Universe1::Widgets::MaterialEditor::DialogMaterialEditor dialog(&db);
     // return dialog.exec();
 
-    Universe1::Widgets::SimulationEditor::DialogSimulationEditor dialog(
-        new Universe1::Project::QSimulationNewtonCurrent("0"));
+    Universe1::Project::QSimulationNewtonCurrent *sim = new Universe1::Project::QSimulationNewtonCurrent("0");
+    Universe1::Widgets::SimulationEditor::DialogSimulationEditor dialog(sim);
+
+    sim->setPrecision(Universe1::Project::QSimulation::PrecisionLongDouble);
+    sim->setMaximumStepTime(0.1);
+
     return dialog.exec();
 
     // return EXIT_SUCCESS;

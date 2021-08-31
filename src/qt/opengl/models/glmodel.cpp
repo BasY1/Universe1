@@ -69,6 +69,31 @@ void Universe1::OpenGL::Models::GLModel::setMaterial(const Material &_value)
 }
 
 /*!
+ * \brief Setup material mode to all materials
+ * \param _mode New material mode
+ */
+void Universe1::OpenGL::Models::GLModel::setMaterialMode(const Material::Mode _mode)
+{
+    for (Material &m : m_materials)
+        m.mode = _mode;
+    emit changed();
+}
+
+/*!
+ * \brief Setup material mode
+ * \param _materialIndex Index of material
+ * \param _mode New material mode
+ */
+void Universe1::OpenGL::Models::GLModel::setMaterialMode(int _materialIndex, const Material::Mode _mode)
+{
+    if (_materialIndex >= 0 && _materialIndex < static_cast<int>(m_materials.size()))
+    {
+        m_materials.at(_materialIndex).mode = _mode;
+        emit changed();
+    }
+}
+
+/*!
  * \brief Setter for specific material
  * \param _materialIndex Material index
  * \param _material Material data

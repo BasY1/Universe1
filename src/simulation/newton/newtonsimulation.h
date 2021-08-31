@@ -107,18 +107,19 @@ template <typename T, typename ObjectClass>
 std::pair<bool, QVector3D> SimulationNewton<T, ObjectClass>::loadInitMass(const size_t _objectID) const
 {
     if (_objectID < Simulation<T, ObjectClass, NewtonTimeStamp<T>>::m_initObjects.size())
-        return {false, QVector3D()};
-    return {true,
+        return {
+            true,
             QVector3D(Simulation<T, ObjectClass, NewtonTimeStamp<T>>::m_initObjects.at(_objectID).mass(), 0.0F, 0.0F)};
+    return {false, QVector3D()};
 }
 
 template <typename T, typename ObjectClass>
 std::pair<bool, QVector3D> SimulationNewton<T, ObjectClass>::loadCalcMass(const size_t _objectID) const
 {
     if (_objectID < Simulation<T, ObjectClass, NewtonTimeStamp<T>>::m_objects.size())
-        return {false, QVector3D()};
-    return {true,
-            QVector3D(Simulation<T, ObjectClass, NewtonTimeStamp<T>>::m_objects.at(_objectID).mass(), 0.0F, 0.0F)};
+        return {true,
+                QVector3D(Simulation<T, ObjectClass, NewtonTimeStamp<T>>::m_objects.at(_objectID).mass(), 0.0F, 0.0F)};
+    return {false, QVector3D()};
 }
 
 template <typename T, typename ObjectClass>
@@ -126,8 +127,8 @@ std::pair<bool, QVector3D> SimulationNewton<T, ObjectClass>::loadInitVelocity(co
                                                                               const double _timeStamp) const
 {
     if (_objectID < Simulation<T, ObjectClass, NewtonTimeStamp<T>>::m_initObjects.size())
-        return {false, QVector3D()};
-    return Simulation<T, ObjectClass, NewtonTimeStamp<T>>::m_initObjects.at(_objectID).loadVelocity(_timeStamp);
+        return Simulation<T, ObjectClass, NewtonTimeStamp<T>>::m_initObjects.at(_objectID).loadVelocity(_timeStamp);
+    return {false, QVector3D()};
 }
 
 template <typename T, typename ObjectClass>
@@ -135,8 +136,8 @@ std::pair<bool, QVector3D> SimulationNewton<T, ObjectClass>::loadCalcVelocity(co
                                                                               const double _timeStamp) const
 {
     if (_objectID < Simulation<T, ObjectClass, NewtonTimeStamp<T>>::m_objects.size())
-        return {false, QVector3D()};
-    return Simulation<T, ObjectClass, NewtonTimeStamp<T>>::m_objects.at(_objectID).loadVelocity(_timeStamp);
+        return Simulation<T, ObjectClass, NewtonTimeStamp<T>>::m_objects.at(_objectID).loadVelocity(_timeStamp);
+    return {false, QVector3D()};
 }
 
 template <typename T, typename ObjectClass>
@@ -144,8 +145,8 @@ std::pair<bool, QVector3D> SimulationNewton<T, ObjectClass>::loadInitAccel(const
                                                                            const double _timeStamp) const
 {
     if (_objectID < Simulation<T, ObjectClass, NewtonTimeStamp<T>>::m_initObjects.size())
-        return {false, QVector3D()};
-    return Simulation<T, ObjectClass, NewtonTimeStamp<T>>::m_initObjects.at(_objectID).loadAccel(_timeStamp);
+        return Simulation<T, ObjectClass, NewtonTimeStamp<T>>::m_initObjects.at(_objectID).loadAccel(_timeStamp);
+    return {false, QVector3D()};
 }
 
 template <typename T, typename ObjectClass>
@@ -153,8 +154,8 @@ std::pair<bool, QVector3D> SimulationNewton<T, ObjectClass>::loadCalcAccel(const
                                                                            const double _timeStamp) const
 {
     if (_objectID < Simulation<T, ObjectClass, NewtonTimeStamp<T>>::m_objects.size())
-        return {false, QVector3D()};
-    return Simulation<T, ObjectClass, NewtonTimeStamp<T>>::m_objects.at(_objectID).loadAccel(_timeStamp);
+        return Simulation<T, ObjectClass, NewtonTimeStamp<T>>::m_objects.at(_objectID).loadAccel(_timeStamp);
+    return {false, QVector3D()};
 }
 
 template <typename T, typename ObjectClass>
@@ -162,8 +163,8 @@ std::pair<bool, QVector3D> SimulationNewton<T, ObjectClass>::loadInitForce(const
                                                                            const double _timeStamp) const
 {
     if (_objectID < Simulation<T, ObjectClass, NewtonTimeStamp<T>>::m_initObjects.size())
-        return {false, QVector3D()};
-    return Simulation<T, ObjectClass, NewtonTimeStamp<T>>::m_initObjects.at(_objectID).loadForce(_timeStamp);
+        return Simulation<T, ObjectClass, NewtonTimeStamp<T>>::m_initObjects.at(_objectID).loadForce(_timeStamp);
+    return {false, QVector3D()};
 }
 
 template <typename T, typename ObjectClass>
@@ -171,8 +172,8 @@ std::pair<bool, QVector3D> SimulationNewton<T, ObjectClass>::loadCalcForce(const
                                                                            const double _timeStamp) const
 {
     if (_objectID < Simulation<T, ObjectClass, NewtonTimeStamp<T>>::m_objects.size())
-        return {false, QVector3D()};
-    return Simulation<T, ObjectClass, NewtonTimeStamp<T>>::m_objects.at(_objectID).loadForce(_timeStamp);
+        return Simulation<T, ObjectClass, NewtonTimeStamp<T>>::m_objects.at(_objectID).loadForce(_timeStamp);
+    return {false, QVector3D()};
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

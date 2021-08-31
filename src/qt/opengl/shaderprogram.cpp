@@ -214,34 +214,33 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
     fs += "void main(void)                                                      \n";
     fs += "{                                                                    \n";
     fs += "    int usedMaterialIndex = int(materialIndex);                      \n";
+    fs += "    int usedMode = material[usedMaterialIndex].mode;                 \n";
     fs += "    float matAlpha = material[usedMaterialIndex].alpha;              \n";
     fs += "    float matShin = material[usedMaterialIndex].shininess;           \n";
     fs += "    vec3 matAmbient = material[usedMaterialIndex].ambient;           \n";
     fs += "    vec3 matDiffuse = material[usedMaterialIndex].diffuse;           \n";
     fs += "    vec3 matSpecular = material[usedMaterialIndex].specular;         \n";
+    fs += "    vec3 result = matAmbient;                                        \n";
     fs += "                                                                     \n";
-    fs += "    if (material[usedMaterialIndex].mode == 1)                       \n";
+    fs += "    if (usedMode == 1)                                               \n";
     fs += "    {                                                                \n";
-    fs += "        FragColor = vec4(matAmbient, matAlpha);                      \n";
-    fs += "        return;                                                      \n";
+    fs += "        result = matAmbient;                                         \n";
     fs += "    }                                                                \n";
-    fs += "                                                                     \n";
-    fs += "    if (material[usedMaterialIndex].mode == 2)                       \n";
+    fs += "    else if (usedMode == 2)                                          \n";
     fs += "    {                                                                \n";
-    fs += "        FragColor = vec4(matDiffuse, matAlpha);                      \n";
-    fs += "        return;                                                      \n";
+    fs += "        result = matDiffuse;                                         \n";
     fs += "    }                                                                \n";
-    fs += "                                                                     \n";
-    fs += "    if (material[usedMaterialIndex].mode == 3)                       \n";
+    fs += "    else if (usedMode == 3)                                          \n";
     fs += "    {                                                                \n";
-    fs += "        FragColor = vec4(matSpecular, matAlpha);                     \n";
-    fs += "        return;                                                      \n";
+    fs += "        result = matSpecular;                                        \n";
     fs += "    }                                                                \n";
-    fs += "                                                                     \n";
+    fs += "    else                                                             \n";
+    fs += "    {                                                                \n";
     fs += "    vec3 usedAmbient = ambientFactor * matAmbient;                   \n";
-    fs += "    vec3 result = usedAmbient;                                       \n";
     fs += "    vec3 norm = normalize(normOut);                                  \n";
     fs += "    vec3 viewDir = normalize(cameraPosition - vertOut);              \n";
+    fs += "                                                                     \n";
+    fs += "    result = usedAmbient;                                            \n";
     fs += "                                                                     \n";
     fs += "    if (directionLight.mode == 1)                                    \n";
     fs += "    {                                                                \n";
@@ -359,6 +358,7 @@ bool Universe1::OpenGL::ShaderProgram::initGL()
         fs += "                                                                     \n";
     }
 
+    fs += "    }\n";
     fs += "    FragColor = vec4(result, matAlpha);                              \n";
     fs += "}\n";
 

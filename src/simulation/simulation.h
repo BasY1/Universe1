@@ -652,8 +652,8 @@ std::pair<bool, QVector3D> Simulation<T, ObjectClass, TimeStampClass>::loadInitP
                                                                                         const double _timeStamp) const
 {
     if (_objectID < m_initObjects.size())
-        return {false, QVector3D()};
-    return m_initObjects.at(_objectID).loadPosition(_timeStamp);
+        return m_initObjects.at(_objectID).loadPosition(_timeStamp);
+    return {false, QVector3D()};
 }
 
 template <typename T, typename ObjectClass, typename TimeStampClass>
@@ -661,8 +661,8 @@ std::pair<bool, QVector3D> Simulation<T, ObjectClass, TimeStampClass>::loadCalcP
                                                                                         const double _timeStamp) const
 {
     if (_objectID < m_objects.size())
-        return {false, QVector3D()};
-    return m_objects.at(_objectID).loadPosition(_timeStamp);
+        return m_objects.at(_objectID).loadPosition(_timeStamp);
+    return {false, QVector3D()};
 }
 
 template <typename T, typename ObjectClass, typename TimeStampClass>

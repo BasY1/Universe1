@@ -80,8 +80,6 @@ class ModelDots : public GLModel
     void setPlaneXY(const int minX, const int minY, const int maxX, const int maxY);
 
  protected:
-    std::vector<Material> m_materials;  //!< Used materials
-
     std::vector<QVector3D> m_vertexData;  //!< Dots vertex position data
 
     std::vector<QVector3D> m_normalData;  //!< Dots vertex normal data

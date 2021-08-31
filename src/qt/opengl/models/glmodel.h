@@ -69,6 +69,9 @@ class GLModel : public QObject, protected QOpenGLFunctions
     virtual void setMaterial(int _materialIndex, const Material &_material);
     virtual void setMaterials(const std::vector<Material> &_materials);
 
+    virtual void setMaterialMode(const Material::Mode _mode);
+    virtual void setMaterialMode(int _materialIndex, const Material::Mode _mode);
+
  signals:
     void changed();  //!< Model changed
 

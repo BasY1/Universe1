@@ -88,6 +88,8 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::WidgetSimulati
     , m_observer1(new OpenGL::Models::ModelSingularity(OpenGL::Material::materialMagentaDark, QVector3D()))
     , m_observer2(new OpenGL::Models::ModelSingularity(OpenGL::Material::materialYellowDark, QVector3D()))
 {
+    m_dotsXY->setMaterialMode(OpenGL::Material::MaterialAmbient);
+
     m_pointLightModels.reserve(m_program->pointLightsCount());
     for (int i = 0; i < m_program->pointLightsCount(); ++i)
         m_pointLightModels.push_back(new OpenGL::Models::ModelPointLight(m_pointLights[i], 0.1F));
@@ -346,20 +348,12 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::setProper
  */
 void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::setCurrentTime(double _value)
 {
-    if (!qFuzzyCompare(m_currentTime, _value))
-    {
-        m_currentTime = _value;
-
-        makeCurrent();
-
-        clearSimulDataGL();
-
-        build();
-
-        doneCurrent();
-
-        update();
-    }
+    m_currentTime = _value;
+    makeCurrent();
+    clearSimulDataGL();
+    build();
+    doneCurrent();
+    update();
 }
 
 /*!
@@ -731,6 +725,7 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::build()
     {
         OpenGL::Models::ModelPath *mp = new OpenGL::Models::ModelPath(
             {OpenGL::Material::materialCyanDark, OpenGL::Material::materialCyan, OpenGL::Material::materialCyanLight});
+        mp->setMaterialMode(OpenGL::Material::MaterialDiffuse);
 
         std::vector<QVector3D> vertexData;
         std::vector<uint8_t> colorData;
@@ -840,7 +835,7 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::build()
                 for (size_t i = 0U; i < objCount; ++i)
                 {
                     const float massRatio = propData[i].second.x() / propRange;
-                    const float massRadius = std::cbrt(massRatio);
+                    const float massRadius = std::cbrt(massRatio * 0.1F);
                     const OpenGL::Material material = OpenGL::Material::ratioGreenRed(massRatio);
 
                     OpenGL::Models::GLModel *mAll = new OpenGL::Models::ModelSphere(

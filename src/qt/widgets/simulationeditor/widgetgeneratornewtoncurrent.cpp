@@ -199,6 +199,7 @@ Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentBinary::Widget
     m_systemVelocity->setValue(settings.value(key + "systemVelocity", m_systemVelocity->value()).value<QVector3D>());
 
     m_info->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    m_info->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
     int row = 0;
     QGridLayout *lay = new QGridLayout();
@@ -250,6 +251,31 @@ QString Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentBinary
 }
 
 /*!
+ * \brief Tool function prepare HTML table row
+ * \param _name Attribute name
+ * \param _value Attribute value
+ * \return HTML table row
+ */
+inline QString htmlRow1(const QString &_name, const long double _value)
+{
+    return "<tr><td><b>" + _name + "</b></td><td colspan=\"2\" align=\"center\">" +
+        Universe1::TextTools::toQString(_value) + "</td></tr>";
+}
+
+/*!
+ * \brief Tool function prepare HTML table row
+ * \param _name Attribute name
+ * \param _value1 Attribute 1 value
+ * \param _value2 Attribute 2 value
+ * \return HTML table row
+ */
+inline QString htmlRow2(const QString &_name, const long double _value1, const long double _value2)
+{
+    return "<tr><td><b>" + _name + "</b></td><td>" + Universe1::TextTools::toQString(_value1) + "</td><td>" +
+        Universe1::TextTools::toQString(_value2) + "</td></tr>";
+}
+
+/*!
  * \brief Rebuild
  */
 void Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentBinary::rebuild()
@@ -268,6 +294,14 @@ void Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentBinary::r
     const long double A2 = F / M2;  // == V2^2 / R1
     const long double V1 = std::sqrt(A1 * R1);
     const long double V2 = std::sqrt(A2 * R2);
+    const long double L1 = 2.0l * M_PIl * R1;
+    const long double L2 = 2.0l * M_PIl * R2;
+    const long double T0 = 2.0l * M_PIl * R1 / V1;
+
+    const long double CNT = m_simulation->calculationStepCount();
+    const long double DT = m_simulation->getMaximumStepTime();
+    const long double TS = CNT * DT;
+    const long double TSA = TS * addVelocity.length();
 
     m_initObjects[0].mass = M1;
     m_initObjects[1].mass = M2;
@@ -275,17 +309,27 @@ void Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentBinary::r
     m_initObjects[0].position = Math::Vec3<long double>(R1, 0.0L, 1.0L);
     m_initObjects[1].position = Math::Vec3<long double>(-R2, 0.0L, 1.0L);
 
-    m_initObjects[0].velocity = addVelocity + Math::Vec3<long double>(0.0L, V1, 1.0L);
-    m_initObjects[1].velocity = addVelocity + Math::Vec3<long double>(0.0L, -V2, 1.0L);
+    m_initObjects[0].velocity = addVelocity + Math::Vec3<long double>(0.0L, V1, 0.0L);
+    m_initObjects[1].velocity = addVelocity + Math::Vec3<long double>(0.0L, -V2, 0.0L);
 
     QString html = "<table cellspacing=\"5\">";
-    html += "<tr><td>" + tr("Position 2") + "</td><td>" + Universe1::TextTools::toQString(R2) + "</td></tr>";
-    html += "<tr><td>" + tr("Distance") + "</td><td>" + Universe1::TextTools::toQString(D) + "</td></tr>";
-    html += "<tr><td>" + tr("Force") + "</td><td>" + Universe1::TextTools::toQString(F) + "</td></tr>";
-    html += "<tr><td>" + tr("Velocity 1") + "</td><td>" + Universe1::TextTools::toQString(V1) + "</td></tr>";
-    html += "<tr><td>" + tr("Velocity 2") + "</td><td>" + Universe1::TextTools::toQString(V2) + "</td></tr>";
-    html += "<tr><td>" + tr("Acceleration 1") + "</td><td>" + Universe1::TextTools::toQString(A1) + "</td></tr>";
-    html += "<tr><td>" + tr("Acceleration 2") + "</td><td>" + Universe1::TextTools::toQString(A2) + "</td></tr>";
+    html += htmlRow1(tr("G [m^3/(kg * s^2)]"), G);
+    html += htmlRow1(tr("Force [N]"), F);
+    html += htmlRow1(tr("Distance [m]"), D);
+    html += htmlRow1(tr("Period [s]"), T0);
+    html += htmlRow1(tr("Duration [s]"), TS);
+    html += htmlRow1(tr("Angle [deg]"), Math::toDeg<long double>(2.0l * M_PIl * TS / T0));
+    html += "<tr><td> </td><td>" + tr("Object 1") + "</td><td>" + tr("Object 2") + "</td></tr>";
+    html += htmlRow2(tr("Radius [m]"), R1, R2);
+    html += htmlRow2(tr("Velocity [m/s]"), V1, V2);
+    html += htmlRow2(tr("Acceleration [m/s^2]"), A1, A2);
+    html += htmlRow2(tr("Circle length [m]"), L1, L2);
+    html += htmlRow2(tr("Path circle length [m]"), TS * V1, TS * V1);
+    if (!Type::isNull(TSA))
+    {
+        html += htmlRow1(tr("Path add length [m]"), TSA);
+        html += htmlRow2(tr("Path total length [m]"), TS * V1 + TSA, TS * V1 + TSA);
+    }
     html += "</table>";
 
     m_info->setText(html);

@@ -82,6 +82,11 @@ class QSimulation : public QObject
      */
     ~QSimulation() = default;
 
+    inline const QString &ID() const;
+    inline QString name() const;
+    inline QString description() const;
+    inline int calculationStepCount() const;
+
     /*!
      * \brief Getter for simulation type
      * \returns The simulation type
@@ -89,7 +94,6 @@ class QSimulation : public QObject
     virtual SimulationType simulationType() const = 0;
 
     inline QString simulationTypeName() const;
-    inline int calculationStepCount() const;
 
     /*!
      * \brief Getter for simulation precision
@@ -236,24 +240,6 @@ class QSimulation : public QObject
      */
     virtual bool createSimulation() = 0;
 
-    /*!
-     * \brief Getter simulation ID
-     * \returns Simulation ID
-     */
-    const QString &ID() const;
-
-    /*!
-     * \brief Getter simulation name
-     * \returns Simulation name
-     */
-    QString name() const;
-
-    /*!
-     * \brief Getter simulation description
-     * \returns Simulation description
-     */
-    QString description() const;
-
  public slots:
     /*!
      * \brief Setter for simulation name
@@ -309,6 +295,33 @@ class QSimulation : public QObject
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QSimulation::ElementProperties)
+
+/*!
+ * \brief Getter simulation ID
+ * \returns Simulation ID
+ */
+inline const QString &QSimulation::ID() const
+{
+    return m_ID;
+}
+
+/*!
+ * \brief Getter simulation name
+ * \returns Simulation name
+ */
+inline QString QSimulation::name() const
+{
+    return m_name;
+}
+
+/*!
+ * \brief Getter simulation description
+ * \returns Simulation description
+ */
+inline QString QSimulation::description() const
+{
+    return m_description;
+}
 
 /*!
  * \brief Tool function - simulation type name

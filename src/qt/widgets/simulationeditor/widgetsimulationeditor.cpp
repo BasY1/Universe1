@@ -265,6 +265,8 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::WidgetSimulationEd
     case Universe1::Project::QSimulation::SimulationNewtonByWave: break;
     }
 
+    m_generatorTabs->setCurrentIndex(settings.value(key + "generatorTab", m_generatorTabs->currentIndex()).toInt());
+
     m_mainTab->addTab(m_generatorTabs, tr("Generator"));
 
     // Tab 2 - calculated data info
@@ -336,15 +338,15 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::WidgetSimulationEd
     connect(m_showProperty, &QTableWidget::itemChanged, this, &WidgetSimulationEditor::showPropertyChanged);
 
     QGridLayout *layTab3 = new QGridLayout();
-    layTab3->addWidget(new QLabel(tr("Point size")), 0, 0);
-    layTab3->addWidget(m_pointSize->box(), 0, 1);
-    layTab3->addWidget(m_pointSize->slider(), 0, 2);
+    layTab3->addWidget(new QLabel(tr("Line width")), 0, 0);
+    layTab3->addWidget(m_lineWidth->box(), 0, 1);
+    layTab3->addWidget(m_lineWidth->slider(), 0, 2);
     layTab3->addWidget(new QLabel(tr("Show axis")), 0, 3);
     layTab3->addWidget(m_showAxis, 0, 4);
 
-    layTab3->addWidget(new QLabel(tr("Line width")), 1, 0);
-    layTab3->addWidget(m_lineWidth->box(), 1, 1);
-    layTab3->addWidget(m_lineWidth->slider(), 1, 2);
+    layTab3->addWidget(new QLabel(tr("Point size")), 1, 0);
+    layTab3->addWidget(m_pointSize->box(), 1, 1);
+    layTab3->addWidget(m_pointSize->slider(), 1, 2);
     layTab3->addWidget(new QLabel(tr("Show dots")), 1, 3);
     layTab3->addWidget(m_showDots, 1, 4);
 
@@ -474,6 +476,7 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::~WidgetSimulationE
     static const QString key = "SimulationEditor/MainWidget/";
     QSettings settings;
     settings.setValue(key + "splitter", m_mainSplitter->saveState());
+    settings.setValue(key + "generatorTab", m_generatorTabs->currentIndex());
 
     disconnect(m_simulation, &Project::QSimulation::dataChanged, this, &WidgetSimulationEditor::simulationChanged);
 
@@ -695,7 +698,9 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::simulationCha
     m_currentTimeSlider->setEnabled(isInit);
     m_currentTimeBox->setEnabled(isInit);
 
-    if (!isInit)
+    double rangeTime = m_timeRange.second - m_timeRange.first;
+
+    if (!isInit || qFuzzyIsNull(rangeTime))
     {
         m_pathData.clear();
         m_timeRange.first = 0.0;
@@ -706,12 +711,11 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::simulationCha
         return;
     }
 
-    double rangeTime = m_timeRange.second - m_timeRange.first;
 
     while (static_cast<int>(rangeTime * m_timeRangeMult) > 100000)
         m_timeRangeMult *= 0.1;
 
-    while (static_cast<int>(rangeTime * m_timeRangeMult) < 10000)
+    while (static_cast<int>(rangeTime * m_timeRangeMult) < 1000)
         m_timeRangeMult *= 10.0;
 
     disconnect(m_currentTimeBox,
@@ -797,7 +801,7 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::rebuildCurren
 
     const size_t cntObjects = m_simulation->objectCountInit();
     const double curTime = m_currentTimeBox->value();
-    const bool isFromInit = (curTime < 0.0 || m_simulation->objectCountCalc() == 0U);
+    const bool isFromInit = (m_simulation->objectCountCalc() == 0U);
 
     m_currentTimePositionsData.reserve(cntObjects);
 

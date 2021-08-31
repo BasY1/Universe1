@@ -525,6 +525,7 @@ void Universe1::Project::QSimulationNewtonCurrent::setMaximumStepTime(const doub
     case PrecisionDouble: m_simD.setMaximumStepTime(_value); break;
     case PrecisionLongDouble: m_simL.setMaximumStepTime(_value); break;
     }
+    emit physicsChanged();
 }
 
 /*!
@@ -539,4 +540,5 @@ void Universe1::Project::QSimulationNewtonCurrent::setMaximumCurveAngleDeg(const
     case PrecisionDouble: m_simD.setMaximumCurveAngleDeg(_value); break;
     case PrecisionLongDouble: m_simL.setMaximumCurveAngleDeg(_value); break;
     }
+    emit physicsChanged();
 }

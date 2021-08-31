@@ -13,21 +13,6 @@ Universe1::Project::QSimulation::QSimulation(const QString &ID, QObject *parent)
 {
 }
 
-const QString &Universe1::Project::QSimulation::ID() const
-{
-    return m_ID;
-}
-
-QString Universe1::Project::QSimulation::name() const
-{
-    return m_name;
-}
-
-QString Universe1::Project::QSimulation::description() const
-{
-    return m_description;
-}
-
 void Universe1::Project::QSimulation::setName(const QString &name)
 {
     m_name = name;
@@ -120,4 +105,5 @@ void Universe1::Project::QSimulation::setConstantElementRadius(double _value)
 void Universe1::Project::QSimulation::setCalculationStepCount(int _value)
 {
     m_calculationStepCount = std::max(2, _value);
+    emit physicsChanged();
 }
