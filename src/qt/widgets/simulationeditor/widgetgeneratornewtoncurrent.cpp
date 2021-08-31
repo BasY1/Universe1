@@ -6,6 +6,8 @@
 
 #include "widgetgeneratornewtoncurrent.h"
 
+#include "../../../math/texttools.h"
+
 #include <QSettings>
 
 /*!
@@ -19,6 +21,10 @@ Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrent::WidgetGenera
     , m_simulation(_simulation)
 {
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
  * \brief Constructor
@@ -39,9 +45,8 @@ Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentUser3::WidgetG
 
     const int usedCnt = countBySwitchState();
 
-    QGridLayout *lay = new QGridLayout();
-
     int row = 0;
+    QGridLayout *lay = new QGridLayout();
     lay->addWidget(new QLabel(tr("Used objects")), row, 0, 1, 2);
     lay->addWidget(m_countSwitch, row++, 2, 1, 2);
 
@@ -164,4 +169,124 @@ void Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentUser3::ob
         m_position[i]->setEnabled(i < usedCnt);
         m_velocity[i]->setEnabled(i < usedCnt);
     }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Constructor
+ * \param _simulation Processing simulation
+ * \param _parent Parent \c QWidget
+ */
+Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentBinary::WidgetGeneratorNewtonCurrentBinary(
+    Project::QSimulationNewtonCurrent *_simulation, QWidget *_parent)
+    : WidgetGeneratorNewtonCurrent(_simulation, _parent)
+    , m_radius1(new GUI::GuiFloat(1.0F, 0.01F, 100.0F, 2, Qt::Horizontal))
+    , m_mass1(new GUI::GuiFloat(1.0F, 0.01F, 100.0F, 2, Qt::Horizontal))
+    , m_mass2(new GUI::GuiFloat(1.0F, 0.01F, 100.0F, 2, Qt::Horizontal))
+    , m_systemVelocity(new GUI::GuiVector3D(QVector3D(), -5, 5, -5, 5, -5, 5, 3, Qt::Horizontal))
+    , m_info(new QLabel())
+{
+    m_initObjects.resize(2);
+
+    static const QString key = "SimulationEditor/WidgetGeneratorNewtonCurrentBinary/";
+    const QSettings settings;
+    m_radius1->setValue(settings.value(key + "radius1", m_radius1->value()).toFloat());
+    m_mass1->setValue(settings.value(key + "mass1", m_mass1->value()).toFloat());
+    m_mass2->setValue(settings.value(key + "mass2", m_mass2->value()).toFloat());
+    m_systemVelocity->setValue(settings.value(key + "systemVelocity", m_systemVelocity->value()).value<QVector3D>());
+
+    m_info->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    int row = 0;
+    QGridLayout *lay = new QGridLayout();
+    m_radius1->layoutRow(tr("Radius 1"), lay, row);
+    m_mass1->layoutRow(tr("Mass 1"), lay, row);
+    m_mass2->layoutRow(tr("Mass 2"), lay, row);
+
+    lay->addWidget(new HorizontalLineSpacer(), row++, 0, 1, 4);
+
+    m_systemVelocity->layoutRow(tr("System velocity"), lay, row);
+
+    lay->addWidget(new HorizontalLineSpacer(), row++, 0, 1, 4);
+    lay->addWidget(m_info, row++, 0, 1, 4);
+    setLayout(lay);
+
+    connect(m_radius1, &GUI::GuiFloat::changed, this, &WidgetGeneratorNewtonCurrentBinary::rebuild);
+    connect(m_mass1, &GUI::GuiFloat::changed, this, &WidgetGeneratorNewtonCurrentBinary::rebuild);
+    connect(m_mass2, &GUI::GuiFloat::changed, this, &WidgetGeneratorNewtonCurrentBinary::rebuild);
+    connect(m_systemVelocity, &GUI::GuiVector3D::changed, this, &WidgetGeneratorNewtonCurrentBinary::rebuild);
+
+    rebuild();
+}
+
+/*!
+ * \brief Destructor
+ */
+Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentBinary::~WidgetGeneratorNewtonCurrentBinary()
+{
+    disconnect(m_radius1, &GUI::GuiFloat::changed, this, &WidgetGeneratorNewtonCurrentBinary::rebuild);
+    disconnect(m_mass1, &GUI::GuiFloat::changed, this, &WidgetGeneratorNewtonCurrentBinary::rebuild);
+    disconnect(m_mass2, &GUI::GuiFloat::changed, this, &WidgetGeneratorNewtonCurrentBinary::rebuild);
+    disconnect(m_systemVelocity, &GUI::GuiVector3D::changed, this, &WidgetGeneratorNewtonCurrentBinary::rebuild);
+
+    static const QString key = "SimulationEditor/WidgetGeneratorNewtonCurrentBinary/";
+    QSettings settings;
+    settings.setValue(key + "radius1", m_radius1->value());
+    settings.setValue(key + "mass1", m_mass1->value());
+    settings.setValue(key + "mass2", m_mass2->value());
+    settings.setValue(key + "systemVelocity", m_systemVelocity->value());
+}
+
+/*!
+ * \brief Generator name getter
+ * \returns "Binary" string
+ */
+QString Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentBinary::generatorName() const
+{
+    return tr("Binary");
+}
+
+/*!
+ * \brief Rebuild
+ */
+void Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentBinary::rebuild()
+{
+    const Math::Vec3<long double> addVelocity = Math::Vec3<long double>::fromQVector3D(m_systemVelocity->value());
+
+    const long double G = m_simulation->getConstantGravityConstant();
+    const long double R1 = m_radius1->value();
+    const long double M1 = m_mass1->value();
+    const long double M2 = m_mass2->value();
+    const long double M1_2 = M1 / M2;
+    const long double R2 = R1 * M1_2;  // R1*M1 == R2*M2
+    const long double D = R1 + R2;
+    const long double F = G * M1 * M2 / (D * D);
+    const long double A1 = F / M1;  // == V1^2 / R1
+    const long double A2 = F / M2;  // == V2^2 / R1
+    const long double V1 = std::sqrt(A1 * R1);
+    const long double V2 = std::sqrt(A2 * R2);
+
+    m_initObjects[0].mass = M1;
+    m_initObjects[1].mass = M2;
+
+    m_initObjects[0].position = Math::Vec3<long double>(R1, 0.0L, 1.0L);
+    m_initObjects[1].position = Math::Vec3<long double>(-R2, 0.0L, 1.0L);
+
+    m_initObjects[0].velocity = addVelocity + Math::Vec3<long double>(0.0L, V1, 1.0L);
+    m_initObjects[1].velocity = addVelocity + Math::Vec3<long double>(0.0L, -V2, 1.0L);
+
+    QString html = "<table cellspacing=\"5\">";
+    html += "<tr><td>" + tr("Position 2") + "</td><td>" + Universe1::TextTools::toQString(R2) + "</td></tr>";
+    html += "<tr><td>" + tr("Distance") + "</td><td>" + Universe1::TextTools::toQString(D) + "</td></tr>";
+    html += "<tr><td>" + tr("Force") + "</td><td>" + Universe1::TextTools::toQString(F) + "</td></tr>";
+    html += "<tr><td>" + tr("Velocity 1") + "</td><td>" + Universe1::TextTools::toQString(V1) + "</td></tr>";
+    html += "<tr><td>" + tr("Velocity 2") + "</td><td>" + Universe1::TextTools::toQString(V2) + "</td></tr>";
+    html += "<tr><td>" + tr("Acceleration 1") + "</td><td>" + Universe1::TextTools::toQString(A1) + "</td></tr>";
+    html += "<tr><td>" + tr("Acceleration 2") + "</td><td>" + Universe1::TextTools::toQString(A2) + "</td></tr>";
+    html += "</table>";
+
+    m_info->setText(html);
 }

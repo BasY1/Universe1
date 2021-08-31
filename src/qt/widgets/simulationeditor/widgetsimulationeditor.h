@@ -107,7 +107,7 @@ class WidgetSimulationEditor : public QWidget
     // Main tab 1
     QTabWidget *m_generatorTabs;  //!< Tab widget for simulation initialization data generators
 
-    WidgetGeneratorNewtonCurrent *m_newtonCurrent[1];  //!< Newton current generators
+    WidgetGeneratorNewtonCurrent *m_newtonCurrent[2];  //!< Newton current generators
 
     // Main tab 2
     QTableWidget *m_objectsData;  //!< Table of object's properties at current time

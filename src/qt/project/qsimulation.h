@@ -298,7 +298,8 @@ class QSimulation : public QObject
     virtual void setMaximumCurveAngleDeg(double _value) = 0;
 
  signals:
-    void dataChanged();  //!< Simulation data was changed
+    void dataChanged();     //!< Simulation data was changed
+    void physicsChanged();  //!< Simulation physics constants was changed
 
  protected:
     const QString m_ID;          //!< Simulation ID

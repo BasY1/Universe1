@@ -1,63 +1,66 @@
 /*!
- * \file qt/project/qsimulationnewtoncurrent.cpp
+ * \file qt/project/qsimulationnewtonbywave.cpp
  * \author Michal Steller
- * \brief Class implementation - QT Simulation for newton \b current physics
+ * \brief Class implementation - QT Simulation for newton \b wave physics
  */
 
-#include "qsimulationnewtoncurrent.h"
+#include "qsimulationnewtonbywave.h"
 
 /*!
  * \brief Constructor
  * \param _ID Simulation ID
  * \param _parent Parent \c QObject
  */
-Universe1::Project::QSimulationNewtonCurrent::QSimulationNewtonCurrent(const QString &_ID, QObject *_parent)
+Universe1::Project::QSimulationNewtonByWave::QSimulationNewtonByWave(const QString &_ID, QObject *_parent)
     : QSimulation(_ID, _parent)
     , m_precision(PrecisionFloat)
 {
 }
 
 /*!
- * \brief Getter for simulation type (\a QSimulation::SimulationNewtonCurrent)
- * \returns The simulation type (\a QSimulation::SimulationNewtonCurrent)
+ * \brief Getter for simulation type (\a QSimulation::SimulationNewtonByWave)
+ * \returns The simulation type (\a QSimulation::SimulationNewtonByWave)
  */
-Universe1::Project::QSimulation::SimulationType Universe1::Project::QSimulationNewtonCurrent::simulationType() const
+Universe1::Project::QSimulation::SimulationType Universe1::Project::QSimulationNewtonByWave::simulationType() const
 {
-    return QSimulation::SimulationNewtonCurrent;
+    return QSimulation::SimulationNewtonByWave;
 }
 
 /*!
  * \brief Getter for simulation precision
  * \returns The simulation precision
  */
-Universe1::Project::QSimulation::Precision Universe1::Project::QSimulationNewtonCurrent::precision() const
+Universe1::Project::QSimulation::Precision Universe1::Project::QSimulationNewtonByWave::precision() const
 {
     return m_precision;
 }
 
 /*!
- * \brief Getter for using history flag (\c false)
- * \returns Using history flag (\c false)
+ * \brief Getter for using history flag (\c true)
+ * \returns Using history flag (\c true)
  */
-bool Universe1::Project::QSimulationNewtonCurrent::usesHistory() const
+bool Universe1::Project::QSimulationNewtonByWave::usesHistory() const
 {
     return false;
 }
 
 /*!
- * \brief Not supported (This is current time based simulation )
+ * \brief Load object's wave sources positions for observer
  * \param _out Output buffer
- * \param _eventTimeStamp Time-stamp of event
- * \param _eventPosition Event location
- * \returns \c false
+ * \param _eventTimeStamp Time-stamp of observer
+ * \param _eventPosition Observer location
+ * \returns Success flag
  */
-bool Universe1::Project::QSimulationNewtonCurrent::loadEventSource(std::vector<std::pair<double, QVector3D>> &_out,
-                                                                   const double _eventTimeStamp,
-                                                                   const QVector3D &_eventPosition) const
+bool Universe1::Project::QSimulationNewtonByWave::loadEventSource(std::vector<std::pair<double, QVector3D>> &_out,
+                                                                  const double _eventTimeStamp,
+                                                                  const QVector3D &_eventPosition) const
 {
-    Q_UNUSED(_out)
-    Q_UNUSED(_eventTimeStamp)
-    Q_UNUSED(_eventPosition)
+    switch (m_precision)
+    {
+    case PrecisionFloat: return m_simF.loadEventSource(_out, _eventTimeStamp, _eventPosition);
+    case PrecisionDouble: return m_simD.loadEventSource(_out, _eventTimeStamp, _eventPosition);
+    case PrecisionLongDouble: return m_simL.loadEventSource(_out, _eventTimeStamp, _eventPosition);
+    }
     return false;
 }
 
@@ -65,7 +68,7 @@ bool Universe1::Project::QSimulationNewtonCurrent::loadEventSource(std::vector<s
  * \brief Getter for using element radius flag (\c false - Elements are singularities)
  * \returns Using element radius flag (\c false - Elements are singularities)
  */
-bool Universe1::Project::QSimulationNewtonCurrent::usesRadius() const
+bool Universe1::Project::QSimulationNewtonByWave::usesRadius() const
 {
     return false;
 }
@@ -75,10 +78,12 @@ bool Universe1::Project::QSimulationNewtonCurrent::usesRadius() const
  * \returns Supported physics constants
  */
 const std::set<Universe1::Simulation::ConstantName> &
-Universe1::Project::QSimulationNewtonCurrent::supportedPhysicsConstants() const
+Universe1::Project::QSimulationNewtonByWave::supportedPhysicsConstants() const
 {
     static const std::set<Universe1::Simulation::ConstantName> supported = {
-        Universe1::Simulation::Const_GravityConstant};
+        Universe1::Simulation::Const_UniverseVelocity, Universe1::Simulation::Const_GravityConstant
+
+    };
     return supported;
 }
 
@@ -88,7 +93,7 @@ Universe1::Project::QSimulationNewtonCurrent::supportedPhysicsConstants() const
  * \returns Physics constant value
  */
 double
-Universe1::Project::QSimulationNewtonCurrent::getPhysicsConstant(const Universe1::Simulation::ConstantName &_name) const
+Universe1::Project::QSimulationNewtonByWave::getPhysicsConstant(const Universe1::Simulation::ConstantName &_name) const
 {
     switch (m_precision)
     {
@@ -103,7 +108,7 @@ Universe1::Project::QSimulationNewtonCurrent::getPhysicsConstant(const Universe1
  * \brief Getter for maximum calculation step time duration
  * \returns Maximum calculation step time duration
  */
-double Universe1::Project::QSimulationNewtonCurrent::getMaximumStepTime() const
+double Universe1::Project::QSimulationNewtonByWave::getMaximumStepTime() const
 {
     switch (m_precision)
     {
@@ -118,7 +123,7 @@ double Universe1::Project::QSimulationNewtonCurrent::getMaximumStepTime() const
  * \brief Getter for maximum calculation step time curving angle
  * \returns Maximum calculation step time curving angle [degrees]
  */
-double Universe1::Project::QSimulationNewtonCurrent::getMaximumCurveAngleDeg() const
+double Universe1::Project::QSimulationNewtonByWave::getMaximumCurveAngleDeg() const
 {
     switch (m_precision)
     {
@@ -134,7 +139,7 @@ double Universe1::Project::QSimulationNewtonCurrent::getMaximumCurveAngleDeg() c
  * \returns Supported element properties
  */
 Universe1::Project::QSimulation::ElementProperties
-Universe1::Project::QSimulationNewtonCurrent::supportedElementProperties() const
+Universe1::Project::QSimulationNewtonByWave::supportedElementProperties() const
 {
     static const ElementProperties supported = PropertyMass | PropertyVelocity | PropertyAcceleration | PropertyForce;
     return supported;
@@ -144,7 +149,7 @@ Universe1::Project::QSimulationNewtonCurrent::supportedElementProperties() const
  * \brief Getter for count of object under initialization
  * \returns Count of object under initialization
  */
-size_t Universe1::Project::QSimulationNewtonCurrent::objectCountInit() const
+size_t Universe1::Project::QSimulationNewtonByWave::objectCountInit() const
 {
     switch (m_precision)
     {
@@ -159,7 +164,7 @@ size_t Universe1::Project::QSimulationNewtonCurrent::objectCountInit() const
  * \brief Getter for count of object under calculation
  * \returns Count of object under calculation
  */
-size_t Universe1::Project::QSimulationNewtonCurrent::objectCountCalc() const
+size_t Universe1::Project::QSimulationNewtonByWave::objectCountCalc() const
 {
     switch (m_precision)
     {
@@ -176,8 +181,8 @@ size_t Universe1::Project::QSimulationNewtonCurrent::objectCountCalc() const
  * \param _objectID Object's index
  * \returns \c true if success
  */
-bool Universe1::Project::QSimulationNewtonCurrent::loadInitPath(std::vector<std::pair<double, QVector3D>> &_out,
-                                                                const size_t _objectID) const
+bool Universe1::Project::QSimulationNewtonByWave::loadInitPath(std::vector<std::pair<double, QVector3D>> &_out,
+                                                               const size_t _objectID) const
 {
     switch (m_precision)
     {
@@ -194,8 +199,8 @@ bool Universe1::Project::QSimulationNewtonCurrent::loadInitPath(std::vector<std:
  * \param _objectID Object's index
  * \returns \c true if success
  */
-bool Universe1::Project::QSimulationNewtonCurrent::loadCalcPath(std::vector<std::pair<double, QVector3D>> &_out,
-                                                                const size_t _objectID) const
+bool Universe1::Project::QSimulationNewtonByWave::loadCalcPath(std::vector<std::pair<double, QVector3D>> &_out,
+                                                               const size_t _objectID) const
 {
     switch (m_precision)
     {
@@ -212,8 +217,8 @@ bool Universe1::Project::QSimulationNewtonCurrent::loadCalcPath(std::vector<std:
  * \param _timeStamp Time-stamp of required value
  * \returns Pair, where \c first item is success flag, and \c second item is position (as \c QVector3D)
  */
-std::pair<bool, QVector3D> Universe1::Project::QSimulationNewtonCurrent::loadInitPosition(const size_t _objectID,
-                                                                                          const double _timeStamp) const
+std::pair<bool, QVector3D> Universe1::Project::QSimulationNewtonByWave::loadInitPosition(const size_t _objectID,
+                                                                                         const double _timeStamp) const
 {
     switch (m_precision)
     {
@@ -230,8 +235,8 @@ std::pair<bool, QVector3D> Universe1::Project::QSimulationNewtonCurrent::loadIni
  * \param _timeStamp Time-stamp of required value
  * \returns Pair, where \c first item is success flag, and \c second item is position (as \c QVector3D)
  */
-std::pair<bool, QVector3D> Universe1::Project::QSimulationNewtonCurrent::loadCalcPosition(const size_t _objectID,
-                                                                                          const double _timeStamp) const
+std::pair<bool, QVector3D> Universe1::Project::QSimulationNewtonByWave::loadCalcPosition(const size_t _objectID,
+                                                                                         const double _timeStamp) const
 {
     switch (m_precision)
     {
@@ -249,7 +254,7 @@ std::pair<bool, QVector3D> Universe1::Project::QSimulationNewtonCurrent::loadCal
  * \param _timeStamp Time-stamp of required value
  * \returns Pair, where \c first item is success flag, and \c second item is property value (as \c QVector3D)
  */
-std::pair<bool, QVector3D> Universe1::Project::QSimulationNewtonCurrent::loadInitProperty(
+std::pair<bool, QVector3D> Universe1::Project::QSimulationNewtonByWave::loadInitProperty(
     const ElementProperty _property, const size_t _objectID, const double _timeStamp) const
 {
     switch (_property)
@@ -309,7 +314,7 @@ std::pair<bool, QVector3D> Universe1::Project::QSimulationNewtonCurrent::loadIni
  * \param _timeStamp Time-stamp of required value
  * \returns Pair, where \c first item is success flag, and \c second item is property value (as \c QVector3D)
  */
-std::pair<bool, QVector3D> Universe1::Project::QSimulationNewtonCurrent::loadCalcProperty(
+std::pair<bool, QVector3D> Universe1::Project::QSimulationNewtonByWave::loadCalcProperty(
     const ElementProperty _property, const size_t _objectID, const double _timeStamp) const
 {
     switch (_property)
@@ -368,7 +373,7 @@ std::pair<bool, QVector3D> Universe1::Project::QSimulationNewtonCurrent::loadCal
  * \returns Success flag
  * \sa Universe1::Simulation::Simulation::createSimulation(const size_t)
  */
-bool Universe1::Project::QSimulationNewtonCurrent::createSimulation()
+bool Universe1::Project::QSimulationNewtonByWave::createSimulation()
 {
     bool result = false;
     switch (m_precision)
@@ -382,40 +387,39 @@ bool Universe1::Project::QSimulationNewtonCurrent::createSimulation()
 }
 
 /*!
- * \brief Helper template function, process job for QSimulationNewtonCurrent::initializeFromObjects
- * \param _objects Collection of starting object's properties
- * \param _sim The simulation
- */
-template <typename T>
-void initObj(const std::vector<Universe1::Project::QSimulationNewtonCurrent::InitObject> &_objects,
-             Universe1::Simulation::GravityNewton::SimulationNewtonCurrent<T> &_sim)
-{
-    std::vector<std::tuple<T, Universe1::Math::Vec3<T>, Universe1::Math::Vec3<T>>> tmp(_objects.size());
-    size_t idx = 0;
-    for (const Universe1::Project::QSimulationNewtonCurrent::InitObject &io : _objects)
-    {
-        std::get<0>(tmp.at(idx)) = io.mass;
-        std::get<1>(tmp.at(idx)) = io.position.converted<T>();
-        std::get<2>(tmp.at(idx)) = io.velocity.converted<T>();
-        ++idx;
-    }
-    _sim.initializeObjects(tmp);
-}
-
-/*!
  * \brief Initialize objects from given collection
  * \param _objects Collection of starting object's properties
+ * \param _doEmit Flag if emit \c dataChanged() signal
  */
-void Universe1::Project::QSimulationNewtonCurrent::initializeFromObjects(const std::vector<InitObject> &_objects)
+void Universe1::Project::QSimulationNewtonByWave::initializeFromObjects(
+    const std::vector<Simulation::GravityNewton::NewtonObjectByWave<long double>> &_objects, const bool _doEmit)
 {
-    m_currentInitObjects = _objects;
     switch (m_precision)
     {
-    case PrecisionFloat: initObj(m_currentInitObjects, m_simF); break;
-    case PrecisionDouble: initObj(m_currentInitObjects, m_simD); break;
-    case PrecisionLongDouble: initObj(m_currentInitObjects, m_simL); break;
+    case PrecisionFloat:
+        m_simF.initObjects().clear();
+        m_simF.initObjects().reserve(_objects.size());
+        for (const Universe1::Simulation::GravityNewton::NewtonObjectByWave<long double> &io : _objects)
+            m_simF.initObjects().push_back(io.createCopy<float>());
+        break;
+
+    case PrecisionDouble:
+        m_simD.initObjects().clear();
+        m_simD.initObjects().reserve(_objects.size());
+        for (const Universe1::Simulation::GravityNewton::NewtonObjectByWave<long double> &io : _objects)
+            m_simD.initObjects().push_back(io.createCopy<double>());
+        break;
+
+    case PrecisionLongDouble:
+        m_simL.initObjects().clear();
+        m_simL.initObjects().reserve(_objects.size());
+        for (const Universe1::Simulation::GravityNewton::NewtonObjectByWave<long double> &io : _objects)
+            m_simL.initObjects().push_back(io.createCopy<long double>());
+        break;
     }
-    emit dataChanged();
+
+    if (_doEmit)
+        emit dataChanged();
 }
 
 /*!
@@ -423,14 +427,10 @@ void Universe1::Project::QSimulationNewtonCurrent::initializeFromObjects(const s
  * \param _objects Collection of starting object's properties
  * \returns Success flag
  */
-bool Universe1::Project::QSimulationNewtonCurrent::rebuildSimulation(const std::vector<InitObject> &_objects)
+bool Universe1::Project::QSimulationNewtonByWave::rebuildSimulation(
+    const std::vector<Simulation::GravityNewton::NewtonObjectByWave<long double>> &_objects)
 {
-    switch (m_precision)
-    {
-    case PrecisionFloat: initObj(_objects, m_simF); break;
-    case PrecisionDouble: initObj(_objects, m_simD); break;
-    case PrecisionLongDouble: initObj(_objects, m_simL); break;
-    }
+    initializeFromObjects(_objects, false);
     return createSimulation();
 }
 
@@ -438,7 +438,7 @@ bool Universe1::Project::QSimulationNewtonCurrent::rebuildSimulation(const std::
  * \brief Setter for simulation precision
  * \param _precision New simulation precision
  */
-void Universe1::Project::QSimulationNewtonCurrent::setPrecision(Precision _precision)
+void Universe1::Project::QSimulationNewtonByWave::setPrecision(Precision _precision)
 {
     if (m_precision == _precision)
         return;
@@ -501,7 +501,7 @@ void Universe1::Project::QSimulationNewtonCurrent::setPrecision(Precision _preci
  * \param _constantName New constant name
  * \param _value New constant value
  */
-void Universe1::Project::QSimulationNewtonCurrent::setUniverseConstant(
+void Universe1::Project::QSimulationNewtonByWave::setUniverseConstant(
     const Universe1::Simulation::ConstantName _constantName, const double _value)
 {
     switch (m_precision)
@@ -517,7 +517,7 @@ void Universe1::Project::QSimulationNewtonCurrent::setUniverseConstant(
  * \brief Setter for maximum calculation step time duration
  * \param _value New value
  */
-void Universe1::Project::QSimulationNewtonCurrent::setMaximumStepTime(const double _value)
+void Universe1::Project::QSimulationNewtonByWave::setMaximumStepTime(const double _value)
 {
     switch (m_precision)
     {
@@ -531,7 +531,7 @@ void Universe1::Project::QSimulationNewtonCurrent::setMaximumStepTime(const doub
  * \brief Setter for maximum calculation step curving angle [degrees]
  * \param _value New angle value [degrees]
  */
-void Universe1::Project::QSimulationNewtonCurrent::setMaximumCurveAngleDeg(const double _value)
+void Universe1::Project::QSimulationNewtonByWave::setMaximumCurveAngleDeg(const double _value)
 {
     switch (m_precision)
     {

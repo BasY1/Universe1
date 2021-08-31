@@ -91,8 +91,10 @@ void Test_Newton::testObjectData()
 
     std::cout << " bbbb: "
               << (o1.eventSource(simCur.physics().universeVelocity, o0.current()->timeStamp, o0.current()->position)
-                      .second->movedToEventSource(
-                          simCur.physics().universeVelocity, o0.current()->timeStamp, o0.current()->position))
+                      .second
+                      ->movedToEventSource(
+                          simCur.physics().universeVelocity, o0.current()->timeStamp, o0.current()->position)
+                      .first)
               << std::endl;
 
     std::cout << "Add: " << (simCur.addStep() ? "OK" : "FAIL") << std::endl;

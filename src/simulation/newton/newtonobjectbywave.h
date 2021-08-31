@@ -139,7 +139,7 @@ void NewtonObjectByWave<T>::initStep(const std::vector<NewtonObjectByWave<T>> &_
                 accel += NewtonObject<T>::getAccel(
                     cur->position,
                     source.second->movedToEventSource(_physics.universeVelocity, cur->timeStamp, cur->position)
-                        .position,
+                        .first.position,
                     obj.m_mass,
                     _physics.gravityConstant);
                 break;

@@ -249,6 +249,32 @@ struct Simulation
     std::pair<bool, QVector3D> loadCalcPosition(const size_t _objectID, const double _timeStamp) const;
 
     /*!
+     * \brief Load object's wave sources positions for observer
+     * \param _out Output buffer
+     * \param _eventTimeStamp Time-stamp of observer
+     * \param _eventPosition Observer location
+     * \returns Success flag
+     */
+    inline bool loadEventSource(std::vector<std::pair<double, QVector3D>> &_out,
+                                const double _eventTimeStamp,
+                                const QVector3D &_eventPosition) const;
+
+ protected:
+    /*!
+     * \brief Load object's wave sources positions for observer
+     * \param _data Object's collection
+     * \param _out Output buffer
+     * \param _eventTimeStamp Time-stamp of observer
+     * \param _eventPosition Observer location
+     * \returns Success flag
+     */
+    bool loadEventSourceData(const std::vector<ObjectClass> &_data,
+                             std::vector<std::pair<double, QVector3D>> &_out,
+                             const double _eventTimeStamp,
+                             const QVector3D &_eventPosition) const;
+
+ public:
+    /*!
      * \brief Copy simulation with different precision
      * \tparam T2  Other simulation template floating point type
      * \tparam ObjectClass2 Other simulation \c ObjectHistory class extension
@@ -502,10 +528,10 @@ bool Simulation<T, ObjectClass, TimeStampClass>::testHistoryVisibility(
             {
                 if (i != j && objJ.initialized())
                 {
-                    const std::pair<EventSourceResult, const TimeStampClass *> es =
+                    const std::pair<EventSourceResult, const TimeStampClass *> source =
                         objJ.eventSource(m_physics.universeVelocity, curI->timeStamp, curI->position);
 
-                    switch (es.first)
+                    switch (source.first)
                     {
                     case EventSourceFoundExact:
                     case EventSourceFoundClosest:
@@ -637,6 +663,64 @@ std::pair<bool, QVector3D> Simulation<T, ObjectClass, TimeStampClass>::loadCalcP
     if (_objectID < m_objects.size())
         return {false, QVector3D()};
     return m_objects.at(_objectID).loadPosition(_timeStamp);
+}
+
+template <typename T, typename ObjectClass, typename TimeStampClass>
+inline bool Simulation<T, ObjectClass, TimeStampClass>::loadEventSource(std::vector<std::pair<double, QVector3D>> &_out,
+                                                                        const double _eventTimeStamp,
+                                                                        const QVector3D &_eventPosition) const
+{
+    if (!m_objects.empty())
+        return loadEventSourceData(m_objects, _out, _eventTimeStamp, _eventPosition);
+    if (!m_initObjects.empty())
+        return loadEventSourceData(m_initObjects, _out, _eventTimeStamp, _eventPosition);
+    return false;
+}
+
+template <typename T, typename ObjectClass, typename TimeStampClass>
+inline bool
+Simulation<T, ObjectClass, TimeStampClass>::loadEventSourceData(const std::vector<ObjectClass> &_data,
+                                                                std::vector<std::pair<double, QVector3D>> &_out,
+                                                                const double _eventTimeStamp,
+                                                                const QVector3D &_eventPosition) const
+{
+    const T ets = _eventTimeStamp;
+    const Math::Vec3<T> ep = Math::Vec3<T>::fromQVector3D(_eventPosition);
+
+    _out.clear();
+    _out.reserve(_data.size());
+    for (const ObjectClass &obj : _data)
+    {
+        const std::pair<EventSourceResult, const TimeStampClass *> source =
+            obj.eventSource(m_physics.universeVelocity, ets, ep);
+
+        switch (source.first)
+        {
+        case EventSourceFoundExact:
+            _out.push_back({static_cast<double>(source.second->timeStamp), source.second->position.toQVector3D()});
+            break;
+
+        case EventSourceFoundClosest:
+        case EventSourceFoundFirst: {
+            const std::pair<TimeStampClass, bool> exactSource =
+                source.second->movedToEventSource(m_physics.universeVelocity, ets, ep);
+
+            if (!exactSource.second)
+            {
+                _out.clear();
+                return false;
+            }
+            _out.push_back(
+                {static_cast<double>(exactSource.first.timeStamp), exactSource.first.position.toQVector3D()});
+        }
+        break;
+
+        case EventSourceEmptyPath:
+        case EventSourceMissing: _out.clear(); return false;
+        }
+    }
+
+    return true;
 }
 
 }  // namespace Simulation

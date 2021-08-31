@@ -1,11 +1,11 @@
 /*!
- * \file qt/project/qsimulationnewtoncurrent.h
+ * \file qt/project/qsimulationnewtonbywave.h
  * \author Michal Steller
- * \brief Class declaration - QT Simulation for newton \b current physics
+ * \brief Class declaration - QT Simulation for newton \b wave physics
  */
 
-#ifndef UNIVERSE1_PROJECT_QSIMULATIONNEWTONCURRENT_H
-#define UNIVERSE1_PROJECT_QSIMULATIONNEWTONCURRENT_H
+#ifndef UNIVERSE1_PROJECT_QSIMULATIONNEWTONBYWAVE_H
+#define UNIVERSE1_PROJECT_QSIMULATIONNEWTONBYWAVE_H
 
 #include "qsimulation.h"
 
@@ -17,19 +17,18 @@ namespace Universe1 {
 namespace Project {
 
 /*!
- * \brief The QT Simulation using Newton current method
+ * \brief The QT Simulation using Newton wave method
  */
-class QSimulationNewtonCurrent : public QSimulation
+class QSimulationNewtonByWave : public QSimulation
 {
     Q_OBJECT
  public:
-
-    QSimulationNewtonCurrent(const QString &_ID, QObject *_parent = nullptr);
+    QSimulationNewtonByWave(const QString &_ID, QObject *_parent = nullptr);
 
     /*!
      * \brief Default destructor
      */
-    ~QSimulationNewtonCurrent() = default;
+    ~QSimulationNewtonByWave() = default;
 
     SimulationType simulationType() const override;
     Precision precision() const override;
@@ -64,18 +63,9 @@ class QSimulationNewtonCurrent : public QSimulation
 
     bool createSimulation() override;
 
-    /*!
-     * \brief Helper structure, holds object's starting properties in \c long \c double precision
-     */
-    struct InitObject
-    {
-        long double mass;                             //!< Object's mass
-        Universe1::Math::Vec3<long double> position;  //!< Object's starting position
-        Universe1::Math::Vec3<long double> velocity;  //!< Object's starting velocity
-    };
-
-    void initializeFromObjects(const std::vector<InitObject> &_objects);
-    bool rebuildSimulation(const std::vector<InitObject> &_objects);
+    void initializeFromObjects(const std::vector<Simulation::GravityNewton::NewtonObjectByWave<long double>> &_objects,
+                               const bool _doEmit = true);
+    bool rebuildSimulation(const std::vector<Simulation::GravityNewton::NewtonObjectByWave<long double>> &_objects);
 
  public slots:
     void setPrecision(Precision _precision) override;
@@ -86,14 +76,12 @@ class QSimulationNewtonCurrent : public QSimulation
  protected:
     Precision m_precision;  //!< Simulation precision
 
-    Simulation::GravityNewton::SimulationNewtonCurrent<float> m_simF;        //!< \c float \b 32bit precision
-    Simulation::GravityNewton::SimulationNewtonCurrent<double> m_simD;       //!< \c double \b 64bit precision
-    Simulation::GravityNewton::SimulationNewtonCurrent<long double> m_simL;  //!< \c long \c double \b 128bit precision
-
-    std::vector<InitObject> m_currentInitObjects;  //!< Collection of starting object's properties
+    Simulation::GravityNewton::SimulationNewtonByWave<float> m_simF;        //!< \c float \b 32bit precision
+    Simulation::GravityNewton::SimulationNewtonByWave<double> m_simD;       //!< \c double \b 64bit precision
+    Simulation::GravityNewton::SimulationNewtonByWave<long double> m_simL;  //!< \c long \c double \b 128bit precision
 };
 
 }  // namespace Project
 }  // namespace Universe1
 
-#endif  // UNIVERSE1_PROJECT_QSIMULATIONNEWTONCURRENT_H
+#endif  // UNIVERSE1_PROJECT_QSIMULATIONNEWTONBYWAVE_H

@@ -104,14 +104,34 @@ class WidgetGeneratorNewtonCurrentUser3 : public WidgetGeneratorNewtonCurrent
 inline int Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentUser3::countBySwitchState() const
 {
     return m_countSwitch->isChecked() ? 3 : 2;
-    // switch (m_countSwitch->checkState())
-    //{
-    // case Qt::Unchecked: break;
-    // case Qt::PartiallyChecked: return 3;
-    // case Qt::Checked: return 4;
-    //}
-    // return 2;
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Newton current simulation initialization data generator widget - 2 objects "binary star like model"
+ */
+class WidgetGeneratorNewtonCurrentBinary : public WidgetGeneratorNewtonCurrent
+{
+    Q_OBJECT
+ public:
+    WidgetGeneratorNewtonCurrentBinary(Project::QSimulationNewtonCurrent *_simulation, QWidget *_parent = nullptr);
+    ~WidgetGeneratorNewtonCurrentBinary();
+
+    QString generatorName() const;
+
+ public slots:
+    void rebuild();
+
+ protected:
+    GUI::GuiFloat *m_radius1;            //!< Radius 1 GUI widgets
+    GUI::GuiFloat *m_mass1;              //!< Mass 1 GUI widgets
+    GUI::GuiFloat *m_mass2;              //!< Mass 2 GUI widgets
+    GUI::GuiVector3D *m_systemVelocity;  //!< System velocity GUI widgets
+    QLabel *m_info;                      //!< Info label
+};
 
 }  // namespace SimulationEditor
 }  // namespace Widgets

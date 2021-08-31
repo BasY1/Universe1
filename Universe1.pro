@@ -75,6 +75,7 @@ HEADERS += \
 SOURCES += \
     src/qt/project/qsimulation.cpp \
     src/qt/project/qsimulationnewtoncurrent.cpp \
+    src/qt/project/qsimulationnewtonbywave.cpp \
     src/qt/project/speechdb.cpp \
     src/qt/project/arrowsetup.cpp \
     src/qt/project/spectrumarrowsetup.cpp \
@@ -86,6 +87,7 @@ SOURCES += \
 HEADERS += \
     src/qt/project/qsimulation.h \
     src/qt/project/qsimulationnewtoncurrent.h \
+    src/qt/project/qsimulationnewtonbywave.h \
     src/qt/project/speechdb.h \
     src/qt/project/arrowsetup.h \
     src/qt/project/spectrumarrowsetup.h \

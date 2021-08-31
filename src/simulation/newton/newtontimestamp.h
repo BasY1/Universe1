@@ -67,7 +67,7 @@ struct NewtonTimeStamp : public TimeStamp<T>
 
     inline T curvingTimeDuration(const T _angleRad) const;
 
-    NewtonTimeStamp
+    std::pair<NewtonTimeStamp<T>, bool>
     movedToEventSource(const T _universeVelocity, const T _eventTimeStamp, const Math::Vec3<T> &_eventPosition) const;
 };
 
@@ -269,17 +269,18 @@ inline NewtonTimeStamp<T> NewtonTimeStamp<T>::moved(const T _timeDelta) const
  * \param _universeVelocity Speed of the Universe
  * \param _eventTimeStamp Time-stamp of event
  * \param _eventPosition Event location
- * \returns This object moved in time to position from where gravitation wave hits event
+ * \returns Pair of this object moved in time to position from where gravitation wave hits event and success flag
  */
 template <typename T>
-NewtonTimeStamp<T> NewtonTimeStamp<T>::movedToEventSource(const T _universeVelocity,
-                                                          const T _eventTimeStamp,
-                                                          const Math::Vec3<T> &_eventPosition) const
+std::pair<NewtonTimeStamp<T>, bool> NewtonTimeStamp<T>::movedToEventSource(const T _universeVelocity,
+                                                                           const T _eventTimeStamp,
+                                                                           const Math::Vec3<T> &_eventPosition) const
 {
     T time1Add = Const::T_0<T>();
     T timeHit = TimeStamp<T>::getTimeWhenWaveHitEvent(_universeVelocity, _eventPosition);
     if (Type::equals<T>(timeHit, _eventTimeStamp))
-        return NewtonTimeStamp<T>(TimeStamp<T>::timeStamp, TimeStamp<T>::position, moveVelocity, Math::Vec3<T>());
+        return {NewtonTimeStamp<T>(TimeStamp<T>::timeStamp, TimeStamp<T>::position, moveVelocity, Math::Vec3<T>()),
+                true};
 
     T time1Diff = _eventTimeStamp - timeHit;
 
@@ -288,7 +289,7 @@ NewtonTimeStamp<T> NewtonTimeStamp<T>::movedToEventSource(const T _universeVeloc
     timeHit = tmpObject.getTimeWhenWaveHitEvent(_universeVelocity, _eventPosition);
 
     if (Type::equals<T>(timeHit, _eventTimeStamp))
-        return tmpObject;
+        return {tmpObject, true};
 
     T time2Diff = _eventTimeStamp - timeHit;
 
@@ -300,14 +301,14 @@ NewtonTimeStamp<T> NewtonTimeStamp<T>::movedToEventSource(const T _universeVeloc
         timeHit = tmpObject.getTimeWhenWaveHitEvent(_universeVelocity, _eventPosition);
 
         if (Type::equals<T>(timeHit, _eventTimeStamp))
-            return tmpObject;
+            return {tmpObject, true};
 
         time1Add = time2Add;
         time2Add = time3Add;
         time1Diff = time2Diff;
         time2Diff = (_eventTimeStamp - timeHit);
     }
-    return NewtonTimeStamp<T>();
+    return {NewtonTimeStamp<T>(), false};
 }
 
 /*!

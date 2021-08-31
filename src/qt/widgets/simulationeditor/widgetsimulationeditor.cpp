@@ -236,6 +236,7 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::WidgetSimulationEd
     // Tab 1 - calculation settings
 
     m_newtonCurrent[0] = nullptr;
+    m_newtonCurrent[1] = nullptr;
 
     m_generatorTabs->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -247,7 +248,16 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::WidgetSimulationEd
         if (simulationNewtonCurrent != nullptr)
         {
             m_newtonCurrent[0] = new WidgetGeneratorNewtonCurrentUser3(simulationNewtonCurrent);
+
+            WidgetGeneratorNewtonCurrentBinary *tmpBin =
+                new WidgetGeneratorNewtonCurrentBinary(simulationNewtonCurrent);
+            m_newtonCurrent[1] = tmpBin;
+            connect(m_simulation,
+                    &Project::QSimulation::physicsChanged,
+                    tmpBin,
+                    &WidgetGeneratorNewtonCurrentBinary::rebuild);
             m_generatorTabs->addTab(m_newtonCurrent[0], tr("3 objects"));
+            m_generatorTabs->addTab(m_newtonCurrent[1], tr("Binary"));
         }
     }
     break;
@@ -542,6 +552,27 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::~WidgetSimulationE
 
     for (int i = 0; i < m_view->program()->spotLightsCount(); ++i)
         disconnect(m_guiSpotLight[i], &GUI::GuiSpotLight::changed, m_view, &WidgetSimulationEditorView::setSpotLight);
+
+    switch (m_simulation->simulationType())
+    {
+    case Universe1::Project::QSimulation::SimulationNewtonCurrent: {
+        Project::QSimulationNewtonCurrent *simulationNewtonCurrent =
+            qobject_cast<Project::QSimulationNewtonCurrent *>(m_simulation);
+        if (simulationNewtonCurrent != nullptr)
+        {
+            WidgetGeneratorNewtonCurrentBinary *tmpBin =
+                qobject_cast<WidgetGeneratorNewtonCurrentBinary *>(m_newtonCurrent[1]);
+            if (tmpBin != nullptr)
+                disconnect(m_simulation,
+                           &Project::QSimulation::physicsChanged,
+                           tmpBin,
+                           &WidgetGeneratorNewtonCurrentBinary::rebuild);
+        }
+    }
+    break;
+
+    case Universe1::Project::QSimulation::SimulationNewtonByWave: break;
+    }
 
     if (m_simulation->usesHistory())
     {
