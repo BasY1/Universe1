@@ -101,7 +101,7 @@ class GuiVector3D : public QObject
     inline GuiFloat *yGui();
     inline GuiFloat *zGui();
 
-    void layoutRow(const QString &_name, QGridLayout *_lay, int &_row);
+    void layoutRow(const QString &_name, QGridLayout *_lay, int &_row, const int _startCol = 0);
 
  protected:
     void connectAll();

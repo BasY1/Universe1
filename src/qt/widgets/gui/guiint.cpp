@@ -52,12 +52,13 @@ Universe1::Widgets::GUI::GuiInt::~GuiInt()
  * \param _name Property name
  * \param _lay Layout object
  * \param _row Current row within layout
+ * \param _startCol Starting column index
  */
-void Universe1::Widgets::GUI::GuiInt::layoutRow(const QString &_name, QGridLayout *_lay, int &_row)
+void Universe1::Widgets::GUI::GuiInt::layoutRow(const QString &_name, QGridLayout *_lay, int &_row, const int _startCol)
 {
-    _lay->addWidget(new QLabel(_name), _row, 0, 1, 2);
-    _lay->addWidget(m_box, _row, 2);
-    _lay->addWidget(m_slider, _row, 3);
+    _lay->addWidget(new QLabel(_name), _row, _startCol, 1, 2);
+    _lay->addWidget(m_box, _row, _startCol + 2);
+    _lay->addWidget(m_slider, _row, _startCol + 3);
     ++_row;
 }
 

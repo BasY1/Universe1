@@ -63,7 +63,7 @@ class GuiSpotLight : public QObject
     inline GuiFloat *linearWidgets();
     inline GuiFloat *quadraticWidgets();
 
-    void layoutRow(QGridLayout *_lay, int &_row, const bool _addSingleColor = true);
+    void layoutRow(QGridLayout *_lay, int &_row, const bool _addSingleColor = true, const int _startCol = 0);
     QWidget *createWidget();
 
  public slots:

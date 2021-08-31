@@ -42,9 +42,6 @@ class LinesModel : public GLModel
      */
     virtual void rebuild() = 0;
 
- protected:
-    bool m_isInit;  //!< OpenGL buffers initialized flag
-
  private:
     bool m_hasIndexes;               //!< Using line index buffer flag
     QOpenGLBuffer m_vertexBuffer;    //!< Vertex position buffer

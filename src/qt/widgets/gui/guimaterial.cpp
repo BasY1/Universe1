@@ -46,14 +46,18 @@ Universe1::Widgets::GUI::GuiMaterial::~GuiMaterial()
  * \param _lay Layout object
  * \param _row Current row within layout
  * \param _addSingleColor Layout object
+ * \param _startCol Starting column index
  */
-void Universe1::Widgets::GUI::GuiMaterial::layoutRow(QGridLayout *_lay, int &_row, const bool _addSingleColor)
+void Universe1::Widgets::GUI::GuiMaterial::layoutRow(QGridLayout *_lay,
+                                                     int &_row,
+                                                     const bool _addSingleColor,
+                                                     const int _startCol)
 {
-    m_colors->layoutRow(_lay, _row, _addSingleColor);
-    _lay->addWidget(new HorizontalLineSpacer(), _row++, 0, 1, 4);
-    m_shininess->layoutRow(tr("Shininess"), _lay, _row);
-    _lay->addWidget(new HorizontalLineSpacer(), _row++, 0, 1, 4);
-    m_alpha->layoutRow(tr("Color alpha"), _lay, _row);
+    m_colors->layoutRow(_lay, _row, _addSingleColor, _startCol);
+    _lay->addWidget(new HorizontalLineSpacer(), _row++, _startCol, 1, 4);
+    m_shininess->layoutRow(tr("Shininess"), _lay, _row, _startCol);
+    _lay->addWidget(new HorizontalLineSpacer(), _row++, _startCol, 1, 4);
+    m_alpha->layoutRow(tr("Color alpha"), _lay, _row, _startCol);
 }
 
 /*!

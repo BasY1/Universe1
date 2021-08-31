@@ -34,7 +34,7 @@ class GuiMaterial : public QObject
     inline GuiFloat *shininessGui();
     inline GuiColorADS *colorsGui();
 
-    void layoutRow(QGridLayout *_lay, int &_row, const bool _addSingleColor = true);
+    void layoutRow(QGridLayout *_lay, int &_row, const bool _addSingleColor = true, const int _startCol = 0);
 
  public slots:
     void setMaterial(const OpenGL::Material &_material);

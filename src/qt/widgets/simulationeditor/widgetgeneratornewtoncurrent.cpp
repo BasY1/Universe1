@@ -25,17 +25,17 @@ Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrent::WidgetGenera
  * \param _simulation Processing simulation
  * \param _parent Parent \c QWidget
  */
-Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentUser4::WidgetGeneratorNewtonCurrentUser4(
+Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentUser3::WidgetGeneratorNewtonCurrentUser3(
     Project::QSimulationNewtonCurrent *_simulation, QWidget *_parent)
     : WidgetGeneratorNewtonCurrent(_simulation, _parent)
     , m_countSwitch(new QCheckBox())
 {
-    static const QString key = "SimulationEditor/GeneratorNewtonCurrentUser4/";
+    static const QString key = "SimulationEditor/GeneratorNewtonCurrentUser3/";
     const QSettings settings;
 
     m_countSwitch->setTristate(true);
     m_countSwitch->setCheckState(static_cast<Qt::CheckState>(settings.value(key + "count", Qt::Checked).toInt()));
-    connect(m_countSwitch, &QCheckBox::stateChanged, this, &WidgetGeneratorNewtonCurrentUser4::countSwitchChanged);
+    connect(m_countSwitch, &QCheckBox::stateChanged, this, &WidgetGeneratorNewtonCurrentUser3::countSwitchChanged);
 
     const int usedCnt = countBySwitchState();
 
@@ -62,7 +62,7 @@ Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentUser4::WidgetG
     static const std::pair<QVector3D, QVector3D> refRangeVel = {QVector3D(-2.0F, -2.0F, -2.0F),
                                                                 QVector3D(2.0F, 2.0F, 2.0F)};
 
-    for (int i = 0; i < 4; ++i)
+    for (int i = 0; i < countObjects; ++i)
     {
         const float m = settings.value(QString("%1mass_%2_").arg(key).arg(i), 1.0F).toFloat();
         const QVector3D p = settings.value(QString("%1position_%2_").arg(key).arg(i), defPos[i]).value<QVector3D>();
@@ -79,11 +79,11 @@ Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentUser4::WidgetG
             m_velocity[i]->setEnabled(false);
         }
 
-        connect(m_mass[i], &GUI::GuiFloat::changed, this, &WidgetGeneratorNewtonCurrentUser4::objectValueChanged);
+        connect(m_mass[i], &GUI::GuiFloat::changed, this, &WidgetGeneratorNewtonCurrentUser3::objectValueChanged);
         connect(
-            m_position[i], &GUI::GuiVector3D::changed, this, &WidgetGeneratorNewtonCurrentUser4::objectValueChanged);
+            m_position[i], &GUI::GuiVector3D::changed, this, &WidgetGeneratorNewtonCurrentUser3::objectValueChanged);
         connect(
-            m_velocity[i], &GUI::GuiVector3D::changed, this, &WidgetGeneratorNewtonCurrentUser4::objectValueChanged);
+            m_velocity[i], &GUI::GuiVector3D::changed, this, &WidgetGeneratorNewtonCurrentUser3::objectValueChanged);
 
         lay->addWidget(new HorizontalLineSpacer(), row++, 0, 1, 4);
 
@@ -101,19 +101,19 @@ Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentUser4::WidgetG
 /*!
  * \brief Destructor
  */
-Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentUser4::~WidgetGeneratorNewtonCurrentUser4()
+Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentUser3::~WidgetGeneratorNewtonCurrentUser3()
 {
-    static const QString key = "SimulationEditor/GeneratorNewtonCurrentUser4/";
+    static const QString key = "SimulationEditor/GeneratorNewtonCurrentUser3/";
     QSettings settings;
     settings.setValue(key + "count", static_cast<int>(m_countSwitch->checkState()));
-    for (int i = 0; i < 4; ++i)
+    for (int i = 0; i < countObjects; ++i)
     {
         settings.setValue(QString("%1mass_%2_").arg(key).arg(i), m_mass[i]->value());
         settings.setValue(QString("%1position_%2_").arg(key).arg(i), m_position[i]->value());
         settings.setValue(QString("%1velocity_%2_").arg(key).arg(i), m_velocity[i]->value());
     }
 
-    for (int i = 0; i < 4; ++i)
+    for (int i = 0; i < countObjects; ++i)
     {
         delete m_mass[i];
         delete m_position[i];
@@ -125,7 +125,7 @@ Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentUser4::~Widget
  * \brief Generator name getter
  * \returns "User objects [N]" string
  */
-QString Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentUser4::generatorName() const
+QString Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentUser3::generatorName() const
 {
     return tr("User objects [%1]").arg(m_initObjects.size());
 }
@@ -134,11 +134,11 @@ QString Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentUser4:
  * \brief Count switch changed
  * \param _state New check-state
  */
-void Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentUser4::countSwitchChanged(int _state)
+void Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentUser3::countSwitchChanged(int _state)
 {
     Q_UNUSED(_state)
     const int usedCnt = countBySwitchState();
-    for (int i = 0; i < 4; ++i)
+    for (int i = 0; i < countObjects; ++i)
     {
         m_mass[i]->setEnabled(i < usedCnt);
         m_position[i]->setEnabled(i < usedCnt);
@@ -150,7 +150,7 @@ void Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentUser4::co
 /*!
  * \brief Object GUI changed value
  */
-void Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentUser4::objectValueChanged()
+void Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentUser3::objectValueChanged()
 {
     const int usedCnt = countBySwitchState();
     m_initObjects.resize(usedCnt);

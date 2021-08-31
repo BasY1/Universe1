@@ -39,7 +39,7 @@ class GuiInt : public QObject
     inline QSlider *slider();
     inline QSpinBox *box();
 
-    void layoutRow(const QString &_name, QGridLayout *_lay, int &_row);
+    void layoutRow(const QString &_name, QGridLayout *_lay, int &_row, const int _startCol = 0);
 
  public slots:
     void setValue(int _value);

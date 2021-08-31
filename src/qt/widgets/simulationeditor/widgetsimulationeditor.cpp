@@ -51,6 +51,8 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::WidgetSimulationEd
 
     , m_objectsData(new QTableWidget())
 
+    , m_pointSize(new GUI::GuiFloat(m_view->pointSize(), 1, 8, 0, Qt::Horizontal))
+    , m_lineWidth(new GUI::GuiFloat(m_view->lineWidth(), 1, 8, 0, Qt::Horizontal))
     , m_showAxis(new QCheckBox())
     , m_showDots(new QCheckBox())
     , m_showProperty(new QTableWidget())
@@ -244,8 +246,8 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::WidgetSimulationEd
             qobject_cast<Project::QSimulationNewtonCurrent *>(m_simulation);
         if (simulationNewtonCurrent != nullptr)
         {
-            m_newtonCurrent[0] = new WidgetGeneratorNewtonCurrentUser4(simulationNewtonCurrent);
-            m_generatorTabs->addTab(m_newtonCurrent[0], tr("4 objects"));
+            m_newtonCurrent[0] = new WidgetGeneratorNewtonCurrentUser3(simulationNewtonCurrent);
+            m_generatorTabs->addTab(m_newtonCurrent[0], tr("3 objects"));
         }
     }
     break;
@@ -317,18 +319,26 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::WidgetSimulationEd
     m_showProperty->setVerticalHeaderLabels(vertlabs);
     m_objectsData->setHorizontalHeaderLabels(horizLabs);
 
+    connect(m_pointSize, &GUI::GuiFloat::changed, m_view, &WidgetSimulationEditorView::setPointSize);
+    connect(m_lineWidth, &GUI::GuiFloat::changed, m_view, &WidgetSimulationEditorView::setLineWidth);
     connect(m_showAxis, &QCheckBox::toggled, m_view, &WidgetSimulationEditorView::setShowAxis);
     connect(m_showDots, &QCheckBox::toggled, m_view, &WidgetSimulationEditorView::setShowDots);
     connect(m_showProperty, &QTableWidget::itemChanged, this, &WidgetSimulationEditor::showPropertyChanged);
 
     QGridLayout *layTab3 = new QGridLayout();
-    layTab3->addWidget(new QLabel(tr("Show axis")), 0, 0);
-    layTab3->addWidget(m_showAxis, 0, 0);
+    layTab3->addWidget(new QLabel(tr("Point size")), 0, 0);
+    layTab3->addWidget(m_pointSize->box(), 0, 1);
+    layTab3->addWidget(m_pointSize->slider(), 0, 2);
+    layTab3->addWidget(new QLabel(tr("Show axis")), 0, 3);
+    layTab3->addWidget(m_showAxis, 0, 4);
 
-    layTab3->addWidget(new QLabel(tr("Show dots")), 1, 0);
-    layTab3->addWidget(m_showDots, 1, 0);
+    layTab3->addWidget(new QLabel(tr("Line width")), 1, 0);
+    layTab3->addWidget(m_lineWidth->box(), 1, 1);
+    layTab3->addWidget(m_lineWidth->slider(), 1, 2);
+    layTab3->addWidget(new QLabel(tr("Show dots")), 1, 3);
+    layTab3->addWidget(m_showDots, 1, 4);
 
-    layTab3->addWidget(m_showProperty, 2, 0, 1, 2);
+    layTab3->addWidget(m_showProperty, 2, 0, 1, 5);
 
     QWidget *widTab3 = new QWidget();
     widTab3->setLayout(layTab3);
@@ -367,7 +377,7 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::WidgetSimulationEd
         connect(m_guiSpotLight[i], &GUI::GuiSpotLight::changed, m_view, &WidgetSimulationEditorView::setSpotLight);
     }
 
-    m_mainTab->addTab(m_lightsTabs, tr("Visual settings"));
+    m_mainTab->addTab(m_lightsTabs, tr("Lights"));
 
     // Tab 5 - observers (Only if simulation uses history)
     if (m_simulation->usesHistory())
@@ -516,6 +526,9 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::~WidgetSimulationE
     disconnect(m_description, &QTextBrowser::textChanged, this, &WidgetSimulationEditor::descriptionChanged);
 
     disconnect(m_objectsData, &QTableWidget::itemSelectionChanged, this, &WidgetSimulationEditor::objectsDataSelection);
+
+    disconnect(m_pointSize, &GUI::GuiFloat::changed, m_view, &WidgetSimulationEditorView::setPointSize);
+    disconnect(m_lineWidth, &GUI::GuiFloat::changed, m_view, &WidgetSimulationEditorView::setLineWidth);
     disconnect(m_showAxis, &QCheckBox::toggled, m_view, &WidgetSimulationEditorView::setShowAxis);
     disconnect(m_showDots, &QCheckBox::toggled, m_view, &WidgetSimulationEditorView::setShowDots);
     disconnect(m_showProperty, &QTableWidget::itemChanged, this, &WidgetSimulationEditor::showPropertyChanged);
@@ -574,15 +587,18 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::precisionChan
  */
 void Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::simulationChanged()
 {
-    disconnect(m_observersEnabled, &QCheckBox::stateChanged, this, &WidgetSimulationEditor::observerEnabledChanged);
-    m_observersEnabled->setChecked(false);
-    connect(m_observersEnabled, &QCheckBox::stateChanged, this, &WidgetSimulationEditor::observerEnabledChanged);
+    if (m_simulation->usesHistory())
+    {
+        disconnect(m_observersEnabled, &QCheckBox::stateChanged, this, &WidgetSimulationEditor::observerEnabledChanged);
+        m_observersEnabled->setChecked(false);
+        connect(m_observersEnabled, &QCheckBox::stateChanged, this, &WidgetSimulationEditor::observerEnabledChanged);
 
-    m_observerTime->setEnabled(false);
-    m_observer1Position->setEnabled(false);
-    m_observer2Position->setEnabled(false);
-    m_view->hideObserver1();
-    m_view->hideObserver2();
+        m_observerTime->setEnabled(false);
+        m_observer1Position->setEnabled(false);
+        m_observer2Position->setEnabled(false);
+        m_view->hideObserver1();
+        m_view->hideObserver2();
+    }
 
     m_selected.clear();
     m_view->setSelected(m_selected);

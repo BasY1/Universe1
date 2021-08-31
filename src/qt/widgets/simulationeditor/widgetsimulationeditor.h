@@ -113,6 +113,8 @@ class WidgetSimulationEditor : public QWidget
     QTableWidget *m_objectsData;  //!< Table of object's properties at current time
 
     // Main tab 3
+    GUI::GuiFloat *m_pointSize;    //!< GUI for point size
+    GUI::GuiFloat *m_lineWidth;    //!< GUI for line width
     QCheckBox *m_showAxis;         //!< Switch for show axis flag
     QCheckBox *m_showDots;         //!< Switch for show dots flag (in X-Y plane)
     QTableWidget *m_showProperty;  //!< Show object properties table with switches

@@ -65,8 +65,6 @@ class ModelPath : public GLModel
     void setPath(const std::vector<QVector3D> &_vertexData);
 
  protected:
-    bool m_isInit;  //!< OpenGL buffers initialized flag
-
     std::vector<QVector3D> m_vertexData;  //!< Path vertex position data
     std::vector<QVector3D> m_normalData;  //!< Path vertex normal data
     std::vector<uint8_t> m_materialData;  //!< Path vertex material data

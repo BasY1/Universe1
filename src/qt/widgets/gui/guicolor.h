@@ -32,7 +32,7 @@ class GuiColor : public QObject
     inline GuiInt *blueGui();
     inline WidgetBGColor *bgWidget();
 
-    void layoutRow(const QString &_name, QGridLayout *_lay, int &_row);
+    void layoutRow(const QString &_name, QGridLayout *_lay, int &_row, const int _startCol = 0);
 
  protected:
     void connectAll();

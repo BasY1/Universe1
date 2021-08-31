@@ -71,14 +71,16 @@ WidgetGeneratorNewtonCurrent::initObjects() const
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
- * \brief Newton current simulation initialization data generator widget - 2 or 4 objects
+ * \brief Newton current simulation initialization data generator widget - 2 or 3 objects
  */
-class WidgetGeneratorNewtonCurrentUser4 : public WidgetGeneratorNewtonCurrent
+class WidgetGeneratorNewtonCurrentUser3 : public WidgetGeneratorNewtonCurrent
 {
     Q_OBJECT
  public:
-    WidgetGeneratorNewtonCurrentUser4(Project::QSimulationNewtonCurrent *_simulation, QWidget *_parent = nullptr);
-    ~WidgetGeneratorNewtonCurrentUser4();
+    static const int countObjects{3};  //!< Maximum object count
+
+    WidgetGeneratorNewtonCurrentUser3(Project::QSimulationNewtonCurrent *_simulation, QWidget *_parent = nullptr);
+    ~WidgetGeneratorNewtonCurrentUser3();
 
     QString generatorName() const;
 
@@ -90,24 +92,25 @@ class WidgetGeneratorNewtonCurrentUser4 : public WidgetGeneratorNewtonCurrent
 
  protected:
     QCheckBox *m_countSwitch;         //!< Count switch "tristate" check-box
-    GUI::GuiFloat *m_mass[4];         //!< GUI widgets for mass
-    GUI::GuiVector3D *m_position[4];  //!< GUI widgets for position
-    GUI::GuiVector3D *m_velocity[4];  //!< GUI widgets for velocity
+    GUI::GuiFloat *m_mass[countObjects];         //!< GUI widgets for mass
+    GUI::GuiVector3D *m_position[countObjects];  //!< GUI widgets for position
+    GUI::GuiVector3D *m_velocity[countObjects];  //!< GUI widgets for velocity
 };
 
 /*!
  * \brief Count objects by switch check-state
  * \returns Count objects
  */
-inline int Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentUser4::countBySwitchState() const
+inline int Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentUser3::countBySwitchState() const
 {
-    switch (m_countSwitch->checkState())
-    {
-    case Qt::Unchecked: break;
-    case Qt::PartiallyChecked: return 3;
-    case Qt::Checked: return 4;
-    }
-    return 2;
+    return m_countSwitch->isChecked() ? 3 : 2;
+    // switch (m_countSwitch->checkState())
+    //{
+    // case Qt::Unchecked: break;
+    // case Qt::PartiallyChecked: return 3;
+    // case Qt::Checked: return 4;
+    //}
+    // return 2;
 }
 
 }  // namespace SimulationEditor

@@ -13,7 +13,6 @@
  */
 Universe1::OpenGL::Models::LinesModel::LinesModel(const std::vector<Material> &_materials, QObject *_parent)
     : GLModel(_materials, _parent)
-    , m_isInit(false)
     , m_hasIndexes(false)
     , m_vertexBuffer()
     , m_normalBuffer()
@@ -44,7 +43,7 @@ Universe1::OpenGL::Models::LinesModel::~LinesModel()
  */
 bool Universe1::OpenGL::Models::LinesModel::isInit() const
 {
-    return m_isInit;
+    return m_vertexBuffer.isCreated();
 }
 
 /*!
@@ -60,7 +59,6 @@ bool Universe1::OpenGL::Models::LinesModel::initBuffers(const std::vector<QVecto
                                                         const std::vector<uint8_t> &_materialData,
                                                         const std::vector<uint> &_linesData)
 {
-    m_isInit = false;
     m_linesCount = 0;
     clearRange();
     m_memoryUsage = 0U;
@@ -138,8 +136,6 @@ bool Universe1::OpenGL::Models::LinesModel::initBuffers(const std::vector<QVecto
     {
         m_linesCount = _vertexData.size();
     }
-
-    m_isInit = m_linesCount > 1;
 
     return true;
 }

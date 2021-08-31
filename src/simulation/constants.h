@@ -82,6 +82,7 @@ inline T Constants<T>::getValue(const ConstantName &_name) const
     case Const_GravityConstant: return gravityConstant;
     case Const_ElementRadius: return elementRadius;
     }
+    return Const::T_0<T>();
 }
 
 /*!

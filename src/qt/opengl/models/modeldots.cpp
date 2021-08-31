@@ -20,11 +20,10 @@ Universe1::OpenGL::Models::ModelDots::ModelDots(const std::vector<Material> &_ma
                                                 const std::vector<uint8_t> &_materialData,
                                                 QObject *_parent)
     : GLModel(_materials, _parent)
-    , m_isInit(false)
     , m_vertexData(_vertexData)
-    , m_normalData(_normalData)
+    , m_normalData()
     , m_normalSingle()
-    , m_materialData(_materialData)
+    , m_materialData()
     , m_vertexBuffer()
     , m_normalBuffer()
     , m_materialBuffer()
@@ -53,12 +52,11 @@ Universe1::OpenGL::Models::ModelDots::ModelDots(const std::vector<Material> &_ma
                                                 const std::vector<uint8_t> &_materialData,
                                                 QObject *_parent)
     : GLModel(_materials, _parent)
-    , m_isInit(false)
     , m_vertexData(_vertexData)
     , m_normalData()
     , m_normalSingle(qFuzzyCompare(QVector3D(), _normalSingle) ? QVector3D(0.0F, 0.0F, 1.0F)
                                                                : _normalSingle.normalized())
-    , m_materialData(_materialData)
+    , m_materialData()
     , m_vertexBuffer()
     , m_normalBuffer()
     , m_materialBuffer()
@@ -87,7 +85,7 @@ Universe1::OpenGL::Models::ModelDots::~ModelDots()
  */
 bool Universe1::OpenGL::Models::ModelDots::isInit() const
 {
-    return m_isInit;
+    return m_vertexBuffer.isCreated();
 }
 
 /*!
@@ -96,27 +94,30 @@ bool Universe1::OpenGL::Models::ModelDots::isInit() const
  */
 void Universe1::OpenGL::Models::ModelDots::rebuild()
 {
-    m_isInit = false;
     clearRange();
     m_memoryUsage = 0U;
     m_dotsCount = 0;
 
     if (!m_vertexBuffer.isCreated())
     {
-        if (!m_vertexBuffer.create())
+        if (m_vertexBuffer.create())
+        {
+            if (!m_normalBuffer.create())
+            {
+                m_vertexBuffer.destroy();
+                return;
+            }
+            if (!m_materialBuffer.create())
+            {
+                m_vertexBuffer.destroy();
+                m_normalBuffer.destroy();
+                return;
+            }
+        }
+        else
+        {
             return;
-    }
-
-    if (!m_normalBuffer.isCreated())
-    {
-        if (!m_normalBuffer.create())
-            return;
-    }
-
-    if (!m_materialBuffer.isCreated())
-    {
-        if (!m_materialBuffer.create())
-            return;
+        }
     }
 
     m_vertexBuffer.bind();
@@ -163,8 +164,6 @@ void Universe1::OpenGL::Models::ModelDots::rebuild()
     }
 
     m_dotsCount = m_vertexData.size();
-
-    m_isInit = m_dotsCount > 0;
 }
 
 /*!

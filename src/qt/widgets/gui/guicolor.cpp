@@ -51,25 +51,29 @@ Universe1::Widgets::GUI::GuiColor::~GuiColor()
  * \param _name Property name
  * \param _lay Layout object
  * \param _row Current row within layout
+ * \param _startCol Starting column index
  */
-void Universe1::Widgets::GUI::GuiColor::layoutRow(const QString &_name, QGridLayout *_lay, int &_row)
+void Universe1::Widgets::GUI::GuiColor::layoutRow(const QString &_name,
+                                                  QGridLayout *_lay,
+                                                  int &_row,
+                                                  const int _startCol)
 {
-    _lay->addWidget(new QLabel(_name), _row, 0);
-    _lay->addWidget(new QLabel("<b>" + tr("R") + "</b>"), _row, 1, Qt::AlignRight);
-    _lay->addWidget(m_red->box(), _row, 2);
-    _lay->addWidget(m_red->slider(), _row, 3);
+    _lay->addWidget(new QLabel(_name), _row, _startCol);
+    _lay->addWidget(new QLabel("<b>" + tr("R") + "</b>"), _row, _startCol + 1, Qt::AlignRight);
+    _lay->addWidget(m_red->box(), _row, _startCol + 2);
+    _lay->addWidget(m_red->slider(), _row, _startCol + 3);
     ++_row;
 
-    _lay->addWidget(m_bgWidget, _row, 0, 2, 1);
+    _lay->addWidget(m_bgWidget, _row, _startCol + 0, 2, 1);
 
-    _lay->addWidget(new QLabel("<b>" + tr("G") + "</b>"), _row, 1, Qt::AlignRight);
-    _lay->addWidget(m_green->box(), _row, 2);
-    _lay->addWidget(m_green->slider(), _row, 3);
+    _lay->addWidget(new QLabel("<b>" + tr("G") + "</b>"), _row, _startCol + 1, Qt::AlignRight);
+    _lay->addWidget(m_green->box(), _row, _startCol + 2);
+    _lay->addWidget(m_green->slider(), _row, _startCol + 3);
     ++_row;
 
-    _lay->addWidget(new QLabel("<b>" + tr("B") + "</b>"), _row, 1, Qt::AlignRight);
-    _lay->addWidget(m_blue->box(), _row, 2);
-    _lay->addWidget(m_blue->slider(), _row, 3);
+    _lay->addWidget(new QLabel("<b>" + tr("B") + "</b>"), _row, _startCol + 1, Qt::AlignRight);
+    _lay->addWidget(m_blue->box(), _row, _startCol + 2);
+    _lay->addWidget(m_blue->slider(), _row, _startCol + 3);
     ++_row;
 }
 

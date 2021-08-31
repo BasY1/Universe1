@@ -45,7 +45,7 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::WidgetSimulati
     QWidget *_parent)
     : OpenGL::GLWidget(new OpenGL::ShaderProgram(4, 4, 3),
                        "SimulationEditor/View/" + _simulation->simulationTypeName() + '/',
-                       false,
+                       true,  // false, //  save camera
                        _parent)
     , m_simulation(_simulation)
     , m_sceneRange(_sceneRange)
@@ -84,7 +84,7 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::WidgetSimulati
                                              AXIS_LINE_R,
                                              AXIS_HEAD_R,
                                              AXIS_HEAD_L))
-    , m_dotsXY(new OpenGL::Models::ModelDots(OpenGL::Material::materialCyanDark))
+    , m_dotsXY(new OpenGL::Models::ModelDots(OpenGL::Material::materialCyan))
     , m_observer1(new OpenGL::Models::ModelSingularity(OpenGL::Material::materialMagentaDark, QVector3D()))
     , m_observer2(new OpenGL::Models::ModelSingularity(OpenGL::Material::materialYellowDark, QVector3D()))
 {
@@ -104,9 +104,10 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::WidgetSimulati
 
     if (settings.contains(m_settingsKey + "propertyAll"))
     {
-        m_propertyAll = settings.value(m_settingsKey + "propertyAll").value<Project::QSimulation::ElementProperties>();
-        m_propertySelected =
-            settings.value(m_settingsKey + "propertySelected").value<Project::QSimulation::ElementProperties>();
+        m_propertyAll =
+            static_cast<Project::QSimulation::ElementProperties>(settings.value(m_settingsKey + "propertyAll").toInt());
+        m_propertySelected = static_cast<Project::QSimulation::ElementProperties>(
+            settings.value(m_settingsKey + "propertySelected").toInt());
     }
     else
     {
@@ -160,8 +161,8 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::~WidgetSimulat
     settings.setValue(m_settingsKey + "showDots", m_showDots);
     settings.setValue(m_settingsKey + "showPathAll", m_showPathAll);
     settings.setValue(m_settingsKey + "showPathSelected", m_showPathSelected);
-    settings.setValue(m_settingsKey + "propertyAll", QVariant::fromValue(m_propertyAll));
-    settings.setValue(m_settingsKey + "propertySelected", QVariant::fromValue(m_propertySelected));
+    settings.setValue(m_settingsKey + "propertyAll", static_cast<int>(m_propertyAll));
+    settings.setValue(m_settingsKey + "propertySelected", static_cast<int>(m_propertySelected));
 
     makeCurrent();
 
@@ -386,6 +387,8 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::rebuildSi
     build();
 
     doneCurrent();
+
+    update();
 }
 
 /*!
@@ -719,10 +722,10 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::build()
         if (objCount != prop.second.size())
             return;
 
-    m_dotsXY->setPlaneXY(static_cast<int>(m_sceneRange->first.x()) - 1,
-                         static_cast<int>(m_sceneRange->first.y()) - 1,
-                         static_cast<int>(m_sceneRange->second.x()) + 1,
-                         static_cast<int>(m_sceneRange->second.y()) + 1);
+    m_dotsXY->setPlaneXY(std::min(-10, static_cast<int>(m_sceneRange->first.x()) - 1),
+                         std::min(-10, static_cast<int>(m_sceneRange->first.y()) - 1),
+                         std::max(10, static_cast<int>(m_sceneRange->second.x()) + 1),
+                         std::max(10, static_cast<int>(m_sceneRange->second.y()) + 1));
 
     for (const std::vector<std::pair<double, QVector3D>> &path : *m_pathData)
     {

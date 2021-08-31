@@ -48,7 +48,7 @@ class GuiFloat : public QObject
     inline QSlider *slider();
     inline QDoubleSpinBox *box();
 
-    void layoutRow(const QString &_name, QGridLayout *_lay, int &_row);
+    void layoutRow(const QString &_name, QGridLayout *_lay, int &_row, const int _startCol = 0);
 
  public slots:
     void setValue(float _value);

@@ -54,7 +54,7 @@ Universe1::OpenGL::Models::ModelPath::~ModelPath()
  */
 bool Universe1::OpenGL::Models::ModelPath::isInit() const
 {
-    return m_isInit;
+    return m_vertexBuffer.isCreated();
 }
 
 /*!
@@ -63,7 +63,6 @@ bool Universe1::OpenGL::Models::ModelPath::isInit() const
  */
 void Universe1::OpenGL::Models::ModelPath::rebuild()
 {
-    m_isInit = false;
     clearRange();
     m_memoryUsage = 0U;
     m_linesCount = 0;
@@ -153,8 +152,6 @@ void Universe1::OpenGL::Models::ModelPath::rebuild()
     }
 
     m_linesCount = m_vertexData.size();
-
-    m_isInit = m_linesCount > 1;
 }
 
 /*!

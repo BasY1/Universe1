@@ -36,7 +36,7 @@ class GuiDirectionLight : public QObject
     inline GuiVector3D *directionWidgets();
     inline GuiColorADS *colorsWidgets();
 
-    void layoutRow(QGridLayout *_lay, int &_row, const bool _addSingleColor = true);
+    void layoutRow(QGridLayout *_lay, int &_row, const bool _addSingleColor = true, const int _startCol = 0);
     QWidget *createWidget();
 
  public slots:

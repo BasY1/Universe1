@@ -54,23 +54,27 @@ Universe1::Widgets::GUI::GuiColorADS::~GuiColorADS()
  * \param _lay Layout object
  * \param _row Current row within layout
  * \param _addSingleColor Layout object
+ * \param _startCol Starting column index
  */
-void Universe1::Widgets::GUI::GuiColorADS::layoutRow(QGridLayout *_lay, int &_row, const bool _addSingleColor)
+void Universe1::Widgets::GUI::GuiColorADS::layoutRow(QGridLayout *_lay,
+                                                     int &_row,
+                                                     const bool _addSingleColor,
+                                                     const int _startCol)
 {
     if (_addSingleColor)
     {
-        _lay->addWidget(new QLabel(tr("Single color")), _row, 0, 1, 2);
-        _lay->addWidget(m_singleColor, _row, 2, 1, 2);
+        _lay->addWidget(new QLabel(tr("Single color")), _row, _startCol, 1, 2);
+        _lay->addWidget(m_singleColor, _row, _startCol + 2, 1, 2);
         _row++;
 
-        //_lay->addWidget(new HorizontalLineSpacer(), _row++, 0, 1, 4);
+        //_lay->addWidget(new HorizontalLineSpacer(), _row++, _startCol, 1, 4);
     }
 
-    m_ambient->layoutRow(tr("Ambient"), _lay, _row);
-    _lay->addWidget(new HorizontalLineSpacer(), _row++, 0, 1, 4);
-    m_diffuse->layoutRow(tr("Diffuse"), _lay, _row);
-    _lay->addWidget(new HorizontalLineSpacer(), _row++, 0, 1, 4);
-    m_specular->layoutRow(tr("Specular"), _lay, _row);
+    m_ambient->layoutRow(tr("Ambient"), _lay, _row, _startCol);
+    _lay->addWidget(new HorizontalLineSpacer(), _row++, _startCol, 1, 4);
+    m_diffuse->layoutRow(tr("Diffuse"), _lay, _row, _startCol);
+    _lay->addWidget(new HorizontalLineSpacer(), _row++, _startCol, 1, 4);
+    m_specular->layoutRow(tr("Specular"), _lay, _row, _startCol);
 }
 
 /*!

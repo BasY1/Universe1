@@ -59,25 +59,29 @@ Universe1::Widgets::GUI::GuiVector3D::~GuiVector3D()
  * \param _name Property name
  * \param _lay Layout object
  * \param _row Current row within layout
+ * \param _startCol Starting column index
  */
-void Universe1::Widgets::GUI::GuiVector3D::layoutRow(const QString &_name, QGridLayout *_lay, int &_row)
+void Universe1::Widgets::GUI::GuiVector3D::layoutRow(const QString &_name,
+                                                     QGridLayout *_lay,
+                                                     int &_row,
+                                                     const int _startCol)
 {
-    _lay->addWidget(new QLabel(_name), _row, 0);
-    _lay->addWidget(new QLabel("<b>" + tr("X") + "</b>"), _row, 1, Qt::AlignRight);
-    _lay->addWidget(m_x->box(), _row, 2);
-    _lay->addWidget(m_x->slider(), _row, 3);
+    _lay->addWidget(new QLabel(_name), _row, _startCol);
+    _lay->addWidget(new QLabel("<b>" + tr("X") + "</b>"), _row, _startCol + 1, Qt::AlignRight);
+    _lay->addWidget(m_x->box(), _row, _startCol + 2);
+    _lay->addWidget(m_x->slider(), _row, _startCol + 3);
     ++_row;
 
-    _lay->addItem(new QSpacerItem(1, 1, QSizePolicy::Minimum, QSizePolicy::Minimum), _row, 0);
-    _lay->addWidget(new QLabel("<b>" + tr("Y") + "</b>"), _row, 1, Qt::AlignRight);
-    _lay->addWidget(m_y->box(), _row, 2);
-    _lay->addWidget(m_y->slider(), _row, 3);
+    _lay->addItem(new QSpacerItem(1, 1, QSizePolicy::Minimum, QSizePolicy::Minimum), _row, _startCol);
+    _lay->addWidget(new QLabel("<b>" + tr("Y") + "</b>"), _row, _startCol + 1, Qt::AlignRight);
+    _lay->addWidget(m_y->box(), _row, _startCol + 2);
+    _lay->addWidget(m_y->slider(), _row, _startCol + 3);
     ++_row;
 
-    _lay->addItem(new QSpacerItem(1, 1, QSizePolicy::Minimum, QSizePolicy::Minimum), _row, 0);
-    _lay->addWidget(new QLabel("<b>" + tr("Z") + "</b>"), _row, 1, Qt::AlignRight);
-    _lay->addWidget(m_z->box(), _row, 2);
-    _lay->addWidget(m_z->slider(), _row, 3);
+    _lay->addItem(new QSpacerItem(1, 1, QSizePolicy::Minimum, QSizePolicy::Minimum), _row, _startCol);
+    _lay->addWidget(new QLabel("<b>" + tr("Z") + "</b>"), _row, _startCol + 1, Qt::AlignRight);
+    _lay->addWidget(m_z->box(), _row, _startCol + 2);
+    _lay->addWidget(m_z->slider(), _row, _startCol + 3);
     ++_row;
 }
 

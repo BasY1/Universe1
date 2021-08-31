@@ -57,20 +57,24 @@ Universe1::Widgets::GUI::GuiDirectionLight::~GuiDirectionLight()
  * \param _lay Layout object
  * \param _row Current row within layout
  * \param _addSingleColor Layout object
+ * \param _startCol Starting column index
  */
-void Universe1::Widgets::GUI::GuiDirectionLight::layoutRow(QGridLayout *_lay, int &_row, const bool _addSingleColor)
+void Universe1::Widgets::GUI::GuiDirectionLight::layoutRow(QGridLayout *_lay,
+                                                           int &_row,
+                                                           const bool _addSingleColor,
+                                                           const int _startCol)
 {
-    _lay->addWidget(new QLabel(tr("Enabled")), _row, 0, 1, 2);
-    _lay->addWidget(m_lightOnOff, _row, 2, 1, 2);
+    _lay->addWidget(new QLabel(tr("Enabled")), _row, _startCol, 1, 2);
+    _lay->addWidget(m_lightOnOff, _row, _startCol + 2, 1, 2);
     _row++;
 
-    _lay->addWidget(new HorizontalLineSpacer(), _row++, 0, 1, 4);
+    _lay->addWidget(new HorizontalLineSpacer(), _row++, _startCol, 1, 4);
 
-    m_colors->layoutRow(_lay, _row, _addSingleColor);
+    m_colors->layoutRow(_lay, _row, _addSingleColor, _startCol);
 
-    _lay->addWidget(new HorizontalLineSpacer(), _row++, 0, 1, 4);
+    _lay->addWidget(new HorizontalLineSpacer(), _row++, _startCol, 1, 4);
 
-    m_direction->layoutRow(tr("Direction"), _lay, _row);
+    m_direction->layoutRow(tr("Direction"), _lay, _row, _startCol);
     m_direction->setToolTip(tr("Light direction normal vector"));
 }
 

@@ -80,25 +80,29 @@ Universe1::Widgets::GUI::GuiPointLight::~GuiPointLight()
  * \param _lay Layout object
  * \param _row Current row within layout
  * \param _addSingleColor Layout object
+ * \param _startCol Starting column index
  */
-void Universe1::Widgets::GUI::GuiPointLight::layoutRow(QGridLayout *_lay, int &_row, const bool _addSingleColor)
+void Universe1::Widgets::GUI::GuiPointLight::layoutRow(QGridLayout *_lay,
+                                                       int &_row,
+                                                       const bool _addSingleColor,
+                                                       const int _startCol)
 {
-    _lay->addWidget(new QLabel(tr("Mode")), _row, 0, 1, 2);
-    _lay->addWidget(m_lightMode, _row++, 2, 1, 2);
+    _lay->addWidget(new QLabel(tr("Mode")), _row, _startCol, 1, 2);
+    _lay->addWidget(m_lightMode, _row++, _startCol + 2, 1, 2);
 
-    _lay->addWidget(new HorizontalLineSpacer(), _row++, 0, 1, 4);
+    _lay->addWidget(new HorizontalLineSpacer(), _row++, _startCol, 1, 4);
 
-    m_colors->layoutRow(_lay, _row, _addSingleColor);
+    m_colors->layoutRow(_lay, _row, _addSingleColor, _startCol);
 
-    _lay->addWidget(new HorizontalLineSpacer(), _row++, 0, 1, 4);
+    _lay->addWidget(new HorizontalLineSpacer(), _row++, _startCol, 1, 4);
 
-    m_position->layoutRow(tr("Position"), _lay, _row);
+    m_position->layoutRow(tr("Position"), _lay, _row, _startCol);
 
-    _lay->addWidget(new HorizontalLineSpacer(), _row++, 0, 1, 4);
+    _lay->addWidget(new HorizontalLineSpacer(), _row++, _startCol, 1, 4);
 
-    m_constantWidgets->layoutRow(tr("Scalar"), _lay, _row);
-    m_linearWidgets->layoutRow(tr("Linear"), _lay, _row);
-    m_quadraticWidgets->layoutRow(tr("Quadratic"), _lay, _row);
+    m_constantWidgets->layoutRow(tr("Scalar"), _lay, _row, _startCol);
+    m_linearWidgets->layoutRow(tr("Linear"), _lay, _row, _startCol);
+    m_quadraticWidgets->layoutRow(tr("Quadratic"), _lay, _row, _startCol);
 }
 
 /*!
