@@ -146,9 +146,9 @@ void Universe1::OpenGL::Models::ModelPath::rebuild()
             materialData.push_back(static_cast<float>(md) + 0.1F);
 
         m_materialBuffer.bind();
-        m_materialBuffer.allocate(m_materialData.data(), m_materialData.size() * sizeof(float));
+        m_materialBuffer.allocate(materialData.data(), materialData.size() * sizeof(float));
         m_materialBuffer.release();
-        m_memoryUsage += m_materialData.size() * sizeof(float);
+        m_memoryUsage += materialData.size() * sizeof(float);
     }
 
     m_linesCount = m_vertexData.size();
@@ -178,7 +178,7 @@ void Universe1::OpenGL::Models::ModelPath::paintGLImlp(ShaderProgram *_program)
 
     m_materialBuffer.bind();
     _program->enableAttributeArray(_program->attrMaterial());
-    _program->setAttributeBuffer(_program->attrMaterial(), GL_UNSIGNED_BYTE, 0, 1);
+    _program->setAttributeBuffer(_program->attrMaterial(), GL_FLOAT, 0, 1);
 
     glDrawArrays(GL_LINE_STRIP, 0, m_linesCount);
 

@@ -476,10 +476,10 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::setSelect
 
     m_selected = _value;
 
-    if (m_selected.size() != 1U)
-        m_camera->setLockedCenterOfView(false);
-    else
-        m_camera->setLockedCenterOfView(m_currentTimePositionsData->at(*m_selected.cbegin()), true);
+    // if (m_selected.size() != 1U)
+    //    m_camera->setLockedCenterOfView(false);
+    // else
+    //    m_camera->setLockedCenterOfView(m_currentTimePositionsData->at(*m_selected.cbegin()), true);
 
     update();
 }
@@ -630,7 +630,8 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::mouseDoub
         const QVector2D screenPos(_event->pos().x(), _event->pos().y());
         const QRect viewPort(0, 0, width(), height());
         const float hh = height();
-        const QMatrix4x4 view = m_camera->viewMatrix();
+        // const QMatrix4x4 view = m_camera->viewMatrix();
+        const QMatrix4x4 view = m_camera->lookAtMatrix();
         const QMatrix4x4 proj = m_camera->perspectiveMatrix();
 
         std::vector<QVector3D>::const_iterator it = m_currentTimePositionsData->cbegin();
@@ -724,7 +725,8 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::build()
     for (const std::vector<std::pair<double, QVector3D>> &path : *m_pathData)
     {
         OpenGL::Models::ModelPath *mp = new OpenGL::Models::ModelPath(
-            {OpenGL::Material::materialCyanDark, OpenGL::Material::materialCyan, OpenGL::Material::materialCyanLight});
+            {OpenGL::Material::materialCyanDark, OpenGL::Material::materialYellow, OpenGL::Material::materialMagenta});
+        mp->initGL();
         mp->setMaterialMode(OpenGL::Material::MaterialDiffuse);
 
         std::vector<QVector3D> vertexData;
@@ -749,7 +751,6 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::build()
         }
 
         mp->setPath(vertexData, colorData);
-        mp->initGL();
         m_objectPath.push_back(mp);
     }
 
@@ -760,9 +761,9 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::build()
     {
         for (const QVector3D &pos : *m_currentTimePositionsData)
         {
-            OpenGL::Models::GLModel *m1 =
-                new OpenGL::Models::ModelSphere(OpenGL::Material::materialWhiteDark, pos, 1.0F);
-            OpenGL::Models::GLModel *m2 = new OpenGL::Models::ModelSphere(OpenGL::Material::materialWhite, pos, 1.0F);
+            OpenGL::Models::GLModel *m1 = new OpenGL::Models::ModelSphere(OpenGL::Material::materialWhite, pos, 1.0F);
+            OpenGL::Models::GLModel *m2 =
+                new OpenGL::Models::ModelSphere(OpenGL::Material::materialWhiteLight, pos, 1.0F);
             m1->initGL();
             m2->initGL();
             m_currentTimeAll.push_back(m1);
@@ -787,6 +788,8 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::build()
                                                                                pos,
                                                                                0.05F,
                                                                                0.95F);
+            m1->setMaterialMode(OpenGL::Material::MaterialDiffuse);
+            m2->setMaterialMode(OpenGL::Material::MaterialDiffuse);
             m1->initGL();
             m2->initGL();
             m_currentTimeAll.push_back(m1);

@@ -45,10 +45,11 @@ int main(int argc, char *argv[])
     // return dialog.exec();
 
     Universe1::Project::QSimulationNewtonCurrent *sim = new Universe1::Project::QSimulationNewtonCurrent("0");
-    Universe1::Widgets::SimulationEditor::DialogSimulationEditor dialog(sim);
-
     sim->setPrecision(Universe1::Project::QSimulation::PrecisionLongDouble);
     sim->setMaximumStepTime(0.1);
+    sim->setCalculationStepCount(200);
+
+    Universe1::Widgets::SimulationEditor::DialogSimulationEditor dialog(sim);
 
     return dialog.exec();
 

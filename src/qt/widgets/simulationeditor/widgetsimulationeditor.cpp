@@ -329,6 +329,8 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::WidgetSimulationEd
         row++;
     }
     m_showProperty->setVerticalHeaderLabels(vertlabs);
+    m_showProperty->resizeColumnsToContents();
+    m_showProperty->resizeRowsToContents();
     m_objectsData->setHorizontalHeaderLabels(horizLabs);
 
     connect(m_pointSize, &GUI::GuiFloat::changed, m_view, &WidgetSimulationEditorView::setPointSize);
@@ -884,6 +886,9 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::rebuildCurren
 
         m_currentTimePropertyMaxLength.insert({propName, maxLength});
     }
+
+    m_objectsData->resizeColumnsToContents();
+    m_objectsData->resizeRowsToContents();
 
     connect(m_objectsData, &QTableWidget::itemSelectionChanged, this, &WidgetSimulationEditor::objectsDataSelection);
 
