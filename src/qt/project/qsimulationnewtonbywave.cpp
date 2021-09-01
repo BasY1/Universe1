@@ -41,7 +41,7 @@ Universe1::Project::QSimulation::Precision Universe1::Project::QSimulationNewton
  */
 bool Universe1::Project::QSimulationNewtonByWave::usesHistory() const
 {
-    return false;
+    return true;
 }
 
 /*!

@@ -169,6 +169,13 @@ struct ObjectHistory
     void initHistory(const bool _filled, const size_t _currentIdx, const size_t _historySize);
 
     /*!
+     * \brief Initialize history buffer
+     * \param _list New history buffer
+     * \param _add Count of empty steps to add
+     */
+    void initHistory(const std::list<TimeStampClass> &_list, const size_t _add = 0U);
+
+    /*!
      * \brief Append new time-stamp data into history buffer
      * \param _timeDelta Step time duration
      * \details
@@ -322,6 +329,17 @@ void ObjectHistory<T, TimeStampClass>::initHistory(const bool _filled,
     m_filled = _filled;
     m_currentIdx = _currentIdx;
     m_history.resize(_historySize < minimumHistorySize ? 0U : _historySize);
+}
+
+template <typename T, typename TimeStampClass>
+void ObjectHistory<T, TimeStampClass>::initHistory(const std::list<TimeStampClass> &_list, const size_t _add)
+{
+    m_filled = false;
+    m_currentIdx = _list.empty() ? 0U : _list.size() - 1U;
+    m_history.clear();
+    m_history.reserve(_list.size() + _add);
+    for (const TimeStampClass &ts : _list)
+        m_history.push_back(ts);
 }
 
 template <typename T, typename TimeStampClass>

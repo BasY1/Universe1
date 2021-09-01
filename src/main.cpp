@@ -44,7 +44,9 @@ int main(int argc, char *argv[])
     // Universe1::Widgets::MaterialEditor::DialogMaterialEditor dialog(&db);
     // return dialog.exec();
 
-    Universe1::Project::QSimulationNewtonCurrent *sim = new Universe1::Project::QSimulationNewtonCurrent("0");
+    // Universe1::Project::QSimulationNewtonCurrent *sim = new Universe1::Project::QSimulationNewtonCurrent("0");
+    Universe1::Project::QSimulationNewtonByWave *sim = new Universe1::Project::QSimulationNewtonByWave("0");
+
     sim->setPrecision(Universe1::Project::QSimulation::PrecisionLongDouble);
     sim->setMaximumStepTime(0.1);
     sim->setCalculationStepCount(200);

@@ -88,6 +88,9 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::WidgetSimulati
     , m_observer1(new OpenGL::Models::ModelSingularity(OpenGL::Material::materialMagentaDark, QVector3D()))
     , m_observer2(new OpenGL::Models::ModelSingularity(OpenGL::Material::materialYellowDark, QVector3D()))
 {
+    m_observer1->setMaterialMode(OpenGL::Material::MaterialDiffuse);
+    m_observer2->setMaterialMode(OpenGL::Material::MaterialDiffuse);
+
     m_dotsXY->setMaterialMode(OpenGL::Material::MaterialAmbient);
 
     m_pointLightModels.reserve(m_program->pointLightsCount());
@@ -405,8 +408,9 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::setObserv
     for (const std::pair<double, QVector3D> &p : _objectData)
     {
         OpenGL::Models::ModelSingularity *ms =
-            new OpenGL::Models::ModelSingularity(OpenGL::Material::materialMagenta, p.second);
+            new OpenGL::Models::ModelSingularity(OpenGL::Material::materialMagenta, p.second, 0.5F, 0.8F);
         ms->initGL();
+        ms->setMaterialMode(OpenGL::Material::MaterialDiffuse);
         m_observer1Sources.push_back(ms);
     }
 
@@ -436,8 +440,9 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::setObserv
     for (const std::pair<double, QVector3D> &p : _objectData)
     {
         OpenGL::Models::ModelSingularity *ms =
-            new OpenGL::Models::ModelSingularity(OpenGL::Material::materialYellow, p.second);
+            new OpenGL::Models::ModelSingularity(OpenGL::Material::materialYellow, p.second, 0.5F, 0.8F);
         ms->initGL();
+        ms->setMaterialMode(OpenGL::Material::MaterialDiffuse);
         m_observer2Sources.push_back(ms);
     }
 
@@ -664,7 +669,17 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::mouseDoub
         }
         else if (_event->modifiers() != Qt::ControlModifier)
         {
-            emit selectionClearRequest();
+            if (!m_selected.empty())
+            {
+                emit selectionClearRequest();
+            }
+            else
+            {
+                if (m_camera->isLockedCenterOfView())
+                    m_camera->setLockedCenterOfView(false);
+                else
+                    m_camera->setLockedCenterOfView(QVector3D(), true);
+            }
         }
     }
 }

@@ -128,7 +128,7 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::WidgetSimulationEd
             &WidgetSimulationEditor::precisionChanged);
 
     m_calculationStepCount->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-    m_calculationStepCount->setRange(2, 10000);
+    m_calculationStepCount->setRange(2, 1000000);
     m_calculationStepCount->setValue(m_simulation->calculationStepCount());
     connect(m_calculationStepCount,
             static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
@@ -136,8 +136,8 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::WidgetSimulationEd
             &Project::QSimulation::setCalculationStepCount);
 
     m_calculationStepTime->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-    m_calculationStepTime->setDecimals(3);
-    m_calculationStepTime->setRange(0.001, 10.0);
+    m_calculationStepTime->setDecimals(5);
+    m_calculationStepTime->setRange(0.00001, 10.0);
     m_calculationStepTime->setValue(m_simulation->getMaximumStepTime());
     connect(m_calculationStepTime,
             static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
@@ -262,7 +262,22 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::WidgetSimulationEd
     }
     break;
 
-    case Universe1::Project::QSimulation::SimulationNewtonByWave: break;
+    case Universe1::Project::QSimulation::SimulationNewtonByWave: {
+        Project::QSimulationNewtonByWave *simulationNewtonByWave =
+            qobject_cast<Project::QSimulationNewtonByWave *>(m_simulation);
+        if (simulationNewtonByWave != nullptr)
+        {
+            WidgetGeneratorNewtonByWaveUser2 *tmpUser2 = new WidgetGeneratorNewtonByWaveUser2(simulationNewtonByWave);
+            connect(m_simulation,
+                    &Project::QSimulation::physicsChanged,
+                    tmpUser2,
+                    &WidgetGeneratorNewtonByWaveUser2::rebuild);
+
+            m_newtonByWave[0] = tmpUser2;
+            m_generatorTabs->addTab(m_newtonByWave[0], tr("2 objects"));
+        }
+    }
+    break;
     }
 
     m_generatorTabs->setCurrentIndex(settings.value(key + "generatorTab", m_generatorTabs->currentIndex()).toInt());
@@ -396,7 +411,6 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::WidgetSimulationEd
     // Tab 5 - observers (Only if simulation uses history)
     if (m_simulation->usesHistory())
     {
-
         m_observersEnabled = new QCheckBox();
         m_observersEnabled->setTristate(true);
         m_observersEnabled->setChecked(false);
@@ -437,6 +451,8 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::WidgetSimulationEd
 
         layTab5->addWidget(new QLabel(tr("Enable")), row, 0, 1, 2);
         layTab5->addWidget(m_observersEnabled, row++, 2, 1, 2);
+        layTab5->addWidget(new QLabel(tr("Time-stamp")), row, 0, 1, 2);
+        layTab5->addWidget(m_observerTime, row++, 2, 1, 2);
 
         layTab5->addWidget(new HorizontalLineSpacer(), row++, 0, 1, 4);
 
@@ -576,7 +592,21 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::~WidgetSimulationE
     }
     break;
 
-    case Universe1::Project::QSimulation::SimulationNewtonByWave: break;
+    case Universe1::Project::QSimulation::SimulationNewtonByWave: {
+        Project::QSimulationNewtonByWave *simulationNewtonByWave =
+            qobject_cast<Project::QSimulationNewtonByWave *>(m_simulation);
+        if (simulationNewtonByWave != nullptr)
+        {
+            WidgetGeneratorNewtonByWaveUser2 *tmpUser2 =
+                qobject_cast<WidgetGeneratorNewtonByWaveUser2 *>(m_newtonByWave[0]);
+            if (tmpUser2 != nullptr)
+                disconnect(m_simulation,
+                           &Project::QSimulation::physicsChanged,
+                           tmpUser2,
+                           &WidgetGeneratorNewtonByWaveUser2::rebuild);
+        }
+    }
+    break;
     }
 
     if (m_simulation->usesHistory())
@@ -938,7 +968,7 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::selectionChan
 void Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::selectionInsertRequest(uint _objectIndex)
 {
     const size_t oIdx = _objectIndex;
-    const bool isRemove = (m_selected.find(oIdx) == m_selected.cend());
+    const bool isRemove = (m_selected.find(oIdx) != m_selected.cend());
 
     if (isRemove)
         m_selected.erase(oIdx);
@@ -1087,6 +1117,9 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::buildSimulati
         m_newtonCurrent[m_generatorTabs->currentIndex()]->simulationNewtonCurrent()->rebuildSimulation(
             m_newtonCurrent[m_generatorTabs->currentIndex()]->initObjects());
         break;
-    case Universe1::Project::QSimulation::SimulationNewtonByWave: break;
+    case Universe1::Project::QSimulation::SimulationNewtonByWave:
+        m_newtonByWave[m_generatorTabs->currentIndex()]->simulationNewtonByWave()->rebuildSimulation(
+            m_newtonByWave[m_generatorTabs->currentIndex()]->initObjects());
+        break;
     }
 }

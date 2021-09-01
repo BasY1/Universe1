@@ -182,12 +182,14 @@ HEADERS += \
 SOURCES += \
     src/qt/widgets/simulationeditor/widgetsimulationeditorview.cpp \
     src/qt/widgets/simulationeditor/widgetgeneratornewtoncurrent.cpp \
+    src/qt/widgets/simulationeditor/widgetgeneratornewtonbywave.cpp \
     src/qt/widgets/simulationeditor/widgetsimulationeditor.cpp \
     src/qt/widgets/simulationeditor/dialogsimulationeditor.cpp \
 
 HEADERS += \
     src/qt/widgets/simulationeditor/widgetsimulationeditorview.h \
     src/qt/widgets/simulationeditor/widgetgeneratornewtoncurrent.h \
+    src/qt/widgets/simulationeditor/widgetgeneratornewtonbywave.h \
     src/qt/widgets/simulationeditor/widgetsimulationeditor.h \
     src/qt/widgets/simulationeditor/dialogsimulationeditor.h \
 

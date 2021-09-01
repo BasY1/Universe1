@@ -174,6 +174,9 @@ struct Vec3
     inline QVector3D toQVector3D() const;
     static Vec3<T> fromQVector3D(const QVector3D &_value);
 
+    inline std::string toString() const;
+    inline QString toQString() const;
+
     /*!
      * \brief Conversion to different precision
      * \tparam T2 Output template floating point type
@@ -946,6 +949,30 @@ template <typename T>
 inline std::ostream &operator<<(std::ostream &os, const Vec3<T> &v)
 {
     return os << '[' << v.x << 'x' << v.y << 'x' << v.z << ']';
+}
+
+/*!
+ * \brief To \c std::string
+ * \tparam T Template floating point type
+ * \return Vector as \c std::string
+ */
+template <typename T>
+inline std::string Vec3<T>::toString() const
+{
+    std::stringstream ss;
+    ss << *this;
+    return ss.str();
+}
+
+/*!
+ * \brief To \c QString
+ * \tparam T Template floating point type
+ * \return Vector as \c QString
+ */
+template <typename T>
+inline QString Vec3<T>::toQString() const
+{
+    return QString::fromStdString(toString());
 }
 
 }  // namespace Math

@@ -7,6 +7,7 @@
 #ifndef UNIVERSE1_WIDGETS_SIMULATIONEDITOR_WIDGETSIMULATIONEDITOR_H
 #define UNIVERSE1_WIDGETS_SIMULATIONEDITOR_WIDGETSIMULATIONEDITOR_H
 
+#include "widgetgeneratornewtonbywave.h"
 #include "widgetgeneratornewtoncurrent.h"
 #include "widgetsimulationeditorview.h"
 
@@ -108,6 +109,7 @@ class WidgetSimulationEditor : public QWidget
     QTabWidget *m_generatorTabs;  //!< Tab widget for simulation initialization data generators
 
     WidgetGeneratorNewtonCurrent *m_newtonCurrent[2];  //!< Newton current generators
+    WidgetGeneratorNewtonByWave *m_newtonByWave[1];    //!< Newton wave based generators
 
     // Main tab 2
     QTableWidget *m_objectsData;  //!< Table of object's properties at current time

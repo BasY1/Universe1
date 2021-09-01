@@ -251,31 +251,6 @@ QString Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentBinary
 }
 
 /*!
- * \brief Tool function prepare HTML table row
- * \param _name Attribute name
- * \param _value Attribute value
- * \return HTML table row
- */
-inline QString htmlRow1(const QString &_name, const long double _value)
-{
-    return "<tr><td><b>" + _name + "</b></td><td colspan=\"2\" align=\"center\">" +
-        Universe1::TextTools::toQString(_value) + "</td></tr>";
-}
-
-/*!
- * \brief Tool function prepare HTML table row
- * \param _name Attribute name
- * \param _value1 Attribute 1 value
- * \param _value2 Attribute 2 value
- * \return HTML table row
- */
-inline QString htmlRow2(const QString &_name, const long double _value1, const long double _value2)
-{
-    return "<tr><td><b>" + _name + "</b></td><td>" + Universe1::TextTools::toQString(_value1) + "</td><td>" +
-        Universe1::TextTools::toQString(_value2) + "</td></tr>";
-}
-
-/*!
  * \brief Rebuild
  */
 void Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentBinary::rebuild()
@@ -313,22 +288,22 @@ void Universe1::Widgets::SimulationEditor::WidgetGeneratorNewtonCurrentBinary::r
     m_initObjects[1].velocity = addVelocity + Math::Vec3<long double>(0.0L, -V2, 0.0L);
 
     QString html = "<table cellspacing=\"5\">";
-    html += htmlRow1(tr("G [m^3/(kg * s^2)]"), G);
-    html += htmlRow1(tr("Force [N]"), F);
-    html += htmlRow1(tr("Distance [m]"), D);
-    html += htmlRow1(tr("Period [s]"), T0);
-    html += htmlRow1(tr("Duration [s]"), TS);
-    html += htmlRow1(tr("Angle [deg]"), Math::toDeg<long double>(2.0l * M_PIl * TS / T0));
+    html += TextTools::htmlRow1of3(tr("G [m^3/(kg * s^2)]"), G);
+    html += TextTools::htmlRow1of3(tr("Force [N]"), F);
+    html += TextTools::htmlRow1of3(tr("Distance [m]"), D);
+    html += TextTools::htmlRow1of3(tr("Period [s]"), T0);
+    html += TextTools::htmlRow1of3(tr("Duration [s]"), TS);
+    html += TextTools::htmlRow1of3(tr("Angle [deg]"), Math::toDeg<long double>(2.0l * M_PIl * TS / T0));
     html += "<tr><td> </td><td>" + tr("Object 1") + "</td><td>" + tr("Object 2") + "</td></tr>";
-    html += htmlRow2(tr("Radius [m]"), R1, R2);
-    html += htmlRow2(tr("Velocity [m/s]"), V1, V2);
-    html += htmlRow2(tr("Acceleration [m/s^2]"), A1, A2);
-    html += htmlRow2(tr("Circle length [m]"), L1, L2);
-    html += htmlRow2(tr("Path circle length [m]"), TS * V1, TS * V1);
+    html += TextTools::htmlRow2of3(tr("Radius [m]"), R1, R2);
+    html += TextTools::htmlRow2of3(tr("Velocity [m/s]"), V1, V2);
+    html += TextTools::htmlRow2of3(tr("Acceleration [m/s^2]"), A1, A2);
+    html += TextTools::htmlRow2of3(tr("Circle length [m]"), L1, L2);
+    html += TextTools::htmlRow2of3(tr("Path circle length [m]"), TS * V1, TS * V1);
     if (!Type::isNull(TSA))
     {
-        html += htmlRow1(tr("Path add length [m]"), TSA);
-        html += htmlRow2(tr("Path total length [m]"), TS * V1 + TSA, TS * V1 + TSA);
+        html += TextTools::htmlRow1of3(tr("Path add length [m]"), TSA);
+        html += TextTools::htmlRow2of3(tr("Path total length [m]"), TS * V1 + TSA, TS * V1 + TSA);
     }
     html += "</table>";
 

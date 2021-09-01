@@ -54,7 +54,7 @@ struct NewtonTimeStamp : public TimeStamp<T>
     inline NewtonTimeStamp(const T _timeStamp,
                            const Math::Vec3<T> &_position,
                            const Math::Vec3<T> &_moveVelocity,
-                           const Math::Vec3<T> &_moveAccel)
+                           const Math::Vec3<T> &_moveAccel = Math::Vec3<T>())
         : TimeStamp<T>(_timeStamp, _position)
         , moveVelocity(_moveVelocity)
         , moveAccel(_moveAccel)
