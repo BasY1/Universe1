@@ -228,7 +228,7 @@ struct Simulation
      * \param _objectID Object ID
      * \returns \c true if success
      */
-    inline bool loadCalcPath(std::vector<std::pair<double, QVector3D>> &_out, const size_t _objectID) const;
+    bool loadCalcPath(std::vector<std::pair<double, QVector3D>> &_out, const size_t _objectID) const;
 
     /*!
      * \brief Getter for initialization object's position
@@ -645,8 +645,8 @@ bool Simulation<T, ObjectClass, TimeStampClass>::loadInitPath(std::vector<std::p
 }
 
 template <typename T, typename ObjectClass, typename TimeStampClass>
-inline bool Simulation<T, ObjectClass, TimeStampClass>::loadCalcPath(std::vector<std::pair<double, QVector3D>> &_out,
-                                                                     const size_t _objectID) const
+bool Simulation<T, ObjectClass, TimeStampClass>::loadCalcPath(std::vector<std::pair<double, QVector3D>> &_out,
+                                                              const size_t _objectID) const
 {
     return _objectID < m_objects.size() && m_objects.at(_objectID).loadPath(_out);
 }

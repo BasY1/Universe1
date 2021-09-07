@@ -246,7 +246,7 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::WidgetSimulationEd
 
     switch (m_simulation->simulationType())
     {
-    case Universe1::Project::QSimulation::SimulationNewtonCurrent: {
+    case Project::QSimulation::SimulationNewtonCurrent: {
         Project::QSimulationNewtonCurrent *simulationNewtonCurrent =
             qobject_cast<Project::QSimulationNewtonCurrent *>(m_simulation);
         if (simulationNewtonCurrent != nullptr)
@@ -266,7 +266,7 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::WidgetSimulationEd
     }
     break;
 
-    case Universe1::Project::QSimulation::SimulationNewtonByWave: {
+    case Project::QSimulation::SimulationNewtonByWave: {
         Project::QSimulationNewtonByWave *simulationNewtonByWave =
             qobject_cast<Project::QSimulationNewtonByWave *>(m_simulation);
         if (simulationNewtonByWave != nullptr)
@@ -279,6 +279,20 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::WidgetSimulationEd
 
             m_newtonByWave[0] = tmpUser2;
             m_generatorTabs->addTab(m_newtonByWave[0], tr("2 objects"));
+        }
+    }
+    break;
+
+    case Project::QSimulation::SimulationNeutrino: {
+        Project::QSimulationNeutrino *simulationNeutrino = qobject_cast<Project::QSimulationNeutrino *>(m_simulation);
+        if (simulationNeutrino != nullptr)
+        {
+            WidgetGeneratorNeutrinoSingle *tmpUser2 = new WidgetGeneratorNeutrinoSingle(simulationNeutrino);
+            connect(
+                m_simulation, &Project::QSimulation::physicsChanged, tmpUser2, &WidgetGeneratorNeutrinoSingle::rebuild);
+
+            m_neutrino[0] = tmpUser2;
+            m_generatorTabs->addTab(m_neutrino[0], tr("Single Neutrino"));
         }
     }
     break;
@@ -580,7 +594,7 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::~WidgetSimulationE
 
     switch (m_simulation->simulationType())
     {
-    case Universe1::Project::QSimulation::SimulationNewtonCurrent: {
+    case Project::QSimulation::SimulationNewtonCurrent: {
         Project::QSimulationNewtonCurrent *simulationNewtonCurrent =
             qobject_cast<Project::QSimulationNewtonCurrent *>(m_simulation);
         if (simulationNewtonCurrent != nullptr)
@@ -596,7 +610,7 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::~WidgetSimulationE
     }
     break;
 
-    case Universe1::Project::QSimulation::SimulationNewtonByWave: {
+    case Project::QSimulation::SimulationNewtonByWave: {
         Project::QSimulationNewtonByWave *simulationNewtonByWave =
             qobject_cast<Project::QSimulationNewtonByWave *>(m_simulation);
         if (simulationNewtonByWave != nullptr)
@@ -608,6 +622,20 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::~WidgetSimulationE
                            &Project::QSimulation::physicsChanged,
                            tmpUser2,
                            &WidgetGeneratorNewtonByWaveUser2::rebuild);
+        }
+    }
+    break;
+
+    case Project::QSimulation::SimulationNeutrino: {
+        Project::QSimulationNeutrino *simulationNeutrino = qobject_cast<Project::QSimulationNeutrino *>(m_simulation);
+        if (simulationNeutrino != nullptr)
+        {
+            WidgetGeneratorNeutrinoSingle *tmpUser2 = qobject_cast<WidgetGeneratorNeutrinoSingle *>(m_neutrino[0]);
+            if (tmpUser2 != nullptr)
+                disconnect(m_simulation,
+                           &Project::QSimulation::physicsChanged,
+                           tmpUser2,
+                           &WidgetGeneratorNeutrinoSingle::rebuild);
         }
     }
     break;
@@ -1254,13 +1282,19 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::buildSimulati
 {
     switch (m_simulation->simulationType())
     {
-    case Universe1::Project::QSimulation::SimulationNewtonCurrent:
+    case Project::QSimulation::SimulationNewtonCurrent:
         m_newtonCurrent[m_generatorTabs->currentIndex()]->simulationNewtonCurrent()->rebuildSimulation(
             m_newtonCurrent[m_generatorTabs->currentIndex()]->initObjects());
         break;
-    case Universe1::Project::QSimulation::SimulationNewtonByWave:
+
+    case Project::QSimulation::SimulationNewtonByWave:
         m_newtonByWave[m_generatorTabs->currentIndex()]->simulationNewtonByWave()->rebuildSimulation(
             m_newtonByWave[m_generatorTabs->currentIndex()]->initObjects());
+        break;
+
+    case Project::QSimulation::SimulationNeutrino:
+        m_neutrino[m_generatorTabs->currentIndex()]->simulationNeutrino()->rebuildSimulation(
+            m_neutrino[m_generatorTabs->currentIndex()]->initObjects());
         break;
     }
 }

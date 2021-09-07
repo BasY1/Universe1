@@ -24,6 +24,12 @@
 #define SPIN_LINE_R_SEL 0.04F  //!< Default line radius for selected spin arrow
 #define SPIN_HEAD_R_SEL 0.05F  //!< Default header radius for selected spin arrow
 
+#define CURV_LINE_R_ALL 0.02F  //!< Default line radius for curving arrow
+#define CURV_HEAD_R_ALL 0.06F  //!< Default header radius for curving arrow
+#define CURV_HEAD_L_ALL 0.4F   //!< Default header length for curving arrow
+#define CURV_LINE_R_SEL 0.04F  //!< Default line radius for selected curving arrow
+#define CURV_HEAD_R_SEL 0.12F  //!< Default header radius for selected curving arrow
+
 /*!
  * \brief Constructor
  * \param _simulation Processing simulation
@@ -1128,46 +1134,35 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::build()
                                                         0.10F,
                                                         0.30F);
             break;
+
         case Project::QSimulation::PropertyCurving1:
-            for (size_t i = 0U; i < m_path1Data->size(); ++i)
-            {
-                const std::pair<bool, QVector3D> &pos = m_currentTimePositions1Data->at(i);
-                if (pos.first && propData[i].first)
-                {
-                    pushModel(tmpAll,
-                              tmpSel,
-                              new OpenGL::Models::ModelPath(OpenGL::Material::materialWhiteDark,
-                                                            {pos.second, propData[i].second}),
-                              new OpenGL::Models::ModelPath(OpenGL::Material::materialWhiteLight,
-                                                            {pos.second, propData[i].second}));
-                }
-                else
-                {
-                    tmpAll.push_back(nullptr);
-                    tmpSel.push_back(nullptr);
-                }
-            }
+            addFixedVectors<OpenGL::Models::ModelSpinArrow>(tmpAll,
+                                                            tmpSel,
+                                                            propData,
+                                                            propRange,
+                                                            OpenGL::Material::materialGreen,
+                                                            OpenGL::Material::materialGreenDark,
+                                                            1.0F,
+                                                            CURV_LINE_R_ALL,
+                                                            CURV_HEAD_R_ALL,
+                                                            CURV_HEAD_L_ALL,
+                                                            CURV_LINE_R_SEL,
+                                                            CURV_HEAD_R_SEL);
             break;
 
         case Project::QSimulation::PropertyCurving2:
-            for (size_t i = 0U; i < m_path1Data->size(); ++i)
-            {
-                const std::pair<bool, QVector3D> &pos2 = m_currentTimePositions2Data->at(i);
-                if (pos2.first && propData[i].first)
-                {
-                    pushModel(tmpAll,
-                              tmpSel,
-                              new OpenGL::Models::ModelPath(OpenGL::Material::materialWhiteDark,
-                                                            {pos2.second, propData[i].second}),
-                              new OpenGL::Models::ModelPath(OpenGL::Material::materialWhiteLight,
-                                                            {pos2.second, propData[i].second}));
-                }
-                else
-                {
-                    tmpAll.push_back(nullptr);
-                    tmpSel.push_back(nullptr);
-                }
-            }
+            addFixedVectors<OpenGL::Models::ModelSpinArrow>(tmpAll,
+                                                            tmpSel,
+                                                            propData,
+                                                            propRange,
+                                                            OpenGL::Material::materialRed,
+                                                            OpenGL::Material::materialRedDark,
+                                                            1.0F,
+                                                            CURV_LINE_R_ALL,
+                                                            CURV_HEAD_R_ALL,
+                                                            CURV_HEAD_L_ALL,
+                                                            CURV_LINE_R_SEL,
+                                                            CURV_HEAD_R_SEL);
             break;
 
         case Project::QSimulation::PropertyPosition2:
@@ -1193,7 +1188,6 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::build()
             break;
 
         case Project::QSimulation::PropertyPosition3:
-            break;
             for (size_t i = 0U; i < m_path1Data->size(); ++i)
             {
                 const std::pair<bool, QVector3D> &pos1 = m_currentTimePositions2Data->at(i);

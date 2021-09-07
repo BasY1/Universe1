@@ -83,6 +83,7 @@ SOURCES += \
     src/qt/project/qsimulation.cpp \
     src/qt/project/qsimulationnewtoncurrent.cpp \
     src/qt/project/qsimulationnewtonbywave.cpp \
+    src/qt/project/qsimulationneutrino.cpp \
     src/qt/project/speechdb.cpp \
     src/qt/project/arrowsetup.cpp \
     src/qt/project/spectrumarrowsetup.cpp \
@@ -95,6 +96,7 @@ HEADERS += \
     src/qt/project/qsimulation.h \
     src/qt/project/qsimulationnewtoncurrent.h \
     src/qt/project/qsimulationnewtonbywave.h \
+    src/qt/project/qsimulationneutrino.h \
     src/qt/project/speechdb.h \
     src/qt/project/arrowsetup.h \
     src/qt/project/spectrumarrowsetup.h \
@@ -190,6 +192,7 @@ SOURCES += \
     src/qt/widgets/simulationeditor/widgetsimulationeditorview.cpp \
     src/qt/widgets/simulationeditor/widgetgeneratornewtoncurrent.cpp \
     src/qt/widgets/simulationeditor/widgetgeneratornewtonbywave.cpp \
+    src/qt/widgets/simulationeditor/widgetgeneratorneutrino.cpp \
     src/qt/widgets/simulationeditor/widgetsimulationeditor.cpp \
     src/qt/widgets/simulationeditor/dialogsimulationeditor.cpp \
 
@@ -197,6 +200,7 @@ HEADERS += \
     src/qt/widgets/simulationeditor/widgetsimulationeditorview.h \
     src/qt/widgets/simulationeditor/widgetgeneratornewtoncurrent.h \
     src/qt/widgets/simulationeditor/widgetgeneratornewtonbywave.h \
+    src/qt/widgets/simulationeditor/widgetgeneratorneutrino.h \
     src/qt/widgets/simulationeditor/widgetsimulationeditor.h \
     src/qt/widgets/simulationeditor/dialogsimulationeditor.h \
 

@@ -1141,14 +1141,15 @@ NeutrinoTimeStamp<T> NeutrinoTimeStamp<T>::moved(const T _timeDelta) const
         result.position = result.position2 + rotArm1.rotated(curv1Normal, curv1AngleRad) + moveVelocity33 * _timeDelta;
 
         result.moveVelocity1 = moveVelocity1.rotated(curv1Normal, curv1AngleRad).rotated(curv2Normal, curv2AngleRad);
-
         result.moveVelocity21 = moveVelocity21.rotated(curv1Normal, curv1AngleRad).rotated(curv2Normal, curv2AngleRad);
-
         result.moveVelocity22 = moveVelocity22.rotated(curv2Normal, curv2AngleRad);
+        result.moveVelocity31 = moveVelocity31.rotated(curv1Normal, curv1AngleRad).rotated(curv2Normal, curv2AngleRad);
+        result.moveVelocity32 = moveVelocity32.rotated(curv2Normal, curv2AngleRad);
+        result.moveVelocity33 = moveVelocity33;
 
         result.spinVelocity1 = spinVelocity1.rotated(curv1Normal, curv1AngleRad).rotated(curv2Normal, curv2AngleRad);
-
         result.spinVelocity2 = spinVelocity2.rotated(curv2Normal, curv2AngleRad);
+        result.spinVelocity3 = spinVelocity3;
 
         result.phase1 = phase1.rotated(spin1Normal, spinAngleRad)
                             .rotated(curv1Normal, curv1AngleRad)

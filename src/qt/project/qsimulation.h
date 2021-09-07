@@ -31,6 +31,7 @@ class QSimulation : public QObject
         SimulationNewtonCurrent,  //!< Classic newton simulation, force point to mate object's current position
         SimulationNewtonByWave,   //!< Relativistic Newton simulation, force point to mate object's position in history
                                   //!< from where gravitational wave at speed of universe hits current object
+        SimulationNeutrino        //!< Neutrino pure gravity simulation
     };
     Q_ENUM(SimulationType)
 

@@ -56,7 +56,26 @@ struct NeutrinoObject : public ObjectHistory<T, NeutrinoTimeStamp<T>>
     std::pair<std::vector<std::pair<size_t, size_t>>, Math::Vec3<T>> accelForSphereSource(
         const Constants<T> &_physics, const T _eventTimeStamp, const Math::Sphere<T> &_eventSphere) const;
 
- public:
+    bool loadPath2(std::vector<std::vector<std::pair<double, QVector3D>>> &_out) const;
+    bool loadPath3(std::vector<std::vector<std::pair<double, QVector3D>>> &_out) const;
+
+    std::pair<bool, QVector3D> loadPosition2(const T _timeStamp) const;
+    std::pair<bool, QVector3D> loadPosition3(const T _timeStamp) const;
+
+    std::pair<bool, QVector3D> loadVelocity1(const T _timeStamp) const;
+    std::pair<bool, QVector3D> loadVelocity2(const T _timeStamp) const;
+    std::pair<bool, QVector3D> loadVelocity3(const T _timeStamp) const;
+
+    std::pair<bool, QVector3D> loadSpin1(const T _timeStamp) const;
+    std::pair<bool, QVector3D> loadSpin2(const T _timeStamp) const;
+    std::pair<bool, QVector3D> loadSpin3(const T _timeStamp) const;
+
+    std::pair<bool, QVector3D> loadAccel1(const T _timeStamp) const;
+    std::pair<bool, QVector3D> loadAccel2(const T _timeStamp) const;
+
+    std::pair<bool, QVector3D> loadCurving1(const T _timeStamp) const;
+    std::pair<bool, QVector3D> loadCurving2(const T _timeStamp) const;
+
     /*!
      * \brief Create copy of this object in different precision
      * \tparam T2  Other simulation template floating point type
@@ -65,7 +84,7 @@ struct NeutrinoObject : public ObjectHistory<T, NeutrinoTimeStamp<T>>
     template <typename T2, typename = std::enable_if<std::is_floating_point<T2>::value>>
     NeutrinoObject<T2> createCopy() const
     {
-        NeutrinoObject<T2> result(ObjectHistory<T, NeutrinoTimeStamp<T>>::m_objectID, NeutrinoObject<T>::m_mass);
+        NeutrinoObject<T2> result(ObjectHistory<T, NeutrinoTimeStamp<T>>::m_objectID);
         result.initHistory(ObjectHistory<T, NeutrinoTimeStamp<T>>::m_filled,
                            ObjectHistory<T, NeutrinoTimeStamp<T>>::m_currentIdx,
                            ObjectHistory<T, NeutrinoTimeStamp<T>>::m_history.size());
@@ -122,7 +141,6 @@ template <typename T>
 inline NeutrinoObject<T> NeutrinoObject<T>::clone(const size_t _objectID, const size_t _size) const
 {
     NeutrinoObject<T> result(_objectID,
-                             NeutrinoObject<T>::m_mass,
                              std::max(_size, ObjectHistory<T, NeutrinoTimeStamp<T>>::m_history.size()));
     ObjectHistory<T, NeutrinoTimeStamp<T>>::cloneHistory(result);
     return result;
@@ -153,7 +171,7 @@ bool NeutrinoObject<T>::initStep(const std::vector<NeutrinoObject<T>> &_objects,
     for (const NeutrinoObject<T> &obj : _objects)
     {
         const std::pair<std::vector<std::pair<size_t, size_t>>, Math::Vec3<T>> tmp =
-            accelForSphereSource(_physics, curTS->timeStamp, curG1Sphere);
+            obj.accelForSphereSource(_physics, curTS->timeStamp, curG1Sphere);
         if (tmp.first.empty())
             return false;
         accel += tmp.second;
@@ -167,13 +185,13 @@ bool NeutrinoObject<T>::initStep(const std::vector<NeutrinoObject<T>> &_objects,
     if (init1Flags != NeutrinoGeneration2)
         return false;
 
-    const Math::Sphere curG2Sphere(curTS->getRadius2(), curTS->position2);
+    const Math::Sphere curG2Sphere(curTS->getRadius2(_physics.elementRadius), curTS->position2);
 
     accel.clear();
     for (const NeutrinoObject<T> &obj : _objects)
     {
         const std::pair<std::vector<std::pair<size_t, size_t>>, Math::Vec3<T>> tmp =
-            accelForSphereSource(_physics, curTS->timeStamp, curG2Sphere);
+            obj.accelForSphereSource(_physics, curTS->timeStamp, curG2Sphere);
         if (tmp.first.empty())
             return false;
         accel += tmp.second;
@@ -524,7 +542,7 @@ std::pair<std::vector<std::pair<size_t, size_t>>, Math::Vec3<T>> NeutrinoObject<
     T lastVolume = scs1.crossSectionVolume();
     if (scs1.waveInsideElement)
     {
-        const T ignoredVolume = Math::Sphere<T>(_eventSphere.radius * Const::T_05<T>());
+        const T ignoredVolume = Math::Sphere<T>(_eventSphere.radius * Const::T_05<T>(), Math::Vec3<T>()).volume();
         result.second += scs1.directionToWave() *
             (_physics.gravityConstant * tsEnergy * scs1.ratio() * (lastVolume - ignoredVolume) / volumeEvent);
     }
@@ -595,7 +613,7 @@ std::pair<std::vector<std::pair<size_t, size_t>>, Math::Vec3<T>> NeutrinoObject<
     lastVolume = scs2.crossSectionVolume();
     if (scs2.waveInsideElement)
     {
-        const T ignoredVolume = Math::Sphere<T>(_eventSphere.radius * Const::T_05<T>());
+        const T ignoredVolume = Math::Sphere<T>(_eventSphere.radius * Const::T_05<T>(), Math::Vec3<T>()).volume();
         result.second += scs2.directionToWave() *
             (_physics.gravityConstant * tsEnergy * scs2.ratio() * (lastVolume - ignoredVolume) / volumeEvent);
     }
@@ -667,7 +685,7 @@ std::pair<std::vector<std::pair<size_t, size_t>>, Math::Vec3<T>> NeutrinoObject<
     lastVolume = scs3.crossSectionVolume();
     if (scs3.waveInsideElement)
     {
-        const T ignoredVolume = Math::Sphere<T>(_eventSphere.radius * Const::T_05<T>());
+        const T ignoredVolume = Math::Sphere<T>(_eventSphere.radius * Const::T_05<T>(), Math::Vec3<T>()).volume();
         result.second += scs3.directionToWave() *
             (_physics.gravityConstant * tsEnergy * scs3.ratio() * (lastVolume - ignoredVolume) / volumeEvent);
     }
@@ -704,6 +722,518 @@ std::pair<std::vector<std::pair<size_t, size_t>>, Math::Vec3<T>> NeutrinoObject<
     }
     return result;
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Loads neutrino generation 2 existence path segments
+ * \param _out Output collection
+ * \return Success flag
+ */
+template <typename T>
+bool NeutrinoObject<T>::loadPath2(std::vector<std::vector<std::pair<double, QVector3D>>> &_out) const
+{
+    if (ObjectHistory<T, NeutrinoTimeStamp<T>>::m_history.empty())
+        return false;
+
+    std::list<std::list<std::pair<double, QVector3D>>> tmp;
+    std::list<std::pair<double, QVector3D>> *currentPath = nullptr;
+    size_t offset = 1U;
+
+    while (true)
+    {
+        const NeutrinoTimeStamp<T> *ts = ObjectHistory<T, NeutrinoTimeStamp<T>>::historyTimeStampByOffset(offset);
+        if (ts == nullptr)
+            break;
+
+        if (ts->isGeneration2())
+        {
+            if (currentPath == nullptr)
+            {
+                tmp.push_back({});
+                currentPath = &tmp.back();
+            }
+
+            currentPath->push_back({ts->timeStamp, ts->position2.toQVector3D()});
+        }
+        else
+        {
+            if (currentPath != nullptr)
+                currentPath = nullptr;
+        }
+        ++offset;
+    }
+
+    if (!tmp.empty())
+    {
+        _out.resize(tmp.size());
+        std::list<std::list<std::pair<double, QVector3D>>>::const_iterator itIn = tmp.cbegin();
+        std::vector<std::vector<std::pair<double, QVector3D>>>::iterator itOut = _out.begin();
+        for (; itIn != tmp.cend(); ++itIn, ++itOut)
+        {
+
+            std::list<std::pair<double, QVector3D>>::const_iterator itIn2 = (*itIn).cbegin();
+            (*itOut).reserve((*itIn).size());
+            for (; itIn2 != (*itIn).cend(); ++itIn2)
+                (*itOut).push_back(*itIn2);
+        }
+    }
+
+    return true;
+}
+
+/*!
+ * \brief Loads neutrino generation 3 existence path segments
+ * \param _out Output collection
+ * \return Success flag
+ */
+template <typename T>
+bool NeutrinoObject<T>::loadPath3(std::vector<std::vector<std::pair<double, QVector3D>>> &_out) const
+{
+    if (ObjectHistory<T, NeutrinoTimeStamp<T>>::m_history.empty())
+        return false;
+
+    std::list<std::list<std::pair<double, QVector3D>>> tmp;
+    std::list<std::pair<double, QVector3D>> *currentPath = nullptr;
+    size_t offset = 1U;
+
+    while (true)
+    {
+        const NeutrinoTimeStamp<T> *ts = ObjectHistory<T, NeutrinoTimeStamp<T>>::historyTimeStampByOffset(offset);
+        if (ts == nullptr)
+            break;
+
+        if (ts->isGeneration3())
+        {
+            if (currentPath == nullptr)
+            {
+                tmp.push_back({});
+                currentPath = &tmp.back();
+            }
+
+            currentPath->push_back({ts->timeStamp, ts->position3.toQVector3D()});
+        }
+        else
+        {
+            if (currentPath != nullptr)
+                currentPath = nullptr;
+        }
+        ++offset;
+    }
+
+    if (!tmp.empty())
+    {
+        _out.resize(tmp.size());
+        std::list<std::list<std::pair<double, QVector3D>>>::const_iterator itIn = tmp.cbegin();
+        std::vector<std::vector<std::pair<double, QVector3D>>>::iterator itOut = _out.begin();
+        for (; itIn != tmp.cend(); ++itIn, ++itOut)
+        {
+
+            std::list<std::pair<double, QVector3D>>::const_iterator itIn2 = (*itIn).cbegin();
+            (*itOut).reserve((*itIn).size());
+            for (; itIn2 != (*itIn).cend(); ++itIn2)
+                (*itOut).push_back(*itIn2);
+        }
+    }
+
+    return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Getter for object's generation 2 position
+ * \tparam T Template floating point type
+ * \param _timeStamp Time-stamp of required position
+ * \returns Pair, where \c first item is success flag, and \c second item is object's generation 2 position
+ */
+template <typename T>
+std::pair<bool, QVector3D> NeutrinoObject<T>::loadPosition2(const T _timeStamp) const
+{
+    const size_t offset = ObjectHistory<T, NeutrinoTimeStamp<T>>::offsetAtTime(_timeStamp);
+    if (offset == 0U)
+        return {false, QVector3D()};
+
+    const NeutrinoTimeStamp<T> *result = ObjectHistory<T, NeutrinoTimeStamp<T>>::historyTimeStampByOffset(offset);
+    if (result == nullptr || !result->isGeneration2())
+        return {false, QVector3D()};
+
+    const T timeDelta = _timeStamp - result->timeStamp;
+    if (Type::isNull(timeDelta))
+        return {true, result->position2.toQVector3D()};
+
+    return {true, result->moved(timeDelta).position2.toQVector3D()};
+}
+
+/*!
+ * \brief Getter for object's generation 3 position
+ * \tparam T Template floating point type
+ * \param _timeStamp Time-stamp of required position
+ * \returns Pair, where \c first item is success flag, and \c second item is object's generation 3 position
+ */
+template <typename T>
+std::pair<bool, QVector3D> NeutrinoObject<T>::loadPosition3(const T _timeStamp) const
+{
+    const size_t offset = ObjectHistory<T, NeutrinoTimeStamp<T>>::offsetAtTime(_timeStamp);
+    if (offset == 0U)
+        return {false, QVector3D()};
+
+    const NeutrinoTimeStamp<T> *result = ObjectHistory<T, NeutrinoTimeStamp<T>>::historyTimeStampByOffset(offset);
+    if (result == nullptr || !result->isGeneration3())
+        return {false, QVector3D()};
+
+    const T timeDelta = _timeStamp - result->timeStamp;
+    if (Type::isNull(timeDelta))
+        return {true, result->position3.toQVector3D()};
+
+    return {true, result->moved(timeDelta).position3.toQVector3D()};
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Getter for object's generation 1 velocity
+ * \tparam T Template floating point type
+ * \param _timeStamp Time-stamp of required position
+ * \returns Pair, where \c first item is success flag, and \c second item is object's generation 1 velocity
+ */
+template <typename T>
+std::pair<bool, QVector3D> NeutrinoObject<T>::loadVelocity1(const T _timeStamp) const
+{
+    const size_t offset = ObjectHistory<T, NeutrinoTimeStamp<T>>::offsetAtTime(_timeStamp);
+    if (offset == 0U)
+        return {false, QVector3D()};
+
+    const NeutrinoTimeStamp<T> *result = ObjectHistory<T, NeutrinoTimeStamp<T>>::historyTimeStampByOffset(offset);
+    if (result == nullptr)
+        return {false, QVector3D()};
+
+    const T timeDelta = _timeStamp - result->timeStamp;
+
+    if (result->isGeneration3())
+    {
+        if (Type::isNull(timeDelta))
+            return {true, result->moveVelocity31.toQVector3D()};
+        return {true, result->moved(timeDelta).moveVelocity31.toQVector3D()};
+    }
+    if (result->isGeneration2())
+    {
+        if (Type::isNull(timeDelta))
+            return {true, result->moveVelocity21.toQVector3D()};
+        return {true, result->moved(timeDelta).moveVelocity21.toQVector3D()};
+    }
+
+    if (Type::isNull(timeDelta))
+        return {true, result->moveVelocity1.toQVector3D()};
+
+    return {true, result->moved(timeDelta).moveVelocity1.toQVector3D()};
+}
+
+/*!
+ * \brief Getter for object's generation 2 velocity
+ * \tparam T Template floating point type
+ * \param _timeStamp Time-stamp of required position
+ * \returns Pair, where \c first item is success flag, and \c second item is object's generation 2 velocity
+ */
+template <typename T>
+std::pair<bool, QVector3D> NeutrinoObject<T>::loadVelocity2(const T _timeStamp) const
+{
+    const size_t offset = ObjectHistory<T, NeutrinoTimeStamp<T>>::offsetAtTime(_timeStamp);
+    if (offset == 0U)
+        return {false, QVector3D()};
+
+    const NeutrinoTimeStamp<T> *result = ObjectHistory<T, NeutrinoTimeStamp<T>>::historyTimeStampByOffset(offset);
+    if (result == nullptr || !result->isGeneration2())
+        return {false, QVector3D()};
+
+    const T timeDelta = _timeStamp - result->timeStamp;
+
+    if (result->isGeneration3())
+    {
+        if (Type::isNull(timeDelta))
+            return {true, result->moveVelocity32.toQVector3D()};
+        return {true, result->moved(timeDelta).moveVelocity32.toQVector3D()};
+    }
+
+    if (Type::isNull(timeDelta))
+        return {true, result->moveVelocity22.toQVector3D()};
+    return {true, result->moved(timeDelta).moveVelocity22.toQVector3D()};
+}
+
+/*!
+ * \brief Getter for object's generation 3 velocity
+ * \tparam T Template floating point type
+ * \param _timeStamp Time-stamp of required position
+ * \returns Pair, where \c first item is success flag, and \c second item is object's generation 3 velocity
+ */
+template <typename T>
+std::pair<bool, QVector3D> NeutrinoObject<T>::loadVelocity3(const T _timeStamp) const
+{
+    const size_t offset = ObjectHistory<T, NeutrinoTimeStamp<T>>::offsetAtTime(_timeStamp);
+    if (offset == 0U)
+        return {false, QVector3D()};
+
+    const NeutrinoTimeStamp<T> *result = ObjectHistory<T, NeutrinoTimeStamp<T>>::historyTimeStampByOffset(offset);
+    if (result == nullptr || !result->isGeneration3())
+        return {false, QVector3D()};
+
+    const T timeDelta = _timeStamp - result->timeStamp;
+
+    if (Type::isNull(timeDelta))
+        return {true, result->moveVelocity33.toQVector3D()};
+    return {true, result->moved(timeDelta).moveVelocity33.toQVector3D()};
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Getter for object's generation 1 spin
+ * \tparam T Template floating point type
+ * \param _timeStamp Time-stamp of required position
+ * \returns Pair, where \c first item is success flag, and \c second item is object's generation 1 spin
+ */
+template <typename T>
+std::pair<bool, QVector3D> NeutrinoObject<T>::loadSpin1(const T _timeStamp) const
+{
+    const size_t offset = ObjectHistory<T, NeutrinoTimeStamp<T>>::offsetAtTime(_timeStamp);
+    if (offset == 0U)
+        return {false, QVector3D()};
+
+    const NeutrinoTimeStamp<T> *result = ObjectHistory<T, NeutrinoTimeStamp<T>>::historyTimeStampByOffset(offset);
+    if (result == nullptr)
+        return {false, QVector3D()};
+
+    const T timeDelta = _timeStamp - result->timeStamp;
+    if (Type::isNull(timeDelta))
+        return {true, result->spinVelocity1.toQVector3D()};
+
+    return {true, result->moved(timeDelta).spinVelocity1.toQVector3D()};
+}
+
+/*!
+ * \brief Getter for object's generation 2 spin
+ * \tparam T Template floating point type
+ * \param _timeStamp Time-stamp of required position
+ * \returns Pair, where \c first item is success flag, and \c second item is object's generation 2 spin
+ */
+template <typename T>
+std::pair<bool, QVector3D> NeutrinoObject<T>::loadSpin2(const T _timeStamp) const
+{
+    const size_t offset = ObjectHistory<T, NeutrinoTimeStamp<T>>::offsetAtTime(_timeStamp);
+    if (offset == 0U)
+        return {false, QVector3D()};
+
+    const NeutrinoTimeStamp<T> *result = ObjectHistory<T, NeutrinoTimeStamp<T>>::historyTimeStampByOffset(offset);
+    if (result == nullptr || !result->isGeneration2())
+        return {false, QVector3D()};
+
+    const T timeDelta = _timeStamp - result->timeStamp;
+
+    if (Type::isNull(timeDelta))
+        return {true, result->spinVelocity2.toQVector3D()};
+    return {true, result->moved(timeDelta).spinVelocity2.toQVector3D()};
+}
+
+/*!
+ * \brief Getter for object's generation 3 spin
+ * \tparam T Template floating point type
+ * \param _timeStamp Time-stamp of required position
+ * \returns Pair, where \c first item is success flag, and \c second item is object's generation 3 spin
+ */
+template <typename T>
+std::pair<bool, QVector3D> NeutrinoObject<T>::loadSpin3(const T _timeStamp) const
+{
+    const size_t offset = ObjectHistory<T, NeutrinoTimeStamp<T>>::offsetAtTime(_timeStamp);
+    if (offset == 0U)
+        return {false, QVector3D()};
+
+    const NeutrinoTimeStamp<T> *result = ObjectHistory<T, NeutrinoTimeStamp<T>>::historyTimeStampByOffset(offset);
+    if (result == nullptr || !result->isGeneration3())
+        return {false, QVector3D()};
+
+    const T timeDelta = _timeStamp - result->timeStamp;
+
+    if (Type::isNull(timeDelta))
+        return {true, result->spinVelocity3.toQVector3D()};
+    return {true, result->moved(timeDelta).spinVelocity3.toQVector3D()};
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Getter for object's generation 1 acceleration
+ * \tparam T Template floating point type
+ * \param _timeStamp Time-stamp of required position
+ * \returns Pair, where \c first item is success flag, and \c second item is object's generation 1 acceleration
+ */
+template <typename T>
+std::pair<bool, QVector3D> NeutrinoObject<T>::loadAccel1(const T _timeStamp) const
+{
+    const size_t offset = ObjectHistory<T, NeutrinoTimeStamp<T>>::offsetAtTime(_timeStamp);
+    if (offset == 0U)
+        return {false, QVector3D()};
+
+    const NeutrinoTimeStamp<T> *result1 = ObjectHistory<T, NeutrinoTimeStamp<T>>::historyTimeStampByOffset(offset);
+    if (result1 == nullptr)
+        return {false, QVector3D()};
+
+    const T timeDelta = _timeStamp - result1->timeStamp;
+
+    if (Type::isNull(timeDelta) || offset == 1U)
+        return {true, result1->accelGravity1.toQVector3D()};
+
+    const NeutrinoTimeStamp<T> *result2 = ObjectHistory<T, NeutrinoTimeStamp<T>>::historyTimeStampByOffset(offset - 1U);
+    if (result2 == nullptr)
+        return {false, QVector3D()};
+
+    return {true,
+            Math::Vec3<T>::ratio(
+                result1->accelGravity1, result2->accelGravity1, result1->timeStamp, result2->timeStamp, _timeStamp)
+                .toQVector3D()};
+}
+
+/*!
+ * \brief Getter for object's generation 2 acceleration
+ * \tparam T Template floating point type
+ * \param _timeStamp Time-stamp of required position
+ * \returns Pair, where \c first item is success flag, and \c second item is object's generation 2 acceleration
+ */
+template <typename T>
+std::pair<bool, QVector3D> NeutrinoObject<T>::loadAccel2(const T _timeStamp) const
+{
+    const size_t offset = ObjectHistory<T, NeutrinoTimeStamp<T>>::offsetAtTime(_timeStamp);
+    if (offset == 0U)
+        return {false, QVector3D()};
+
+    const NeutrinoTimeStamp<T> *result1 = ObjectHistory<T, NeutrinoTimeStamp<T>>::historyTimeStampByOffset(offset);
+    if (result1 == nullptr && !result1->isGeneration2())
+        return {false, QVector3D()};
+
+    const T timeDelta = _timeStamp - result1->timeStamp;
+
+    if (Type::isNull(timeDelta) || offset == 1U)
+        return {true, result1->accelGravity2.toQVector3D()};
+
+    const NeutrinoTimeStamp<T> *result2 = ObjectHistory<T, NeutrinoTimeStamp<T>>::historyTimeStampByOffset(offset - 1U);
+    if (result2 == nullptr)
+        return {false, QVector3D()};
+
+    if (result2->isGeneration2())
+        return {true,
+                Math::Vec3<T>::ratio(
+                    result1->accelGravity2, result2->accelGravity2, result1->timeStamp, result2->timeStamp, _timeStamp)
+                    .toQVector3D()};
+
+    return {true, result1->accelGravity2.toQVector3D()};
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Getter for object's generation 1 curving
+ * \tparam T Template floating point type
+ * \param _timeStamp Time-stamp of required position
+ * \returns Pair, where \c first item is success flag, and \c second item is object's generation 1 curving
+ */
+template <typename T>
+std::pair<bool, QVector3D> NeutrinoObject<T>::loadCurving1(const T _timeStamp) const
+{
+    const size_t offset = ObjectHistory<T, NeutrinoTimeStamp<T>>::offsetAtTime(_timeStamp);
+    if (offset == 0U)
+        return {false, QVector3D()};
+
+    const NeutrinoTimeStamp<T> *result1 = ObjectHistory<T, NeutrinoTimeStamp<T>>::historyTimeStampByOffset(offset);
+    if (result1 == nullptr)
+        return {false, QVector3D()};
+
+    const T timeDelta = _timeStamp - result1->timeStamp;
+
+    if (result1->isGeneration2())
+    {
+        if (Type::isNull(timeDelta) || offset == 1U)
+            return {true, result1->curvingVelocity21.toQVector3D()};
+
+        const NeutrinoTimeStamp<T> *result2 =
+            ObjectHistory<T, NeutrinoTimeStamp<T>>::historyTimeStampByOffset(offset - 1U);
+        if (result2 == nullptr)
+            return {false, QVector3D()};
+
+        if (result2->isGeneration2())
+            return {true,
+                    Math::Vec3<T>::ratio(result1->curvingVelocity21,
+                                         result2->curvingVelocity21,
+                                         result1->timeStamp,
+                                         result2->timeStamp,
+                                         _timeStamp)
+                        .toQVector3D()};
+
+        return {true, result1->curvingVelocity21.toQVector3D()};
+    }
+
+    if (Type::isNull(timeDelta) || offset == 1U)
+        return {true, result1->curvingVelocity1.toQVector3D()};
+
+    const NeutrinoTimeStamp<T> *result2 = ObjectHistory<T, NeutrinoTimeStamp<T>>::historyTimeStampByOffset(offset - 1U);
+    if (result2 == nullptr)
+        return {false, QVector3D()};
+
+    return {
+        true,
+        Math::Vec3<T>::ratio(
+            result1->curvingVelocity1, result2->curvingVelocity1, result1->timeStamp, result2->timeStamp, _timeStamp)
+            .toQVector3D()};
+}
+
+/*!
+ * \brief Getter for object's generation 2 curving
+ * \tparam T Template floating point type
+ * \param _timeStamp Time-stamp of required position
+ * \returns Pair, where \c first item is success flag, and \c second item is object's generation 2 curving
+ */
+template <typename T>
+std::pair<bool, QVector3D> NeutrinoObject<T>::loadCurving2(const T _timeStamp) const
+{
+    const size_t offset = ObjectHistory<T, NeutrinoTimeStamp<T>>::offsetAtTime(_timeStamp);
+    if (offset == 0U)
+        return {false, QVector3D()};
+
+    const NeutrinoTimeStamp<T> *result1 = ObjectHistory<T, NeutrinoTimeStamp<T>>::historyTimeStampByOffset(offset);
+    if (result1 == nullptr || !result1->isGeneration2())
+        return {false, QVector3D()};
+
+    const T timeDelta = _timeStamp - result1->timeStamp;
+    if (Type::isNull(timeDelta) || offset == 1U)
+        return {true, result1->curvingVelocity22.toQVector3D()};
+
+    const NeutrinoTimeStamp<T> *result2 = ObjectHistory<T, NeutrinoTimeStamp<T>>::historyTimeStampByOffset(offset - 1U);
+    if (result2 == nullptr)
+        return {false, QVector3D()};
+
+    if (!result2->isGeneration2())
+        return {true, result1->curvingVelocity22.toQVector3D()};
+
+    return {
+        true,
+        Math::Vec3<T>::ratio(
+            result1->curvingVelocity22, result2->curvingVelocity22, result1->timeStamp, result2->timeStamp, _timeStamp)
+            .toQVector3D()};
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 }  // namespace GravityNeutrino
 }  // namespace Simulation
