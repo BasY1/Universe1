@@ -61,6 +61,40 @@ QString Universe1::Project::QSimulation::getElementPropertyName(const ElementPro
 }
 
 /*!
+ * \brief Get generation index from property name
+ * \param _value Property name
+ * \return Property generation index
+ */
+uint Universe1::Project::QSimulation::getElementPropertyGeneration(const ElementProperty _value)
+{
+    switch (_value)
+    {
+    case PropertyNone: break;
+    case PropertyMass: return 1U;
+    case PropertyForce: return 1U;
+    case PropertyVelocity1: return 1U;
+    case PropertyVelocity2: return 2U;
+    case PropertyVelocity3: return 3U;
+    case PropertySpin1: return 1U;
+    case PropertySpin2: return 2U;
+    case PropertySpin3: return 3U;
+    case PropertySpinR: return 1U;
+    case PropertySpinG: return 1U;
+    case PropertySpinB: return 1U;
+    case PropertyAcceleration1: return 1U;
+    case PropertyAcceleration2: return 2U;
+    case PropertyAccelerationR: return 1U;
+    case PropertyAccelerationG: return 1U;
+    case PropertyAccelerationB: return 1U;
+    case PropertyCurving1: return 1U;
+    case PropertyCurving2: return 2U;
+    case PropertyPosition2: return 2U;
+    case PropertyPosition3: return 3U;
+    }
+    return 0U;
+}
+
+/*!
  * \brief Tool function converts flags to list
  * \param _value Flags
  * \returns List of checked flags

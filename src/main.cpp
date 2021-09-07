@@ -31,7 +31,8 @@ int main(int argc, char *argv[])
     // QSettings().clear();
 
     // if (!runTests())
-    //    return EXIT_FAILURE;
+    //     return EXIT_FAILURE;
+    // return EXIT_SUCCESS;
 
     // Universe1::Project::Project *p = new
     // Universe1::Project::Project("/home/basy/Universe1/projectWorkingDirectory/");
@@ -52,19 +53,28 @@ int main(int argc, char *argv[])
     sim->setCalculationStepCount(200);
 
     Universe1::Widgets::SimulationEditor::DialogSimulationEditor dialog(sim);
-
     return dialog.exec();
 
     // return EXIT_SUCCESS;
     // return app.exec();
 }
 
+#include "unit_tests/test_neutrinoobject.h"
+#include "unit_tests/test_neutrinotimestamp.h"
 #include "unit_tests/test_newton.h"
+#include "unit_tests/test_spherecrosssection.h"
 #include "unit_tests/test_vec3.h"
 
 bool runTests()
 {
-    static const std::vector<QObject *> tests = {new Test_Vec3(), new Test_Newton()};
+    static const std::vector<QObject *> tests =  //
+        {
+            // new Test_Vec3(),
+            new Test_Newton(),
+            // new Test_SphereCrossSection(),
+            // new Test_NeutrinoTimeStamp(),
+            // new Test_NeutrinoObject(),
+        };
 
     bool result = true;
 

@@ -12,11 +12,11 @@
 #define AXIS_HEAD_R 0.05F  //!< Default header radius for scene axis arrow
 #define AXIS_HEAD_L 0.1F   //!< Default header length for scene axis arrow
 
-#define FORCE_LINE_R_ALL 0.1F   //!< Default line radius for force arrow
-#define FORCE_HEAD_R_ALL 0.2F   //!< Default header radius for force arrow
-#define FORCE_HEAD_L_ALL 0.5F   //!< Default header length for force arrow
-#define FORCE_LINE_R_SEL 0.15F  //!< Default line radius for selected force arrow
-#define FORCE_HEAD_R_SEL 0.3F   //!< Default header radius for selected force arrow
+#define FORCE_LINE_R_ALL 0.01F   //!< Default line radius for force arrow
+#define FORCE_HEAD_R_ALL 0.02F   //!< Default header radius for force arrow
+#define FORCE_HEAD_L_ALL 0.05F   //!< Default header length for force arrow
+#define FORCE_LINE_R_SEL 0.015F  //!< Default line radius for selected force arrow
+#define FORCE_HEAD_R_SEL 0.03F   //!< Default header radius for selected force arrow
 
 #define SPIN_LINE_R_ALL 0.02F  //!< Default line radius for spin arrow
 #define SPIN_HEAD_R_ALL 0.02F  //!< Default header radius for spin arrow
@@ -28,8 +28,12 @@
  * \brief Constructor
  * \param _simulation Processing simulation
  * \param _sceneRange Simulation scene range from all objects paths
- * \param _pathData Object's path data
- * \param _currentTimePositionsData Object's positions at current time
+ * \param _path1Data Object's path data
+ * \param _path2Data Object's path data - generation 2
+ * \param _path3Data Object's path data - generation 3
+ * \param _currentTimePositions1Data Object's positions at current time
+ * \param _currentTimePositions2Data Object's positions at current time - generation 2
+ * \param _currentTimePositions3Data Object's positions at current time - generation 3
  * \param _currentTimePropertyData Object's Properties at current time
  * \param _currentTimePropertyMaxLength Maximum length of current vector property
  * \param _parent Parent \c QWidget
@@ -37,9 +41,13 @@
 Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::WidgetSimulationEditorView(
     const Project::QSimulation *_simulation,
     const std::pair<QVector3D, QVector3D> *_sceneRange,
-    const std::vector<std::vector<std::pair<double, QVector3D>>> *_pathData,
-    const std::vector<QVector3D> *_currentTimePositionsData,
-    const std::map<Project::QSimulation::ElementProperty, std::vector<std::pair<double, QVector3D>>>
+    const std::vector<std::vector<std::pair<double, QVector3D>>> *_path1Data,
+    const std::vector<std::vector<std::vector<std::pair<double, QVector3D>>>> *_path2Data,
+    const std::vector<std::vector<std::vector<std::pair<double, QVector3D>>>> *_path3Data,
+    const std::vector<std::pair<bool, QVector3D>> *_currentTimePositions1Data,
+    const std::vector<std::pair<bool, QVector3D>> *_currentTimePositions2Data,
+    const std::vector<std::pair<bool, QVector3D>> *_currentTimePositions3Data,
+    const std::map<Project::QSimulation::ElementProperty, std::vector<std::pair<bool, QVector3D>>>
         *_currentTimePropertyData,
     const std::map<Project::QSimulation::ElementProperty, float> *_currentTimePropertyMaxLength,
     QWidget *_parent)
@@ -49,8 +57,12 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::WidgetSimulati
                        _parent)
     , m_simulation(_simulation)
     , m_sceneRange(_sceneRange)
-    , m_pathData(_pathData)
-    , m_currentTimePositionsData(_currentTimePositionsData)
+    , m_path1Data(_path1Data)
+    , m_path2Data(_path2Data)
+    , m_path3Data(_path3Data)
+    , m_currentTimePositions1Data(_currentTimePositions1Data)
+    , m_currentTimePositions2Data(_currentTimePositions2Data)
+    , m_currentTimePositions3Data(_currentTimePositions3Data)
     , m_currentTimePropertyData(_currentTimePropertyData)
     , m_currentTimePropertyMaxLength(_currentTimePropertyMaxLength)
     , m_isObserver1(false)
@@ -130,28 +142,15 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::WidgetSimulati
         if (props.testFlag(Project::QSimulation::PropertyForce))
         {
             m_propertySelected |= Project::QSimulation::PropertyForce;
-
-            if (props.testFlag(Project::QSimulation::PropertyForceRed))
-                m_propertySelected |= Project::QSimulation::PropertyForceRed;
-            if (props.testFlag(Project::QSimulation::PropertyForceGreen))
-                m_propertySelected |= Project::QSimulation::PropertyForceGreen;
-            if (props.testFlag(Project::QSimulation::PropertyForceBlue))
-                m_propertySelected |= Project::QSimulation::PropertyForceBlue;
         }
         else if (props.testFlag(Project::QSimulation::PropertyAcceleration))
         {
             m_propertySelected |= Project::QSimulation::PropertyAcceleration;
         }
 
-        if (props.testFlag(Project::QSimulation::PropertySpin))
+        if (props.testFlag(Project::QSimulation::PropertySpin1))
         {
-            m_propertySelected |= Project::QSimulation::PropertySpin;
-            if (props.testFlag(Project::QSimulation::PropertySpinRed))
-                m_propertySelected |= Project::QSimulation::PropertySpinRed;
-            if (props.testFlag(Project::QSimulation::PropertySpinGreen))
-                m_propertySelected |= Project::QSimulation::PropertySpinGreen;
-            if (props.testFlag(Project::QSimulation::PropertySpinBlue))
-                m_propertySelected |= Project::QSimulation::PropertySpinBlue;
+            m_propertySelected |= Project::QSimulation::PropertySpin1;
         }
     }
 }
@@ -553,7 +552,8 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::paintGLIm
         if (m_showPathAll)
         {
             for (OpenGL::Models::ModelPath *s : m_objectPath)
-                s->paintGL(m_program);
+                if (s != nullptr)
+                    s->paintGL(m_program);
         }
 
         for (const Project::QSimulation::ElementProperty f : flagsAll)
@@ -564,12 +564,14 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::paintGLIm
             if (it != m_modelsAll.cend())
             {
                 for (OpenGL::Models::GLModel *m : it->second)
-                    m->paintGL(m_program);
+                    if (m != nullptr)
+                        m->paintGL(m_program);
             }
         }
 
         for (OpenGL::Models::GLModel *m : m_currentTimeAll)
-            m->paintGL(m_program);
+            if (m != nullptr)
+                m->paintGL(m_program);
     }
     else
     {
@@ -583,7 +585,8 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::paintGLIm
                 glLineWidth(m_lineWidth * 2.0F);
 
                 if (m_showPathSelected)
-                    m_objectPath[i]->paintGL(m_program);
+                    if (m_objectPath[i] != nullptr)
+                        m_objectPath[i]->paintGL(m_program);
 
                 glLineWidth(m_lineWidth);
 
@@ -593,25 +596,29 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::paintGLIm
                                        std::vector<OpenGL::Models::GLModel *>>::const_iterator it =
                         m_modelsSelected.find(f);
                     if (it != m_modelsSelected.cend())
-                        it->second[i]->paintGL(m_program);
+                        if (it->second[i] != nullptr)
+                            it->second[i]->paintGL(m_program);
                 }
 
-                m_currentTimeSelected[i]->paintGL(m_program);
+                if (m_currentTimeSelected[i] != nullptr)
+                    m_currentTimeSelected[i]->paintGL(m_program);
             }
             else
             {
                 if (m_showPathAll)
-                    m_objectPath[i]->paintGL(m_program);
+                    if (m_objectPath[i] != nullptr)
+                        m_objectPath[i]->paintGL(m_program);
 
                 for (const Project::QSimulation::ElementProperty f : flagsAll)
                 {
                     std::unordered_map<Project::QSimulation::ElementProperty,
                                        std::vector<OpenGL::Models::GLModel *>>::const_iterator it = m_modelsAll.find(f);
                     if (it != m_modelsAll.cend())
-                        it->second[i]->paintGL(m_program);
+                        if (it->second[i] != nullptr)
+                            it->second[i]->paintGL(m_program);
                 }
-
-                m_currentTimeAll[i]->paintGL(m_program);
+                if (m_currentTimeAll[i] != nullptr)
+                    m_currentTimeAll[i]->paintGL(m_program);
             }
         }
     }
@@ -623,7 +630,7 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::paintGLIm
  */
 void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::mouseDoubleClickEvent(QMouseEvent *_event)
 {
-    if (m_currentTimePositionsData->empty())
+    if (m_currentTimePositions1Data->empty())
         return;
 
     if (_event->buttons() == Qt::RightButton)
@@ -635,32 +642,24 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::mouseDoub
         const QVector2D screenPos(_event->pos().x(), _event->pos().y());
         const QRect viewPort(0, 0, width(), height());
         const float hh = height();
-        // const QMatrix4x4 view = m_camera->viewMatrix();
         const QMatrix4x4 view = m_camera->lookAtMatrix();
         const QMatrix4x4 proj = m_camera->perspectiveMatrix();
 
-        std::vector<QVector3D>::const_iterator it = m_currentTimePositionsData->cbegin();
-
-        QVector3D posProj = (*it).project(view, proj, viewPort);
-        float distance = QVector2D(posProj.x(), hh - posProj.y()).distanceToPoint(screenPos);
+        float distance = -1.0F;
         uint closeIdx = 0U;
-        uint tmpIdx = 1U;
-
-        ++it;
-        while (it != m_currentTimePositionsData->cend())
-        {
-            posProj = (*it).project(view, proj, viewPort);
-            const float distance2 = QVector2D(posProj.x(), hh - posProj.y()).distanceToPoint(screenPos);
-            if (distance2 < distance)
+        for (size_t i = 0U; i < m_currentTimePositions1Data->size(); ++i)
+            if (m_currentTimePositions1Data->at(i).first)
             {
-                distance = distance2;
-                closeIdx = tmpIdx;
+                const QVector3D posProj = m_currentTimePositions1Data->at(i).second.project(view, proj, viewPort);
+                const float distance2 = QVector2D(posProj.x(), hh - posProj.y()).distanceToPoint(screenPos);
+                if (distance < -0.5F || distance2 < distance)
+                {
+                    distance = distance2;
+                    closeIdx = i;
+                }
             }
-            ++it;
-            ++tmpIdx;
-        }
 
-        if (distance < 5.0F)
+        if (distance > -0.5F && distance < 5.0F)
         {
             if (_event->modifiers() == Qt::ControlModifier)
                 emit selectionInsertRequest(closeIdx);
@@ -723,21 +722,23 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::clearSimu
  */
 void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::build()
 {
-    const size_t objCount = m_pathData->size();
-    if (objCount == 0U || objCount != m_currentTimePositionsData->size())
+    const size_t objCount = m_path1Data->size();
+    if (objCount == 0U || objCount != m_currentTimePositions1Data->size())
         return;
 
-    for (const std::pair<const Project::QSimulation::ElementProperty, std::vector<std::pair<double, QVector3D>>> &prop :
+    for (const std::pair<const Project::QSimulation::ElementProperty, std::vector<std::pair<bool, QVector3D>>> &prop :
          *m_currentTimePropertyData)
         if (objCount != prop.second.size())
             return;
+
+    const float elRadius = m_simulation->usesRadius() ? m_simulation->getConstantElementRadius() : 0.0F;
 
     m_dotsXY->setPlaneXY(std::min(-10, static_cast<int>(m_sceneRange->first.x()) - 1),
                          std::min(-10, static_cast<int>(m_sceneRange->first.y()) - 1),
                          std::max(10, static_cast<int>(m_sceneRange->second.x()) + 1),
                          std::max(10, static_cast<int>(m_sceneRange->second.y()) + 1));
 
-    for (const std::vector<std::pair<double, QVector3D>> &path : *m_pathData)
+    for (const std::vector<std::pair<double, QVector3D>> &path : *m_path1Data)
     {
         OpenGL::Models::ModelPath *mp = new OpenGL::Models::ModelPath(
             {OpenGL::Material::materialCyanDark, OpenGL::Material::materialYellow, OpenGL::Material::materialMagenta});
@@ -774,45 +775,62 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::build()
 
     if (m_simulation->usesRadius())
     {
-        for (const QVector3D &pos : *m_currentTimePositionsData)
+        for (const std::pair<bool, QVector3D> &pos : *m_currentTimePositions1Data)
         {
-            OpenGL::Models::GLModel *m1 = new OpenGL::Models::ModelSphere(OpenGL::Material::materialWhite, pos, 1.0F);
-            OpenGL::Models::GLModel *m2 =
-                new OpenGL::Models::ModelSphere(OpenGL::Material::materialWhiteLight, pos, 1.0F);
-            m1->initGL();
-            m2->initGL();
-            m_currentTimeAll.push_back(m1);
-            m_currentTimeSelected.push_back(m2);
+            if (pos.first)
+            {
+                OpenGL::Models::GLModel *m1 =
+                    new OpenGL::Models::ModelSphere(OpenGL::Material::materialWhite, pos.second, elRadius);
+                OpenGL::Models::GLModel *m2 =
+                    new OpenGL::Models::ModelSphere(OpenGL::Material::materialWhiteLight, pos.second, elRadius);
+                m1->initGL();
+                m2->initGL();
+                m_currentTimeAll.push_back(m1);
+                m_currentTimeSelected.push_back(m2);
+            }
+            else
+            {
+                m_currentTimeAll.push_back(nullptr);
+                m_currentTimeSelected.push_back(nullptr);
+            }
         }
     }
     else
     {
         static const OpenGL::Material whiteMoreDarker = OpenGL::Material::materialWhiteDark.darker();
-        for (const QVector3D &pos : *m_currentTimePositionsData)
+        for (const std::pair<bool, QVector3D> &pos : *m_currentTimePositions1Data)
         {
-            OpenGL::Models::GLModel *m1 = new OpenGL::Models::ModelSingularity(whiteMoreDarker,
-                                                                               OpenGL::Material::materialWhiteDark,
-                                                                               OpenGL::Material::materialWhite,
-                                                                               pos,
-                                                                               0.01F,
-                                                                               0.9F);
+            if (pos.first)
+            {
+                OpenGL::Models::GLModel *m1 = new OpenGL::Models::ModelSingularity(whiteMoreDarker,
+                                                                                   OpenGL::Material::materialWhiteDark,
+                                                                                   OpenGL::Material::materialWhite,
+                                                                                   pos.second,
+                                                                                   0.01F,
+                                                                                   0.9F);
 
-            OpenGL::Models::GLModel *m2 = new OpenGL::Models::ModelSingularity(OpenGL::Material::materialWhiteDark,
-                                                                               OpenGL::Material::materialWhite,
-                                                                               OpenGL::Material::materialWhiteLight,
-                                                                               pos,
-                                                                               0.05F,
-                                                                               0.95F);
-            m1->setMaterialMode(OpenGL::Material::MaterialDiffuse);
-            m2->setMaterialMode(OpenGL::Material::MaterialDiffuse);
-            m1->initGL();
-            m2->initGL();
-            m_currentTimeAll.push_back(m1);
-            m_currentTimeSelected.push_back(m2);
+                OpenGL::Models::GLModel *m2 = new OpenGL::Models::ModelSingularity(OpenGL::Material::materialWhiteDark,
+                                                                                   OpenGL::Material::materialWhite,
+                                                                                   OpenGL::Material::materialWhiteLight,
+                                                                                   pos.second,
+                                                                                   0.05F,
+                                                                                   0.95F);
+                m1->setMaterialMode(OpenGL::Material::MaterialDiffuse);
+                m2->setMaterialMode(OpenGL::Material::MaterialDiffuse);
+                m1->initGL();
+                m2->initGL();
+                m_currentTimeAll.push_back(m1);
+                m_currentTimeSelected.push_back(m2);
+            }
+            else
+            {
+                m_currentTimeAll.push_back(nullptr);
+                m_currentTimeSelected.push_back(nullptr);
+            }
         }
     }
 
-    for (const std::pair<const Project::QSimulation::ElementProperty, std::vector<std::pair<double, QVector3D>>> &prop :
+    for (const std::pair<const Project::QSimulation::ElementProperty, std::vector<std::pair<bool, QVector3D>>> &prop :
          *m_currentTimePropertyData)
     {
         std::map<Project::QSimulation::ElementProperty, float>::const_iterator itRange =
@@ -822,12 +840,14 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::build()
             continue;
 
         const float &propRange = itRange->second;
-        const std::vector<std::pair<double, QVector3D>> &propData = prop.second;
+        const std::vector<std::pair<bool, QVector3D>> &propData = prop.second;
 
         std::vector<OpenGL::Models::GLModel *> &tmpAll = m_modelsAll.insert({prop.first, {}}).first->second;
         std::vector<OpenGL::Models::GLModel *> &tmpSel = m_modelsSelected.insert({prop.first, {}}).first->second;
         tmpAll.reserve(objCount);
         tmpSel.reserve(objCount);
+
+        static float massRadiusBase = 0.1F;
 
         switch (prop.first)
         {
@@ -838,37 +858,70 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::build()
             {
                 for (size_t i = 0U; i < objCount; ++i)
                 {
-                    OpenGL::Models::GLModel *mAll = new OpenGL::Models::ModelSphere(
-                        OpenGL::Material::materialGreen, m_currentTimePositionsData->at(i), 1.0F);
-                    OpenGL::Models::GLModel *mSel = new OpenGL::Models::ModelSphere(
-                        OpenGL::Material::materialGreenLight, m_currentTimePositionsData->at(i), 1.0F);
-                    mAll->initGL();
-                    mSel->initGL();
-                    tmpAll.push_back(mAll);
-                    tmpSel.push_back(mSel);
+                    const std::pair<bool, QVector3D> &pos = m_currentTimePositions1Data->at(i);
+                    if (pos.first)
+                    {
+                        OpenGL::Models::GLModel *mAll = new OpenGL::Models::ModelSphere(
+                            OpenGL::Material::materialGreen, pos.second, massRadiusBase);
+                        OpenGL::Models::GLModel *mSel = new OpenGL::Models::ModelSphere(
+                            OpenGL::Material::materialGreenLight, pos.second, massRadiusBase);
+                        mAll->initGL();
+                        mSel->initGL();
+                        tmpAll.push_back(mAll);
+                        tmpSel.push_back(mSel);
+                    }
+                    else
+                    {
+                        tmpAll.push_back(nullptr);
+                        tmpSel.push_back(nullptr);
+                    }
                 }
             }
             else
             {
                 for (size_t i = 0U; i < objCount; ++i)
                 {
-                    const float massRatio = propData[i].second.x() / propRange;
-                    const float massRadius = std::cbrt(massRatio * 0.1F);
-                    const OpenGL::Material material = OpenGL::Material::ratioGreenRed(massRatio);
+                    const std::pair<bool, QVector3D> &pos = m_currentTimePositions1Data->at(i);
+                    if (pos.first)
+                    {
+                        const float massRatio = propData[i].second.x() / propRange;
+                        const float massRadius = std::cbrt(massRatio * massRadiusBase);
+                        const OpenGL::Material material = OpenGL::Material::ratioGreenRed(massRatio);
 
-                    OpenGL::Models::GLModel *mAll = new OpenGL::Models::ModelSphere(
-                        material.darker(), m_currentTimePositionsData->at(i), massRadius);
-                    OpenGL::Models::GLModel *mSel =
-                        new OpenGL::Models::ModelSphere(material, m_currentTimePositionsData->at(i), massRadius);
-                    mAll->initGL();
-                    mSel->initGL();
-                    tmpAll.push_back(mAll);
-                    tmpSel.push_back(mSel);
+                        OpenGL::Models::GLModel *mAll =
+                            new OpenGL::Models::ModelSphere(material.darker(), pos.second, massRadius);
+                        OpenGL::Models::GLModel *mSel =
+                            new OpenGL::Models::ModelSphere(material, pos.second, massRadius);
+                        mAll->initGL();
+                        mSel->initGL();
+                        tmpAll.push_back(mAll);
+                        tmpSel.push_back(mSel);
+                    }
+                    else
+                    {
+                        tmpAll.push_back(nullptr);
+                        tmpSel.push_back(nullptr);
+                    }
                 }
             }
             break;
 
-        case Project::QSimulation::PropertyVelocity:
+        case Project::QSimulation::PropertyForce:
+            addFixedVectors<OpenGL::Models::ModelArrow>(tmpAll,
+                                                        tmpSel,
+                                                        propData,
+                                                        propRange,
+                                                        OpenGL::Material::materialWhite,
+                                                        OpenGL::Material::materialWhiteDark,
+                                                        1.0F,
+                                                        FORCE_LINE_R_ALL,
+                                                        FORCE_HEAD_R_ALL,
+                                                        FORCE_HEAD_L_ALL,
+                                                        FORCE_LINE_R_SEL,
+                                                        FORCE_HEAD_R_SEL);
+            break;
+
+        case Project::QSimulation::PropertyVelocity1:
             addVectors<OpenGL::Models::ModelArrow>(tmpAll,
                                                    tmpSel,
                                                    propData,
@@ -882,131 +935,287 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditorView::build()
                                                    0.15F);
             break;
 
-        case Project::QSimulation::PropertyAcceleration:
-            addVectors<OpenGL::Models::ModelArrow>(tmpAll,
-                                                   tmpSel,
-                                                   propData,
-                                                   propRange,
-                                                   OpenGL::Material::materialYellowDark,
-                                                   OpenGL::Material::materialYellowDark.darker(),
-                                                   0.05F,
-                                                   0.15F,
-                                                   0.2F,
-                                                   0.10F,
-                                                   0.30F);
+        case Project::QSimulation::PropertyVelocity2:
+            addVectors2<OpenGL::Models::ModelArrow>(tmpAll,
+                                                    tmpSel,
+                                                    propData,
+                                                    propRange,
+                                                    OpenGL::Material::materialCyanDark,
+                                                    OpenGL::Material::materialCyanDark.darker(),
+                                                    0.01F,
+                                                    0.05F,
+                                                    0.1F,
+                                                    0.03F,
+                                                    0.15F);
             break;
 
-        case Project::QSimulation::PropertyForce:
-            addVectors<OpenGL::Models::ModelArrow>(tmpAll,
-                                                   tmpSel,
-                                                   propData,
-                                                   propRange,
-                                                   OpenGL::Material::materialWhite,
-                                                   OpenGL::Material::materialWhiteDark,
-                                                   FORCE_LINE_R_ALL,
-                                                   FORCE_HEAD_R_ALL,
-                                                   FORCE_HEAD_L_ALL,
-                                                   FORCE_LINE_R_SEL,
-                                                   FORCE_HEAD_R_SEL);
+        case Project::QSimulation::PropertyVelocity3:
+            addVectors3<OpenGL::Models::ModelArrow>(tmpAll,
+                                                    tmpSel,
+                                                    propData,
+                                                    propRange,
+                                                    OpenGL::Material::materialCyanDark,
+                                                    OpenGL::Material::materialCyanDark.darker(),
+                                                    0.01F,
+                                                    0.05F,
+                                                    0.1F,
+                                                    0.03F,
+                                                    0.15F);
             break;
 
-        case Project::QSimulation::PropertyForceRed:
-            addVectors<OpenGL::Models::ModelArrow>(tmpAll,
-                                                   tmpSel,
-                                                   propData,
-                                                   propRange,
-                                                   OpenGL::Material::materialRed,
-                                                   OpenGL::Material::materialRedDark,
-                                                   FORCE_LINE_R_ALL,
-                                                   FORCE_HEAD_R_ALL,
-                                                   FORCE_HEAD_L_ALL,
-                                                   FORCE_LINE_R_SEL,
-                                                   FORCE_HEAD_R_SEL);
+        case Project::QSimulation::PropertySpin1:
+            addFixedVectors<OpenGL::Models::ModelSpinArrow>(tmpAll,
+                                                            tmpSel,
+                                                            propData,
+                                                            propRange,
+                                                            OpenGL::Material::materialWhite,
+                                                            OpenGL::Material::materialWhiteDark,
+                                                            1.0F,
+                                                            SPIN_LINE_R_ALL,
+                                                            SPIN_HEAD_R_ALL,
+                                                            SPIN_HEAD_L_ALL,
+                                                            SPIN_LINE_R_SEL,
+                                                            SPIN_HEAD_R_SEL);
             break;
 
-        case Project::QSimulation::PropertyForceGreen:
-            addVectors<OpenGL::Models::ModelArrow>(tmpAll,
-                                                   tmpSel,
-                                                   propData,
-                                                   propRange,
-                                                   OpenGL::Material::materialGreen,
-                                                   OpenGL::Material::materialGreenDark,
-                                                   FORCE_LINE_R_ALL,
-                                                   FORCE_HEAD_R_ALL,
-                                                   FORCE_HEAD_L_ALL,
-                                                   FORCE_LINE_R_SEL,
-                                                   FORCE_HEAD_R_SEL);
+        case Project::QSimulation::PropertySpin2:
+            addFixedVectors2<OpenGL::Models::ModelSpinArrow>(tmpAll,
+                                                             tmpSel,
+                                                             propData,
+                                                             propRange,
+                                                             OpenGL::Material::materialWhite,
+                                                             OpenGL::Material::materialWhiteDark,
+                                                             1.0F,
+                                                             SPIN_LINE_R_ALL,
+                                                             SPIN_HEAD_R_ALL,
+                                                             SPIN_HEAD_L_ALL,
+                                                             SPIN_LINE_R_SEL,
+                                                             SPIN_HEAD_R_SEL);
             break;
 
-        case Project::QSimulation::PropertyForceBlue:
-            addVectors<OpenGL::Models::ModelArrow>(tmpAll,
-                                                   tmpSel,
-                                                   propData,
-                                                   propRange,
-                                                   OpenGL::Material::materialBlue,
-                                                   OpenGL::Material::materialBlueDark,
-                                                   FORCE_LINE_R_ALL,
-                                                   FORCE_HEAD_R_ALL,
-                                                   FORCE_HEAD_L_ALL,
-                                                   FORCE_LINE_R_SEL,
-                                                   FORCE_HEAD_R_SEL);
+        case Project::QSimulation::PropertySpin3:
+            addFixedVectors3<OpenGL::Models::ModelSpinArrow>(tmpAll,
+                                                             tmpSel,
+                                                             propData,
+                                                             propRange,
+                                                             OpenGL::Material::materialWhite,
+                                                             OpenGL::Material::materialWhiteDark,
+                                                             1.0F,
+                                                             SPIN_LINE_R_ALL,
+                                                             SPIN_HEAD_R_ALL,
+                                                             SPIN_HEAD_L_ALL,
+                                                             SPIN_LINE_R_SEL,
+                                                             SPIN_HEAD_R_SEL);
             break;
 
-        case Project::QSimulation::PropertySpin:
-            addVectors<OpenGL::Models::ModelSpinArrow>(tmpAll,
-                                                       tmpSel,
-                                                       propData,
-                                                       propRange,
-                                                       OpenGL::Material::materialWhite,
-                                                       OpenGL::Material::materialWhiteDark,
-                                                       SPIN_LINE_R_ALL,
-                                                       SPIN_HEAD_R_ALL,
-                                                       SPIN_HEAD_L_ALL,
-                                                       SPIN_LINE_R_SEL,
-                                                       SPIN_HEAD_R_SEL);
+        case Project::QSimulation::PropertySpinR:
+            addFixedVectors<OpenGL::Models::ModelSpinArrow>(tmpAll,
+                                                            tmpSel,
+                                                            propData,
+                                                            propRange,
+                                                            OpenGL::Material::materialRed,
+                                                            OpenGL::Material::materialRedDark,
+                                                            0.75F,
+                                                            SPIN_LINE_R_ALL,
+                                                            SPIN_HEAD_R_ALL,
+                                                            SPIN_HEAD_L_ALL,
+                                                            SPIN_LINE_R_SEL,
+                                                            SPIN_HEAD_R_SEL);
             break;
 
-        case Project::QSimulation::PropertySpinRed:
-            addVectors<OpenGL::Models::ModelSpinArrow>(tmpAll,
-                                                       tmpSel,
-                                                       propData,
-                                                       propRange,
-                                                       OpenGL::Material::materialRed,
-                                                       OpenGL::Material::materialRedDark,
-                                                       SPIN_LINE_R_ALL,
-                                                       SPIN_HEAD_R_ALL,
-                                                       SPIN_HEAD_L_ALL,
-                                                       SPIN_LINE_R_SEL,
-                                                       SPIN_HEAD_R_SEL);
+        case Project::QSimulation::PropertySpinG:
+            addFixedVectors<OpenGL::Models::ModelSpinArrow>(tmpAll,
+                                                            tmpSel,
+                                                            propData,
+                                                            propRange,
+                                                            OpenGL::Material::materialGreen,
+                                                            OpenGL::Material::materialGreenDark,
+                                                            0.75F,
+                                                            SPIN_LINE_R_ALL,
+                                                            SPIN_HEAD_R_ALL,
+                                                            SPIN_HEAD_L_ALL,
+                                                            SPIN_LINE_R_SEL,
+                                                            SPIN_HEAD_R_SEL);
             break;
 
-        case Project::QSimulation::PropertySpinGreen:
-            addVectors<OpenGL::Models::ModelSpinArrow>(tmpAll,
-                                                       tmpSel,
-                                                       propData,
-                                                       propRange,
-                                                       OpenGL::Material::materialGreen,
-                                                       OpenGL::Material::materialGreenDark,
-                                                       SPIN_LINE_R_ALL,
-                                                       SPIN_HEAD_R_ALL,
-                                                       SPIN_HEAD_L_ALL,
-                                                       SPIN_LINE_R_SEL,
-                                                       SPIN_HEAD_R_SEL);
+        case Project::QSimulation::PropertySpinB:
+            addFixedVectors<OpenGL::Models::ModelSpinArrow>(tmpAll,
+                                                            tmpSel,
+                                                            propData,
+                                                            propRange,
+                                                            OpenGL::Material::materialBlue,
+                                                            OpenGL::Material::materialBlueDark,
+                                                            0.75F,
+                                                            SPIN_LINE_R_ALL,
+                                                            SPIN_HEAD_R_ALL,
+                                                            SPIN_HEAD_L_ALL,
+                                                            SPIN_LINE_R_SEL,
+                                                            SPIN_HEAD_R_SEL);
+
             break;
 
-        case Project::QSimulation::PropertySpinBlue:
-            addVectors<OpenGL::Models::ModelSpinArrow>(tmpAll,
-                                                       tmpSel,
-                                                       propData,
-                                                       propRange,
-                                                       OpenGL::Material::materialBlue,
-                                                       OpenGL::Material::materialBlueDark,
-                                                       SPIN_LINE_R_ALL,
-                                                       SPIN_HEAD_R_ALL,
-                                                       SPIN_HEAD_L_ALL,
-                                                       SPIN_LINE_R_SEL,
-                                                       SPIN_HEAD_R_SEL);
+        case Project::QSimulation::PropertyAcceleration1:
+            addFixedVectors<OpenGL::Models::ModelArrow>(tmpAll,
+                                                        tmpSel,
+                                                        propData,
+                                                        propRange,
+                                                        OpenGL::Material::materialYellowDark,
+                                                        OpenGL::Material::materialYellowDark.darker(),
+                                                        0.5F,
+                                                        0.05F,
+                                                        0.15F,
+                                                        0.2F,
+                                                        0.10F,
+                                                        0.30F);
+            break;
 
+        case Project::QSimulation::PropertyAcceleration2:
+            addFixedVectors2<OpenGL::Models::ModelArrow>(tmpAll,
+                                                         tmpSel,
+                                                         propData,
+                                                         propRange,
+                                                         OpenGL::Material::materialYellowDark,
+                                                         OpenGL::Material::materialYellowDark.darker(),
+                                                         0.5F,
+                                                         0.05F,
+                                                         0.15F,
+                                                         0.2F,
+                                                         0.10F,
+                                                         0.30F);
+            break;
+
+        case Project::QSimulation::PropertyAccelerationR:
+            addFixedVectors<OpenGL::Models::ModelArrow>(tmpAll,
+                                                        tmpSel,
+                                                        propData,
+                                                        propRange,
+                                                        OpenGL::Material::materialRedDark,
+                                                        OpenGL::Material::materialRedDark.darker(),
+                                                        0.5F,
+                                                        0.05F,
+                                                        0.15F,
+                                                        0.2F,
+                                                        0.10F,
+                                                        0.30F);
+            break;
+
+        case Project::QSimulation::PropertyAccelerationG:
+            addFixedVectors<OpenGL::Models::ModelArrow>(tmpAll,
+                                                        tmpSel,
+                                                        propData,
+                                                        propRange,
+                                                        OpenGL::Material::materialGreenDark,
+                                                        OpenGL::Material::materialGreenDark.darker(),
+                                                        0.5F,
+                                                        0.05F,
+                                                        0.15F,
+                                                        0.2F,
+                                                        0.10F,
+                                                        0.30F);
+            break;
+
+        case Project::QSimulation::PropertyAccelerationB:
+            addFixedVectors<OpenGL::Models::ModelArrow>(tmpAll,
+                                                        tmpSel,
+                                                        propData,
+                                                        propRange,
+                                                        OpenGL::Material::materialBlueDark,
+                                                        OpenGL::Material::materialBlueDark.darker(),
+                                                        0.5F,
+                                                        0.05F,
+                                                        0.15F,
+                                                        0.2F,
+                                                        0.10F,
+                                                        0.30F);
+            break;
+        case Project::QSimulation::PropertyCurving1:
+            for (size_t i = 0U; i < m_path1Data->size(); ++i)
+            {
+                const std::pair<bool, QVector3D> &pos = m_currentTimePositions1Data->at(i);
+                if (pos.first && propData[i].first)
+                {
+                    pushModel(tmpAll,
+                              tmpSel,
+                              new OpenGL::Models::ModelPath(OpenGL::Material::materialWhiteDark,
+                                                            {pos.second, propData[i].second}),
+                              new OpenGL::Models::ModelPath(OpenGL::Material::materialWhiteLight,
+                                                            {pos.second, propData[i].second}));
+                }
+                else
+                {
+                    tmpAll.push_back(nullptr);
+                    tmpSel.push_back(nullptr);
+                }
+            }
+            break;
+
+        case Project::QSimulation::PropertyCurving2:
+            for (size_t i = 0U; i < m_path1Data->size(); ++i)
+            {
+                const std::pair<bool, QVector3D> &pos2 = m_currentTimePositions2Data->at(i);
+                if (pos2.first && propData[i].first)
+                {
+                    pushModel(tmpAll,
+                              tmpSel,
+                              new OpenGL::Models::ModelPath(OpenGL::Material::materialWhiteDark,
+                                                            {pos2.second, propData[i].second}),
+                              new OpenGL::Models::ModelPath(OpenGL::Material::materialWhiteLight,
+                                                            {pos2.second, propData[i].second}));
+                }
+                else
+                {
+                    tmpAll.push_back(nullptr);
+                    tmpSel.push_back(nullptr);
+                }
+            }
+            break;
+
+        case Project::QSimulation::PropertyPosition2:
+            for (size_t i = 0U; i < m_path1Data->size(); ++i)
+            {
+                const std::pair<bool, QVector3D> &pos1 = m_currentTimePositions2Data->at(i);
+                const std::pair<bool, QVector3D> &pos2 = m_currentTimePositions2Data->at(i);
+                if (pos1.first && pos2.first)
+                {
+                    const float g2Radius = elRadius - (pos1.second.distanceToPoint(pos2.second));
+                    pushModel(
+                        tmpAll,
+                        tmpSel,
+                        new OpenGL::Models::ModelSphere(OpenGL::Material::materialWhite, pos2.second, g2Radius),
+                        new OpenGL::Models::ModelSphere(OpenGL::Material::materialWhiteLight, pos2.second, g2Radius));
+                }
+                else
+                {
+                    tmpAll.push_back(nullptr);
+                    tmpSel.push_back(nullptr);
+                }
+            }
+            break;
+
+        case Project::QSimulation::PropertyPosition3:
+            break;
+            for (size_t i = 0U; i < m_path1Data->size(); ++i)
+            {
+                const std::pair<bool, QVector3D> &pos1 = m_currentTimePositions2Data->at(i);
+                const std::pair<bool, QVector3D> &pos2 = m_currentTimePositions2Data->at(i);
+                const std::pair<bool, QVector3D> &pos3 = m_currentTimePositions2Data->at(i);
+                if (pos1.first && pos2.first && pos3.first)
+                {
+                    const float g3Radius = elRadius - (pos1.second.distanceToPoint(pos2.second)) -
+                        (pos2.second.distanceToPoint(pos3.second));
+                    ;
+                    pushModel(
+                        tmpAll,
+                        tmpSel,
+                        new OpenGL::Models::ModelSphere(OpenGL::Material::materialWhite, pos3.second, g3Radius),
+                        new OpenGL::Models::ModelSphere(OpenGL::Material::materialWhiteLight, pos3.second, g3Radius));
+                }
+                else
+                {
+                    tmpAll.push_back(nullptr);
+                    tmpSel.push_back(nullptr);
+                }
+            }
             break;
         }
     }

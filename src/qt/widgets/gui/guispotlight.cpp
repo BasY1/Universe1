@@ -125,7 +125,7 @@ void Universe1::Widgets::GUI::GuiSpotLight::layoutRow(QGridLayout *_lay,
 
 /*!
  * \brief Create widget with this GUI
- * \return Widget with spot light GUI
+ * \returns Widget with spot light GUI
  */
 QWidget *Universe1::Widgets::GUI::GuiSpotLight::createWidget()
 {

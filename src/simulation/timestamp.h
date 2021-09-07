@@ -9,6 +9,8 @@
 
 #include "../math/vec3.h"
 
+#include "constants.h"
+
 namespace Universe1 {
 namespace Simulation {
 

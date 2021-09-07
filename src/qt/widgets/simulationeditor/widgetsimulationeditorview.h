@@ -34,9 +34,13 @@ class WidgetSimulationEditorView : public OpenGL::GLWidget
     WidgetSimulationEditorView(
         const Project::QSimulation *_simulation,
         const std::pair<QVector3D, QVector3D> *_sceneRange,
-        const std::vector<std::vector<std::pair<double, QVector3D>>> *_pathData,
-        const std::vector<QVector3D> *_currentTimePositionsData,
-        const std::map<Project::QSimulation::ElementProperty, std::vector<std::pair<double, QVector3D>>>
+        const std::vector<std::vector<std::pair<double, QVector3D>>> *_path1Data,
+        const std::vector<std::vector<std::vector<std::pair<double, QVector3D>>>> *_path2Data,
+        const std::vector<std::vector<std::vector<std::pair<double, QVector3D>>>> *_path3Data,
+        const std::vector<std::pair<bool, QVector3D>> *_currentTimePositions1Data,
+        const std::vector<std::pair<bool, QVector3D>> *_currentTimePositions2Data,
+        const std::vector<std::pair<bool, QVector3D>> *_currentTimePositions3Data,
+        const std::map<Project::QSimulation::ElementProperty, std::vector<std::pair<bool, QVector3D>>>
             *_currentTimePropertyData,
         const std::map<Project::QSimulation::ElementProperty, float> *_currentTimePropertyMaxLength,
         QWidget *_parent = nullptr);
@@ -93,7 +97,7 @@ class WidgetSimulationEditorView : public OpenGL::GLWidget
     template <typename ARROW>
     void addVectors(std::vector<OpenGL::Models::GLModel *> &_outAll,
                     std::vector<OpenGL::Models::GLModel *> &_outSel,
-                    const std::vector<std::pair<double, QVector3D>> &_propData,
+                    const std::vector<std::pair<bool, QVector3D>> &_propData,
                     const float propRange,
                     const OpenGL::Material &_materialLine,
                     const OpenGL::Material &_materialBottom,
@@ -102,6 +106,74 @@ class WidgetSimulationEditorView : public OpenGL::GLWidget
                     const float _ratioLengthHeaderAll,
                     const float _ratioRadiusLineSelected,
                     const float _ratioRadiusHeaderSelected);
+
+    template <typename ARROW>
+    void addVectors2(std::vector<OpenGL::Models::GLModel *> &_outAll,
+                     std::vector<OpenGL::Models::GLModel *> &_outSel,
+                     const std::vector<std::pair<bool, QVector3D>> &_propData,
+                     const float propRange,
+                     const OpenGL::Material &_materialLine,
+                     const OpenGL::Material &_materialBottom,
+                     const float _ratioRadiusLineAll,
+                     const float _ratioRadiusHeaderAll,
+                     const float _ratioLengthHeaderAll,
+                     const float _ratioRadiusLineSelected,
+                     const float _ratioRadiusHeaderSelected);
+
+    template <typename ARROW>
+    void addVectors3(std::vector<OpenGL::Models::GLModel *> &_outAll,
+                     std::vector<OpenGL::Models::GLModel *> &_outSel,
+                     const std::vector<std::pair<bool, QVector3D>> &_propData,
+                     const float propRange,
+                     const OpenGL::Material &_materialLine,
+                     const OpenGL::Material &_materialBottom,
+                     const float _ratioRadiusLineAll,
+                     const float _ratioRadiusHeaderAll,
+                     const float _ratioLengthHeaderAll,
+                     const float _ratioRadiusLineSelected,
+                     const float _ratioRadiusHeaderSelected);
+
+    template <typename ARROW>
+    void addFixedVectors(std::vector<OpenGL::Models::GLModel *> &_outAll,
+                         std::vector<OpenGL::Models::GLModel *> &_outSel,
+                         const std::vector<std::pair<bool, QVector3D>> &_propData,
+                         const float propRange,
+                         const OpenGL::Material &_materialLine,
+                         const OpenGL::Material &_materialBottom,
+                         const float _fixedLengthAll,
+                         const float _ratioRadiusLineAll,
+                         const float _ratioRadiusHeaderAll,
+                         const float _ratioLengthHeaderAll,
+                         const float _ratioRadiusLineSelected,
+                         const float _ratioRadiusHeaderSelected);
+
+    template <typename ARROW>
+    void addFixedVectors2(std::vector<OpenGL::Models::GLModel *> &_outAll,
+                          std::vector<OpenGL::Models::GLModel *> &_outSel,
+                          const std::vector<std::pair<bool, QVector3D>> &_propData,
+                          const float propRange,
+                          const OpenGL::Material &_materialLine,
+                          const OpenGL::Material &_materialBottom,
+                          const float _fixedLengthAll,
+                          const float _ratioRadiusLineAll,
+                          const float _ratioRadiusHeaderAll,
+                          const float _ratioLengthHeaderAll,
+                          const float _ratioRadiusLineSelected,
+                          const float _ratioRadiusHeaderSelected);
+
+    template <typename ARROW>
+    void addFixedVectors3(std::vector<OpenGL::Models::GLModel *> &_outAll,
+                          std::vector<OpenGL::Models::GLModel *> &_outSel,
+                          const std::vector<std::pair<bool, QVector3D>> &_propData,
+                          const float propRange,
+                          const OpenGL::Material &_materialLine,
+                          const OpenGL::Material &_materialBottom,
+                          const float _fixedLengthAll,
+                          const float _ratioRadiusLineAll,
+                          const float _ratioRadiusHeaderAll,
+                          const float _ratioLengthHeaderAll,
+                          const float _ratioRadiusLineSelected,
+                          const float _ratioRadiusHeaderSelected);
  signals:
 
     /*!
@@ -126,11 +198,17 @@ class WidgetSimulationEditorView : public OpenGL::GLWidget
 
     const std::pair<QVector3D, QVector3D> *m_sceneRange;  //!< Simulation scene range from all objects paths
 
-    const std::vector<std::vector<std::pair<double, QVector3D>>> *m_pathData;  //!< Object's path data
+    const std::vector<std::vector<std::pair<double, QVector3D>>> *m_path1Data;               //!< Object's path data
+    const std::vector<std::vector<std::vector<std::pair<double, QVector3D>>>> *m_path2Data;  //!< Generation 2 path data
+    const std::vector<std::vector<std::vector<std::pair<double, QVector3D>>>> *m_path3Data;  //!< Generation 3 path data
 
-    const std::vector<QVector3D> *m_currentTimePositionsData;  //!< Object's positions at current time
+    const std::vector<std::pair<bool, QVector3D>> *m_currentTimePositions1Data;  //!< Object's positions at current time
+    const std::vector<std::pair<bool, QVector3D>>
+        *m_currentTimePositions2Data;  //!< Generation 2 positions at current time
+    const std::vector<std::pair<bool, QVector3D>>
+        *m_currentTimePositions3Data;  //!< Generation 3 positions at current time
 
-    const std::map<Project::QSimulation::ElementProperty, std::vector<std::pair<double, QVector3D>>>
+    const std::map<Project::QSimulation::ElementProperty, std::vector<std::pair<bool, QVector3D>>>
         *m_currentTimePropertyData;  //!< Object's Properties at current time
 
     const std::map<Project::QSimulation::ElementProperty, float>
@@ -267,6 +345,24 @@ inline const std::set<size_t> &WidgetSimulationEditorView::selected() const
 }
 
 /*!
+ * \brief Tool function push arrows into collection
+ * \param _outAll Output all models collection for pushing
+ * \param _outSel Output selected models collection for pushing
+ * \param _arrowAll Arrow for all models
+ * \param _arrowSel Arrow for selected models
+ */
+inline void pushModel(std::vector<OpenGL::Models::GLModel *> &_outAll,
+                      std::vector<OpenGL::Models::GLModel *> &_outSel,
+                      OpenGL::Models::GLModel *_arrowAll,
+                      OpenGL::Models::GLModel *_arrowSel)
+{
+    _arrowAll->initGL();
+    _arrowSel->initGL();
+    _outAll.push_back(_arrowAll);
+    _outSel.push_back(_arrowSel);
+}
+
+/*!
  * \brief Prepare object property arrow
  * \tparam ARROW Arrow model class
  * \param _outAll Output all models collection for pushing
@@ -284,7 +380,7 @@ inline const std::set<size_t> &WidgetSimulationEditorView::selected() const
 template <typename ARROW>
 void WidgetSimulationEditorView::addVectors(std::vector<OpenGL::Models::GLModel *> &_outAll,
                                             std::vector<OpenGL::Models::GLModel *> &_outSel,
-                                            const std::vector<std::pair<double, QVector3D>> &_propData,
+                                            const std::vector<std::pair<bool, QVector3D>> &_propData,
                                             const float _propRange,
                                             const OpenGL::Material &_materialLine,
                                             const OpenGL::Material &_materialBottom,
@@ -297,70 +393,699 @@ void WidgetSimulationEditorView::addVectors(std::vector<OpenGL::Models::GLModel 
     const OpenGL::Material materialLineDark = _materialLine.darker();
     const OpenGL::Material materialBottomDark = _materialBottom.darker();
 
+    static const float offset = 0.05F;
+    const float elRadius = m_simulation->usesRadius() ? m_simulation->getConstantElementRadius() : 0.0F;
+
     if (qFuzzyIsNull(_propRange))
     {
-        for (size_t i = 0U; i < m_pathData->size(); ++i)
+        for (size_t i = 0U; i < m_path1Data->size(); ++i)
         {
-            const QVector3D fromPos =
-                m_currentTimePositionsData->at(i) + (m_simulation->usesRadius() ? 1.05F : 0.05F) * _propData[i].second;
-            const QVector3D toPos =
-                m_currentTimePositionsData->at(i) + (m_simulation->usesRadius() ? 2.05F : 1.05F) * _propData[i].second;
+            const std::pair<bool, QVector3D> &pos = m_currentTimePositions1Data->at(i);
+            if (pos.first && _propData[i].first)
+            {
+                const QVector3D fromPos = pos.second + (elRadius + offset) * _propData[i].second.normalized();
+                const QVector3D toPos = fromPos + _propData[i].second;
+                pushModel(_outAll,
+                          _outSel,
+                          new ARROW(materialLineDark,
+                                    OpenGL::Material::materialGreen,
+                                    materialBottomDark,
+                                    fromPos,
+                                    toPos,
+                                    _ratioRadiusLineAll,
+                                    _ratioRadiusHeaderAll,
+                                    _ratioLengthHeaderAll),
 
-            ARROW *arrowAll = new ARROW(materialLineDark,
+                          new ARROW(_materialLine,
+                                    OpenGL::Material::materialGreenLight,
+                                    _materialBottom,
+                                    fromPos,
+                                    toPos,
+                                    _ratioRadiusLineSelected,
+                                    _ratioRadiusHeaderSelected,
+                                    _ratioLengthHeaderAll));
+            }
+            else
+            {
+                _outAll.push_back(nullptr);
+                _outSel.push_back(nullptr);
+            }
+        }
+    }
+    else
+    {
+        for (size_t i = 0U; i < m_path1Data->size(); ++i)
+        {
+            const std::pair<bool, QVector3D> &pos = m_currentTimePositions1Data->at(i);
+            if (pos.first && _propData[i].first)
+            {
+                const QVector3D fromPos = pos.second + (elRadius + offset) * _propData[i].second.normalized();
+                const QVector3D toPos = fromPos + _propData[i].second;
+                const float valueRatio = _propData[i].second.length() / _propRange;
+                const OpenGL::Material material = OpenGL::Material::ratioGreenRed(valueRatio);
+                pushModel(_outAll,
+                          _outSel,
+                          new ARROW(materialLineDark,
+                                    material.darker(),
+                                    materialBottomDark,
+                                    fromPos,
+                                    toPos,
+                                    _ratioRadiusLineAll,
+                                    _ratioRadiusHeaderAll,
+                                    _ratioLengthHeaderAll),
+                          new ARROW(_materialLine,
+                                    material,
+                                    _materialBottom,
+                                    fromPos,
+                                    toPos,
+                                    _ratioRadiusLineSelected,
+                                    _ratioRadiusHeaderSelected,
+                                    _ratioLengthHeaderAll));
+            }
+            else
+            {
+                _outAll.push_back(nullptr);
+                _outSel.push_back(nullptr);
+            }
+        }
+    }
+}
+
+/*!
+ * \brief Prepare object property arrow - generation 2
+ * \tparam ARROW Arrow model class
+ * \param _outAll Output all models collection for pushing
+ * \param _outSel Output selected models collection for pushing
+ * \param _propData Data property values
+ * \param _propRange Maximum property length
+ * \param _materialLine Material for arrow line
+ * \param _materialBottom Material for arrow bottom
+ * \param _ratioRadiusLineAll Arrow line radius
+ * \param _ratioRadiusHeaderAll Arrow header radius
+ * \param _ratioLengthHeaderAll Arrow header length
+ * \param _ratioRadiusLineSelected Selected object arrow line radius
+ * \param _ratioRadiusHeaderSelected Selected object arrow header radius
+ */
+template <typename ARROW>
+void WidgetSimulationEditorView::addVectors2(std::vector<OpenGL::Models::GLModel *> &_outAll,
+                                             std::vector<OpenGL::Models::GLModel *> &_outSel,
+                                             const std::vector<std::pair<bool, QVector3D>> &_propData,
+                                             const float _propRange,
+                                             const OpenGL::Material &_materialLine,
+                                             const OpenGL::Material &_materialBottom,
+                                             const float _ratioRadiusLineAll,
+                                             const float _ratioRadiusHeaderAll,
+                                             const float _ratioLengthHeaderAll,
+                                             const float _ratioRadiusLineSelected,
+                                             const float _ratioRadiusHeaderSelected)
+{
+    static const float offset = 0.05F;
+    const float elRadius = m_simulation->getConstantElementRadius();
+    const OpenGL::Material materialLineDark = _materialLine.darker();
+    const OpenGL::Material materialBottomDark = _materialBottom.darker();
+
+    if (qFuzzyIsNull(_propRange))
+    {
+        for (size_t i = 0U; i < m_path1Data->size(); ++i)
+        {
+            if (_propData[i].first)
+            {
+                const std::pair<bool, QVector3D> &pos1 = m_currentTimePositions1Data->at(i);
+                const std::pair<bool, QVector3D> &pos2 = m_currentTimePositions2Data->at(i);
+                if (pos1.first && pos2.first)
+                {
+                    const float g2Radius = elRadius - (pos1.second.distanceToPoint(pos2.second));
+                    const QVector3D fromPos = pos2.second + (g2Radius + offset) * _propData[i].second.normalized();
+                    const QVector3D toPos = fromPos + _propData[i].second;
+                    pushModel(_outAll,
+                              _outSel,
+                              new ARROW(materialLineDark,
                                         OpenGL::Material::materialGreen,
                                         materialBottomDark,
                                         fromPos,
                                         toPos,
                                         _ratioRadiusLineAll,
                                         _ratioRadiusHeaderAll,
-                                        _ratioLengthHeaderAll);
-
-            ARROW *arrowSel = new ARROW(_materialLine,
+                                        _ratioLengthHeaderAll),
+                              new ARROW(_materialLine,
                                         OpenGL::Material::materialGreenLight,
                                         _materialBottom,
                                         fromPos,
                                         toPos,
                                         _ratioRadiusLineSelected,
                                         _ratioRadiusHeaderSelected,
-                                        _ratioLengthHeaderAll);
-            arrowAll->initGL();
-            arrowSel->initGL();
-            _outAll.push_back(arrowAll);
-            _outSel.push_back(arrowSel);
+                                        _ratioLengthHeaderAll));
+                }
+            }
+            else
+            {
+                _outAll.push_back(nullptr);
+                _outSel.push_back(nullptr);
+            }
         }
     }
     else
     {
-        for (size_t i = 0U; i < m_pathData->size(); ++i)
+        for (size_t i = 0U; i < m_path1Data->size(); ++i)
         {
-            const QVector3D fromPos =
-                m_currentTimePositionsData->at(i) + (m_simulation->usesRadius() ? 1.05F : 0.05F) * _propData[i].second;
-            const QVector3D toPos =
-                m_currentTimePositionsData->at(i) + (m_simulation->usesRadius() ? 2.05F : 1.05F) * _propData[i].second;
-
-            const float valueRatio = _propData[i].second.length() / _propRange;
-            const OpenGL::Material material = OpenGL::Material::ratioGreenRed(valueRatio);
-
-            ARROW *arrowAll = new ARROW(materialLineDark,
+            if (_propData[i].first)
+            {
+                const std::pair<bool, QVector3D> &pos1 = m_currentTimePositions1Data->at(i);
+                const std::pair<bool, QVector3D> &pos2 = m_currentTimePositions2Data->at(i);
+                if (pos1.first && pos2.first)
+                {
+                    const float g2Radius = elRadius - (pos1.second.distanceToPoint(pos2.second));
+                    const QVector3D fromPos = pos2.second + (g2Radius + offset) * _propData[i].second.normalized();
+                    const QVector3D toPos = fromPos + _propData[i].second;
+                    const float valueRatio = _propData[i].second.length() / _propRange;
+                    const OpenGL::Material material = OpenGL::Material::ratioGreenRed(valueRatio);
+                    pushModel(_outAll,
+                              _outSel,
+                              new ARROW(materialLineDark,
                                         material.darker(),
                                         materialBottomDark,
                                         fromPos,
                                         toPos,
                                         _ratioRadiusLineAll,
                                         _ratioRadiusHeaderAll,
-                                        _ratioLengthHeaderAll);
-            ARROW *arrowSel = new ARROW(_materialLine,
+                                        _ratioLengthHeaderAll),
+                              new ARROW(_materialLine,
                                         material,
                                         _materialBottom,
                                         fromPos,
                                         toPos,
                                         _ratioRadiusLineSelected,
                                         _ratioRadiusHeaderSelected,
-                                        _ratioLengthHeaderAll);
-            arrowAll->initGL();
-            arrowSel->initGL();
-            _outAll.push_back(arrowAll);
-            _outSel.push_back(arrowSel);
+                                        _ratioLengthHeaderAll));
+                }
+                else
+                {
+                    _outAll.push_back(nullptr);
+                    _outSel.push_back(nullptr);
+                }
+            }
+            else
+            {
+                _outAll.push_back(nullptr);
+                _outSel.push_back(nullptr);
+            }
+        }
+    }
+}
+
+/*!
+ * \brief Prepare object property arrow - generation 3
+ * \tparam ARROW Arrow model class
+ * \param _outAll Output all models collection for pushing
+ * \param _outSel Output selected models collection for pushing
+ * \param _propData Data property values
+ * \param _propRange Maximum property length
+ * \param _materialLine Material for arrow line
+ * \param _materialBottom Material for arrow bottom
+ * \param _ratioRadiusLineAll Arrow line radius
+ * \param _ratioRadiusHeaderAll Arrow header radius
+ * \param _ratioLengthHeaderAll Arrow header length
+ * \param _ratioRadiusLineSelected Selected object arrow line radius
+ * \param _ratioRadiusHeaderSelected Selected object arrow header radius
+ */
+template <typename ARROW>
+void WidgetSimulationEditorView::addVectors3(std::vector<OpenGL::Models::GLModel *> &_outAll,
+                                             std::vector<OpenGL::Models::GLModel *> &_outSel,
+                                             const std::vector<std::pair<bool, QVector3D>> &_propData,
+                                             const float _propRange,
+                                             const OpenGL::Material &_materialLine,
+                                             const OpenGL::Material &_materialBottom,
+                                             const float _ratioRadiusLineAll,
+                                             const float _ratioRadiusHeaderAll,
+                                             const float _ratioLengthHeaderAll,
+                                             const float _ratioRadiusLineSelected,
+                                             const float _ratioRadiusHeaderSelected)
+{
+    static const float offset = 0.05F;
+    const float elRadius = m_simulation->getConstantElementRadius();
+    const OpenGL::Material materialLineDark = _materialLine.darker();
+    const OpenGL::Material materialBottomDark = _materialBottom.darker();
+
+    if (qFuzzyIsNull(_propRange))
+    {
+        for (size_t i = 0U; i < m_path1Data->size(); ++i)
+        {
+            if (_propData[i].first)
+            {
+                const std::pair<bool, QVector3D> &pos1 = m_currentTimePositions1Data->at(i);
+                const std::pair<bool, QVector3D> &pos2 = m_currentTimePositions2Data->at(i);
+                const std::pair<bool, QVector3D> &pos3 = m_currentTimePositions3Data->at(i);
+                if (pos1.first && pos2.first && pos3.first)
+                {
+                    const float g3Radius = elRadius - (pos1.second.distanceToPoint(pos2.second)) -
+                        pos2.second.distanceToPoint(pos3.second);
+                    const QVector3D fromPos = pos3.second + (g3Radius + offset) * _propData[i].second.normalized();
+                    const QVector3D toPos = fromPos + _propData[i].second;
+                    pushModel(_outAll,
+                              _outSel,
+                              new ARROW(materialLineDark,
+                                        OpenGL::Material::materialGreen,
+                                        materialBottomDark,
+                                        fromPos,
+                                        toPos,
+                                        _ratioRadiusLineAll,
+                                        _ratioRadiusHeaderAll,
+                                        _ratioLengthHeaderAll),
+                              new ARROW(_materialLine,
+                                        OpenGL::Material::materialGreenLight,
+                                        _materialBottom,
+                                        fromPos,
+                                        toPos,
+                                        _ratioRadiusLineSelected,
+                                        _ratioRadiusHeaderSelected,
+                                        _ratioLengthHeaderAll));
+                }
+            }
+            else
+            {
+                _outAll.push_back(nullptr);
+                _outSel.push_back(nullptr);
+            }
+        }
+    }
+    else
+    {
+        for (size_t i = 0U; i < m_path1Data->size(); ++i)
+        {
+            if (_propData[i].first)
+            {
+                const std::pair<bool, QVector3D> &pos1 = m_currentTimePositions1Data->at(i);
+                const std::pair<bool, QVector3D> &pos2 = m_currentTimePositions2Data->at(i);
+                const std::pair<bool, QVector3D> &pos3 = m_currentTimePositions3Data->at(i);
+                if (pos1.first && pos2.first && pos3.first)
+                {
+                    const float g3Radius = elRadius - (pos1.second.distanceToPoint(pos2.second)) -
+                        pos2.second.distanceToPoint(pos3.second);
+                    const QVector3D fromPos = pos3.second + (g3Radius + offset) * _propData[i].second.normalized();
+                    const QVector3D toPos = fromPos + _propData[i].second;
+                    const float valueRatio = _propData[i].second.length() / _propRange;
+                    const OpenGL::Material material = OpenGL::Material::ratioGreenRed(valueRatio);
+                    pushModel(_outAll,
+                              _outSel,
+                              new ARROW(materialLineDark,
+                                        material.darker(),
+                                        materialBottomDark,
+                                        fromPos,
+                                        toPos,
+                                        _ratioRadiusLineAll,
+                                        _ratioRadiusHeaderAll,
+                                        _ratioLengthHeaderAll),
+                              new ARROW(_materialLine,
+                                        material,
+                                        _materialBottom,
+                                        fromPos,
+                                        toPos,
+                                        _ratioRadiusLineSelected,
+                                        _ratioRadiusHeaderSelected,
+                                        _ratioLengthHeaderAll));
+                }
+                else
+                {
+                    _outAll.push_back(nullptr);
+                    _outSel.push_back(nullptr);
+                }
+            }
+            else
+            {
+                _outAll.push_back(nullptr);
+                _outSel.push_back(nullptr);
+            }
+        }
+    }
+}
+
+/*!
+ * \brief Prepare object property arrow
+ * \tparam ARROW Arrow model class
+ * \param _outAll Output all models collection for pushing
+ * \param _outSel Output selected models collection for pushing
+ * \param _propData Data property values
+ * \param _propRange Maximum property length
+ * \param _materialLine Material for arrow line
+ * \param _materialBottom Material for arrow bottom
+ * \param _fixedLengthAll Length of all arrows
+ * \param _ratioRadiusLineAll Arrow line radius
+ * \param _ratioRadiusHeaderAll Arrow header radius
+ * \param _ratioLengthHeaderAll Arrow header length
+ * \param _ratioRadiusLineSelected Selected object arrow line radius
+ * \param _ratioRadiusHeaderSelected Selected object arrow header radius
+ */
+template <typename ARROW>
+void WidgetSimulationEditorView::addFixedVectors(std::vector<OpenGL::Models::GLModel *> &_outAll,
+                                                 std::vector<OpenGL::Models::GLModel *> &_outSel,
+                                                 const std::vector<std::pair<bool, QVector3D>> &_propData,
+                                                 const float _propRange,
+                                                 const OpenGL::Material &_materialLine,
+                                                 const OpenGL::Material &_materialBottom,
+                                                 const float _fixedLengthAll,
+                                                 const float _ratioRadiusLineAll,
+                                                 const float _ratioRadiusHeaderAll,
+                                                 const float _ratioLengthHeaderAll,
+                                                 const float _ratioRadiusLineSelected,
+                                                 const float _ratioRadiusHeaderSelected)
+{
+    const OpenGL::Material materialLineDark = _materialLine.darker();
+    const OpenGL::Material materialBottomDark = _materialBottom.darker();
+
+    if (qFuzzyIsNull(_propRange))
+    {
+        for (size_t i = 0U; i < m_path1Data->size(); ++i)
+        {
+            const std::pair<bool, QVector3D> &pos = m_currentTimePositions1Data->at(i);
+            if (pos.first && _propData[i].first)
+            {
+                const QVector3D &value = _propData[i].second;
+                const QVector3D fromPos = pos.second + value * (m_simulation->usesRadius() ? 1.05F : 0.05F);
+                const QVector3D toPos = fromPos + value.normalized() * _fixedLengthAll;
+                pushModel(_outAll,
+                          _outSel,
+                          new ARROW(materialLineDark,
+                                    OpenGL::Material::materialGreen,
+                                    materialBottomDark,
+                                    fromPos,
+                                    toPos,
+                                    _ratioRadiusLineAll,
+                                    _ratioRadiusHeaderAll,
+                                    _ratioLengthHeaderAll),
+                          new ARROW(_materialLine,
+                                    OpenGL::Material::materialGreenLight,
+                                    _materialBottom,
+                                    fromPos,
+                                    toPos,
+                                    _ratioRadiusLineSelected,
+                                    _ratioRadiusHeaderSelected,
+                                    _ratioLengthHeaderAll));
+            }
+            else
+            {
+                _outAll.push_back(nullptr);
+                _outSel.push_back(nullptr);
+            }
+        }
+    }
+    else
+    {
+        for (size_t i = 0U; i < m_path1Data->size(); ++i)
+        {
+            const std::pair<bool, QVector3D> &pos = m_currentTimePositions1Data->at(i);
+            if (pos.first && _propData[i].first)
+            {
+                const QVector3D &value = _propData[i].second;
+                const QVector3D fromPos = pos.second + value * (m_simulation->usesRadius() ? 1.05F : 0.05F);
+                const QVector3D toPos = fromPos + value.normalized() * _fixedLengthAll;
+                const float valueRatio = value.length() / _propRange;
+                const OpenGL::Material material = OpenGL::Material::ratioGreenRed(valueRatio);
+                pushModel(_outAll,
+                          _outSel,
+                          new ARROW(materialLineDark,
+                                    material.darker(),
+                                    materialBottomDark,
+                                    fromPos,
+                                    toPos,
+                                    _ratioRadiusLineAll,
+                                    _ratioRadiusHeaderAll,
+                                    _ratioLengthHeaderAll),
+                          new ARROW(_materialLine,
+                                    material,
+                                    _materialBottom,
+                                    fromPos,
+                                    toPos,
+                                    _ratioRadiusLineSelected,
+                                    _ratioRadiusHeaderSelected,
+                                    _ratioLengthHeaderAll));
+            }
+            else
+            {
+                _outAll.push_back(nullptr);
+                _outSel.push_back(nullptr);
+            }
+        }
+    }
+}
+
+/*!
+ * \brief Prepare object property arrow - generation 2
+ * \tparam ARROW Arrow model class
+ * \param _outAll Output all models collection for pushing
+ * \param _outSel Output selected models collection for pushing
+ * \param _propData Data property values
+ * \param _propRange Maximum property length
+ * \param _materialLine Material for arrow line
+ * \param _materialBottom Material for arrow bottom
+ * \param _fixedLengthAll Length of all arrows
+ * \param _ratioRadiusLineAll Arrow line radius
+ * \param _ratioRadiusHeaderAll Arrow header radius
+ * \param _ratioLengthHeaderAll Arrow header length
+ * \param _ratioRadiusLineSelected Selected object arrow line radius
+ * \param _ratioRadiusHeaderSelected Selected object arrow header radius
+ */
+template <typename ARROW>
+void WidgetSimulationEditorView::addFixedVectors2(std::vector<OpenGL::Models::GLModel *> &_outAll,
+                                                  std::vector<OpenGL::Models::GLModel *> &_outSel,
+                                                  const std::vector<std::pair<bool, QVector3D>> &_propData,
+                                                  const float _propRange,
+                                                  const OpenGL::Material &_materialLine,
+                                                  const OpenGL::Material &_materialBottom,
+                                                  const float _fixedLengthAll,
+                                                  const float _ratioRadiusLineAll,
+                                                  const float _ratioRadiusHeaderAll,
+                                                  const float _ratioLengthHeaderAll,
+                                                  const float _ratioRadiusLineSelected,
+                                                  const float _ratioRadiusHeaderSelected)
+{
+    static const float offset = 0.05F;
+    const float elRadius = m_simulation->getConstantElementRadius();
+    const OpenGL::Material materialLineDark = _materialLine.darker();
+    const OpenGL::Material materialBottomDark = _materialBottom.darker();
+
+    if (qFuzzyIsNull(_propRange))
+    {
+        for (size_t i = 0U; i < m_path1Data->size(); ++i)
+        {
+            if (_propData[i].first)
+            {
+                const std::pair<bool, QVector3D> &pos1 = m_currentTimePositions1Data->at(i);
+                const std::pair<bool, QVector3D> &pos2 = m_currentTimePositions2Data->at(i);
+                if (pos1.first && pos2.first)
+                {
+                    const float g2Radius = elRadius - (pos1.second.distanceToPoint(pos2.second));
+                    const QVector3D fromPos = pos2.second + (g2Radius + offset) * _propData[i].second.normalized();
+                    const QVector3D toPos = fromPos + _propData[i].second.normalized() * _fixedLengthAll;
+                    pushModel(_outAll,
+                              _outSel,
+                              new ARROW(materialLineDark,
+                                        OpenGL::Material::materialGreen,
+                                        materialBottomDark,
+                                        fromPos,
+                                        toPos,
+                                        _ratioRadiusLineAll,
+                                        _ratioRadiusHeaderAll,
+                                        _ratioLengthHeaderAll),
+                              new ARROW(_materialLine,
+                                        OpenGL::Material::materialGreenLight,
+                                        _materialBottom,
+                                        fromPos,
+                                        toPos,
+                                        _ratioRadiusLineSelected,
+                                        _ratioRadiusHeaderSelected,
+                                        _ratioLengthHeaderAll));
+                }
+                else
+                {
+                    _outAll.push_back(nullptr);
+                    _outSel.push_back(nullptr);
+                }
+            }
+            else
+            {
+                _outAll.push_back(nullptr);
+                _outSel.push_back(nullptr);
+            }
+        }
+    }
+    else
+    {
+        for (size_t i = 0U; i < m_path1Data->size(); ++i)
+        {
+            if (_propData[i].first)
+            {
+                const std::pair<bool, QVector3D> &pos1 = m_currentTimePositions1Data->at(i);
+                const std::pair<bool, QVector3D> &pos2 = m_currentTimePositions2Data->at(i);
+                if (pos1.first && pos2.first)
+                {
+                    const float g2Radius = elRadius - (pos1.second.distanceToPoint(pos2.second));
+                    const QVector3D fromPos = pos2.second + (g2Radius + offset) * _propData[i].second.normalized();
+                    const QVector3D toPos = fromPos + _propData[i].second.normalized() * _fixedLengthAll;
+                    const float valueRatio = _propData[i].second.length() / _propRange;
+                    const OpenGL::Material material = OpenGL::Material::ratioGreenRed(valueRatio);
+                    pushModel(_outAll,
+                              _outSel,
+                              new ARROW(materialLineDark,
+                                        material.darker(),
+                                        materialBottomDark,
+                                        fromPos,
+                                        toPos,
+                                        _ratioRadiusLineAll,
+                                        _ratioRadiusHeaderAll,
+                                        _ratioLengthHeaderAll),
+                              new ARROW(_materialLine,
+                                        material,
+                                        _materialBottom,
+                                        fromPos,
+                                        toPos,
+                                        _ratioRadiusLineSelected,
+                                        _ratioRadiusHeaderSelected,
+                                        _ratioLengthHeaderAll));
+                }
+                else
+                {
+                    _outAll.push_back(nullptr);
+                    _outSel.push_back(nullptr);
+                }
+            }
+            else
+            {
+                _outAll.push_back(nullptr);
+                _outSel.push_back(nullptr);
+            }
+        }
+    }
+}
+
+/*!
+ * \brief Prepare object property arrow - generation 3
+ * \tparam ARROW Arrow model class
+ * \param _outAll Output all models collection for pushing
+ * \param _outSel Output selected models collection for pushing
+ * \param _propData Data property values
+ * \param _propRange Maximum property length
+ * \param _materialLine Material for arrow line
+ * \param _materialBottom Material for arrow bottom
+ * \param _fixedLengthAll Length of all arrows
+ * \param _ratioRadiusLineAll Arrow line radius
+ * \param _ratioRadiusHeaderAll Arrow header radius
+ * \param _ratioLengthHeaderAll Arrow header length
+ * \param _ratioRadiusLineSelected Selected object arrow line radius
+ * \param _ratioRadiusHeaderSelected Selected object arrow header radius
+ */
+template <typename ARROW>
+void WidgetSimulationEditorView::addFixedVectors3(std::vector<OpenGL::Models::GLModel *> &_outAll,
+                                                  std::vector<OpenGL::Models::GLModel *> &_outSel,
+                                                  const std::vector<std::pair<bool, QVector3D>> &_propData,
+                                                  const float _propRange,
+                                                  const OpenGL::Material &_materialLine,
+                                                  const OpenGL::Material &_materialBottom,
+                                                  const float _fixedLengthAll,
+                                                  const float _ratioRadiusLineAll,
+                                                  const float _ratioRadiusHeaderAll,
+                                                  const float _ratioLengthHeaderAll,
+                                                  const float _ratioRadiusLineSelected,
+                                                  const float _ratioRadiusHeaderSelected)
+{
+    static const float offset = 0.05F;
+    const float elRadius = m_simulation->getConstantElementRadius();
+    const OpenGL::Material materialLineDark = _materialLine.darker();
+    const OpenGL::Material materialBottomDark = _materialBottom.darker();
+
+    if (qFuzzyIsNull(_propRange))
+    {
+        for (size_t i = 0U; i < m_path1Data->size(); ++i)
+        {
+            if (_propData[i].first)
+            {
+                const std::pair<bool, QVector3D> &pos1 = m_currentTimePositions1Data->at(i);
+                const std::pair<bool, QVector3D> &pos2 = m_currentTimePositions2Data->at(i);
+                const std::pair<bool, QVector3D> &pos3 = m_currentTimePositions3Data->at(i);
+                if (pos1.first && pos2.first && pos3.first)
+                {
+                    const float g3Radius = elRadius - (pos1.second.distanceToPoint(pos2.second)) -
+                        pos2.second.distanceToPoint(pos3.second);
+                    const QVector3D fromPos = pos3.second + (g3Radius + offset) * _propData[i].second.normalized();
+                    const QVector3D toPos = fromPos + _propData[i].second.normalized() * _fixedLengthAll;
+                    pushModel(_outAll,
+                              _outSel,
+                              new ARROW(materialLineDark,
+                                        OpenGL::Material::materialGreen,
+                                        materialBottomDark,
+                                        fromPos,
+                                        toPos,
+                                        _ratioRadiusLineAll,
+                                        _ratioRadiusHeaderAll,
+                                        _ratioLengthHeaderAll),
+                              new ARROW(_materialLine,
+                                        OpenGL::Material::materialGreenLight,
+                                        _materialBottom,
+                                        fromPos,
+                                        toPos,
+                                        _ratioRadiusLineSelected,
+                                        _ratioRadiusHeaderSelected,
+                                        _ratioLengthHeaderAll));
+                }
+                else
+                {
+                    _outAll.push_back(nullptr);
+                    _outSel.push_back(nullptr);
+                }
+            }
+            else
+            {
+                _outAll.push_back(nullptr);
+                _outSel.push_back(nullptr);
+            }
+        }
+    }
+    else
+    {
+        for (size_t i = 0U; i < m_path1Data->size(); ++i)
+        {
+            if (_propData[i].first)
+            {
+                const std::pair<bool, QVector3D> &pos1 = m_currentTimePositions1Data->at(i);
+                const std::pair<bool, QVector3D> &pos2 = m_currentTimePositions2Data->at(i);
+                const std::pair<bool, QVector3D> &pos3 = m_currentTimePositions3Data->at(i);
+                if (pos1.first && pos2.first && pos3.first)
+                {
+                    const float g3Radius = elRadius - (pos1.second.distanceToPoint(pos2.second)) -
+                        pos2.second.distanceToPoint(pos3.second);
+                    const QVector3D fromPos = pos3.second + (g3Radius + offset) * _propData[i].second.normalized();
+                    const QVector3D toPos = fromPos + _propData[i].second.normalized() * _fixedLengthAll;
+                    const float valueRatio = _propData[i].second.length() / _propRange;
+                    const OpenGL::Material material = OpenGL::Material::ratioGreenRed(valueRatio);
+                    pushModel(_outAll,
+                              _outSel,
+                              new ARROW(materialLineDark,
+                                        material.darker(),
+                                        materialBottomDark,
+                                        fromPos,
+                                        toPos,
+                                        _ratioRadiusLineAll,
+                                        _ratioRadiusHeaderAll,
+                                        _ratioLengthHeaderAll),
+                              new ARROW(_materialLine,
+                                        material,
+                                        _materialBottom,
+                                        fromPos,
+                                        toPos,
+                                        _ratioRadiusLineSelected,
+                                        _ratioRadiusHeaderSelected,
+                                        _ratioLengthHeaderAll));
+                }
+                else
+                {
+                    _outAll.push_back(nullptr);
+                    _outSel.push_back(nullptr);
+                }
+            }
+            else
+            {
+                _outAll.push_back(nullptr);
+                _outSel.push_back(nullptr);
+            }
         }
     }
 }

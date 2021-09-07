@@ -45,6 +45,15 @@ bool Universe1::Project::QSimulationNewtonByWave::usesHistory() const
 }
 
 /*!
+ * \brief Object's can't access higher generation
+ * \returns \c false
+ */
+bool Universe1::Project::QSimulationNewtonByWave::usesGenerations() const
+{
+    return false;
+}
+
+/*!
  * \brief Load object's wave sources positions for observer
  * \param _out Output buffer
  * \param _eventTimeStamp Time-stamp of observer
@@ -212,6 +221,62 @@ bool Universe1::Project::QSimulationNewtonByWave::loadCalcPath(std::vector<std::
 }
 
 /*!
+ * \brief Generation 2 not supported
+ * \param _out Output vector
+ * \param _objectID Object's index
+ * \returns \c false
+ */
+bool Universe1::Project::QSimulationNewtonByWave::loadInitPath2(
+    std::vector<std::vector<std::pair<double, QVector3D>>> &_out, const size_t _objectID) const
+{
+    Q_UNUSED(_out)
+    Q_UNUSED(_objectID)
+    return false;
+}
+
+/*!
+ * \brief Generation 2 not supported
+ * \param _out Output vector
+ * \param _objectID Object's index
+ * \returns \c false
+ */
+bool Universe1::Project::QSimulationNewtonByWave::loadCalcPath2(
+    std::vector<std::vector<std::pair<double, QVector3D>>> &_out, const size_t _objectID) const
+{
+    Q_UNUSED(_out)
+    Q_UNUSED(_objectID)
+    return false;
+}
+
+/*!
+ * \brief Generation 3 not supported
+ * \param _out Output vector
+ * \param _objectID Object's index
+ * \returns \c false
+ */
+bool Universe1::Project::QSimulationNewtonByWave::loadInitPath3(
+    std::vector<std::vector<std::pair<double, QVector3D>>> &_out, const size_t _objectID) const
+{
+    Q_UNUSED(_out)
+    Q_UNUSED(_objectID)
+    return false;
+}
+
+/*!
+ * \brief Generation 2 not supported
+ * \param _out Output vector
+ * \param _objectID Object's index
+ * \returns \c false
+ */
+bool Universe1::Project::QSimulationNewtonByWave::loadCalcPath3(
+    std::vector<std::vector<std::pair<double, QVector3D>>> &_out, const size_t _objectID) const
+{
+    Q_UNUSED(_out)
+    Q_UNUSED(_objectID)
+    return false;
+}
+
+/*!
  * \brief Getter for initialization object position
  * \param _objectID Object's index
  * \param _timeStamp Time-stamp of required value
@@ -244,6 +309,62 @@ std::pair<bool, QVector3D> Universe1::Project::QSimulationNewtonByWave::loadCalc
     case PrecisionDouble: return m_simD.loadCalcPosition(_objectID, _timeStamp);
     case PrecisionLongDouble: return m_simL.loadCalcPosition(_objectID, _timeStamp);
     }
+    return {false, QVector3D()};
+}
+
+/*!
+ * \brief Generation 2 not supported
+ * \param _objectID Object's index
+ * \param _timeStamp Time-stamp of required value
+ * \returns \c false and null \c QVector3D pair
+ */
+std::pair<bool, QVector3D> Universe1::Project::QSimulationNewtonByWave::loadInitPosition2(const size_t _objectID,
+                                                                                          const double _timeStamp) const
+{
+    Q_UNUSED(_objectID)
+    Q_UNUSED(_timeStamp)
+    return {false, QVector3D()};
+}
+
+/*!
+ * \brief Generation 2 not supported
+ * \param _objectID Object's index
+ * \param _timeStamp Time-stamp of required value
+ * \returns \c false and null \c QVector3D pair
+ */
+std::pair<bool, QVector3D> Universe1::Project::QSimulationNewtonByWave::loadCalcPosition2(const size_t _objectID,
+                                                                                          const double _timeStamp) const
+{
+    Q_UNUSED(_objectID)
+    Q_UNUSED(_timeStamp)
+    return {false, QVector3D()};
+}
+
+/*!
+ * \brief Generation 3 not supported
+ * \param _objectID Object's index
+ * \param _timeStamp Time-stamp of required value
+ * \returns \c false and null \c QVector3D pair
+ */
+std::pair<bool, QVector3D> Universe1::Project::QSimulationNewtonByWave::loadInitPosition3(const size_t _objectID,
+                                                                                          const double _timeStamp) const
+{
+    Q_UNUSED(_objectID)
+    Q_UNUSED(_timeStamp)
+    return {false, QVector3D()};
+}
+
+/*!
+ * \brief Generation 3 not supported
+ * \param _objectID Object's index
+ * \param _timeStamp Time-stamp of required value
+ * \returns \c false and null \c QVector3D pair
+ */
+std::pair<bool, QVector3D> Universe1::Project::QSimulationNewtonByWave::loadCalcPosition3(const size_t _objectID,
+                                                                                          const double _timeStamp) const
+{
+    Q_UNUSED(_objectID)
+    Q_UNUSED(_timeStamp)
     return {false, QVector3D()};
 }
 
@@ -295,14 +416,7 @@ std::pair<bool, QVector3D> Universe1::Project::QSimulationNewtonByWave::loadInit
         }
         break;
 
-    case QSimulation::PropertyNone:
-    case QSimulation::PropertySpin:
-    case QSimulation::PropertySpinRed:
-    case QSimulation::PropertySpinGreen:
-    case QSimulation::PropertySpinBlue:
-    case QSimulation::PropertyForceRed:
-    case QSimulation::PropertyForceGreen:
-    case QSimulation::PropertyForceBlue: break;
+    default: break;
     }
     return {false, QVector3D()};
 }
@@ -355,14 +469,7 @@ std::pair<bool, QVector3D> Universe1::Project::QSimulationNewtonByWave::loadCalc
         }
         break;
 
-    case QSimulation::PropertyNone:
-    case QSimulation::PropertySpin:
-    case QSimulation::PropertySpinRed:
-    case QSimulation::PropertySpinGreen:
-    case QSimulation::PropertySpinBlue:
-    case QSimulation::PropertyForceRed:
-    case QSimulation::PropertyForceGreen:
-    case QSimulation::PropertyForceBlue: break;
+    default: break;
     }
     return {false, QVector3D()};
 }

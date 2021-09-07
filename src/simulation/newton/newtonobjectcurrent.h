@@ -46,7 +46,7 @@ struct NewtonObjectCurrent : public NewtonObject<T>
     {
     }
 
-    void initStep(const std::vector<NewtonObjectCurrent<T>> &_objects, const Constants<T> &_physics);
+    bool initStep(const std::vector<NewtonObjectCurrent<T>> &_objects, const Constants<T> &_physics);
 
     /*!
      * \brief Create clone of this object with new ID and history size
@@ -92,11 +92,15 @@ struct NewtonObjectCurrent : public NewtonObject<T>
     }
 };
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /*!
  * \brief Test physics constants, returns \c true when gravitational constant has positive value
  * \tparam T Template floating point type
  * \param _physics Physics constants to test
- * \returns \c true when gravitational constant has positive value
+ * \returns Zero when gravitational constant has positive value or error flags
  */
 template <typename T>
 uint32_t NewtonObjectCurrent<T>::testConstants(const Constants<T> &_physics)
@@ -109,9 +113,10 @@ uint32_t NewtonObjectCurrent<T>::testConstants(const Constants<T> &_physics)
  * \tparam T Template floating point type
  * \param _objects List of all simulated objects
  * \param _physics Physics constants
+ * \returns Success flag
  */
 template <typename T>
-void NewtonObjectCurrent<T>::initStep(const std::vector<NewtonObjectCurrent<T>> &_objects, const Constants<T> &_physics)
+bool NewtonObjectCurrent<T>::initStep(const std::vector<NewtonObjectCurrent<T>> &_objects, const Constants<T> &_physics)
 {
     NewtonTimeStamp<T> *cur = ObjectHistory<T, NewtonTimeStamp<T>>::current();
     Math::Vec3<T> accel;
@@ -121,6 +126,7 @@ void NewtonObjectCurrent<T>::initStep(const std::vector<NewtonObjectCurrent<T>> 
                 NewtonObject<T>::getAccel(cur->position, obj.current()->position, obj.m_mass, _physics.gravityConstant);
 
     cur->moveAccel = accel;
+    return true;
 }
 
 }  // namespace GravityNewton

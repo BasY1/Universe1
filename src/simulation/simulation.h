@@ -322,6 +322,10 @@ struct Simulation
     }
 };
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 template <typename T, typename ObjectClass, typename TimeStampClass>
 inline const Constants<T> &Simulation<T, ObjectClass, TimeStampClass>::physics() const
 {
@@ -577,12 +581,13 @@ bool Simulation<T, ObjectClass, TimeStampClass>::addStep(const size_t _stepCount
         return false;
 
     const bool useAngle = Type::isPositive<T>(m_maximumCurveAngleRad);
-    const size_t stepCount = std::max(_stepCount, size_t(1U));
 
-    for (size_t step = 0U; step < stepCount; ++step)
+    for (size_t step = 0U; step < std::max(_stepCount, size_t(1U)); ++step)
     {
         for (ObjectClass &obj : m_objects)
-            obj.initStep(m_objects, m_physics);
+            if (!obj.initStep(m_objects, m_physics))
+                return false;
+
         T stepDuration = m_maximumStepTime;
         if (useAngle)
         {

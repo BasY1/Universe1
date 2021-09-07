@@ -80,7 +80,7 @@ void Universe1::Widgets::GUI::GuiDirectionLight::layoutRow(QGridLayout *_lay,
 
 /*!
  * \brief Create widget with this GUI
- * \return Widget with direction light GUI
+ * \returns Widget with direction light GUI
  */
 QWidget *Universe1::Widgets::GUI::GuiDirectionLight::createWidget()
 {

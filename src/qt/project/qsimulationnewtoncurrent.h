@@ -34,6 +34,7 @@ class QSimulationNewtonCurrent : public QSimulation
     SimulationType simulationType() const override;
     Precision precision() const override;
     bool usesHistory() const override;
+    bool usesGenerations() const override;
     bool usesRadius() const override;
     bool loadEventSource(std::vector<std::pair<double, QVector3D>> &_out,
                          const double _eventTimeStamp,
@@ -52,9 +53,21 @@ class QSimulationNewtonCurrent : public QSimulation
 
     bool loadInitPath(std::vector<std::pair<double, QVector3D>> &_out, const size_t _objectID) const override;
     bool loadCalcPath(std::vector<std::pair<double, QVector3D>> &_out, const size_t _objectID) const override;
+    bool loadInitPath2(std::vector<std::vector<std::pair<double, QVector3D>>> &_out,
+                       const size_t _objectID) const override;
+    bool loadCalcPath2(std::vector<std::vector<std::pair<double, QVector3D>>> &_out,
+                       const size_t _objectID) const override;
+    bool loadInitPath3(std::vector<std::vector<std::pair<double, QVector3D>>> &_out,
+                       const size_t _objectID) const override;
+    bool loadCalcPath3(std::vector<std::vector<std::pair<double, QVector3D>>> &_out,
+                       const size_t _objectID) const override;
 
     std::pair<bool, QVector3D> loadInitPosition(const size_t _objectID, const double _timeStamp) const override;
     std::pair<bool, QVector3D> loadCalcPosition(const size_t _objectID, const double _timeStamp) const override;
+    std::pair<bool, QVector3D> loadInitPosition2(const size_t _objectID, const double _timeStamp) const override;
+    std::pair<bool, QVector3D> loadCalcPosition2(const size_t _objectID, const double _timeStamp) const override;
+    std::pair<bool, QVector3D> loadInitPosition3(const size_t _objectID, const double _timeStamp) const override;
+    std::pair<bool, QVector3D> loadCalcPosition3(const size_t _objectID, const double _timeStamp) const override;
 
     std::pair<bool, QVector3D>
     loadInitProperty(const ElementProperty _property, const size_t _objectID, const double _timeStamp) const override;

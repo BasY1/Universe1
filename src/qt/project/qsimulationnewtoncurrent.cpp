@@ -45,6 +45,15 @@ bool Universe1::Project::QSimulationNewtonCurrent::usesHistory() const
 }
 
 /*!
+ * \brief Object's can't access higher generation
+ * \returns \c false
+ */
+bool Universe1::Project::QSimulationNewtonCurrent::usesGenerations() const
+{
+    return false;
+}
+
+/*!
  * \brief Not supported (This is current time based simulation )
  * \param _out Output buffer
  * \param _eventTimeStamp Time-stamp of event
@@ -207,6 +216,62 @@ bool Universe1::Project::QSimulationNewtonCurrent::loadCalcPath(std::vector<std:
 }
 
 /*!
+ * \brief Generation 2 not supported
+ * \param _out Output vector
+ * \param _objectID Object's index
+ * \returns \c false
+ */
+bool Universe1::Project::QSimulationNewtonCurrent::loadInitPath2(
+    std::vector<std::vector<std::pair<double, QVector3D>>> &_out, const size_t _objectID) const
+{
+    Q_UNUSED(_out)
+    Q_UNUSED(_objectID)
+    return false;
+}
+
+/*!
+ * \brief Generation 2 not supported
+ * \param _out Output vector
+ * \param _objectID Object's index
+ * \returns \c false
+ */
+bool Universe1::Project::QSimulationNewtonCurrent::loadCalcPath2(
+    std::vector<std::vector<std::pair<double, QVector3D>>> &_out, const size_t _objectID) const
+{
+    Q_UNUSED(_out)
+    Q_UNUSED(_objectID)
+    return false;
+}
+
+/*!
+ * \brief Generation 3 not supported
+ * \param _out Output vector
+ * \param _objectID Object's index
+ * \returns \c false
+ */
+bool Universe1::Project::QSimulationNewtonCurrent::loadInitPath3(
+    std::vector<std::vector<std::pair<double, QVector3D>>> &_out, const size_t _objectID) const
+{
+    Q_UNUSED(_out)
+    Q_UNUSED(_objectID)
+    return false;
+}
+
+/*!
+ * \brief Generation 2 not supported
+ * \param _out Output vector
+ * \param _objectID Object's index
+ * \returns \c false
+ */
+bool Universe1::Project::QSimulationNewtonCurrent::loadCalcPath3(
+    std::vector<std::vector<std::pair<double, QVector3D>>> &_out, const size_t _objectID) const
+{
+    Q_UNUSED(_out)
+    Q_UNUSED(_objectID)
+    return false;
+}
+
+/*!
  * \brief Getter for initialization object position
  * \param _objectID Object's index
  * \param _timeStamp Time-stamp of required value
@@ -239,6 +304,62 @@ std::pair<bool, QVector3D> Universe1::Project::QSimulationNewtonCurrent::loadCal
     case PrecisionDouble: return m_simD.loadCalcPosition(_objectID, _timeStamp);
     case PrecisionLongDouble: return m_simL.loadCalcPosition(_objectID, _timeStamp);
     }
+    return {false, QVector3D()};
+}
+
+/*!
+ * \brief Generation 2 not supported
+ * \param _objectID Object's index
+ * \param _timeStamp Time-stamp of required value
+ * \returns \c false and null \c QVector3D pair
+ */
+std::pair<bool, QVector3D>
+Universe1::Project::QSimulationNewtonCurrent::loadInitPosition2(const size_t _objectID, const double _timeStamp) const
+{
+    Q_UNUSED(_objectID)
+    Q_UNUSED(_timeStamp)
+    return {false, QVector3D()};
+}
+
+/*!
+ * \brief Generation 2 not supported
+ * \param _objectID Object's index
+ * \param _timeStamp Time-stamp of required value
+ * \returns \c false and null \c QVector3D pair
+ */
+std::pair<bool, QVector3D>
+Universe1::Project::QSimulationNewtonCurrent::loadCalcPosition2(const size_t _objectID, const double _timeStamp) const
+{
+    Q_UNUSED(_objectID)
+    Q_UNUSED(_timeStamp)
+    return {false, QVector3D()};
+}
+
+/*!
+ * \brief Generation 3 not supported
+ * \param _objectID Object's index
+ * \param _timeStamp Time-stamp of required value
+ * \returns \c false and null \c QVector3D pair
+ */
+std::pair<bool, QVector3D>
+Universe1::Project::QSimulationNewtonCurrent::loadInitPosition3(const size_t _objectID, const double _timeStamp) const
+{
+    Q_UNUSED(_objectID)
+    Q_UNUSED(_timeStamp)
+    return {false, QVector3D()};
+}
+
+/*!
+ * \brief Generation 3 not supported
+ * \param _objectID Object's index
+ * \param _timeStamp Time-stamp of required value
+ * \returns \c false and null \c QVector3D pair
+ */
+std::pair<bool, QVector3D>
+Universe1::Project::QSimulationNewtonCurrent::loadCalcPosition3(const size_t _objectID, const double _timeStamp) const
+{
+    Q_UNUSED(_objectID)
+    Q_UNUSED(_timeStamp)
     return {false, QVector3D()};
 }
 
@@ -290,14 +411,7 @@ std::pair<bool, QVector3D> Universe1::Project::QSimulationNewtonCurrent::loadIni
         }
         break;
 
-    case QSimulation::PropertyNone:
-    case QSimulation::PropertySpin:
-    case QSimulation::PropertySpinRed:
-    case QSimulation::PropertySpinGreen:
-    case QSimulation::PropertySpinBlue:
-    case QSimulation::PropertyForceRed:
-    case QSimulation::PropertyForceGreen:
-    case QSimulation::PropertyForceBlue: break;
+    default: break;
     }
     return {false, QVector3D()};
 }
@@ -350,14 +464,7 @@ std::pair<bool, QVector3D> Universe1::Project::QSimulationNewtonCurrent::loadCal
         }
         break;
 
-    case QSimulation::PropertyNone:
-    case QSimulation::PropertySpin:
-    case QSimulation::PropertySpinRed:
-    case QSimulation::PropertySpinGreen:
-    case QSimulation::PropertySpinBlue:
-    case QSimulation::PropertyForceRed:
-    case QSimulation::PropertyForceGreen:
-    case QSimulation::PropertyForceBlue: break;
+    default: break;
     }
     return {false, QVector3D()};
 }

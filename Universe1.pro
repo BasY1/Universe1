@@ -39,6 +39,9 @@ HEADERS += \
     src/math/type.h \
     src/math/texttools.h \
     src/math/vec3.h \
+    src/math/circle.h \
+    src/math/sphere.h \
+    src/math/spherecrosssection.h \
     \
     src/simulation/constants.h \
     src/simulation/timestamp.h \
@@ -51,6 +54,10 @@ HEADERS += \
     src/simulation/newton/newtonobjectcurrent.h \
     src/simulation/newton/newtonobjectbywave.h \
     src/simulation/newton/newtonsimulation.h \
+    \
+    src/simulation/neutrino/neutrinotimestamp.h \
+    src/simulation/neutrino/neutrinoobject.h \
+    src/simulation/neutrino/neutrinosimulation.h \
 
 ########################################################################################################################
 
@@ -211,11 +218,17 @@ HEADERS += \
 
 SOURCES += \
     src/unit_tests/test_vec3.cpp \
-    src/unit_tests/test_newton.cpp
+    src/unit_tests/test_newton.cpp \
+    src/unit_tests/test_spherecrosssection.cpp \
+    src/unit_tests/test_neutrinotimestamp.cpp \
+    src/unit_tests/test_neutrinoobject.cpp \
 
 HEADERS += \
     src/unit_tests/test_vec3.h \
-    src/unit_tests/test_newton.h
+    src/unit_tests/test_newton.h \
+    src/unit_tests/test_spherecrosssection.h \
+    src/unit_tests/test_neutrinotimestamp.h \
+    src/unit_tests/test_neutrinoobject.h \
 
 ########################################################################################################################
 

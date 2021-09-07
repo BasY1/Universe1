@@ -132,7 +132,7 @@ inline QString toQString(const T _value, const int _decimals)
  * \param _name Attribute name
  * \param _value Attribute value
  * \param _decimals Decimals count
- * \return HTML table row
+ * \returns HTML table row
  */
 template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
 inline QString htmlRow1of3(const QString &_name, const T _value, const int _decimals = -1)
@@ -147,7 +147,7 @@ inline QString htmlRow1of3(const QString &_name, const T _value, const int _deci
  * \param _value1 Attribute 1 value
  * \param _value2 Attribute 2 value
  * \param _decimals Decimals count
- * \return HTML table row
+ * \returns HTML table row
  */
 template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
 inline QString htmlRow2of3(const QString &_name, const T _value1, const T _value2, const int _decimals = -1)
@@ -160,7 +160,7 @@ inline QString htmlRow2of3(const QString &_name, const T _value1, const T _value
  * \brief Tool function prepare HTML table row
  * \param _name Attribute name
  * \param _value Attribute value
- * \return HTML table row
+ * \returns HTML table row
  */
 inline QString htmlRow1of3(const QString &_name, const QString &_value)
 {
@@ -172,7 +172,7 @@ inline QString htmlRow1of3(const QString &_name, const QString &_value)
  * \param _name Attribute name
  * \param _value1 Attribute 1 value
  * \param _value2 Attribute 2 value
- * \return HTML table row
+ * \returns HTML table row
  */
 inline QString htmlRow2of3(const QString &_name, const QString &_value1, const QString &_value2)
 {

@@ -4,8 +4,8 @@
  * \brief 3D vector template implementation
  */
 
-#ifndef MATH_VEC3_H
-#define MATH_VEC3_H
+#ifndef UNIVERSE1_MATH_VEC3_H
+#define UNIVERSE1_MATH_VEC3_H
 
 #include "texttools.h"
 #include "type.h"
@@ -170,6 +170,9 @@ struct Vec3
 
     static Vec3<T> rotate(const Vec3<T> &point, const Vec3<T> &normal, const T angleRad);
     inline Vec3<T> rotated(const Vec3<T> &normal, const T angleRad) const;
+
+    static Vec3<T>
+    ratio(const Vec3<T> &_v1, const Vec3<T> &_v2, const T _value1, const T _value2, const T _valueCenter);
 
     inline QVector3D toQVector3D() const;
     static Vec3<T> fromQVector3D(const QVector3D &_value);
@@ -871,7 +874,7 @@ inline T Vec3<T>::angleNormDeg(const Vec3<T> &v, const Vec3<T> &normal) const
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
@@ -911,6 +914,25 @@ template <typename T>
 inline Vec3<T> Vec3<T>::rotated(const Vec3<T> &normal, const T angleRad) const
 {
     return Vec3<T>::rotate(*this, normal, angleRad);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Ratio vector
+ * \param _v1 Vector 1
+ * \param _v2 Vector 2
+ * \param _value1 Value for vector 1
+ * \param _value2 Value for vector 2
+ * \param _valueCenter Value for result vector
+ * \returns Ratio vector
+ */
+template <typename T>
+Vec3<T> Vec3<T>::ratio(const Vec3<T> &_v1, const Vec3<T> &_v2, const T _value1, const T _value2, const T _valueCenter)
+{
+    return _v1 + (_v2 - _v1) * ((_valueCenter - _value1) / (_value2 - _value1));
 }
 
 /*!
@@ -954,7 +976,7 @@ inline std::ostream &operator<<(std::ostream &os, const Vec3<T> &v)
 /*!
  * \brief To \c std::string
  * \tparam T Template floating point type
- * \return Vector as \c std::string
+ * \returns Vector as \c std::string
  */
 template <typename T>
 inline std::string Vec3<T>::toString() const
@@ -967,7 +989,7 @@ inline std::string Vec3<T>::toString() const
 /*!
  * \brief To \c QString
  * \tparam T Template floating point type
- * \return Vector as \c QString
+ * \returns Vector as \c QString
  */
 template <typename T>
 inline QString Vec3<T>::toQString() const
@@ -978,4 +1000,4 @@ inline QString Vec3<T>::toQString() const
 }  // namespace Math
 }  // namespace Universe1
 
-#endif  // MATH_VEC3_H
+#endif  // UNIVERSE1_MATH_VEC3_H

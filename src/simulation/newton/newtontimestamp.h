@@ -20,14 +20,6 @@ namespace GravityNewton {
 template <typename T>
 struct NewtonTimeStamp : public TimeStamp<T>
 {
-    /*!
-     * \brief Compare previous and moved object
-     * \param _previous First object
-     * \param _next Second object
-     * \returns \c true when time-stamp, position and velocity are equal
-     * \note Acceleration \a moveAccel is ignored
-     */
-    static bool compareMoved(const NewtonTimeStamp<T> &_previous, const NewtonTimeStamp<T> &_next);
 
     Math::Vec3<T> moveVelocity;  //!< Object velocity     [m/s]
     Math::Vec3<T> moveAccel;     //!< Object acceleration [m/s^2]
@@ -61,15 +53,20 @@ struct NewtonTimeStamp : public TimeStamp<T>
     {
     }
 
-    inline NewtonTimeStamp moved(const T _timeDelta) const;
+    inline NewtonTimeStamp<T> moved(const T _timeDelta) const;
 
-    inline T curvingAngleRad(const T _timeDelta) const;
-
-    inline T curvingTimeDuration(const T _angleRad) const;
+    T curvingAngleRad(const T _timeDelta) const;
+    T curvingTimeDuration(const T _angleRad) const;
 
     std::pair<NewtonTimeStamp<T>, bool>
     movedToEventSource(const T _universeVelocity, const T _eventTimeStamp, const Math::Vec3<T> &_eventPosition) const;
+
+    static bool compareMoved(const NewtonTimeStamp<T> &_previous, const NewtonTimeStamp<T> &_next);
 };
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
  * \brief Returns angle between current move direction and direction after given time duration
@@ -83,7 +80,7 @@ struct NewtonTimeStamp : public TimeStamp<T>
  * Returned value is angle (in radians) in between \f$\vec{V}_{t_N}\f$ and \f$\vec{V}_{t_\Delta}\f$
  */
 template <typename T>
-inline T NewtonTimeStamp<T>::curvingAngleRad(const T _timeDelta) const
+T NewtonTimeStamp<T>::curvingAngleRad(const T _timeDelta) const
 {
     return moveVelocity.angleRad(moveVelocity + moveAccel * _timeDelta);
 }
@@ -200,7 +197,7 @@ inline T NewtonTimeStamp<T>::curvingAngleRad(const T _timeDelta) const
  * \f}
  */
 template <typename T>
-inline T NewtonTimeStamp<T>::curvingTimeDuration(const T _angleRad) const
+T NewtonTimeStamp<T>::curvingTimeDuration(const T _angleRad) const
 {
     if (moveVelocity.isNull() || moveAccel.isNull() || moveVelocity.isParallel(moveAccel))
         return -Const::T_1<T>();
@@ -230,6 +227,14 @@ inline T NewtonTimeStamp<T>::curvingTimeDuration(const T _angleRad) const
     return std::max((LHG + DS2) / GMLL, (LHG - DS2) / GMLL);
 }
 
+/*!
+ * \brief Compare previous and moved object
+ * \tparam T Template floating point type
+ * \param _previous First object
+ * \param _next Second object
+ * \returns \c true when time-stamp, position and velocity are equal
+ * \note Acceleration \a moveAccel is ignored
+ */
 template <typename T>
 bool NewtonTimeStamp<T>::compareMoved(const NewtonTimeStamp<T> &_previous, const NewtonTimeStamp<T> &_next)
 {

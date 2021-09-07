@@ -48,7 +48,7 @@ struct NewtonObjectByWave : public NewtonObject<T>
     {
     }
 
-    void initStep(const std::vector<NewtonObjectByWave<T>> &_objects, const Constants<T> &_physics);
+    bool initStep(const std::vector<NewtonObjectByWave<T>> &_objects, const Constants<T> &_physics);
 
     /*!
      * \brief Create clone of this object with new ID and history size
@@ -94,11 +94,15 @@ struct NewtonObjectByWave : public NewtonObject<T>
     }
 };
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /*!
  * \brief Test physics constants, returns \c true when gravitational constant and speed of the universe are positive
  * \tparam T Template floating point type
  * \param _physics Physics constants to test
- * \returns \c true when gravitational constant has positive value
+ * \returns Zero when gravitational constant has positive value or error flags
  */
 template <typename T>
 uint32_t NewtonObjectByWave<T>::testConstants(const Constants<T> &_physics)
@@ -112,9 +116,10 @@ uint32_t NewtonObjectByWave<T>::testConstants(const Constants<T> &_physics)
  * \tparam T Template floating point type
  * \param _objects List of all simulated objects
  * \param _physics Physics constants
+ * \returns Success flag
  */
 template <typename T>
-void NewtonObjectByWave<T>::initStep(const std::vector<NewtonObjectByWave<T>> &_objects, const Constants<T> &_physics)
+bool NewtonObjectByWave<T>::initStep(const std::vector<NewtonObjectByWave<T>> &_objects, const Constants<T> &_physics)
 {
     NewtonTimeStamp<T> *cur = ObjectHistory<T, NewtonTimeStamp<T>>::current();
     Math::Vec3<T> accel;
@@ -126,7 +131,8 @@ void NewtonObjectByWave<T>::initStep(const std::vector<NewtonObjectByWave<T>> &_
 
             switch (source.first)
             {
-            case EventSourceEmptyPath: break;
+            case EventSourceEmptyPath:
+            case EventSourceMissing: return false;
 
             case EventSourceFoundExact:
                 accel += NewtonObject<T>::getAccel(
@@ -135,7 +141,6 @@ void NewtonObjectByWave<T>::initStep(const std::vector<NewtonObjectByWave<T>> &_
 
             case EventSourceFoundClosest:
             case EventSourceFoundFirst:
-            case EventSourceMissing:
                 accel += NewtonObject<T>::getAccel(
                     cur->position,
                     source.second->movedToEventSource(_physics.universeVelocity, cur->timeStamp, cur->position)
@@ -146,6 +151,7 @@ void NewtonObjectByWave<T>::initStep(const std::vector<NewtonObjectByWave<T>> &_
             }
         }
     cur->moveAccel = accel;
+    return true;
 }
 
 }  // namespace GravityNewton

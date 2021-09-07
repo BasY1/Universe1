@@ -50,25 +50,41 @@ class QSimulation : public QObject
      */
     enum ElementProperty
     {
-        PropertyNone = 0b0000000000000000,          //!< Helper zero value for flags
-        PropertyMass = 0b0000000000000001,          //!< Element's mass
-        PropertyVelocity = 0b0000000000000010,      //!< Element's velocity
-        PropertyAcceleration = 0b0000000000000100,  //!< Element's acceleration
-        PropertyForce = 0b0000000000001000,         //!< Element's gravitational force resp. acceleration
-        PropertyForceRed = 0b0000000000010000,      //!< Element's red force
-        PropertyForceGreen = 0b0000000000100000,    //!< Element's green force
-        PropertyForceBlue = 0b0000000001000000,     //!< Element's blue force
-        PropertySpin = 0b0000000010000000,          //!< Element's master (gravity) spin
-        PropertySpinRed = 0b0000000100000000,       //!< Element's red spin
-        PropertySpinGreen = 0b0000001000000000,     //!< Element's green spin
-        PropertySpinBlue = 0b0000010000000000,      //!< Element's blue spin
+        PropertyNone = 0b00000000000000000000000000000000,   //!< Helper zero value for flags
+        PropertyMass = 0b00000000000000000000000000000001,   //!< Element's mass
+        PropertyForce = 0b00000000000000000000000000000010,  //!< Element's gravitational force resp. acceleration
 
+        PropertyVelocity1 = 0b00000000000000000000000000000100,  //!< Velocity within generation 1
+        PropertyVelocity2 = 0b00000000000000000000000000001000,  //!< Velocity within generation 2
+        PropertyVelocity3 = 0b00000000000000000000000000010000,  //!< Velocity within generation 3
+        PropertyVelocity = PropertyVelocity1,                    //!< Velocity (Non-generation elements)
+
+        PropertySpin1 = 0b00000000000000000000000000100000,  //!< Spin angular velocity within generation 1
+        PropertySpin2 = 0b00000000000000000000000001000000,  //!< Spin angular velocity within generation 2
+        PropertySpin3 = 0b00000000000000000000000010000000,  //!< Spin angular velocity within generation 3
+        PropertySpinR = 0b00000000000000000000000100000000,  //!< Color angular velocity - red spin
+        PropertySpinG = 0b00000000000000000000001000000000,  //!< Color angular velocity - green spin
+        PropertySpinB = 0b00000000000000000000010000000000,  //!< Color angular velocity - blue spin
+
+        PropertyAcceleration1 = 0b00000000000000000000100000000000,  //!< Acceleration acting on generation 1 move
+        PropertyAcceleration2 = 0b00000000000000000001000000000000,  //!< Acceleration acting on generation 2 move
+        PropertyAccelerationR = 0b00000000000000000010000000000000,  //!< Acceleration acting on red move
+        PropertyAccelerationG = 0b00000000000000000100000000000000,  //!< Acceleration acting on green move
+        PropertyAccelerationB = 0b00000000000000001000000000000000,  //!< Acceleration acting on blue move
+        PropertyAcceleration = PropertyAcceleration1,                //!< Acceleration (Non-generation elements)
+
+        PropertyCurving1 = 0b00000000000000100000000000000000,  // Arm for curving of generation 1 velocity
+        PropertyCurving2 = 0b00000000000001000000000000000000,  // Arm for curving of generation 2 velocity
+
+        PropertyPosition2 = 0b00000000000010000000000000000000,  // Generation 2 sphere center
+        PropertyPosition3 = 0b00000000000100000000000000000000,  // Generation 3 sphere center
     };
     Q_DECLARE_FLAGS(ElementProperties, ElementProperty)
     Q_FLAG(ElementProperties)
 
     static std::list<ElementProperty> parseElementProperties(const ElementProperties _value);
     static QString getElementPropertyName(const ElementProperty _value);
+    static uint getElementPropertyGeneration(const ElementProperty _value);
 
     /*!
      * \brief Constructor
@@ -111,6 +127,12 @@ class QSimulation : public QObject
      * | \c false | History time - information wave based simulation |
      */
     virtual bool usesHistory() const = 0;
+
+    /*!
+     * \brief Getter for using generation flag elements can be in second and third generation
+     * \returns Using generations flag
+     */
+    virtual bool usesGenerations() const = 0;
 
     /*!
      * \brief Load object historical positions from where wave hits event positions
@@ -198,6 +220,42 @@ class QSimulation : public QObject
     virtual bool loadCalcPath(std::vector<std::pair<double, QVector3D>> &_out, const size_t _objectID) const = 0;
 
     /*!
+     * \brief Fill output vector with initialization object time-stamps and positions of generation 2
+     * \param _out Output vector
+     * \param _objectID Object's index
+     * \returns \c true if success
+     */
+    virtual bool loadInitPath2(std::vector<std::vector<std::pair<double, QVector3D>>> &_out,
+                               const size_t _objectID) const = 0;
+
+    /*!
+     * \brief Fill output vector with calculation object time-stamps and positions of generation 2
+     * \param _out Output vector
+     * \param _objectID Object's index
+     * \returns \c true if success
+     */
+    virtual bool loadCalcPath2(std::vector<std::vector<std::pair<double, QVector3D>>> &_out,
+                               const size_t _objectID) const = 0;
+
+    /*!
+     * \brief Fill output vector with initialization object time-stamps and positions of generation 3
+     * \param _out Output vector
+     * \param _objectID Object's index
+     * \returns \c true if success
+     */
+    virtual bool loadInitPath3(std::vector<std::vector<std::pair<double, QVector3D>>> &_out,
+                               const size_t _objectID) const = 0;
+
+    /*!
+     * \brief Fill output vector with calculation object time-stamps and positions of generation 3
+     * \param _out Output vector
+     * \param _objectID Object's index
+     * \returns \c true if success
+     */
+    virtual bool loadCalcPath3(std::vector<std::vector<std::pair<double, QVector3D>>> &_out,
+                               const size_t _objectID) const = 0;
+
+    /*!
      * \brief Getter for initialization object position at time-stamp
      * \param _objectID Object's index
      * \param _timeStamp Time-stamp of required value
@@ -212,6 +270,37 @@ class QSimulation : public QObject
      * \returns Pair, where \c first item is success flag, and \c second item is position (as \c QVector3D)
      */
     virtual std::pair<bool, QVector3D> loadCalcPosition(const size_t _objectID, const double _timeStamp) const = 0;
+
+    /*!
+     * \brief Getter for initialization object generation 2 position at time-stamp
+     * \param _objectID Object's index
+     * \param _timeStamp Time-stamp of required value
+     * \returns Pair, where \c first item is success flag, and \c second item is position (as \c QVector3D)
+     */
+    virtual std::pair<bool, QVector3D> loadInitPosition2(const size_t _objectID, const double _timeStamp) const = 0;
+
+    /*!
+     * \brief Getter for calculation object generation 2 position at time-stamp
+     * \param _objectID Object's index
+     * \param _timeStamp Time-stamp of required value
+     * \returns Pair, where \c first item is success flag, and \c second item is position (as \c QVector3D)
+     */
+    virtual std::pair<bool, QVector3D> loadCalcPosition2(const size_t _objectID, const double _timeStamp) const = 0;
+    /*!
+     * \brief Getter for initialization object generation 3 position at time-stamp
+     * \param _objectID Object's index
+     * \param _timeStamp Time-stamp of required value
+     * \returns Pair, where \c first item is success flag, and \c second item is position (as \c QVector3D)
+     */
+    virtual std::pair<bool, QVector3D> loadInitPosition3(const size_t _objectID, const double _timeStamp) const = 0;
+
+    /*!
+     * \brief Getter for calculation object generation 3 position at time-stamp
+     * \param _objectID Object's index
+     * \param _timeStamp Time-stamp of required value
+     * \returns Pair, where \c first item is success flag, and \c second item is position (as \c QVector3D)
+     */
+    virtual std::pair<bool, QVector3D> loadCalcPosition3(const size_t _objectID, const double _timeStamp) const = 0;
 
     /*!
      * \brief Universal getter for initialization object property

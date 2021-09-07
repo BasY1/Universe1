@@ -23,8 +23,12 @@ Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::WidgetSimulationEd
 
     , m_view(new WidgetSimulationEditorView(m_simulation,
                                             &m_sceneRange,
-                                            &m_pathData,
-                                            &m_currentTimePositionsData,
+                                            &m_path1Data,
+                                            &m_path2Data,
+                                            &m_path3Data,
+                                            &m_currentTimePositions1Data,
+                                            &m_currentTimePositions2Data,
+                                            &m_currentTimePositions3Data,
                                             &m_currentTimePropertyData,
                                             &m_currentTimePropertyMaxLength))
 
@@ -669,8 +673,12 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::simulationCha
     m_selected.clear();
     m_view->setSelected(m_selected);
 
-    m_pathData.clear();
-    m_currentTimePositionsData.clear();
+    m_path1Data.clear();
+    m_path2Data.clear();
+    m_path3Data.clear();
+    m_currentTimePositions1Data.clear();
+    m_currentTimePositions2Data.clear();
+    m_currentTimePositions3Data.clear();
     m_currentTimePropertyData.clear();
     m_currentTimePropertyMaxLength.clear();
 
@@ -687,30 +695,45 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::simulationCha
 
     const size_t cntObjects = m_simulation->objectCountInit();
 
-    m_pathData.resize(cntObjects);
+    m_path1Data.resize(cntObjects);
     for (size_t i = 0U; i < cntObjects; ++i)
-        if (!m_simulation->loadCalcPath(m_pathData[i], i))
-            m_simulation->loadInitPath(m_pathData[i], i);
+        if (!m_simulation->loadCalcPath(m_path1Data[i], i))
+            m_simulation->loadInitPath(m_path1Data[i], i);
+
+    if (m_simulation->usesGenerations())
+    {
+        m_path2Data.resize(cntObjects);
+        m_path3Data.resize(cntObjects);
+        for (size_t i = 0U; i < cntObjects; ++i)
+        {
+            if (!m_simulation->loadCalcPath2(m_path2Data[i], i))
+                m_simulation->loadInitPath2(m_path2Data[i], i);
+            if (!m_simulation->loadCalcPath3(m_path3Data[i], i))
+                m_simulation->loadInitPath3(m_path3Data[i], i);
+        }
+    }
+
+    const float elRadius = m_simulation->usesRadius() ? m_simulation->getConstantElementRadius() : 0.0F;
 
     bool isInit = false;
-    for (const std::vector<std::pair<double, QVector3D>> &objPath : m_pathData)
+    for (const std::vector<std::pair<double, QVector3D>> &objPath : m_path1Data)
     {
         for (const std::pair<double, QVector3D> &pathPos : objPath)
         {
             if (isInit)
             {
-                if (m_sceneRange.first.x() > pathPos.second.x())
-                    m_sceneRange.first.setX(pathPos.second.x());
-                if (m_sceneRange.first.y() > pathPos.second.y())
-                    m_sceneRange.first.setY(pathPos.second.y());
-                if (m_sceneRange.first.z() > pathPos.second.z())
-                    m_sceneRange.first.setZ(pathPos.second.z());
-                if (m_sceneRange.second.x() < pathPos.second.x())
-                    m_sceneRange.second.setX(pathPos.second.x());
-                if (m_sceneRange.second.y() < pathPos.second.y())
-                    m_sceneRange.second.setY(pathPos.second.y());
-                if (m_sceneRange.second.z() < pathPos.second.z())
-                    m_sceneRange.second.setZ(pathPos.second.z());
+                if (m_sceneRange.first.x() > pathPos.second.x() - elRadius)
+                    m_sceneRange.first.setX(pathPos.second.x() - elRadius);
+                if (m_sceneRange.first.y() > pathPos.second.y() - elRadius)
+                    m_sceneRange.first.setY(pathPos.second.y() - elRadius);
+                if (m_sceneRange.first.z() > pathPos.second.z() - elRadius)
+                    m_sceneRange.first.setZ(pathPos.second.z() - elRadius);
+                if (m_sceneRange.second.x() < pathPos.second.x() + elRadius)
+                    m_sceneRange.second.setX(pathPos.second.x() + elRadius);
+                if (m_sceneRange.second.y() < pathPos.second.y() + elRadius)
+                    m_sceneRange.second.setY(pathPos.second.y() + elRadius);
+                if (m_sceneRange.second.z() < pathPos.second.z() + elRadius)
+                    m_sceneRange.second.setZ(pathPos.second.z() + elRadius);
                 if (m_timeRange.first > pathPos.first)
                     m_timeRange.first = pathPos.first;
                 if (m_timeRange.second < pathPos.first)
@@ -734,7 +757,9 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::simulationCha
 
     if (!isInit || qFuzzyIsNull(rangeTime))
     {
-        m_pathData.clear();
+        m_path1Data.clear();
+        m_path2Data.clear();
+        m_path3Data.clear();
         m_timeRange.first = 0.0;
         m_timeRange.second = 0.0;
         m_sceneRange.first = QVector3D();
@@ -815,11 +840,11 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::currentTimeBo
 /*!
  * \brief Tool function vector to string
  * \param _vector Vector
- * \return Vector as \c QString
+ * \returns Vector as \c QString
  */
 inline QString vecStr(const QVector3D &_vector)
 {
-    return QString("%1 x %2 x %3").arg(_vector.x()).arg(_vector.y()).arg(_vector.z());
+    return QString("%1 x %2 x %3\n|%4|").arg(_vector.x()).arg(_vector.y()).arg(_vector.z()).arg(_vector.length());
 }
 
 /*!
@@ -827,7 +852,9 @@ inline QString vecStr(const QVector3D &_vector)
  */
 void Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::rebuildCurrentTime()
 {
-    m_currentTimePositionsData.clear();
+    m_currentTimePositions1Data.clear();
+    m_currentTimePositions2Data.clear();
+    m_currentTimePositions3Data.clear();
     m_currentTimePropertyData.clear();
     m_currentTimePropertyMaxLength.clear();
 
@@ -835,22 +862,43 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::rebuildCurren
     const double curTime = m_currentTimeBox->value();
     const bool isFromInit = (m_simulation->objectCountCalc() == 0U);
 
-    m_currentTimePositionsData.reserve(cntObjects);
+    m_currentTimePositions1Data.reserve(cntObjects);
 
     disconnect(m_objectsData, &QTableWidget::itemSelectionChanged, this, &WidgetSimulationEditor::objectsDataSelection);
 
     m_objectsData->clearSelection();
     m_objectsData->setRowCount(cntObjects);
 
-    if (isFromInit)
+    if (m_simulation->usesGenerations())
     {
-        for (size_t i = 0U; i < cntObjects; ++i)
-            m_currentTimePositionsData.push_back(m_simulation->loadInitPosition(i, curTime).second);
+        if (isFromInit)
+        {
+            for (size_t i = 0U; i < cntObjects; ++i)
+            {
+                m_currentTimePositions1Data.push_back(m_simulation->loadInitPosition(i, curTime));
+                m_currentTimePositions2Data.push_back(m_simulation->loadInitPosition2(i, curTime));
+                m_currentTimePositions3Data.push_back(m_simulation->loadInitPosition3(i, curTime));
+            }
+        }
+        else
+        {
+            for (size_t i = 0U; i < cntObjects; ++i)
+            {
+                m_currentTimePositions1Data.push_back(m_simulation->loadCalcPosition(i, curTime));
+                m_currentTimePositions2Data.push_back(m_simulation->loadCalcPosition2(i, curTime));
+                m_currentTimePositions3Data.push_back(m_simulation->loadCalcPosition3(i, curTime));
+            }
+        }
     }
     else
     {
-        for (size_t i = 0U; i < cntObjects; ++i)
-            m_currentTimePositionsData.push_back(m_simulation->loadCalcPosition(i, curTime).second);
+        if (isFromInit)
+            for (size_t i = 0U; i < cntObjects; ++i)
+                m_currentTimePositions1Data.push_back(m_simulation->loadInitPosition(i, curTime));
+
+        else
+            for (size_t i = 0U; i < cntObjects; ++i)
+                m_currentTimePositions1Data.push_back(m_simulation->loadCalcPosition(i, curTime));
     }
 
     const std::list<Project::QSimulation::ElementProperty> flagsAll =
@@ -860,7 +908,29 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::rebuildCurren
     {
         QTableWidgetItem *item = new QTableWidgetItem();
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-        item->setText(vecStr(m_currentTimePositionsData[i]));
+        if (m_currentTimePositions1Data[i].first)
+        {
+            if (m_simulation->usesGenerations())
+            {
+                if (m_currentTimePositions3Data[i].first && m_currentTimePositions2Data[i].first)
+                    item->setText(tr("G1") + ": " + vecStr(m_currentTimePositions1Data[i].second) + "\n" + tr("G2") +
+                                  ": " + vecStr(m_currentTimePositions2Data[i].second) + "\n" + tr("G3") + ": " +
+                                  vecStr(m_currentTimePositions3Data[i].second));
+                else if (m_currentTimePositions2Data[i].first)
+                    item->setText(tr("G1") + ": " + vecStr(m_currentTimePositions1Data[i].second) + "\n" + tr("G2") +
+                                  ": " + vecStr(m_currentTimePositions2Data[i].second));
+                else
+                    item->setText(vecStr(m_currentTimePositions1Data[i].second));
+            }
+            else
+            {
+                item->setText(vecStr(m_currentTimePositions1Data[i].second));
+            }
+        }
+        else
+        {
+            item->setText(tr("Invalid"));
+        }
         m_objectsData->setItem(i, 0, item);
     }
 
@@ -869,29 +939,96 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::rebuildCurren
     {
         ++col;
 
-        std::vector<std::pair<double, QVector3D>> &propData =
-            m_currentTimePropertyData.insert({propName, std::vector<std::pair<double, QVector3D>>()}).first->second;
+        const uint propGen = Project::QSimulation::getElementPropertyGeneration(propName);
+
+        std::vector<std::pair<bool, QVector3D>> &propData =
+            m_currentTimePropertyData.insert({propName, std::vector<std::pair<bool, QVector3D>>()}).first->second;
 
         propData.reserve(cntObjects);
-        if (isFromInit)
+
+        switch (propGen)
         {
-            for (size_t i = 0U; i < cntObjects; ++i)
-                propData.push_back(m_simulation->loadInitProperty(propName, i, curTime));
-        }
-        else
-        {
-            for (size_t i = 0U; i < cntObjects; ++i)
-                propData.push_back(m_simulation->loadCalcProperty(propName, i, curTime));
+        case 3U:
+            if (isFromInit)
+            {
+                for (size_t i = 0U; i < cntObjects; ++i)
+                {
+                    if (m_currentTimePositions3Data[i].first)
+                        propData.push_back(m_simulation->loadInitProperty(propName, i, curTime));
+                    else
+                        propData.push_back({false, QVector3D()});
+                }
+            }
+            else
+            {
+                for (size_t i = 0U; i < cntObjects; ++i)
+                {
+                    if (m_currentTimePositions3Data[i].first)
+                        propData.push_back(m_simulation->loadCalcProperty(propName, i, curTime));
+                    else
+                        propData.push_back({false, QVector3D()});
+                }
+            }
+            break;
+
+        case 2U:
+            if (isFromInit)
+            {
+                for (size_t i = 0U; i < cntObjects; ++i)
+                {
+                    if (m_currentTimePositions2Data[i].first)
+                        propData.push_back(m_simulation->loadInitProperty(propName, i, curTime));
+                    else
+                        propData.push_back({false, QVector3D()});
+                }
+            }
+            else
+            {
+                for (size_t i = 0U; i < cntObjects; ++i)
+                {
+                    if (m_currentTimePositions2Data[i].first)
+                        propData.push_back(m_simulation->loadCalcProperty(propName, i, curTime));
+                    else
+                        propData.push_back({false, QVector3D()});
+                }
+            }
+            break;
+
+        default:
+            if (isFromInit)
+            {
+                for (size_t i = 0U; i < cntObjects; ++i)
+                {
+                    if (m_currentTimePositions1Data[i].first)
+                        propData.push_back(m_simulation->loadInitProperty(propName, i, curTime));
+                    else
+                        propData.push_back({false, QVector3D()});
+                }
+            }
+            else
+            {
+                for (size_t i = 0U; i < cntObjects; ++i)
+                {
+                    if (m_currentTimePositions1Data[i].first)
+                        propData.push_back(m_simulation->loadCalcProperty(propName, i, curTime));
+                    else
+                        propData.push_back({false, QVector3D()});
+                }
+            }
+            break;
         }
 
         float maxLength = 0.0F;
 
-        for (const std::pair<double, QVector3D> &objData : propData)
-        {
-            const float l = objData.second.length();
-            if (maxLength < l)
-                maxLength = l;
-        }
+        for (const std::pair<bool, QVector3D> &objData : propData)
+            if (objData.first)
+            {
+                const float l = objData.second.length();
+                if (maxLength < l)
+                    maxLength = l;
+            }
+
+        m_currentTimePropertyMaxLength.insert({propName, maxLength});
 
         if (propName == Project::QSimulation::PropertyMass)
         {
@@ -899,7 +1036,10 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::rebuildCurren
             {
                 QTableWidgetItem *item = new QTableWidgetItem();
                 item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-                item->setText(QString::number(propData[i].second.x()));
+                if (propData[i].first)
+                    item->setText(QString::number(propData[i].second.x()));
+                else
+                    item->setText(tr("Invalid"));
                 m_objectsData->setItem(i, col, item);
             }
         }
@@ -909,12 +1049,13 @@ void Universe1::Widgets::SimulationEditor::WidgetSimulationEditor::rebuildCurren
             {
                 QTableWidgetItem *item = new QTableWidgetItem();
                 item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-                item->setText(vecStr(propData[i].second));
+                if (propData[i].first)
+                    item->setText(vecStr(propData[i].second));
+                else
+                    item->setText(tr("Invalid"));
                 m_objectsData->setItem(i, col, item);
             }
         }
-
-        m_currentTimePropertyMaxLength.insert({propName, maxLength});
     }
 
     m_objectsData->resizeColumnsToContents();

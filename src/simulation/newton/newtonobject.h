@@ -99,6 +99,10 @@ struct NewtonObject : public ObjectHistory<T, NewtonTimeStamp<T>>
     getAccel(const Math::Vec3<T> &_current, const Math::Vec3<T> &_other, const T _otherMass, const T _gravityConstant);
 };
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 template <typename T>
 inline T NewtonObject<T>::mass() const
 {
@@ -131,15 +135,26 @@ std::pair<bool, QVector3D> NewtonObject<T>::loadVelocity(const T _timeStamp) con
 template <typename T>
 std::pair<bool, QVector3D> NewtonObject<T>::loadAccel(const T _timeStamp) const
 {
-    const NewtonTimeStamp<T> *result = ObjectHistory<T, NewtonTimeStamp<T>>::dataAtTime(_timeStamp);
-    if (result == nullptr)
+    // const NewtonTimeStamp<T> *result = ObjectHistory<T, NewtonTimeStamp<T>>::dataAtTime(_timeStamp);
+    const size_t offset = ObjectHistory<T, NewtonTimeStamp<T>>::offsetAtTime(_timeStamp);
+    if (offset == 0U)
         return {false, QVector3D()};
 
-    const T timeDelta = _timeStamp - result->timeStamp;
-    if (Type::isNull(timeDelta))
-        return {true, result->moveAccel.toQVector3D()};
+    const NewtonTimeStamp<T> *result1 = ObjectHistory<T, NewtonTimeStamp<T>>::historyTimeStampByOffset(offset);
+    if (result1 == nullptr)
+        return {false, QVector3D()};
+    const T timeDelta = _timeStamp - result1->timeStamp;
+    if (Type::isNull(timeDelta) || offset == 1U)
+        return {true, result1->moveAccel.toQVector3D()};
 
-    return {true, result->moved(timeDelta).moveAccel.toQVector3D()};
+    const NewtonTimeStamp<T> *result2 = ObjectHistory<T, NewtonTimeStamp<T>>::historyTimeStampByOffset(offset - 1U);
+    if (result2 == nullptr)
+        return {false, QVector3D()};
+
+    return {
+        true,
+        Math::Vec3<T>::ratio(result1->moveAccel, result2->moveAccel, result1->timeStamp, result2->timeStamp, _timeStamp)
+            .toQVector3D()};
 }
 
 template <typename T>

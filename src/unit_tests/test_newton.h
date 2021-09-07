@@ -84,12 +84,38 @@ void Test_Newton::testObjectData()
     const __CLAZZ__<T> &o0 = simCur.objects().at(0U);
     const __CLAZZ__<T> &o1 = simCur.objects().at(1U);
 
+    std::cout << "******************2.25  " << o0.offsetAtTime(2.25) << std::endl;
+    std::cout << "******************3.25  " << o0.offsetAtTime(3.25) << std::endl;
+    std::cout << "******************4.25  " << o0.offsetAtTime(4.25) << std::endl;
+    std::cout << "******************5.25  " << o0.offsetAtTime(5.25) << std::endl;
+
     std::cout
-        << " aaaa: "
+        << " 1: "
         << (*o1.eventSource(simCur.physics().universeVelocity, o0.current()->timeStamp, o0.current()->position).second)
         << std::endl;
+    std::cout << " 2: "
+              << o1.offsetForEventSource(
+                     simCur.physics().universeVelocity, o0.current()->timeStamp, o0.current()->position)
+              << std::endl;
+    std::cout << " own: "
+              << o1.offsetForEventSource(
+                     simCur.physics().universeVelocity, o1.current()->timeStamp, o1.current()->position)
+              << std::endl;
 
-    std::cout << " bbbb: "
+    for (T ii = 0; ii < T(5); ++ii)
+    {
+        std::cout << " 2-" << ii << "  "
+                  << o1.offsetForEventSource(
+                         simCur.physics().universeVelocity, o0.current()->timeStamp - ii, o0.current()->position)
+                  << std::endl;
+    }
+
+    std::cout << " 3: "
+              << o1.history().at(o1.historyIdxByOffset(o1.offsetForEventSource(
+                     simCur.physics().universeVelocity, o0.current()->timeStamp, o0.current()->position)))
+              << std::endl;
+
+    std::cout << " 4: "
               << (o1.eventSource(simCur.physics().universeVelocity, o0.current()->timeStamp, o0.current()->position)
                       .second
                       ->movedToEventSource(

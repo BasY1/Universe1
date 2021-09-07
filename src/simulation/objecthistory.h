@@ -37,6 +37,10 @@ enum EventSourceResult : uint8_t
 
 };
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /*!
  * \brief Base object history class
  * \tparam T Template floating point type
@@ -133,6 +137,21 @@ struct ObjectHistory
     inline TimeStampClass *current();
 
     /*!
+     * \brief Returns index in history by step count from current
+     * \param _offset Offset - step count from current index
+     * \returns Index in history by step count from current
+     */
+    inline size_t historyIdxByOffset(const size_t _offset) const;
+
+    /*!
+     * \brief Getter for time-stamp data N steps before current
+     * \param _offset Offset (N) - step count from current index
+     * \returns Time-stamp data "offset" steps before current time-stamp
+     * \note When given \a _offset is out of history vector range, then null is returned
+     */
+    inline const TimeStampClass *historyTimeStampByOffset(const size_t _offset) const;
+
+    /*!
      * \brief Returns count of stored time-stamps in history
      * \returns Stored time-stamp count
      */
@@ -186,11 +205,10 @@ struct ObjectHistory
     std::pair<EventSourceResult, const TimeStampClass *>
     eventSource(const T _universeVelocity, const T _eventTimeStamp, const Math::Vec3<T> &_eventPosition) const;
 
+    size_t
+    offsetForEventSource(const T _universeVelocity, const T _eventTimeStamp, const Math::Vec3<T> &_eventPosition) const;
+
  protected:
-    /*!
-     * \brief Clone History
-     * \param other Other object to setup history
-     */
     void cloneHistory(ObjectHistory<T, TimeStampClass> &other) const;
 
  public:
@@ -209,6 +227,20 @@ struct ObjectHistory
      *        to move backwards in time)
      */
     const TimeStampClass *dataAtTime(const T _timeStamp) const;
+
+    /*!
+     * \brief Getter for index of time-stamp data that is exactly at given time-stamp or before
+     * \param _timeStamp Time-stamp of required data
+     * \returns Index of time-stamp data in history, that is before or exactly at given \a _timeStamp
+     */
+    size_t indexAtTime(const T _timeStamp) const;
+
+    /*!
+     * \brief Getter for offset in history of time-stamp data that is exactly at given time-stamp or before
+     * \param _timeStamp Time-stamp of required data
+     * \returns Offset of time-stamp data in history, that is before or exactly at given \a _timeStamp
+     */
+    size_t offsetAtTime(const T _timeStamp) const;
 
     /*!
      * \brief Getter for object's position
@@ -268,6 +300,30 @@ template <typename T, typename TimeStampClass>
 inline TimeStampClass *ObjectHistory<T, TimeStampClass>::current()
 {
     return m_history.empty() ? nullptr : &m_history.at(m_currentIdx);
+}
+
+template <typename T, typename TimeStampClass>
+inline size_t ObjectHistory<T, TimeStampClass>::historyIdxByOffset(const size_t _offset) const
+{
+    if (_offset <= m_currentIdx)
+        return m_currentIdx - _offset;
+
+    if (!m_filled || _offset >= (m_history.size() - 1U))
+        return m_history.size() + 1U;  // Returns out of range index
+
+    return m_history.size() - _offset + m_currentIdx - 1U;
+}
+
+template <typename T, typename TimeStampClass>
+inline const TimeStampClass *ObjectHistory<T, TimeStampClass>::historyTimeStampByOffset(const size_t _offset) const
+{
+    if (_offset <= m_currentIdx)
+        return &m_history.at(m_currentIdx - _offset);
+
+    if (!m_filled || _offset >= (m_history.size() - 1U))
+        return nullptr;
+
+    return &m_history.at(m_history.size() - _offset + m_currentIdx - 1U);
 }
 
 template <typename T, typename TimeStampClass>
@@ -396,6 +452,8 @@ void ObjectHistory<T, TimeStampClass>::addStep(const T _timeDelta)
 
 /*!
  * \brief Find closest position in history, from where wave hits event
+ * \tparam T Template floating point type
+ * \tparam TimeStampClass \c TimeStamp class extension
  * \param _universeVelocity Speed of the Universe
  * \param _eventTimeStamp Time-stamp of event
  * \param _eventPosition Event location
@@ -410,11 +468,11 @@ std::pair<EventSourceResult, const TimeStampClass *> ObjectHistory<T, TimeStampC
 
     const size_t idxLastHist = m_history.size() - 1U;
 
-    size_t idxBefore;
-    size_t idxAfter;
-
     const TimeStampClass *objBefore = nullptr;
     const TimeStampClass *objAfter = nullptr;
+
+    size_t idxBefore;
+    size_t idxAfter;
 
     T timeBefore;
     T timeAfter;
@@ -497,6 +555,147 @@ std::pair<EventSourceResult, const TimeStampClass *> ObjectHistory<T, TimeStampC
 #undef EVENT_SOURCE_CHECK_EXACT
 #undef EVENT_SOURCE_FIRST_CHECK
 
+/*!
+ * \brief Returns count of steps in history needed to be "before" given event
+ * \tparam T Template floating point type
+ * \tparam TimeStampClass \c TimeStamp class extension
+ * \param _universeVelocity Speed of the Universe
+ * \param _eventTimeStamp Time-stamp of event
+ * \param _eventPosition Event location
+ * \returns Count of steps in history needed to be "before" given event
+ */
+template <typename T, typename TimeStampClass>
+size_t ObjectHistory<T, TimeStampClass>::offsetForEventSource(const T _universeVelocity,
+                                                              const T _eventTimeStamp,
+                                                              const Math::Vec3<T> &_eventPosition) const
+{
+    if (m_history.size() < 2U || (!m_filled && m_currentIdx == 0U))
+        return 0U;
+
+    const size_t idxLastHist = m_history.size() - 1U;
+    const TimeStampClass *objBefore = nullptr;
+    const TimeStampClass *objAfter = nullptr;
+
+    size_t idxBefore;
+    size_t idxAfter;
+    T timeBefore;
+    T timeAfter;
+    bool isOffset = false;
+
+    if (m_filled && m_currentIdx != idxLastHist)
+    {
+        if (m_currentIdx == 0U)
+        {
+            idxBefore = idxLastHist;
+            objBefore = &m_history.at(idxBefore);
+            timeBefore = objBefore->getTimeWhenWaveHitEvent(_universeVelocity, _eventPosition);
+            if (Type::equals<T>(timeBefore, _eventTimeStamp) || timeBefore < _eventTimeStamp)
+                return 1U;
+
+            idxAfter = 1U;
+            objAfter = &m_history.at(idxAfter);
+            timeAfter = objAfter->getTimeWhenWaveHitEvent(_universeVelocity, _eventPosition);
+            if (Type::equals<T>(timeAfter, _eventTimeStamp))
+                return idxLastHist;
+
+            if (timeAfter > _eventTimeStamp)
+                return 0U;
+        }
+        else
+        {
+            idxBefore = m_currentIdx - 1U;
+            objBefore = &m_history.at(idxBefore);
+            timeBefore = objBefore->getTimeWhenWaveHitEvent(_universeVelocity, _eventPosition);
+            if (Type::equals<T>(timeBefore, _eventTimeStamp) || timeBefore < _eventTimeStamp)
+                return 1U;
+
+            idxAfter = m_currentIdx + 1U;
+            objAfter = &m_history.at(idxAfter);
+            timeAfter = objAfter->getTimeWhenWaveHitEvent(_universeVelocity, _eventPosition);
+            if (Type::equals<T>(timeAfter, _eventTimeStamp))
+                return idxLastHist;
+
+            if (timeAfter > _eventTimeStamp)
+                return 0U;
+
+            const TimeStampClass *objBreak0 = &m_history.at(0U);
+            const T timeBreak0 = objBreak0->getTimeWhenWaveHitEvent(_universeVelocity, _eventPosition);
+            if (Type::equals<T>(timeBreak0, _eventTimeStamp))
+                return m_currentIdx;
+
+            if (timeBreak0 < _eventTimeStamp)
+            {
+                idxAfter = 0U;
+                objAfter = objBreak0;
+                timeAfter = timeBreak0;
+            }
+            else
+            {
+                isOffset = true;
+                idxBefore = idxLastHist;
+                objBefore = &m_history.at(idxBefore);
+                timeBefore = objBefore->getTimeWhenWaveHitEvent(_universeVelocity, _eventPosition);
+                if (Type::equals<T>(timeBefore, _eventTimeStamp) || timeBefore > _eventTimeStamp)
+                    return m_currentIdx + 1U;
+            }
+        }
+    }
+    else
+    {
+        idxBefore = m_currentIdx - 1U;
+        idxAfter = 0U;
+
+        objBefore = &m_history.at(idxBefore);
+        timeBefore = objBefore->getTimeWhenWaveHitEvent(_universeVelocity, _eventPosition);
+        if (Type::equals<T>(timeBefore, _eventTimeStamp) || timeBefore < _eventTimeStamp)
+            return 1U;
+
+        objAfter = &m_history.at(idxAfter);
+        timeAfter = objAfter->getTimeWhenWaveHitEvent(_universeVelocity, _eventPosition);
+        if (Type::equals<T>(timeAfter, _eventTimeStamp))
+            return idxLastHist;
+
+        if (timeAfter > _eventTimeStamp)
+            return 0U;
+    }
+
+    size_t idxRange = idxBefore - idxAfter;
+
+    while (idxRange > 1U)
+    {
+        const T timeDeltaBefore = timeBefore - _eventTimeStamp;
+        const T timeDeltaAfter = _eventTimeStamp - timeAfter;
+        const T timeDeltaSum = timeDeltaBefore + timeDeltaAfter;
+        const T timeRatio = timeDeltaAfter / timeDeltaSum;
+        const size_t idxRatio = static_cast<size_t>(static_cast<T>(idxRange) * timeRatio);
+        const size_t idxMiddle = idxAfter + std::max(size_t(1U), idxRatio);
+
+        const TimeStampClass *objMiddle = &m_history.at(idxMiddle);
+        const T timeMiddle = objMiddle->getTimeWhenWaveHitEvent(_universeVelocity, _eventPosition);
+        if (Type::equals<T>(timeMiddle, _eventTimeStamp))
+            return isOffset ? (m_currentIdx + m_history.size() - idxMiddle) : (m_currentIdx - idxMiddle);
+
+        if (timeMiddle > _eventTimeStamp)
+        {
+            idxBefore = idxMiddle;
+            timeBefore = timeMiddle;
+        }
+        else
+        {
+            idxAfter = idxMiddle;
+            timeAfter = timeMiddle;
+        }
+        idxRange = idxBefore - idxAfter;
+    }
+    return isOffset ? (m_currentIdx + m_history.size() - idxAfter) : (m_currentIdx - idxAfter);
+}
+
+/*!
+ * \brief Clone History
+ * \tparam T Template floating point type
+ * \tparam TimeStampClass \c TimeStamp class extension
+ * \param other Other object to setup history
+ */
 template <typename T, typename TimeStampClass>
 void ObjectHistory<T, TimeStampClass>::cloneHistory(ObjectHistory<T, TimeStampClass> &other) const
 {
@@ -618,6 +817,134 @@ const TimeStampClass *ObjectHistory<T, TimeStampClass>::dataAtTime(const T _time
         idxRange = idxBefore - idxAfter;
     }
     return &m_history[idxAfter];
+}
+
+template <typename T, typename TimeStampClass>
+size_t ObjectHistory<T, TimeStampClass>::indexAtTime(const T _timeStamp) const
+{
+    if (m_history.empty())
+        return 0U;
+
+    if (Type::equals<T>(m_history[m_currentIdx].timeStamp, _timeStamp) ||
+        m_history[m_currentIdx].timeStamp < _timeStamp || (!m_filled && m_currentIdx == 0U))
+        return m_currentIdx;
+
+    const size_t idxLastHist = m_history.size() - 1U;
+    size_t idxAfter;
+    size_t idxBefore;
+    if (m_filled && m_currentIdx != idxLastHist)
+    {
+        if (m_currentIdx == 0U)
+        {
+            idxAfter = 1U;
+            idxBefore = idxLastHist;
+            if (Type::equals<T>(m_history[idxBefore].timeStamp, _timeStamp) ||
+                m_history[idxBefore].timeStamp < _timeStamp)
+                return idxBefore;
+        }
+        else
+        {
+            if (Type::equals<T>(m_history[0U].timeStamp, _timeStamp))
+                return 0U;
+
+            if (m_history[0U].timeStamp < _timeStamp)
+            {
+                idxAfter = 0U;
+                idxBefore = m_currentIdx;
+            }
+            else
+            {
+                idxAfter = m_currentIdx + 1U;
+                idxBefore = idxLastHist;
+                if (Type::equals<T>(m_history[idxBefore].timeStamp, _timeStamp) ||
+                    m_history[idxBefore].timeStamp < _timeStamp)
+                    return idxBefore;
+            }
+        }
+    }
+    else
+    {
+        idxAfter = 0U;
+        idxBefore = m_currentIdx;
+    }
+
+    if (Type::equals<T>(m_history[idxAfter].timeStamp, _timeStamp) || m_history[idxAfter].timeStamp > _timeStamp)
+        return idxAfter;
+
+    size_t idxRange = idxBefore - idxAfter;
+
+    while (idxRange > 1U)
+    {
+        const T timeDeltaBefore = m_history[idxBefore].timeStamp - _timeStamp;
+        const T timeDeltaAfter = _timeStamp - m_history[idxAfter].timeStamp;
+        const T timeDeltaSum = timeDeltaBefore + timeDeltaAfter;
+        const T timeRatio = timeDeltaAfter / timeDeltaSum;
+        const size_t idxRatio = static_cast<size_t>(static_cast<T>(idxRange) * timeRatio);
+        const size_t idxMiddle = idxAfter + std::max(size_t(1U), idxRatio);
+
+        const T timeMiddle = m_history[idxMiddle].timeStamp - _timeStamp;
+        if (Type::isNull<T>(timeMiddle))
+            return idxMiddle;
+
+        if (timeMiddle > Const::T_0<T>())
+            idxBefore = idxMiddle;
+        else
+            idxAfter = idxMiddle;
+        idxRange = idxBefore - idxAfter;
+    }
+    return idxAfter;
+}
+
+template <typename T, typename TimeStampClass>
+size_t ObjectHistory<T, TimeStampClass>::offsetAtTime(const T _timeStamp) const
+{
+    if (m_history.empty() || Type::equals<T>(m_history[m_currentIdx].timeStamp, _timeStamp) ||
+        m_history[m_currentIdx].timeStamp < _timeStamp || (!m_filled && m_currentIdx == 0U))
+        return 0U;
+
+    size_t offsetBegin = 1U;
+    size_t idxBegin = historyIdxByOffset(offsetBegin);
+    if (Type::equals<T>(m_history[idxBegin].timeStamp, _timeStamp) || m_history[idxBegin].timeStamp < _timeStamp)
+        return offsetBegin;
+
+    size_t offsetEnd = historyStepCount();
+    size_t idxEnd = historyIdxByOffset(offsetEnd);
+
+    if (Type::equals<T>(m_history[idxEnd].timeStamp, _timeStamp))
+        return offsetEnd;
+
+    if (m_history[idxEnd].timeStamp > _timeStamp)
+        return 0U;
+
+    size_t offsetRange = offsetEnd - offsetBegin;
+
+    while (offsetRange > 1U)
+    {
+        const T timeDeltaBegin = m_history[idxBegin].timeStamp - _timeStamp;
+        const T timeDeltaEnd = _timeStamp - m_history[idxEnd].timeStamp;
+        const T timeDeltaSum = timeDeltaBegin + timeDeltaEnd;
+        const T timeRatio = timeDeltaBegin / timeDeltaSum;
+        const size_t idxRatio = static_cast<size_t>(static_cast<T>(offsetRange) * timeRatio);
+        const size_t offsetMiddle = offsetBegin + std::max(size_t(1U), idxRatio);
+        const size_t idxMiddle = historyIdxByOffset(offsetMiddle);
+
+        const T timeMiddle = m_history[idxMiddle].timeStamp - _timeStamp;
+        if (Type::isNull<T>(timeMiddle))
+            return offsetMiddle;
+
+        if (timeMiddle > Const::T_0<T>())
+        {
+            offsetBegin = offsetMiddle;
+            idxBegin = idxMiddle;
+        }
+        else
+        {
+            offsetEnd = offsetMiddle;
+            idxEnd = idxMiddle;
+        }
+        offsetRange = offsetEnd - offsetBegin;
+    }
+    return offsetEnd;
 }
 
 template <typename T, typename TimeStampClass>

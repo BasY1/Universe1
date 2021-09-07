@@ -74,11 +74,15 @@ class WidgetSimulationEditor : public QWidget
 
     std::pair<QVector3D, QVector3D> m_sceneRange;  //!< Simulation scene range from all objects paths
 
-    std::vector<std::vector<std::pair<double, QVector3D>>> m_pathData;  //!< Object's path data
+    std::vector<std::vector<std::pair<double, QVector3D>>> m_path1Data;               //!< Object's path data
+    std::vector<std::vector<std::vector<std::pair<double, QVector3D>>>> m_path2Data;  //!< Generation 2 path data
+    std::vector<std::vector<std::vector<std::pair<double, QVector3D>>>> m_path3Data;  //!< Generation 3 path data
 
-    std::vector<QVector3D> m_currentTimePositionsData;  //!< Object's positions at current time
+    std::vector<std::pair<bool, QVector3D>> m_currentTimePositions1Data;  //!< Object's positions at current time
+    std::vector<std::pair<bool, QVector3D>> m_currentTimePositions2Data;  //!< Generation 2 positions at current time
+    std::vector<std::pair<bool, QVector3D>> m_currentTimePositions3Data;  //!< Generation 3 positions at current time
 
-    std::map<Project::QSimulation::ElementProperty, std::vector<std::pair<double, QVector3D>>>
+    std::map<Project::QSimulation::ElementProperty, std::vector<std::pair<bool, QVector3D>>>
         m_currentTimePropertyData;  //!< Object's Properties at current time
 
     std::map<Project::QSimulation::ElementProperty, float>
