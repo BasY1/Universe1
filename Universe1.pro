@@ -1,249 +1,277 @@
-# Universe1
-# 
+TEMPLATE = subdirs
 
-QT      += core gui
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+CONFIG += ordered
 
-#QT      += multimedia
-#QT      += texttospeech
+SUBDIRS += unit_test
+unit_test.file = src/unit_test.pro
 
-QT      += testlib
-CONFIG += testcase
+# SUBDIRS += model_view_opengl
+# model_view_opengl.file = src/model_view_opengl.pro
 
-#CONFIG += c++11
-CONFIG += c++17
+# SUBDIRS += particle_view_opengl
+# particle_view_opengl.file = src/particle_view_opengl.pro
 
-TARGET   = Universe1
-TEMPLATE = app
+# SUBDIRS += model_view_vulkan
+# model_view_vulkan.file = src/model_view_vulkan.pro
 
-#DESTDIR_TARGET = build
-#DESTDIR = build
-#OBJECTS_DIR = build/obj
-#MOC_DIR = build/moc
-#RCC_DIR = build/rcc
-#UI_DIR = build/ui
-
-# You can make your code fail to compile if it uses deprecated APIs.
-# In order to do so, uncomment the following line.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
-
-#LIBS += -lcuda -lnvrtc
-
-SOURCES += \
-    src/main.cpp
-
-########################################################################################################################
-
-HEADERS += \
-    src/math/typeconst.h \
-    src/math/type.h \
-    src/math/texttools.h \
-    src/math/vec3.h \
-    src/math/circle.h \
-    src/math/sphere.h \
-    src/math/spherecrosssection.h \
-    \
-    src/simulation/constants.h \
-    src/simulation/timestamp.h \
-    src/simulation/objecthistory.h \
-    src/simulation/simulationproperty.h \
-    src/simulation/simulation.h \
-    \
-    src/simulation/newton/newtontimestamp.h \
-    src/simulation/newton/newtonobject.h \
-    src/simulation/newton/newtonobjectcurrent.h \
-    src/simulation/newton/newtonobjectbywave.h \
-    src/simulation/newton/newtonsimulation.h \
-    \
-    src/simulation/neutrino/neutrinotimestamp.h \
-    src/simulation/neutrino/neutrinoobject.h \
-    src/simulation/neutrino/neutrinosimulation.h \
-
-########################################################################################################################
-
-SOURCES += \
-    src/qt/opengl/camera.cpp \
-    src/qt/opengl/adscolors.cpp \
-    src/qt/opengl/material.cpp \
-    src/qt/opengl/lights.cpp \
-    src/qt/opengl/shaderprogram.cpp \
-    src/qt/opengl/glwidget.cpp \
-
-HEADERS += \
-    src/qt/opengl/camera.h \
-    src/qt/opengl/adscolors.h \
-    src/qt/opengl/material.h \
-    src/qt/opengl/lights.h \
-    src/qt/opengl/shaderprogram.h \
-    src/qt/opengl/glwidget.h \
-
-########################################################################################################################
-
-SOURCES += \
-    src/qt/project/qsimulation.cpp \
-    src/qt/project/qsimulationnewtoncurrent.cpp \
-    src/qt/project/qsimulationnewtonbywave.cpp \
-    src/qt/project/qsimulationneutrino.cpp \
-    src/qt/project/speechdb.cpp \
-    src/qt/project/arrowsetup.cpp \
-    src/qt/project/spectrumarrowsetup.cpp \
-    src/qt/project/spacesetup.cpp \
-    src/qt/project/scenesetup.cpp \
-    src/qt/project/materialdb.cpp \
-    src/qt/project/project.cpp \
-
-HEADERS += \
-    src/qt/project/qsimulation.h \
-    src/qt/project/qsimulationnewtoncurrent.h \
-    src/qt/project/qsimulationnewtonbywave.h \
-    src/qt/project/qsimulationneutrino.h \
-    src/qt/project/speechdb.h \
-    src/qt/project/arrowsetup.h \
-    src/qt/project/spectrumarrowsetup.h \
-    src/qt/project/spacesetup.h \
-    src/qt/project/scenesetup.h \
-    src/qt/project/materialdb.h \
-    src/qt/project/project.h \
-
-
-########################################################################################################################
-
-SOURCES += \
-    src/qt/opengl/models/glmodel.cpp \
-    \
-    src/qt/opengl/models/modeldots.cpp \
-    src/qt/opengl/models/modelpath.cpp \
-    src/qt/opengl/models/modelsingularity.cpp \
-    \
-    src/qt/opengl/models/linesmodel.cpp \
-    src/qt/opengl/models/modelpointlight.cpp \
-    src/qt/opengl/models/modelspotlight.cpp \
-    \
-    src/qt/opengl/models/meshmodel.cpp \
-    src/qt/opengl/models/modeltriangle.cpp \
-    src/qt/opengl/models/modelplane.cpp \
-    src/qt/opengl/models/modelbox.cpp \
-    src/qt/opengl/models/modelsphere.cpp \
-    src/qt/opengl/models/modelcylinder.cpp \
-    src/qt/opengl/models/modeltorus.cpp \
-    src/qt/opengl/models/modelarrow.cpp \
-    src/qt/opengl/models/modelspinarrow.cpp \
-
-HEADERS += \
-    src/qt/opengl/models/glmodel.h \
-    \
-    src/qt/opengl/models/modeldots.h \
-    src/qt/opengl/models/modelpath.h \
-    src/qt/opengl/models/modelsingularity.h \
-    \
-    src/qt/opengl/models/linesmodel.h \
-    src/qt/opengl/models/modelpointlight.h \
-    src/qt/opengl/models/modelspotlight.h \
-    \
-    src/qt/opengl/models/meshmodel.h \
-    src/qt/opengl/models/modeltriangle.h \
-    src/qt/opengl/models/modelplane.h \
-    src/qt/opengl/models/modelbox.h \
-    src/qt/opengl/models/modelsphere.h \
-    src/qt/opengl/models/modelcylinder.h \
-    src/qt/opengl/models/modeltorus.h \
-    src/qt/opengl/models/modelarrow.h \
-    src/qt/opengl/models/modelspinarrow.h \
-
-########################################################################################################################
-
-SOURCES += \
-    src/qt/widgets/horizontallinespacer.cpp \
-    src/qt/widgets/widgetbgcolor.cpp \
-    src/qt/widgets/widgetglsettings.cpp \
-
-HEADERS += \
-    src/qt/widgets/horizontallinespacer.h \
-    src/qt/widgets/widgetbgcolor.h \
-    src/qt/widgets/widgetglsettings.h \
-
-########################################################################################################################
-
-SOURCES += \
-    src/qt/widgets/gui/guiint.cpp \
-    src/qt/widgets/gui/guifloat.cpp \
-    src/qt/widgets/gui/guivector3d.cpp \
-    src/qt/widgets/gui/guicolor.cpp \
-    src/qt/widgets/gui/guicolorads.cpp \
-    src/qt/widgets/gui/guimaterial.cpp \
-    src/qt/widgets/gui/guidirectionlight.cpp \
-    src/qt/widgets/gui/guipointlight.cpp \
-    src/qt/widgets/gui/guispotlight.cpp \
-
-HEADERS += \
-    src/qt/widgets/gui/guiint.h \
-    src/qt/widgets/gui/guifloat.h \
-    src/qt/widgets/gui/guivector3d.h \
-    src/qt/widgets/gui/guicolor.h \
-    src/qt/widgets/gui/guicolorads.h \
-    src/qt/widgets/gui/guimaterial.h \
-    src/qt/widgets/gui/guidirectionlight.h \
-    src/qt/widgets/gui/guipointlight.h \
-    src/qt/widgets/gui/guispotlight.h \
-
-########################################################################################################################
-
-SOURCES += \
-    src/qt/widgets/simulationeditor/widgetsimulationeditorview.cpp \
-    src/qt/widgets/simulationeditor/widgetgeneratornewtoncurrent.cpp \
-    src/qt/widgets/simulationeditor/widgetgeneratornewtonbywave.cpp \
-    src/qt/widgets/simulationeditor/widgetgeneratorneutrino.cpp \
-    src/qt/widgets/simulationeditor/widgetsimulationeditor.cpp \
-    src/qt/widgets/simulationeditor/dialogsimulationeditor.cpp \
-
-HEADERS += \
-    src/qt/widgets/simulationeditor/widgetsimulationeditorview.h \
-    src/qt/widgets/simulationeditor/widgetgeneratornewtoncurrent.h \
-    src/qt/widgets/simulationeditor/widgetgeneratornewtonbywave.h \
-    src/qt/widgets/simulationeditor/widgetgeneratorneutrino.h \
-    src/qt/widgets/simulationeditor/widgetsimulationeditor.h \
-    src/qt/widgets/simulationeditor/dialogsimulationeditor.h \
-
-########################################################################################################################
-
-SOURCES += \
-    src/qt/widgets/materialeditor/widgetmaterialeditorview.cpp \
-    src/qt/widgets/materialeditor/widgetmodels.cpp \
-    src/qt/widgets/materialeditor/widgetmaterialeditor.cpp \
-    src/qt/widgets/materialeditor/dialogmaterialeditor.cpp \
-
-HEADERS += \
-    src/qt/widgets/materialeditor/widgetmaterialeditorview.h \
-    src/qt/widgets/materialeditor/widgetmodels.h \
-    src/qt/widgets/materialeditor/widgetmaterialeditor.h \
-    src/qt/widgets/materialeditor/dialogmaterialeditor.h \
-
-########################################################################################################################
-
-SOURCES += \
-    src/unit_tests/test_vec3.cpp \
-    src/unit_tests/test_newton.cpp \
-    src/unit_tests/test_spherecrosssection.cpp \
-    src/unit_tests/test_neutrinotimestamp.cpp \
-    src/unit_tests/test_neutrinoobject.cpp \
-
-HEADERS += \
-    src/unit_tests/test_vec3.h \
-    src/unit_tests/test_newton.h \
-    src/unit_tests/test_spherecrosssection.h \
-    src/unit_tests/test_neutrinotimestamp.h \
-    src/unit_tests/test_neutrinoobject.h \
-
-########################################################################################################################
-
-#TRANSLATIONS += \
-#    Test_en_US.ts
-#
 OTHER_FILES += \
     doc/Doxyfile \
     README.md
 
-# Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
+# SUBDIRS = logic gui
+
+# # Universe1
+# #
+#
+# QT      += core gui
+# greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+#
+# #QT      += multimedia
+# #QT      += texttospeech
+#
+# QT      += testlib
+# CONFIG += testcase
+#
+# #CONFIG += c++11
+# CONFIG += c++17
+#
+# TARGET   = Universe1
+# TEMPLATE = app
+#
+# #DESTDIR_TARGET = build
+# #DESTDIR = build
+# #OBJECTS_DIR = build/obj
+# #MOC_DIR = build/moc
+# #RCC_DIR = build/rcc
+# #UI_DIR = build/ui
+#
+# # You can make your code fail to compile if it uses deprecated APIs.
+# # In order to do so, uncomment the following line.
+# #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+#
+# #LIBS += -lcuda -lnvrtc
+#
+# SOURCES += \
+#     src/main.cpp
+#
+# ########################################################################################################################
+#
+# include(src/math/math.pri)
+#
+# #HEADERS += \
+# #    src/math/typeconst.h \
+# #    src/math/type.h \
+# #    src/math/texttools.h \
+# #    src/math/vec3.h \
+# #    src/math/circle.h \
+# #    src/math/sphere.h \
+# #    src/math/spherecrosssection.h \
+# #    src/math/spiral.h \
+# #    src/math/complexspin.h \
+# #    src/math/particletimestamp.h \
+# #    \
+# #    #src/simulation/constants.h \
+# #    #src/simulation/timestamp.h \
+# #    #src/simulation/objecthistory.h \
+# #    #src/simulation/simulationproperty.h \
+# #    #src/simulation/simulation.h \
+# #    #\
+# #    #src/simulation/newton/newtontimestamp.h \
+# #    #src/simulation/newton/newtonobject.h \
+# #    #src/simulation/newton/newtonobjectcurrent.h \
+# #    #src/simulation/newton/newtonobjectbywave.h \
+# #    #src/simulation/newton/newtonsimulation.h \
+# #    #\
+# #    #src/simulation/neutrino/neutrinotimestamp.h \
+# #    #src/simulation/neutrino/neutrinoobject.h \
+# #    #src/simulation/neutrino/neutrinosimulation.h \
+#
+# ########################################################################################################################
+#
+# # SOURCES += \
+# #     src/qt/opengl/camera.cpp \
+# #     src/qt/opengl/adscolors.cpp \
+# #     src/qt/opengl/material.cpp \
+# #     src/qt/opengl/lights.cpp \
+# #     src/qt/opengl/shaderprogram.cpp \
+# #     src/qt/opengl/glwidget.cpp \
+# #
+# # HEADERS += \
+# #     src/qt/opengl/camera.h \
+# #     src/qt/opengl/adscolors.h \
+# #     src/qt/opengl/material.h \
+# #     src/qt/opengl/lights.h \
+# #     src/qt/opengl/shaderprogram.h \
+# #     src/qt/opengl/glwidget.h \
+#
+# ########################################################################################################################
+#
+# # SOURCES += \
+# #     src/qt/project/qsimulation.cpp \
+# #     src/qt/project/qsimulationnewtoncurrent.cpp \
+# #     src/qt/project/qsimulationnewtonbywave.cpp \
+# #     src/qt/project/qsimulationneutrino.cpp \
+# #     src/qt/project/speechdb.cpp \
+# #     src/qt/project/arrowsetup.cpp \
+# #     src/qt/project/spectrumarrowsetup.cpp \
+# #     src/qt/project/spacesetup.cpp \
+# #     src/qt/project/scenesetup.cpp \
+# #     src/qt/project/materialdb.cpp \
+# #     src/qt/project/project.cpp \
+# #
+# # HEADERS += \
+# #     src/qt/project/qsimulation.h \
+# #     src/qt/project/qsimulationnewtoncurrent.h \
+# #     src/qt/project/qsimulationnewtonbywave.h \
+# #     src/qt/project/qsimulationneutrino.h \
+# #     src/qt/project/speechdb.h \
+# #     src/qt/project/arrowsetup.h \
+# #     src/qt/project/spectrumarrowsetup.h \
+# #     src/qt/project/spacesetup.h \
+# #     src/qt/project/scenesetup.h \
+# #     src/qt/project/materialdb.h \
+# #     src/qt/project/project.h \
+#
+#
+# ########################################################################################################################
+#
+# # SOURCES += \
+# #     src/qt/opengl/models/glmodel.cpp \
+# #     \
+# #     src/qt/opengl/models/modeldots.cpp \
+# #     src/qt/opengl/models/modelpath.cpp \
+# #     src/qt/opengl/models/modelsingularity.cpp \
+# #     \
+# #     src/qt/opengl/models/linesmodel.cpp \
+# #     src/qt/opengl/models/modelpointlight.cpp \
+# #     src/qt/opengl/models/modelspotlight.cpp \
+# #     \
+# #     src/qt/opengl/models/meshmodel.cpp \
+# #     src/qt/opengl/models/modeltriangle.cpp \
+# #     src/qt/opengl/models/modelplane.cpp \
+# #     src/qt/opengl/models/modelbox.cpp \
+# #     src/qt/opengl/models/modelsphere.cpp \
+# #     src/qt/opengl/models/modelcylinder.cpp \
+# #     src/qt/opengl/models/modeltorus.cpp \
+# #     src/qt/opengl/models/modelarrow.cpp \
+# #     src/qt/opengl/models/modelspinarrow.cpp \
+# #
+# # HEADERS += \
+# #     src/qt/opengl/models/glmodel.h \
+# #     \
+# #     src/qt/opengl/models/modeldots.h \
+# #     src/qt/opengl/models/modelpath.h \
+# #     src/qt/opengl/models/modelsingularity.h \
+# #     \
+# #     src/qt/opengl/models/linesmodel.h \
+# #     src/qt/opengl/models/modelpointlight.h \
+# #     src/qt/opengl/models/modelspotlight.h \
+# #     \
+# #     src/qt/opengl/models/meshmodel.h \
+# #     src/qt/opengl/models/modeltriangle.h \
+# #     src/qt/opengl/models/modelplane.h \
+# #     src/qt/opengl/models/modelbox.h \
+# #     src/qt/opengl/models/modelsphere.h \
+# #     src/qt/opengl/models/modelcylinder.h \
+# #     src/qt/opengl/models/modeltorus.h \
+# #     src/qt/opengl/models/modelarrow.h \
+# #     src/qt/opengl/models/modelspinarrow.h \
+#
+# ########################################################################################################################
+#
+# # SOURCES += \
+# #     src/qt/widgets/horizontallinespacer.cpp \
+# #     src/qt/widgets/widgetbgcolor.cpp \
+# #     src/qt/widgets/widgetglsettings.cpp \
+# #
+# # HEADERS += \
+# #     src/qt/widgets/horizontallinespacer.h \
+# #     src/qt/widgets/widgetbgcolor.h \
+# #     src/qt/widgets/widgetglsettings.h \
+#
+# ########################################################################################################################
+#
+# # SOURCES += \
+# #     src/qt/widgets/gui/guiint.cpp \
+# #     src/qt/widgets/gui/guifloat.cpp \
+# #     src/qt/widgets/gui/guivector3d.cpp \
+# #     src/qt/widgets/gui/guicolor.cpp \
+# #     src/qt/widgets/gui/guicolorads.cpp \
+# #     src/qt/widgets/gui/guimaterial.cpp \
+# #     src/qt/widgets/gui/guidirectionlight.cpp \
+# #     src/qt/widgets/gui/guipointlight.cpp \
+# #     src/qt/widgets/gui/guispotlight.cpp \
+# #
+# # HEADERS += \
+# #     src/qt/widgets/gui/guiint.h \
+# #     src/qt/widgets/gui/guifloat.h \
+# #     src/qt/widgets/gui/guivector3d.h \
+# #     src/qt/widgets/gui/guicolor.h \
+# #     src/qt/widgets/gui/guicolorads.h \
+# #     src/qt/widgets/gui/guimaterial.h \
+# #     src/qt/widgets/gui/guidirectionlight.h \
+# #     src/qt/widgets/gui/guipointlight.h \
+# #     src/qt/widgets/gui/guispotlight.h \
+#
+# ########################################################################################################################
+#
+# # SOURCES += \
+# #     src/qt/widgets/simulationeditor/widgetsimulationeditorview.cpp \
+# #     src/qt/widgets/simulationeditor/widgetgeneratornewtoncurrent.cpp \
+# #     src/qt/widgets/simulationeditor/widgetgeneratornewtonbywave.cpp \
+# #     src/qt/widgets/simulationeditor/widgetgeneratorneutrino.cpp \
+# #     src/qt/widgets/simulationeditor/widgetsimulationeditor.cpp \
+# #     src/qt/widgets/simulationeditor/dialogsimulationeditor.cpp \
+# #
+# # HEADERS += \
+# #     src/qt/widgets/simulationeditor/widgetsimulationeditorview.h \
+# #     src/qt/widgets/simulationeditor/widgetgeneratornewtoncurrent.h \
+# #     src/qt/widgets/simulationeditor/widgetgeneratornewtonbywave.h \
+# #     src/qt/widgets/simulationeditor/widgetgeneratorneutrino.h \
+# #     src/qt/widgets/simulationeditor/widgetsimulationeditor.h \
+# #     src/qt/widgets/simulationeditor/dialogsimulationeditor.h \
+#
+# ########################################################################################################################
+#
+# # SOURCES += \
+# #     src/qt/widgets/materialeditor/widgetmaterialeditorview.cpp \
+# #     src/qt/widgets/materialeditor/widgetmodels.cpp \
+# #     src/qt/widgets/materialeditor/widgetmaterialeditor.cpp \
+# #     src/qt/widgets/materialeditor/dialogmaterialeditor.cpp \
+# #
+# # HEADERS += \
+# #     src/qt/widgets/materialeditor/widgetmaterialeditorview.h \
+# #     src/qt/widgets/materialeditor/widgetmodels.h \
+# #     src/qt/widgets/materialeditor/widgetmaterialeditor.h \
+# #     src/qt/widgets/materialeditor/dialogmaterialeditor.h \
+#
+# ########################################################################################################################
+#
+# SOURCES += \
+#     src/unit_tests/test_vec3.cpp \
+# #    src/unit_tests/test_newton.cpp \
+# #    src/unit_tests/test_spherecrosssection.cpp \
+# #    src/unit_tests/test_neutrinotimestamp.cpp \
+# #    src/unit_tests/test_neutrinoobject.cpp \
+#
+# HEADERS += \
+#     src/unit_tests/test_vec3.h \
+# #    src/unit_tests/test_newton.h \
+# #    src/unit_tests/test_spherecrosssection.h \
+# #    src/unit_tests/test_neutrinotimestamp.h \
+# #    src/unit_tests/test_neutrinoobject.h \
+#
+# ########################################################################################################################
+#
+# #TRANSLATIONS += \
+# #    Test_en_US.ts
+# #
+# OTHER_FILES += \
+#     doc/Doxyfile \
+#     README.md
+#
+# # Default rules for deployment.
+# qnx: target.path = /tmp/$${TARGET}/bin
+# else: unix:!android: target.path = /opt/$${TARGET}/bin
+# !isEmpty(target.path): INSTALLS += target
+#

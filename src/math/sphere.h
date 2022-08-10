@@ -7,7 +7,7 @@
 #ifndef UNIVERSE1_MATH_SPHERE_H
 #define UNIVERSE1_MATH_SPHERE_H
 
-#include "vec3.h"
+#include "circle.h"
 
 namespace Universe1 {
 namespace Math {
@@ -61,6 +61,8 @@ struct Sphere
     inline bool isNull() const;
     inline bool isValid() const;
 
+    inline bool isCovered(const Vec3<T> &_position) const;
+
     inline bool equals(const Sphere<T> &_other) const;
     inline bool operator==(const Sphere<T> &_other) const;
     inline bool operator!=(const Sphere<T> &_other) const;
@@ -75,7 +77,7 @@ struct Sphere
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
@@ -94,43 +96,55 @@ inline void Sphere<T>::reset(const T _radius, const Vec3<T> &_position)
 /*!
  * \brief Test if sphere is null (only radius must be null)
  * \tparam T Template floating point type
- * \returns \c true if sphere is null
+ * \return \c true if sphere is null
  */
 template <typename T>
 inline bool Sphere<T>::isNull() const
 {
-    return Type::isNull<T>(radius);
+    return Math::isNull<T>(radius);
 }
 
 /*!
  * \brief Test if sphere is valid (only radius must be not null and positive)
  * \tparam T Template floating point type
- * \returns \c true if sphere is valid
+ * \return \c true if sphere is valid
  */
 template <typename T>
 inline bool Sphere<T>::isValid() const
 {
-    return Type::isPositive<T>(radius);
+    return isPositive<T>(radius);
+}
+
+/*!
+ * \brief Test if sphere covers vertex
+ * \param _position Vertex position
+ * \return \c true if distance of vertex and sphere center position is lower or equals sphere radius
+ */
+template <typename T>
+inline bool Sphere<T>::isCovered(const Vec3<T> &_position) const
+{
+    const T dist = _position.distanceToPoint(position);
+    return Math::equals(dist, radius) || dist < radius;
 }
 
 /*!
  * \brief Test if spheres are equal
  * \tparam T Template floating point type
  * \param _other Other sphere
- * \returns \c true if spheres are equal
+ * \return \c true if spheres are equal
  * \sa TypeEquals<T>(const T, const T)
  */
 template <typename T>
 inline bool Sphere<T>::equals(const Sphere<T> &_other) const
 {
-    return Type::equals<T>(radius, _other.radius) && position.equals(_other.position);
+    return Math::equals<T>(radius, _other.radius) && position.equals(_other.position);
 }
 
 /*!
  * \brief Operator for test if spheres are equal
  * \tparam T Template floating point type
  * \param _other Other sphere
- * \returns \c true if spheres are equal
+ * \return \c true if spheres are equal
  * \sa Vec3<T>::equals<T>(const Vec3<T>&)
  */
 template <typename T>
@@ -143,7 +157,7 @@ inline bool Sphere<T>::operator==(const Sphere<T> &_other) const
  * \brief Operator for test if spheres are not equal
  * \tparam T Template floating point type
  * \param _other Other sphere
- * \returns \c true if spheres are not equal
+ * \return \c true if spheres are not equal
  * \sa Vec3<T>::equals<T>(const Vec3<T>&)
  */
 template <typename T>
@@ -163,10 +177,14 @@ inline void Sphere<T>::clear()
     position.clear();
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /*!
  * \brief Returns sphere surface area \f$4 \pi r^2\f$
  * \tparam T Template floating point type
- * \returns Sphere surface area
+ * \return Sphere surface area
  */
 template <typename T>
 inline T Sphere<T>::surfaceArea() const
@@ -177,7 +195,7 @@ inline T Sphere<T>::surfaceArea() const
 /*!
  * \brief Returns sphere circle area \f$\pi r^2\f$
  * \tparam T Template floating point type
- * \returns Sphere circle area
+ * \return Sphere circle area
  */
 template <typename T>
 inline T Sphere<T>::circleArea() const
@@ -185,10 +203,14 @@ inline T Sphere<T>::circleArea() const
     return Const::T_PI<T>() * radius * radius;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /*!
  * \brief Returns sphere circle area \f$\frac{4}{3} \pi r^3\f$
  * \tparam T Template floating point type
- * \returns Sphere volume
+ * \return Sphere volume
  */
 template <typename T>
 inline T Sphere<T>::volume() const
@@ -200,7 +222,7 @@ inline T Sphere<T>::volume() const
  * \brief Returns sphere circle area \f$\frac{4}{3} \pi r^3\f$
  * \tparam T Template floating point type
  * \param _height Cup height
- * \returns Sphere volume
+ * \return Sphere volume
  */
 template <typename T>
 inline T Sphere<T>::volumeCup(const T _height) const
@@ -208,12 +230,16 @@ inline T Sphere<T>::volumeCup(const T _height) const
     return Const::T_PI_3<T>() * _height * _height * (Const::T_3<T>() * radius - _height);
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /*!
  * \brief Fill output text stream
  * \tparam T Template floating point type
  * \param _os Output text stream
  * \param _s Sphere
- * \returns Output text stream
+ * \return Output text stream
  */
 template <typename T>
 inline std::ostream &operator<<(std::ostream &_os, const Sphere<T> &_s)

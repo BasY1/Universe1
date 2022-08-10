@@ -15,7 +15,6 @@ namespace Math {
 /*!
  * \brief 3D Circle representation
  * \tparam T Template floating point type
- * \details Circle is line defined by center "position", "arm" vector and "arm rotation normal" vector
  */
 template <typename T>
 struct Circle
@@ -53,24 +52,27 @@ struct Circle
     inline void clear();
 
     inline T length() const;
-	inline T area() const;
+    inline T area() const;
 
-	inline Vec3<T> arm() const;
+    inline Vec3<T> arm() const;
+
+    //
+    Vec3<T> point(const T _angleRad) const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
  * \brief Test if circle is valid - normal is unit vector and arm is not null
  * \tparam T Template floating point type
- * \returns \c true if circle is valid
+ * \return \c true if circle is valid
  */
 template <typename T>
 inline bool Circle<T>::isValid() const
 {
-    return Type::isPositive<T>(radius) && normal.isNormalized();
+    return isPositive<T>(radius) && normal.isNormalized();
 }
 
 /*!
@@ -88,7 +90,7 @@ inline void Circle<T>::clear()
 /*!
  * \brief Returns circle area \f$\pi r^2\f$
  * \tparam T Template floating point type
- * \returns Circle area
+ * \return Circle area
  */
 template <typename T>
 inline T Circle<T>::area() const
@@ -99,7 +101,7 @@ inline T Circle<T>::area() const
 /*!
  * \brief Returns circle area \f$2 \pi r\f$
  * \tparam T Template floating point type
- * \returns Circle area
+ * \return Circle area
  */
 template <typename T>
 inline T Circle<T>::length() const
@@ -110,7 +112,7 @@ inline T Circle<T>::length() const
 /*!
  * \brief Returns base circle arm vector
  * \tparam T Template floating point type
- * \returns Base circle arm vector
+ * \return Base circle arm vector
  * \details Circle \b arm is vector of length that equals radius and pointing to one circle curve point.
  * All circle curve points can by defined by rotating \b arm vector around \b normal vector.
  * \sa Vec3<T>::perpendicularNormal<T>() const
@@ -121,8 +123,20 @@ inline Vec3<T> Circle<T>::arm() const
 	return radius * normal.perpendicularNormal();
 }
 
+/*!
+ * \brief Returns point position on circle, that is created by rotating circle \b arm by given angle
+ * \tparam T Template floating point type
+ * \param _angleRad Arm rotation angle in radians
+ * \return Circle point position
+ */
+template <typename T>
+Vec3<T> Circle<T>::point(const T _angleRad) const
+{
+    return position + arm().rotated(normal, _angleRad);
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
@@ -130,7 +144,7 @@ inline Vec3<T> Circle<T>::arm() const
  * \tparam T Template floating point type
  * \param _os Output text stream
  * \param _c Circle
- * \returns Output text stream
+ * \return Output text stream
  */
 template <typename T>
 inline std::ostream &operator<<(std::ostream &_os, const Circle<T> &_c)
