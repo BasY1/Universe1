@@ -7,7 +7,7 @@
 #ifndef UNIVERSE1_MATH_ORIENTATION_H
 #define UNIVERSE1_MATH_ORIENTATION_H
 
-#include "vec3.h"
+#include "quaternion.h"
 
 namespace Universe1 {
 namespace Math {

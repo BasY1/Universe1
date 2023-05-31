@@ -7,7 +7,7 @@
 #ifndef UNIVERSE1_MATH_CIRCLE_H
 #define UNIVERSE1_MATH_CIRCLE_H
 
-#include "vec3.h"
+#include "constellation.h"
 
 namespace Universe1 {
 namespace Math {
@@ -28,7 +28,7 @@ struct Circle
      */
     template <typename = std::enable_if_t<std::is_floating_point<T>::value>>
     inline Circle()
-        : radius(Const::T_0<T>())
+        : radius(T(0))
         , position()
         , normal()
     {
@@ -58,6 +58,14 @@ struct Circle
 
     //
     Vec3<T> point(const T _angleRad) const;
+
+    void createCirclePoints(std::vector<Vec3<T>> &_out, const size_t _pointCount) const;
+    void createArcPoints(std::vector<Vec3<T>> &_out,
+                         const T _angleStartRad,
+                         const T _angleArcRad,
+                         const size_t _pointCount) const;
+
+    static Circle<T> fromPoints(const Vec3<T> &_p1, const Vec3<T> &_p2, const Vec3<T> &_p3, bool *_outOk = nullptr);
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -82,7 +90,7 @@ inline bool Circle<T>::isValid() const
 template <typename T>
 inline void Circle<T>::clear()
 {
-    radius = Const::T_0<T>();
+    radius = T(0);
     position.clear();
     normal.clear();
 }
@@ -135,6 +143,76 @@ Vec3<T> Circle<T>::point(const T _angleRad) const
     return position + arm().rotated(normal, _angleRad);
 }
 
+/*!
+ * \brief Fills vector with points on this circle
+ * \tparam T Template floating point type
+ * \param _out Output point positions vector
+ * \param _pointCount Required point count
+ */
+template <typename T>
+void Circle<T>::createCirclePoints(std::vector<Vec3<T>> &_out, const size_t _pointCount) const
+{
+    if (_pointCount == 0UL || !isValid())
+        return;
+
+    const T angleStepRad = Const::T_2PI<T>() / static_cast<T>(_pointCount);
+    const T angleStepSin = std::sin(angleStepRad);
+    const T angleStepCos = std::cos(angleStepRad);
+
+    Vec3<T> a = normal.perpendicularNormal();
+
+    if (_out.empty())
+    {
+        _out.reserve(_pointCount);
+        for (size_t i = 0UL; i < _pointCount; ++i, a = a.rotated(normal, angleStepSin, angleStepCos).normalized())
+            _out.push_back(position + a * radius);
+    }
+    else
+    {
+        if (_out.size() != _pointCount)
+            _out.resize(_pointCount);
+        for (size_t i = 0UL; i < _pointCount; ++i, a = a.rotated(normal, angleStepSin, angleStepCos).normalized())
+            _out[i] = (position + a * radius);
+    }
+}
+
+/*!
+ * \brief Fills vector with points on this circle within given arc
+ * \tparam T Template floating point type
+ * \param _out Output point positions vector
+ * \param _angleStartRad Start angle in radians
+ * \param _angleArcRad Total arc angle in radians
+ * \param _pointCount Required point count
+ */
+template <typename T>
+void Circle<T>::createArcPoints(std::vector<Vec3<T>> &_out,
+                                const T _angleStartRad,
+                                const T _angleArcRad,
+                                const size_t _pointCount) const
+{
+    if (_pointCount == 0UL || !isValid())
+        return;
+
+    Vec3<T> a = normal.perpendicularNormal();
+    a = a.rotated(normal, _angleStartRad).normalized();
+
+    if (_out.size() != _pointCount)
+        _out.resize(_pointCount);
+
+    if (_pointCount == 1UL)
+    {
+        _out.front() = (position + a * radius);
+        return;
+    }
+
+    const T angleStepRad = _angleArcRad / static_cast<T>(_pointCount - 1UL);
+    const T angleStepSin = std::sin(angleStepRad);
+    const T angleStepCos = std::cos(angleStepRad);
+
+    for (size_t i = 0UL; i < _pointCount; ++i, a = a.rotated(normal, angleStepSin, angleStepCos).normalized())
+        _out[i] = (position + a * radius);
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -150,6 +228,50 @@ template <typename T>
 inline std::ostream &operator<<(std::ostream &_os, const Circle<T> &_c)
 {
     return _os << "[R[" << _c.radius << "]P" << _c.position << 'N' << _c.normal << ']';
+}
+
+/*!
+ * \brief Create circle from 3 points
+ * \tparam T Template floating point type
+ * \param _p1 1. point
+ * \param _p2 2. point
+ * \param _p3 3. point
+ * \param _outOk Success flag
+ * \return Calculated circle object
+ */
+template <typename T>
+Circle<T> Circle<T>::fromPoints(const Vec3<T> &_p1, const Vec3<T> &_p2, const Vec3<T> &_p3, bool *_outOk)
+{
+    const Vec3<T> t = _p2 - _p1;
+    const Vec3<T> u = _p3 - _p1;
+    const Vec3<T> v = _p3 - _p2;
+
+    if (t.isNull() || u.isNull() || v.isNull())
+    {
+        if (_outOk != nullptr)
+            *_outOk = false;
+        return Circle<T>();
+    }
+
+    const Vec3<T> w = Vec3<T>::cross(t, u);
+    const T wsl = Vec3<T>::dot(w, w);
+    if (isNull<T>(wsl))
+    {
+        if (_outOk != nullptr)
+            *_outOk = false;
+        return Circle<T>();
+    }
+
+    const T iwsl2 = T(1) / (T(2) * wsl);
+    const T tt = Vec3<T>::dot(t, t);
+    const T uu = Vec3<T>::dot(u, u);
+
+    if (_outOk != nullptr)
+        *_outOk = true;
+
+    return Circle<T>(std::sqrt(tt * uu * (Vec3<T>::dot(v, v)) * iwsl2 * T(0.5)),
+                     _p1 + (u * tt * (Vec3<T>::dot(u, v)) - t * uu * (Vec3<T>::dot(t, v))) * iwsl2,
+                     w / std::sqrt(wsl));
 }
 
 }  // namespace Math

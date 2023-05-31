@@ -62,14 +62,14 @@ inline void setDefaultPrecision<float>(std::ostream &os)
 template <>
 inline void setDefaultPrecision<double>(std::ostream &os)
 {
-    os.precision(14);
+    os.precision(15);
     os << std::fixed;
 }
 
 template <>
 inline void setDefaultPrecision<long double>(std::ostream &os)
 {
-    os.precision(18);
+    os.precision(17);
     os << std::fixed;
 }
 #endif  // DOXYGEN_SKIP

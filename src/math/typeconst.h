@@ -8,95 +8,28 @@
 #define UNIVERSE1_CONST_TYPECONST_H
 
 #include <cmath>
+#include <cstdint>
+#include <limits>
+
+#include <cstring>
+#include <iostream>
+#include <sstream>
+
 #include <type_traits>
+
+#include <list>
+#include <map>
+#include <set>
+#include <vector>
+
+#ifdef UNIVERSE1_USE_QT_LIB
+#include <QString>
+#include <QStringList>
+#endif
 
 namespace Universe1 {
 namespace Math {
 namespace Const {
-
-template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
-inline T T_0()
-{
-    static const T tmp = 0;
-    return tmp;
-}
-
-template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
-inline T T_1()
-{
-    static const T tmp = 1;
-    return tmp;
-}
-
-template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
-inline T T_01()
-{
-    static const T tmp = 0.1l;
-    return tmp;
-}
-
-template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
-inline T T_001()
-{
-    static const T tmp = 0.01l;
-    return tmp;
-}
-
-template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
-inline T T_05()
-{
-    static const T tmp = 0.5l;
-    return tmp;
-}
-
-template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
-inline T T_2()
-{
-    static const T tmp = 2;
-    return tmp;
-}
-
-template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
-inline T T_3()
-{
-    static const T tmp = 3;
-    return tmp;
-}
-
-template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
-inline T T_4()
-{
-    static const T tmp = 4;
-    return tmp;
-}
-
-template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
-inline T T_10()
-{
-    static const T tmp = 10;
-    return tmp;
-}
-
-template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
-inline T T_32()
-{
-    static const T tmp = 32;
-    return tmp;
-}
-
-template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
-inline T T_100()
-{
-    static const T tmp = 100;
-    return tmp;
-}
-
-template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
-inline T T_255()
-{
-    static const T tmp = 255;
-    return tmp;
-}
 
 template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
 inline T T_PI()
@@ -122,6 +55,13 @@ template <typename T, typename = std::enable_if<std::is_floating_point<T>::value
 inline T T_PIxRxR(const T _R)
 {
     return _R * _R * T_PI<T>();
+}
+
+template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
+inline T T_4PIxRxR(const T _R)
+{
+    static const T tmp = static_cast<T>(4.0l * M_PIl);
+    return _R * _R * tmp;
 }
 
 template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
@@ -226,90 +166,6 @@ inline T T_RadInDeg()
  */
 
 /*!
- * \fn Universe1::Math::Const::T_0()
- * \brief Getter for type specific value: 0
- * \tparam T Template floating point type
- * \return 0 in specific floating point type
- */
-
-/*!
- * \fn Universe1::Math::Const::T_1()
- * \brief Getter for type specific value: 1
- * \tparam T Template floating point type
- * \return 1 in specific floating point type
- */
-
-/*!
- * \fn Universe1::Math::Const::T_01()
- * \brief Getter for type specific value: 0.1
- * \tparam T Template floating point type
- * \return 0.1 in specific floating point type
- */
-
-/*!
- * \fn Universe1::Math::Const::T_001()
- * \brief Getter for type specific value: 0.01
- * \tparam T Template floating point type
- * \return 0.01 in specific floating point type
- */
-
-/*!
- * \fn Universe1::Math::Const::T_05()
- * \brief Getter for type specific value: 0.5
- * \tparam T Template floating point type
- * \return 0.5 in specific floating point type
- */
-
-/*!
- * \fn Universe1::Math::Const::T_2()
- * \brief Getter for type specific value: 2
- * \tparam T Template floating point type
- * \return 2 in specific floating point type
- */
-
-/*!
- * \fn Universe1::Math::Const::T_3()
- * \brief Getter for type specific value: 3
- * \tparam T Template floating point type
- * \return 3 in specific floating point type
- */
-
-/*!
- * \fn Universe1::Math::Const::T_4()
- * \brief Getter for type specific value: 4
- * \tparam T Template floating point type
- * \return 4 in specific floating point type
- */
-
-/*!
- * \fn Universe1::Math::Const::T_10()
- * \brief Getter for type specific value: 10
- * \tparam T Template floating point type
- * \return 10 in specific floating point type
- */
-
-/*!
- * \fn Universe1::Math::Const::T_32()
- * \brief Getter for type specific value: 32
- * \tparam T Template floating point type
- * \return 32 in specific floating point type
- */
-
-/*!
- * \fn Universe1::Math::Const::T_100()
- * \brief Getter for type specific value: 100
- * \tparam T Template floating point type
- * \return 100 in specific floating point type
- */
-
-/*!
- * \fn Universe1::Math::Const::T_255()
- * \brief Getter for type specific value: 255
- * \tparam T Template floating point type
- * \return 255 in specific floating point type
- */
-
-/*!
  * \fn Universe1::Math::Const::T_PI()
  * \brief Getter for type specific value: \f$\pi\f$
  * \tparam T Template floating point type
@@ -344,6 +200,14 @@ inline T T_RadInDeg()
  * \brief Getter for type specific value: \f$4\pi\f$
  * \tparam T Template floating point type
  * \return \f$4\pi\f$ in specific floating point type
+ */
+
+/*!
+ * \fn Universe1::Math::Const::T_4PIxRxR(const T _R)
+ * \brief 4 times circle area
+ * \tparam T Template floating point type
+ * \param _R Radius
+ * \return \f$4\pi R^2\f$ in specific floating point type
  */
 
 /*!

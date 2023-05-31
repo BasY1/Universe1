@@ -7,7 +7,6 @@
 #ifndef UNIVERSE1_MATH_SPHERECROSSSECTION_H
 #define UNIVERSE1_MATH_SPHERECROSSSECTION_H
 
-#include "circle.h"
 #include "sphere.h"
 
 namespace Universe1 {
@@ -54,6 +53,9 @@ struct SphereCrossSection
     inline T angleRad() const;
     inline T angleDeg() const;
 
+    T particleAngleRad() const;
+    inline T particleAngleDeg() const;
+
     T crossSectionVolume() const;
     T crossSectionVolumeRatio() const;
     T crossSectionArea() const;
@@ -69,9 +71,8 @@ struct SphereCrossSection
     Circle<T> circle() const;
 
     static T calculateLinearRatio(const uint64_t _steps);
-    static Vec3<T> calculateCircularRatio(const uint64_t _steps,
-                                          const T _trajectoryRadius = Const::T_1<T>(),
-                                          const T _particleRadius = Const::T_1<T>());
+    static Vec3<T>
+    calculateCircularRatio(const uint64_t _steps, const T _trajectoryRadius = T(1), const T _particleRadius = T(1));
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -90,8 +91,8 @@ SphereCrossSection<T>::SphereCrossSection(const Sphere<T> &_particle, const Sphe
     , wave(_wave)
     , crossSectionType(CROSS_INVALID)
     , waveInsideParticle(false)
-    , positionDistance(Const::T_0<T>())
-    , cosAngle(Const::T_0<T>())
+    , positionDistance(T(0))
+    , cosAngle(T(0))
 {
     if (!particle.isValid() || !wave.isValid())
         return;
@@ -113,7 +114,7 @@ SphereCrossSection<T>::SphereCrossSection(const Sphere<T> &_particle, const Sphe
     else if (equals<T>(positionDistance, particle.radius))
     {
         waveInsideParticle = true;
-        const T diameter = Const::T_2<T>() * particle.radius;
+        const T diameter = T(2) * particle.radius;
         if (equals<T>(wave.radius, diameter))
             crossSectionType = CROSS_WAVE_TOUCH_AFTER;
         else if (wave.radius < diameter)
@@ -158,7 +159,7 @@ SphereCrossSection<T>::SphereCrossSection(const Sphere<T> &_particle, const Sphe
     if (crossSectionType == CROSS_WAVE_CROSSES)
         cosAngle = alignedToPM1<T>(
             (wave.radius * wave.radius + positionDistance * positionDistance - particle.radius * particle.radius) /
-            (Const::T_2<T>() * wave.radius * positionDistance));
+            (T(2) * wave.radius * positionDistance));
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -217,7 +218,7 @@ inline bool SphereCrossSection<T>::isTouch() const
 template <typename T>
 inline T SphereCrossSection<T>::angleRad() const
 {
-    return crossSectionType != CROSS_WAVE_CROSSES ? Const::T_0<T>() : std::acos(cosAngle);
+    return crossSectionType != CROSS_WAVE_CROSSES ? T(0) : std::acos(cosAngle);
 }
 
 /*!
@@ -229,6 +230,41 @@ template <typename T>
 inline T SphereCrossSection<T>::angleDeg() const
 {
     return toDeg<T>(angleRad());
+}
+
+/*!
+ * \brief Returns angle of cross-section in radians from particle perspective
+ * \tparam T Template floating point type
+ * \return Angle of cross-section in radians from particle perspective
+ */
+template <typename T>
+T SphereCrossSection<T>::particleAngleRad() const
+{
+    switch (crossSectionType)
+    {
+    case CROSS_INVALID: return T(0);
+    case CROSS_WAVE_MISS_BEFORE: return Const::T_PI<T>();
+    case CROSS_WAVE_TOUCH_BEFORE: return Const::T_PI<T>();
+    case CROSS_WAVE_CROSSES:
+        return Const::T_PI<T>() -
+            std::acos(alignedToPM1<T>(
+                (particle.radius * particle.radius + positionDistance * positionDistance - wave.radius * wave.radius) /
+                (T(2) * particle.radius * positionDistance)));
+    case CROSS_WAVE_TOUCH_AFTER: return T(0);
+    case CROSS_WAVE_MISS_AFTER: return T(0);
+    }
+    return T(0);
+}
+
+/*!
+ * \brief Returns angle of cross-section in degrees from particle perspective
+ * \tparam T Template floating point type
+ * \return Angle of cross-section in degrees from particle perspective
+ */
+template <typename T>
+inline T SphereCrossSection<T>::particleAngleDeg() const
+{
+    return toDeg<T>(particleAngleRad());
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -243,19 +279,19 @@ T SphereCrossSection<T>::crossSectionVolume() const
 {
     switch (crossSectionType)
     {
-    case CROSS_INVALID: return Const::T_0<T>();
+    case CROSS_INVALID: return T(0);
 
     case CROSS_WAVE_MISS_BEFORE:
-    case CROSS_WAVE_TOUCH_BEFORE: return (waveInsideParticle ? wave.volume() : Const::T_0<T>());
+    case CROSS_WAVE_TOUCH_BEFORE: return (waveInsideParticle ? wave.volume() : T(0));
 
     case CROSS_WAVE_TOUCH_AFTER:
     case CROSS_WAVE_MISS_AFTER: return particle.volume();
 
     case CROSS_WAVE_CROSSES:
-        return wave.volumeCup(wave.radius * (Const::T_1<T>() - cosAngle)) +
+        return wave.volumeCup(wave.radius * (T(1) - cosAngle)) +
             particle.volumeCup(particle.radius - positionDistance + wave.radius * cosAngle);
     }
-    return Const::T_0<T>();
+    return T(0);
 }
 
 /*!
@@ -268,23 +304,23 @@ T SphereCrossSection<T>::crossSectionVolumeRatio() const
 {
     switch (crossSectionType)
     {
-    case CROSS_INVALID: return Const::T_0<T>();
+    case CROSS_INVALID: return T(0);
 
     case CROSS_WAVE_MISS_BEFORE:
     case CROSS_WAVE_TOUCH_BEFORE:
         return (waveInsideParticle
                     ? (wave.radius * wave.radius * wave.radius) / (particle.radius * particle.radius * particle.radius)
-                    : Const::T_0<T>());
+                    : T(0));
 
     case CROSS_WAVE_TOUCH_AFTER:
-    case CROSS_WAVE_MISS_AFTER: return Const::T_1<T>();
+    case CROSS_WAVE_MISS_AFTER: return T(1);
 
     case CROSS_WAVE_CROSSES:
-        return (wave.volumeCup(wave.radius * (Const::T_1<T>() - cosAngle)) +
+        return (wave.volumeCup(wave.radius * (T(1) - cosAngle)) +
                 particle.volumeCup(particle.radius - positionDistance + wave.radius * cosAngle)) /
             particle.volume();
     }
-    return Const::T_0<T>();
+    return T(0);
 }
 
 /*!
@@ -302,9 +338,9 @@ T SphereCrossSection<T>::crossSectionArea() const
     case CROSS_WAVE_TOUCH_BEFORE:
     case CROSS_WAVE_TOUCH_AFTER:
     case CROSS_WAVE_MISS_AFTER: break;
-    case CROSS_WAVE_CROSSES: return Const::T_2PI<T>() * wave.radius * wave.radius * (Const::T_1<T>() - cosAngle);
+    case CROSS_WAVE_CROSSES: return Const::T_2PI<T>() * wave.radius * wave.radius * (T(1) - cosAngle);
     }
-    return Const::T_0<T>();
+    return T(0);
 }
 
 /*!
@@ -323,9 +359,9 @@ T SphereCrossSection<T>::crossSectionAreaRatio() const
     case CROSS_WAVE_TOUCH_BEFORE:
     case CROSS_WAVE_TOUCH_AFTER:
     case CROSS_WAVE_MISS_AFTER: break;
-    case CROSS_WAVE_CROSSES: return Const::T_05<T>() * (Const::T_1<T>() - cosAngle);
+    case CROSS_WAVE_CROSSES: return T(0.5) * (T(1) - cosAngle);
     }
-    return Const::T_0<T>();
+    return T(0);
 }
 
 /*!
@@ -343,9 +379,9 @@ T SphereCrossSection<T>::ratio() const
     case CROSS_WAVE_TOUCH_BEFORE:
     case CROSS_WAVE_TOUCH_AFTER:
     case CROSS_WAVE_MISS_AFTER: break;
-    case CROSS_WAVE_CROSSES: return (Const::T_1<T>() - cosAngle * cosAngle) / Const::T_4<T>();
+    case CROSS_WAVE_CROSSES: return (T(1) - cosAngle * cosAngle) / T(4);
     }
-    return Const::T_0<T>();
+    return T(0);
 }
 
 /*!
@@ -376,7 +412,7 @@ T SphereCrossSection<T>::distanceOffset() const
         else
             return (wave.radius + particle.radius) - positionDistance;
     }
-    return Const::T_0<T>();
+    return T(0);
 }
 
 /*!
@@ -414,10 +450,10 @@ T SphereCrossSection<T>::circleRadius() const
     case CROSS_WAVE_MISS_BEFORE:
     case CROSS_WAVE_TOUCH_BEFORE:
     case CROSS_WAVE_TOUCH_AFTER:
-    case CROSS_WAVE_MISS_AFTER: return Const::T_0<T>();
-    case CROSS_WAVE_CROSSES: return wave.radius * std::sqrt(Const::T_1<T>() - cosAngle * cosAngle);
+    case CROSS_WAVE_MISS_AFTER: return T(0);
+    case CROSS_WAVE_CROSSES: return wave.radius * std::sqrt(T(1) - cosAngle * cosAngle);
     }
-    return Const::T_0<T>();
+    return T(0);
 }
 
 /*!
@@ -437,7 +473,7 @@ Vec3<T> SphereCrossSection<T>::circleArm() const
     case CROSS_WAVE_MISS_AFTER: return Vec3<T>();
     case CROSS_WAVE_CROSSES: {
         const Vec3<T> n = (particle.position - wave.position).normalized();
-        const T r = wave.radius * std::sqrt(Const::T_1<T>() - cosAngle * cosAngle);
+        const T r = wave.radius * std::sqrt(T(1) - cosAngle * cosAngle);
         return n.perpendicularNormal() * r;
     }
     }
@@ -481,7 +517,7 @@ Circle<T> SphereCrossSection<T>::circle() const
     case CROSS_WAVE_TOUCH_AFTER:
     case CROSS_WAVE_MISS_AFTER: break;
     case CROSS_WAVE_CROSSES: {
-        result.radius = wave.radius * std::sqrt(Const::T_1<T>() - cosAngle * cosAngle);
+        result.radius = wave.radius * std::sqrt(T(1) - cosAngle * cosAngle);
         result.normal = (particle.position - wave.position).normalized();
         result.position = wave.position + result.normal * (wave.radius * cosAngle);
     }
@@ -505,25 +541,25 @@ template <typename T>
 T SphereCrossSection<T>::calculateLinearRatio(const uint64_t _steps)
 {
     const T angleStep = Const::T_PI_2<T>() / static_cast<T>(_steps + 1U);
-    const Sphere<T> particle(Const::T_1<T>(), Vec3<T>());
+    const Sphere<T> particle(T(1), Vec3<T>());
     const T volumeParticle = particle.volume();
 
-    T result = Const::T_0<T>();
+    T result = T(0);
     T angle = angleStep;
-    T lastRatio = Const::T_0<T>();
-    T lastVolume = Const::T_05<T>();
+    T lastRatio = T(0);
+    T lastVolume = T(0.5);
     lastVolume = Const::T_4PI_3<T>() * lastVolume * lastVolume * lastVolume;
     for (uint64_t i = 0U; i < _steps; ++i, angle += angleStep)
     {
         const T tmpS = std::sin(angle);
         const T tmpC = std::cos(angle);
-        const T tmpR = (tmpS * tmpS + tmpC * tmpC) / (Const::T_2<T>() * tmpC);
-        const SphereCrossSection<T> scs(particle, Sphere<T>(tmpR, Vec3<T>(-tmpR, Const::T_0<T>(), Const::T_0<T>())));
+        const T tmpR = (tmpS * tmpS + tmpC * tmpC) / (T(2) * tmpC);
+        const SphereCrossSection<T> scs(particle, Sphere<T>(tmpR, Vec3<T>(-tmpR, T(0), T(0))));
         const T tmpRatio = scs.ratio();
         const T tmpVolume = scs.crossSectionVolume();
         const T tmpVolumeAdd = (tmpVolume - lastVolume);
         const T tmpVolumeRatio = tmpVolumeAdd / volumeParticle;
-        const T tmpAreaRatio = (lastRatio + tmpRatio) * Const::T_05<T>();
+        const T tmpAreaRatio = (lastRatio + tmpRatio) * T(0.5);
         const T tmpAdd = tmpVolumeRatio * tmpAreaRatio;
         result += tmpAdd;
         lastVolume = tmpVolume;
@@ -532,8 +568,8 @@ T SphereCrossSection<T>::calculateLinearRatio(const uint64_t _steps)
         //          << ", R=" << tmpRatio * Const::T_100<T>() << "% +=" << tmpAdd << std::endl;
     }
 
-    const T finalVolume = (volumeParticle * Const::T_05<T>() - lastVolume) / volumeParticle;
-    const T finalRatio = lastRatio * Const::T_05<T>();
+    const T finalVolume = (volumeParticle * T(0.5) - lastVolume) / volumeParticle;
+    const T finalRatio = lastRatio * T(0.5);
     result += finalVolume * finalRatio;
 
     return result;
@@ -553,7 +589,7 @@ SphereCrossSection<T>::calculateCircularRatio(const uint64_t _steps, const T _tr
 {
     static const uint8_t maxLoops = 20U;
     static const Vec3<T> n = Vec3<T>::unitZ();
-    const Vec3<T> arm = Vec3<T>(_trajectoryRadius, Const::T_0<T>(), Const::T_0<T>());
+    const Vec3<T> arm = Vec3<T>(_trajectoryRadius, T(0), T(0));
 
     uint8_t loop1 = 0U;
     uint8_t loop2 = 0U;
@@ -561,7 +597,7 @@ SphereCrossSection<T>::calculateCircularRatio(const uint64_t _steps, const T _tr
 #ifndef DOXYGEN_SKIP
 #define ___DIFF1(WR, DIST) _particleRadius - WR - DIST
 
-    T path1 = _particleRadius * Const::T_05<T>();
+    T path1 = _particleRadius * T(0.5);
     T angle1 = path1 / _trajectoryRadius;
     T dist1 = arm.distanceToPoint(arm.rotated(n, angle1));
     T diff1 = ___DIFF1(path1, dist1);
@@ -719,7 +755,7 @@ SphereCrossSection<T>::calculateCircularRatio(const uint64_t _steps, const T _tr
         const Vec3<T> tmpDir = scs.directionToWave();
         const T tmpVolumeAdd = (tmpVolume - lastVolume);
         const T tmpVolumeRatio = tmpVolumeAdd / volumeParticle;
-        const T tmpAreaRatio = (lastRatio + tmpRatio) * Const::T_05<T>();
+        const T tmpAreaRatio = (lastRatio + tmpRatio) * T(0.5);
         const T tmpAdd = tmpVolumeRatio * tmpAreaRatio;
 
         result += (tmpDir + lastDir).normalized() * tmpAdd;
@@ -802,10 +838,9 @@ inline std::ostream &operator<<(std::ostream &_os, const SphereCrossSection<T> &
     if (_scs.crossSectionType == CROSS_WAVE_CROSSES)
     {
         _os << "Angle[" << _scs.angleDeg() << "deg]";
-        _os << "Ratio[" << (_scs.ratio() * Const::T_100<T>()) << "%]";
-        _os << "Area[" << _scs.crossSectionArea() << "(" << (_scs.crossSectionAreaRatio() * Const::T_100<T>()) << "%)]";
-        _os << "Volume[" << _scs.crossSectionVolume() << "(" << (_scs.crossSectionVolumeRatio() * Const::T_100<T>())
-            << "%)]";
+        _os << "Ratio[" << (_scs.ratio() * T(100)) << "%]";
+        _os << "Area[" << _scs.crossSectionArea() << "(" << (_scs.crossSectionAreaRatio() * T(100)) << "%)]";
+        _os << "Volume[" << _scs.crossSectionVolume() << "(" << (_scs.crossSectionVolumeRatio() * T(100)) << "%)]";
     }
 
     _os << ']';

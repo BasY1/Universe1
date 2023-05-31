@@ -7,8 +7,7 @@
 #ifndef UNIVERSE1_MATH_VEC3_H
 #define UNIVERSE1_MATH_VEC3_H
 
-#include "texttools.h"
-#include "type.h"
+#include "vec2.h"
 
 #ifdef UNIVERSE1_USE_QT_LIB
 #include <QColor>
@@ -18,11 +17,8 @@
 namespace Universe1 {
 namespace Math {
 
-/*!
- * \defgroup TypeAngles Angle tools
- * \brief Angle conversion tools
- * \{
- */
+template <typename T>
+struct Quaternion;
 
 /*!
  * \brief 3D vector template for various floating point types
@@ -59,9 +55,9 @@ struct Vec3
      */
     template <typename = std::enable_if<std::is_floating_point<T>::value>>
     inline Vec3()
-        : x(Const::T_0<T>())
-        , y(Const::T_0<T>())
-        , z(Const::T_0<T>())
+        : x(T(0))
+        , y(T(0))
+        , z(T(0))
     {
     }
 
@@ -89,6 +85,16 @@ struct Vec3
         , z(_other.z)
     {
     }
+
+#ifdef UNIVERSE1_USE_QT_LIB
+    template <typename = std::enable_if<std::is_floating_point<T>::value>>
+    inline Vec3(const QVector3D &_other)
+        : x(_other.x())
+        , y(_other.y())
+        , z(_other.z())
+    {
+    }
+#endif
 
     static Vec3<T> unitX();
     static Vec3<T> unitY();
@@ -168,6 +174,8 @@ struct Vec3
 
     inline bool isValidColor() const;
 
+    inline Vec2<T> toVec2(const uint8_t _skipAxis = 2U) const;
+
     inline std::string toString(const int _decimals = -1) const;
     inline std::string toStringFull(const int _decimals = -1) const;
 
@@ -208,7 +216,7 @@ struct Vec3
 template <typename T>
 Vec3<T> Vec3<T>::unitX()
 {
-    return Vec3<T>(Const::T_1<T>(), Const::T_0<T>(), Const::T_0<T>());
+    return Vec3<T>(T(1), T(0), T(0));
 }
 
 /*!
@@ -219,7 +227,7 @@ Vec3<T> Vec3<T>::unitX()
 template <typename T>
 Vec3<T> Vec3<T>::unitY()
 {
-    return Vec3<T>(Const::T_0<T>(), Const::T_1<T>(), Const::T_0<T>());
+    return Vec3<T>(T(0), T(1), T(0));
 }
 
 /*!
@@ -230,7 +238,7 @@ Vec3<T> Vec3<T>::unitY()
 template <typename T>
 Vec3<T> Vec3<T>::unitZ()
 {
-    return Vec3<T>(Const::T_0<T>(), Const::T_0<T>(), Const::T_1<T>());
+    return Vec3<T>(T(0), T(0), T(1));
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -294,9 +302,9 @@ inline bool Vec3<T>::operator!=(const Vec3<T> &_other) const
 template <typename T>
 inline void Vec3<T>::clear()
 {
-    x = Const::T_0<T>();
-    y = Const::T_0<T>();
-    z = Const::T_0<T>();
+    x = T(0);
+    y = T(0);
+    z = T(0);
 }
 
 /*!
@@ -533,8 +541,8 @@ inline bool Vec3<T>::isPerpendicular(const Vec3<T> &_other) const
 template <typename T>
 inline Vec3<T> Vec3<T>::perpendicularNormal() const
 {
-    static const Vec3<T> n1(Const::T_1<T>(), Const::T_0<T>(), Const::T_0<T>());
-    static const Vec3<T> n2(Const::T_0<T>(), Const::T_1<T>(), Const::T_0<T>());
+    static const Vec3<T> n1(T(1), T(0), T(0));
+    static const Vec3<T> n2(T(0), T(1), T(0));
     return (isParallel(n1) ? Vec3<T>::cross(*this, n2).normalized() : Vec3<T>::cross(*this, n1).normalized());
 }
 
@@ -749,7 +757,7 @@ inline T Vec3<T>::distanceToLine(const Vec3<T> &_linePoint, const Vec3<T> &_line
 {
     const T lenSq = _lineNormal.lengthSquared();
     if (Math::isNull<T>(lenSq))
-        return Const::T_0<T>();  // distanceToPoint(linePoint);
+        return T(0);  // distanceToPoint(linePoint);
     const T tmp = cross(*this - _linePoint, *this - _linePoint - _lineNormal).length();
     return isUnit<T>(lenSq) ? tmp : (tmp / std::sqrt(lenSq));
 }
@@ -766,7 +774,7 @@ inline T Vec3<T>::distanceToPlane(const Vec3<T> &_planePoint, const Vec3<T> &_pl
 {
     const T lenSq = _planeNormal.lengthSquared();
     if (Math::isNull<T>(lenSq))
-        return Const::T_0<T>();
+        return T(0);
     if (isUnit<T>(lenSq))
         return dot(*this - _planePoint, _planeNormal);
     return dot(*this - _planePoint, _planeNormal) / std::sqrt(lenSq);
@@ -784,7 +792,7 @@ inline T Vec3<T>::projectedLength(const Vec3<T> &_projDirection) const
 {
     const T lenSq = _projDirection.lengthSquared();
     if (Math::isNull<T>(lenSq))
-        return Const::T_0<T>();
+        return T(0);
     if (isUnit<T>(lenSq))
         return dot(*this, _projDirection);
     return dot(*this, _projDirection) / std::sqrt(lenSq);
@@ -868,7 +876,7 @@ inline T Vec3<T>::cosAngle(const Vec3<T> &_other) const
 {
     const T lenSq = lengthSquared() * _other.lengthSquared();
     if (Math::isNull<T>(lenSq))
-        return Const::T_0<T>();
+        return T(0);
     if (isUnit<T>(lenSq))
         return dot(*this, _other);
     return dot(*this, _other) / std::sqrt(lenSq);
@@ -885,7 +893,7 @@ inline T Vec3<T>::cosAnglePow2(const Vec3<T> &_other) const
 {
     const T lenSq = lengthSquared() * _other.lengthSquared();
     if (Math::isNull<T>(lenSq))
-        return Const::T_0<T>();
+        return T(0);
     const T result = dot(*this, _other);
     if (isUnit<T>(lenSq))
         return result * result;
@@ -913,7 +921,7 @@ inline T Vec3<T>::sinAngle(const Vec3<T> &_other) const
 template <typename T>
 inline T Vec3<T>::sinAnglePow2(const Vec3<T> &_other) const
 {
-    return Const::T_1<T>() - cosAnglePow2(_other);
+    return T(1) - cosAnglePow2(_other);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -934,11 +942,11 @@ inline T Vec3<T>::angleRad(const Vec3<T> &_other) const
 {
     const T lenSq = lengthSquared() * _other.lengthSquared();
     if (Math::isNull<T>(lenSq))
-        return Const::T_0<T>();
+        return T(0);
     T result = dot(*this, _other);
     if (!isUnit<T>(lenSq))
         result /= std::sqrt(lenSq);
-    return std::acos(std::min(Const::T_1<T>(), std::max(-Const::T_1<T>(), result)));
+    return std::acos(std::min(T(1), std::max(-T(1), result)));
 }
 
 /*!
@@ -966,7 +974,7 @@ template <typename T>
 inline T Vec3<T>::angleNormRad(const Vec3<T> &_other, const Vec3<T> &_normal) const
 {
     const T result = angleRad(_other);
-    return Vec3<T>::dot(_normal, Vec3<T>::cross(*this, _other)) < Const::T_0<T>() ? -result : result;
+    return Vec3<T>::dot(_normal, Vec3<T>::cross(*this, _other)) < T(0) ? -result : result;
 }
 
 /*!
@@ -1090,6 +1098,49 @@ inline bool Vec3<T>::isValidColor() const
     return isAlignedTo0_1<T>(x) && isAlignedTo0_1<T>(y) && isAlignedTo0_1<T>(z);
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Conversion to 2D vector by not using defined vector component \a _skipAxis
+ * \param _skipAxis 3D vector component (axis) that is not used in output 2D vector
+ * \return 2D vector from this 3D vector
+ */
+template <typename T>
+inline Vec2<T> Vec3<T>::toVec2(const uint8_t _skipAxis) const
+{
+    switch (_skipAxis)
+    {
+    case 0U: return Vec2<T>(m_data[1U], m_data[2U]);
+    case 1U: return Vec2<T>(m_data[0U], m_data[2U]);
+    default: break;
+    }
+    return Vec2<T>(m_data[0U], m_data[1U]);
+}
+
+/*!
+ * \brief Conversion to 3D vector by using value \a _thirdValue for defined vector component \a _thirdAxis
+ * \param _thirdAxis Index of third component
+ * \param _thirdValue Value for third component
+ * \return 3D vector from this 2D vector
+ */
+template <typename T>
+Vec3<T> Vec2<T>::toVec3(const uint8_t _thirdAxis, const T _thirdValue) const
+{
+    switch (_thirdAxis)
+    {
+    case 0U: return Vec3<T>(_thirdValue, x, y);
+    case 1U: return Vec3<T>(x, _thirdValue, y);
+    default: break;
+    }
+    return Vec3<T>(x, y, _thirdValue);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #ifdef UNIVERSE1_USE_QT_LIB
 
 /*!
@@ -1120,9 +1171,9 @@ Vec3<T> Vec3<T>::fromQVector3D(const QVector3D &_value)
 template <typename T>
 inline QColor Vec3<T>::toQColor() const
 {
-    return QColor(std::max(0, std::min(255, static_cast<int>(x * Const::T_255<T>()))),
-                  std::max(0, std::min(255, static_cast<int>(y * Const::T_255<T>()))),
-                  std::max(0, std::min(255, static_cast<int>(z * Const::T_255<T>()))));
+    return QColor(std::max(0, std::min(255, static_cast<int>(x * T(255)))),
+                  std::max(0, std::min(255, static_cast<int>(y * T(255)))),
+                  std::max(0, std::min(255, static_cast<int>(z * T(255)))));
 }
 
 /*!
@@ -1164,7 +1215,7 @@ inline QColor toColor(const QVector3D &_value)
 template <typename T>
 inline std::ostream &operator<<(std::ostream &_os, const Vec3<T> &_v)
 {
-    return _os << '[' << _v.x << " x " << _v.y << " x " << _v.z << ']';
+    return _os << '[' << _v.x << ',' << _v.y << ',' << _v.z << ']';
 }
 
 /*!
@@ -1201,7 +1252,7 @@ inline std::string Vec3<T>::toStringFull(const int _decimals) const
         ss.precision(_decimals);
         ss << std::fixed;
     }
-    ss << '[' << x << " x " << y << " x " << z << " | " << length() << ']';
+    ss << '[' << x << ',' << y << ',' << z << '|' << length() << ']';
     return ss.str();
 }
 
@@ -1232,6 +1283,14 @@ inline QString Vec3<T>::toQStringFull(const int _decimals) const
 }
 
 #endif
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+typedef Vec3<float> Vec3F;        //!< 32 bit floating point precision 3D vector
+typedef Vec3<double> Vec3D;       //!< 64 bit floating point precision 3D vector
+typedef Vec3<long double> Vec3L;  //!< 128 bit floating point precision 3D vector
 
 }  // namespace Math
 }  // namespace Universe1
