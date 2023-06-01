@@ -15,6 +15,8 @@
 #include <iostream>
 #include <sstream>
 
+#include <thread>
+
 #include <type_traits>
 
 #include <list>
@@ -23,8 +25,29 @@
 #include <vector>
 
 #ifdef UNIVERSE1_USE_QT_LIB
+#include <QCommandLineParser>
+#include <QGuiApplication>
+
+#include <QOffscreenSurface>
+#include <QOpenGLBuffer>
+#include <QOpenGLFramebufferObject>
+#include <QOpenGLFunctions>
+#include <QOpenGLShaderProgram>
+
+#include <QPainter>
+#include <QProcess>
+#include <QTextDocument>
+
+#include <QDir>
+#include <QFile>
+
+#include <QColor>
+#include <QDateTime>
+#include <QMatrix4x4>
+#include <QQuaternion>
 #include <QString>
 #include <QStringList>
+#include <QVector3D>
 #endif
 
 namespace Universe1 {
