@@ -55,5 +55,31 @@ HEADERS += src/video/data3d.h
 HEADERS += src/video/shader.h
 SOURCES += src/video/shader.cpp
 
+HEADERS += src/video/items/item.h
+SOURCES += src/video/items/item.cpp
+
+HEADERS += src/video/items/items2d/subs.h
+SOURCES += src/video/items/items2d/subs.cpp
+
+HEADERS += src/video/items/items2d/item2d.h
+SOURCES += src/video/items/items2d/item2d.cpp
+
+HEADERS += src/video/items/items2d/item2dimage.h
+SOURCES += src/video/items/items2d/item2dimage.cpp
+
+HEADERS += src/video/items/items3d/item3d.h
+SOURCES += src/video/items/items3d/item3d.cpp
+
+HEADERS += src/video/items/items3d/text3d/item3dtext.h
+SOURCES += src/video/items/items3d/text3d/item3dtext.cpp
+
+HEADERS += src/video/items/items3d/plane/item3dplane.h
+SOURCES += src/video/items/items3d/plane/item3dplane.cpp
+
+HEADERS += src/video/items/items3d/plane/item3dplanecircle.h
+SOURCES += src/video/items/items3d/plane/item3dplanecircle.cpp
+
+HEADERS += src/video/items/items3d/plane/item3dplanecircleslice.h
+SOURCES += src/video/items/items3d/plane/item3dplanecircleslice.cpp
 
 SOURCES += src/main.cpp

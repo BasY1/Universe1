@@ -21,16 +21,43 @@ struct DynamicMaterialGroup
      * \brief Constructor
      * \param _value Initial color
      * \param _name Property name
+     * \param _allProps All item properties
+     * \param _allMaterials All item materials
      */
-    DynamicMaterialGroup(const QColor _value, const std::string &_name);
+    DynamicMaterialGroup(const QColor _value,
+                         const std::string &_name,
+                         std::list<DynamicProperty *> &_allProps,
+                         std::list<DynamicMaterialGroup *> _allMaterials);
 
     /*!
      * \brief Constructor
      * \param _material Initial color
      * \param _name Property name
+     * \param _allProps All item properties
+     * \param _allMaterials All item materials
      */
-    DynamicMaterialGroup(const Material &_material, const std::string &_name);
+    DynamicMaterialGroup(const Material &_material,
+                         const std::string &_name,
+                         std::list<DynamicProperty *> &_allProps,
+                         std::list<DynamicMaterialGroup *> _allMaterials);
 
+ private:
+    /*!
+     * \brief Add properties into collection
+     * \param _allProps All item properties
+     * \param _allMaterials All item materials
+     */
+    inline void setupProps(std::list<DynamicProperty *> &_allProps, std::list<DynamicMaterialGroup *> _allMaterials)
+    {
+        _allProps.push_back(&ambient);
+        _allProps.push_back(&diffuse);
+        _allProps.push_back(&specular);
+        _allProps.push_back(&shine);
+        _allProps.push_back(&alpha);
+        _allMaterials.push_back(this);
+    }
+
+ public:
     /*!
      * \brief Returns material value at specific time-step
      * \param _timeStep Time-step

@@ -76,6 +76,10 @@ struct Config
     bool glCullFront = true;  //!< Open GL apply cull front
     uint glSamples = 0U;      //!< Open GL multi-sampling
 
+    QColor colorBG = Qt::black;    //!< Background color
+    QColor colorSubs = Qt::white;  //!< Subtitles color
+    float alphaSubs = 0.875f;      //!< Subtitles banner transparency
+
     QString textSubsFontFamily = "";  //!< Font family for subtitles
     QString text2DFontFamily = "";    //!< Font family for 2D text
     QString text3DFontFamily = "";    //!< Font family for 3D text

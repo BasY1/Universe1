@@ -12,29 +12,38 @@ namespace Video {
 struct DynamicTextGroup
 {
     DynamicString text;            //!< Text property
-    DynamicAlign align;            //!< Align property
     DynamicValue<float> sizeMult;  //!< Size multiplier
+    DynamicAlign align;            //!< Align property
 
     /*!
      * \brief Constructor
      * \param _text Initial text
-     * \param _align Initial align
      * \param _sizeMult Initial size multiplier
+     * \param _align Initial align
      * \param _itemName Item name
      * \param _props Output dynamic property collection
      */
     inline DynamicTextGroup(const QString &_text,
-                            const Qt::Alignment &_align,
                             const float _sizeMult,
+                            const Qt::Alignment &_align,
                             const std::string &_itemName,
                             std::list<DynamicProperty *> &_props)
         : text(_text, _itemName + ".text")
-        , align(_align, _itemName + ".align")
         , sizeMult(_sizeMult, _itemName + ".sizeMult")
+        , align(_align, _itemName + ".align")
     {
         _props.push_back(&text);
         _props.push_back(&align);
         _props.push_back(&sizeMult);
+    }
+
+    /*!
+     * \brief Add same value as last stored at time-step (\a sizeMult only)
+     * \param _timeStep Time-step
+     */
+    inline void addSame(const uint64_t _timeStep)
+    {
+        sizeMult.addSame(_timeStep);
     }
 };
 
