@@ -82,4 +82,35 @@ SOURCES += src/video/items/items3d/plane/item3dplanecircle.cpp
 HEADERS += src/video/items/items3d/plane/item3dplanecircleslice.h
 SOURCES += src/video/items/items3d/plane/item3dplanecircleslice.cpp
 
+HEADERS += src/video/items/items3d/cone/item3dcone.h
+SOURCES += src/video/items/items3d/cone/item3dcone.cpp
+
+HEADERS += src/video/items/items3d/cone/item3dconeslice.h
+SOURCES += src/video/items/items3d/cone/item3dconeslice.cpp
+
+HEADERS += src/video/items/items3d/cylinder/item3dcylinder.h
+SOURCES += src/video/items/items3d/cylinder/item3dcylinder.cpp
+
+HEADERS += src/video/items/items3d/cylinder/item3dcylinderslice.h
+SOURCES += src/video/items/items3d/cylinder/item3dcylinderslice.cpp
+
+HEADERS += src/video/items/items3d/torus/item3dtorus.h
+SOURCES += src/video/items/items3d/torus/item3dtorus.cpp
+
+HEADERS += src/video/items/items3d/torus/item3dtoruscup.h
+SOURCES += src/video/items/items3d/torus/item3dtoruscup.cpp
+
+HEADERS += src/video/items/items3d/torus/item3dtorusslice.h
+SOURCES += src/video/items/items3d/torus/item3dtorusslice.cpp
+
+HEADERS += src/video/items/items3d/torus/item3dtorusarc.h
+SOURCES += src/video/items/items3d/torus/item3dtorusarc.cpp
+
+HEADERS += src/video/items/items3d/torus/item3dtorusarccup.h
+SOURCES += src/video/items/items3d/torus/item3dtorusarccup.cpp
+
+HEADERS += src/video/items/items3d/torus/item3dtorusarcslice.h
+SOURCES += src/video/items/items3d/torus/item3dtorusarcslice.cpp
+
+
 SOURCES += src/main.cpp
