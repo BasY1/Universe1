@@ -90,7 +90,7 @@ struct Item3DText : public Item3DBase
                                  const Material &_material)
     {
         const QVector3D fw = (_shader->cam() - _position).normalized();
-        const QVector3D nr = QVector3D::crossProduct(QVector3D(0, 0, 1), fw).normalized();
+        const QVector3D nr = QVector3D::crossProduct(nz, fw).normalized();
         const QVector3D nu = QVector3D::crossProduct(fw, nr).normalized();
         buildData(_out, _textHtml, _textSize, _textAlign, _position, nr, nu, _material);
     }

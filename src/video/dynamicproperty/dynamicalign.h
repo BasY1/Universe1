@@ -1,7 +1,7 @@
 #ifndef UNIVERSE1_VIDEO_DYNAMICALIGN_H
 #define UNIVERSE1_VIDEO_DYNAMICALIGN_H
 
-#include "dynamicvalue.h"
+#include "dynamicenum.h"
 
 namespace Universe1 {
 namespace Video {

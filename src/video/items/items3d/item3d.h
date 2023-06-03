@@ -13,6 +13,10 @@ struct Item3D : public Item
     std::list<DynamicMaterialGroup *> materials;  //!< All materials
 
  public:
+    static const QVector3D nx;  //!< Unit vector in \b X direction
+    static const QVector3D ny;  //!< Unit vector in \b Y direction
+    static const QVector3D nz;  //!< Unit vector in \b Z direction
+
     DynamicBool visible;  //!< Visible flag
 
  protected:

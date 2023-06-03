@@ -1,5 +1,9 @@
 #include "item3d.h"
 
+const QVector3D Universe1::Video::Item3D::nx(1, 0, 0);
+const QVector3D Universe1::Video::Item3D::ny(0, 1, 0);
+const QVector3D Universe1::Video::Item3D::nz(0, 0, 1);
+
 Universe1::Video::Item3D::Item3D(const bool _visible, const std::string &_name)
     : Item(_name)
     , visible(_visible, _name + ".visible")

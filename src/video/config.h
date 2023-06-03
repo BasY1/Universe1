@@ -97,6 +97,16 @@ struct Config
     uint qualitySphere = 3U;   //!< Quality for sphere circle
     uint qualityLatLong = 1U;  //!< Quality for wire-frame sphere latitude-longitude steps
 
+    uint lineMultDash = 30U;   //!< Default dash line segment multiplier (with line radius)
+    uint lineMultSpace = 15U;  //!< Default dash line space multiplier (with line radius)
+
+    float lineRadius = 0.005F;       //!< Default line radius
+    float lineRadiusSpin = 0.0075F;  //!< Default line radius for spin
+    float spinOffsetDir = -0.25F;    //!< Default arrow offset over line for spin
+    float spinOffsetSide = 0.1F;     //!< Default arrow offset to side of line for spin
+    float arrowLength = 0.08F;       //!< Default arrow length
+    float arrowRadius = 0.03F;       //!< Default arrow header radius
+
  private:
     static QHash<QString, std::pair<QString, uint64_t>> speechDB;  //!< Speech files database
     static QHash<uint64_t, QString> silenceDB;                     //!< Silence files database

@@ -112,5 +112,59 @@ SOURCES += src/video/items/items3d/torus/item3dtorusarccup.cpp
 HEADERS += src/video/items/items3d/torus/item3dtorusarcslice.h
 SOURCES += src/video/items/items3d/torus/item3dtorusarcslice.cpp
 
+HEADERS += src/video/items/items3d/sphere/item3dsphere.h
+SOURCES += src/video/items/items3d/sphere/item3dsphere.cpp
+
+HEADERS += src/video/items/items3d/sphere/item3dspherecup.h
+SOURCES += src/video/items/items3d/sphere/item3dspherecup.cpp
+
+HEADERS += src/video/items/items3d/sphere/item3dsphereslice.h
+SOURCES += src/video/items/items3d/sphere/item3dsphereslice.cpp
+
+HEADERS += src/video/items/items3d/line/item3dline.h
+SOURCES += src/video/items/items3d/line/item3dline.cpp
+
+HEADERS += src/video/items/items3d/line/item3dlinedots.h
+SOURCES += src/video/items/items3d/line/item3dlinedots.cpp
+
+HEADERS += src/video/items/items3d/line/item3dlinedash.h
+SOURCES += src/video/items/items3d/line/item3dlinedash.cpp
+
+HEADERS += src/video/items/items3d/line/item3dlinetwist.h
+SOURCES += src/video/items/items3d/line/item3dlinetwist.cpp
+
+HEADERS += src/video/items/items3d/line/item3dlinecross.h
+SOURCES += src/video/items/items3d/line/item3dlinecross.cpp
+
+HEADERS += src/video/items/items3d/arc/item3dlinecircle.h
+SOURCES += src/video/items/items3d/arc/item3dlinecircle.cpp
+
+HEADERS += src/video/items/items3d/arc/item3dlinearc.h
+SOURCES += src/video/items/items3d/arc/item3dlinearc.cpp
+
+HEADERS += src/video/items/items3d/arc/item3dlinearcdots.h
+SOURCES += src/video/items/items3d/arc/item3dlinearcdots.cpp
+
+HEADERS += src/video/items/items3d/arc/item3dlinearcdash.h
+SOURCES += src/video/items/items3d/arc/item3dlinearcdash.cpp
+
+HEADERS += src/video/items/items3d/wiresphere/item3dwiresphere.h
+SOURCES += src/video/items/items3d/wiresphere/item3dwiresphere.cpp
+
+HEADERS += src/video/items/items3d/wiresphere/item3dwirespherecup.h
+SOURCES += src/video/items/items3d/wiresphere/item3dwirespherecup.cpp
+
+HEADERS += src/video/items/items3d/wiresphere/item3dwiresphereslice.h
+SOURCES += src/video/items/items3d/wiresphere/item3dwiresphereslice.cpp
+
+HEADERS += src/video/items/items3d/arrow/item3dlinearrow.h
+SOURCES += src/video/items/items3d/arrow/item3dlinearrow.cpp
+
+HEADERS += src/video/items/items3d/arrow/item3darcarrow.h
+SOURCES += src/video/items/items3d/arrow/item3darcarrow.cpp
+
+HEADERS += src/video/items/items3d/arrow/item3dangledim.h
+SOURCES += src/video/items/items3d/arrow/item3dangledim.cpp
+
 
 SOURCES += src/main.cpp
