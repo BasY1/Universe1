@@ -86,7 +86,7 @@ Universe1::Video::Item3DSpin::Item3DSpin(const uint8_t _showFlags,
     props.push_back(&qualityLine);
 
     if (_materials.empty())
-        std::cerr << "[" << name << "]: Empty material collection !" << std::endl;
+        std::cerr << "Error[" << name << "]: Empty material collection !" << std::endl;
 
     spinMaterials.reserve(_materials.size());
     uint idx = 0U;

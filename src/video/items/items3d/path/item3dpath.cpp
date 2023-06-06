@@ -26,7 +26,7 @@ Universe1::Video::Item3DPath::Item3DPath(const std::vector<QVector3D> &_path,
     props.push_back(&showPoint);
 
     if (_path.empty())
-        std::cerr << "[" << name << "]: Empty path collection !" << std::endl;
+        std::cerr << "Error[" << name << "]: Empty path collection !" << std::endl;
 
     points.reserve(_path.size());
     for (size_t i = 0UL; i < _path.size(); ++i)

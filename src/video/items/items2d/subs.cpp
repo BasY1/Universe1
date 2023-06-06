@@ -81,25 +81,22 @@ void Universe1::Video::Subs::paint(QPainter *_painter) const
     delete doc;
 }
 
-Universe1::Video::FootageSubs::FootageSubs(const std::string &_footageName, const uint64_t &_footageId)
+Universe1::Video::DBSubs::DBSubs(const std::string &_footageName, const uint64_t &_footageId)
     : footageName(_footageName)
     , footageId(_footageId)
 {
 }
 
-Universe1::Video::FootageSubs::~FootageSubs()
+Universe1::Video::DBSubs::~DBSubs()
 {
-    while (!subs.empty())
-    {
-        delete subs.front();
-        subs.pop_front();
-    }
+    for (Subs *ii : subs)
+        delete ii;
 }
 
-Universe1::Video::Subs *Universe1::Video::FootageSubs::add(const uint64_t _showTime,
-                                                           const uint64_t _hideTime,
-                                                           const QString &_textHtml,
-                                                           const QString &_textRead)
+Universe1::Video::Subs *Universe1::Video::DBSubs::add(const uint64_t _showTime,
+                                                      const uint64_t _hideTime,
+                                                      const QString &_textHtml,
+                                                      const QString &_textRead)
 {
     const uint64_t fd = Config::cfg().frameDuration;
     const uint64_t tmodShow = _showTime % fd;
@@ -122,7 +119,7 @@ Universe1::Video::Subs *Universe1::Video::FootageSubs::add(const uint64_t _showT
     return result;
 }
 
-bool Universe1::Video::FootageSubs::initialize(const uint64_t _duration)
+bool Universe1::Video::DBSubs::initialize(const uint64_t _duration)
 {
     const Config &cfg = Config::cfg();
     if (!cfg.addSubs || subs.empty())
@@ -200,7 +197,7 @@ bool Universe1::Video::FootageSubs::initialize(const uint64_t _duration)
     return cfg.connectAudio(pathAudioFile, allAudioFiles);
 }
 
-void Universe1::Video::FootageSubs::paint(QPainter *_painter, const uint64_t _timeStep) const
+void Universe1::Video::DBSubs::paint(QPainter *_painter, const uint64_t _timeStep) const
 {
     const Config &cfg = Config::cfg();
     if (!cfg.addSubs)
@@ -219,7 +216,7 @@ void Universe1::Video::FootageSubs::paint(QPainter *_painter, const uint64_t _ti
     }
 }
 
-QString Universe1::Video::FootageSubs::toHtml() const
+QString Universe1::Video::DBSubs::toHtml() const
 {
     QString result = "<h2>" + QString::fromStdString(footageName) + "</h2><br/><table>";
     for (const Subs *s : subs)

@@ -58,7 +58,7 @@ struct Item2D : public Item
 };
 
 /*! \brief Footage 2D text item database */
-struct FootageItems2D
+struct DBItem2D
 {
     const std::string &footageName;                      //!< Footage name
     std::map<Qt::Alignment, std::list<Item2D *>> items;  //!< 2D items list
@@ -67,9 +67,9 @@ struct FootageItems2D
      * \brief Constructor
      * \param _footageName Footage name
      */
-    FootageItems2D(const std::string &_footageName);
+    DBItem2D(const std::string &_footageName);
 
-    virtual ~FootageItems2D();  //!< Destructor
+    virtual ~DBItem2D();  //!< Destructor
 
     /*!
      * \brief Initialize 2D items database

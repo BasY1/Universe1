@@ -61,7 +61,7 @@ void Universe1::Video::Item3D::addShow(const uint64_t _startShowingTime, const u
 
     if (visible.values.empty() || visible.values.back().second == true)
     {
-        std::cerr << "[" << name << "]: Can't addShow(" << startFixed << ", ...), already visible !" << std::endl;
+        std::cerr << "Error[" << name << "]: Can't addShow(" << startFixed << ", ...), already visible !" << std::endl;
         return;
     }
 

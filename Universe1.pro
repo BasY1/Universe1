@@ -187,4 +187,10 @@ SOURCES += src/video/items/items3d/spin/item3dspin.cpp
 HEADERS += src/video/items/items3d/spin/item3dconstellation.h
 SOURCES += src/video/items/items3d/spin/item3dconstellation.cpp
 
+HEADERS += src/video/footage.h
+SOURCES += src/video/footage.cpp
+
+HEADERS += src/gui/mainwindow.h
+SOURCES += src/gui/mainwindow.cpp
+
 SOURCES += src/main.cpp

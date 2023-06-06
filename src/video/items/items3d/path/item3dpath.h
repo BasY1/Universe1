@@ -65,8 +65,8 @@ struct Item3DPath : public Item3D
     {
         if (_positions.size() != points.size())
         {
-            std::cerr << "[" << name << "Can't add path invalid point count [" << _positions.size() << "], expected ["
-                      << points.size() << "]" << std::endl;
+            std::cerr << "Error[" << name << "]: Can't add path invalid point count [" << _positions.size()
+                      << "], expected [" << points.size() << "]" << std::endl;
             return;
         }
         for (size_t i = 0UL; i < points.size(); ++i)

@@ -28,7 +28,7 @@ Universe1::Video::Item3DLineTwist::Item3DLineTwist(const QVector3D &_point,
     props.push_back(&quality);
 
     if (_materials.empty())
-        std::cerr << "[" << name << "]: Empty material collection !" << std::endl;
+        std::cerr << "Error[" << name << "]: Empty material collection !" << std::endl;
 
     materialProps.reserve(_materials.size());
     uint idx = 0U;

@@ -89,7 +89,7 @@ struct Subs : public Item
 /*!
  * \brief Footage subtitle database
  */
-struct FootageSubs
+struct DBSubs
 {
     const std::string &footageName;  //!< Footage name
     const uint64_t &footageId;       //!< Footage ID
@@ -103,9 +103,9 @@ struct FootageSubs
      * \param _footageName Footage name
      * \param _footageId Footage ID
      */
-    FootageSubs(const std::string &_footageName, const uint64_t &_footageId);
+    DBSubs(const std::string &_footageName, const uint64_t &_footageId);
 
-    virtual ~FootageSubs();  //!< Destructor
+    virtual ~DBSubs();  //!< Destructor
 
     /*!
      * \brief Add subtitle

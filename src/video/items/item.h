@@ -5,7 +5,7 @@
 
 namespace Universe1 {
 namespace Video {
-
+class MainWindow;
 /*!
  * \brief Base visible item structure
  */
@@ -14,6 +14,7 @@ struct Item
     const std::string name;  //!< Item name
 
  protected:
+    friend class MainWindow;             //!< \a MainWindow can access properties
     std::list<DynamicProperty *> props;  //!< Dynamic properties
 
  public:

@@ -108,24 +108,24 @@ void Universe1::Video::Item2DImage::addMaximized(const uint64_t _timeStep)
 
 //
 
-Universe1::Video::FootageItems2DImage::FootageItems2DImage(const std::string &_footageName)
+Universe1::Video::DBItem2DImage::DBItem2DImage(const std::string &_footageName)
     : footageName(_footageName)
 {
 }
 
-Universe1::Video::FootageItems2DImage::~FootageItems2DImage()
+Universe1::Video::DBItem2DImage::~DBItem2DImage()
 {
     for (Item2DImage *i : images)
         delete i;
 }
 
-Universe1::Video::Item2DImage *Universe1::Video::FootageItems2DImage::add(const bool _visible,
-                                                                          const bool _visibleText,
-                                                                          const QImage &_image,
-                                                                          const QString &_textHtml,
-                                                                          const float _textSize,
-                                                                          const Qt::Alignment _textAlign,
-                                                                          const QColor _textColor)
+Universe1::Video::Item2DImage *Universe1::Video::DBItem2DImage::add(const bool _visible,
+                                                                    const bool _visibleText,
+                                                                    const QImage &_image,
+                                                                    const QString &_textHtml,
+                                                                    const float _textSize,
+                                                                    const Qt::Alignment _textAlign,
+                                                                    const QColor _textColor)
 {
     Item2DImage *result = new Item2DImage(_visible,
                                           _visibleText,
@@ -139,7 +139,7 @@ Universe1::Video::Item2DImage *Universe1::Video::FootageItems2DImage::add(const 
     return result;
 }
 
-bool Universe1::Video::FootageItems2DImage::initialize(const uint64_t _duration)
+bool Universe1::Video::DBItem2DImage::initialize(const uint64_t _duration)
 {
     bool result = true;
     for (Item2DImage *p : images)
@@ -148,7 +148,7 @@ bool Universe1::Video::FootageItems2DImage::initialize(const uint64_t _duration)
     return result;
 }
 
-void Universe1::Video::FootageItems2DImage::paint(QPainter *_painter, const uint64_t _timeStep) const
+void Universe1::Video::DBItem2DImage::paint(QPainter *_painter, const uint64_t _timeStep) const
 {
     for (const Item2DImage *p : images)
         if (p->visible.getValue(_timeStep))

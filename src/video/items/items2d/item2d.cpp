@@ -94,23 +94,23 @@ void Universe1::Video::Item2D::paint(QPainter *_painter, const uint64_t _timeSte
 
 //
 
-Universe1::Video::FootageItems2D::FootageItems2D(const std::string &_footageName)
+Universe1::Video::DBItem2D::DBItem2D(const std::string &_footageName)
     : footageName(_footageName)
 {
 }
 
-Universe1::Video::FootageItems2D::~FootageItems2D()
+Universe1::Video::DBItem2D::~DBItem2D()
 {
     for (std::pair<const Qt::Alignment, std::list<Item2D *>> &i : items)
         for (Item2D *ii : i.second)
             delete ii;
 }
 
-Universe1::Video::Item2D *Universe1::Video::FootageItems2D::add(const bool _visible,
-                                                                const QString &_textHtml,
-                                                                const float _textSize,
-                                                                const Qt::Alignment _textAlign,
-                                                                const QColor _textColor)
+Universe1::Video::Item2D *Universe1::Video::DBItem2D::add(const bool _visible,
+                                                          const QString &_textHtml,
+                                                          const float _textSize,
+                                                          const Qt::Alignment _textAlign,
+                                                          const QColor _textColor)
 {
     std::map<Qt::Alignment, std::list<Item2D *>>::iterator it = items.find(_textAlign);
     if (it == items.end())
@@ -129,7 +129,7 @@ Universe1::Video::Item2D *Universe1::Video::FootageItems2D::add(const bool _visi
     return nullptr;
 }
 
-bool Universe1::Video::FootageItems2D::initialize(const uint64_t _duration)
+bool Universe1::Video::DBItem2D::initialize(const uint64_t _duration)
 {
     if (items.empty())
         return true;
@@ -143,7 +143,7 @@ bool Universe1::Video::FootageItems2D::initialize(const uint64_t _duration)
     return result;
 }
 
-void Universe1::Video::FootageItems2D::paint(QPainter *_painter, const uint64_t _timeStep) const
+void Universe1::Video::DBItem2D::paint(QPainter *_painter, const uint64_t _timeStep) const
 {
     for (const std::pair<const Qt::Alignment, std::list<Item2D *>> &i : items)
         for (const Item2D *s : i.second)

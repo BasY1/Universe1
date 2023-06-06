@@ -228,7 +228,7 @@ static bool removeDirFiles(uint64_t &_out, const QString &_path, const QStringLi
         }
         else
         {
-            std::cerr << "Can't remove file: " + dirFile.toStdString() << std::endl;
+            std::cerr << "Error: Can't remove file: " + dirFile.toStdString() << std::endl;
             result = false;
         }
     }

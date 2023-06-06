@@ -76,7 +76,7 @@ struct Item2DImage : public Item2D
 };
 
 /*! \brief Footage 2D image item database */
-struct FootageItems2DImage
+struct DBItem2DImage
 {
     const std::string &footageName;   //!< Footage name
     std::list<Item2DImage *> images;  //!< 2D image items list
@@ -85,8 +85,8 @@ struct FootageItems2DImage
      * \brief Constructor
      * \param _footageName Footage name
      */
-    FootageItems2DImage(const std::string &_footageName);
-    virtual ~FootageItems2DImage();  //!< Destructor
+    DBItem2DImage(const std::string &_footageName);
+    virtual ~DBItem2DImage();  //!< Destructor
 
     /*!
      * \brief Initialize 2D image items database

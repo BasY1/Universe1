@@ -1,7 +1,7 @@
 #ifndef UNIVERSE1_VIDEO_ITEM3D_H
 #define UNIVERSE1_VIDEO_ITEM3D_H
 
-#include "../items2d/item2d.h"
+#include "../items2d/item2dimage.h"
 
 namespace Universe1 {
 namespace Video {
