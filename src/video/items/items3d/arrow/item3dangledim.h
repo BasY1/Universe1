@@ -1,9 +1,7 @@
 #ifndef UNIVERSE1_VIDEO_ITEM3DANGLEDIM_H
 #define UNIVERSE1_VIDEO_ITEM3DANGLEDIM_H
 
-#include "../torus/item3dtorusarc.h"
 #include "item3darcarrow.h"
-#include "item3dlinearrow.h"
 
 namespace Universe1 {
 namespace Video {
@@ -24,12 +22,10 @@ struct Item3DAngleDim : public Item3DBase
     DynamicBool showArrowFrom;  //!< Show arrow at \b from direction
     DynamicBool showArrowTo;    //!< Show arrow at \b to direction
 
-    DynamicBool showText;                                     //!< Show text flag
-    DynamicEnum<Item3DLineArrow::TextPosition> textPosition;  //!< Text position over arc line
-    DynamicTextGroup text;                                    //!< Text properties group
-
     DynamicValue<uint> qualityAngle;  //!< Quality main circle
     DynamicValue<uint> qualityLine;   //!< Quality line circle
+
+    DynamicTextGroupExt text;  //!< Text properties group
 
     /*!
      * \brief Constructor
@@ -66,7 +62,7 @@ struct Item3DAngleDim : public Item3DBase
                    const bool _showArrowTo,
                    const bool _showText,
                    const QString &_text,
-                   const Item3DLineArrow::TextPosition _textPosition,
+                   const TextPosition _textPosition,
                    const float _textSize,
                    const Qt::Alignment _textAlign,
                    const uint _qualityAngle,
@@ -121,7 +117,7 @@ struct Item3DAngleDim : public Item3DBase
                           const bool _showArrowTo,
                           const bool _showText,
                           const QString &_text,
-                          const Item3DLineArrow::TextPosition _textPosition,
+                          const TextPosition _textPosition,
                           const float _textSize,
                           const Qt::Alignment _textAlign,
                           const uint _qualityAngle,
@@ -174,7 +170,7 @@ struct DBItem3DAngleDim : public DBItems3D
                         const bool _showArrowTo,
                         const bool _showText,
                         const QString &_text,
-                        const Item3DLineArrow::TextPosition _textPosition,
+                        const TextPosition _textPosition,
                         const float _textSize,
                         const Qt::Alignment _textAlign,
                         const uint _qualityAngle,
@@ -216,7 +212,7 @@ struct DBItem3DAngleDim : public DBItems3D
                                const bool _showArrowTo,
                                const bool _showText,
                                const QString &_text,
-                               const Item3DLineArrow::TextPosition _textPosition,
+                               const TextPosition _textPosition,
                                const float _textSize,
                                const Qt::Alignment _textAlign,
                                const uint _qualityAngle,
@@ -278,7 +274,7 @@ struct DBItem3DAngleDim : public DBItems3D
                    true,
                    _showText,
                    _text,
-                   Item3DLineArrow::_TextMiddle,
+                   _TextMiddle,
                    1.0f,
                    Qt::AlignHCenter | Qt::AlignTop,
                    c.qualitySphere,
@@ -349,7 +345,7 @@ struct DBItem3DAngleDim : public DBItems3D
                                      const bool _showArrowTo,
                                      const bool _showText,
                                      const QString &_text,
-                                     const Item3DLineArrow::TextPosition _textPosition,
+                                     const TextPosition _textPosition,
                                      const float _textSize,
                                      const Qt::Alignment _textAlign,
                                      const uint _qualityAngle,
@@ -411,7 +407,7 @@ struct DBItem3DAngleDim : public DBItems3D
                          true,
                          _showText,
                          _text,
-                         Item3DLineArrow::_TextMiddle,
+                         _TextMiddle,
                          1.0f,
                          Qt::AlignHCenter | Qt::AlignTop,
                          c.qualitySphere,

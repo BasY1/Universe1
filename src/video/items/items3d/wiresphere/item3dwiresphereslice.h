@@ -88,6 +88,31 @@ struct Item3DWireSphereSlice : public Item3DWireSphere
                           const uint _qualitySphere,
                           const uint _qualityLine,
                           const Material &_material);
+
+    /*!
+     * \brief Build 3D multi-color data
+     * \param _out Output 3D data list
+     * \param _center Center point
+     * \param _normal Normal direction
+     * \param _arm Arm direction
+     * \param _radiusSphere RadiusSphere
+     * \param _radiusLine RadiusLine
+     * \param _qualityLatLong Quality latitude-longitude circle
+     * \param _qualitySphere Quality sphere circle
+     * \param _qualityLine Quality line circle
+     * \param _materials Materials
+     * \return
+     */
+    static void buildMultiColor(std::list<Data3D> &_out,
+                                const QVector3D &_center,
+                                const QVector3D &_normal,
+                                const QVector3D &_arm,
+                                const float _radiusSphere,
+                                const float _radiusLine,
+                                const uint _qualityLatLong,
+                                const uint _qualitySphere,
+                                const uint _qualityLine,
+                                const std::vector<Material> &_materials);
 };
 
 /*! \brief Footage 3D wire-sphere slice database */

@@ -104,6 +104,16 @@ struct Item3D : public Item
         const std::pair<uint, uint> lola = loLaPointCount(_quality);
         return {lola.first * lola.second + 2UL, lola.first * lola.second * 6UL};
     }
+
+    /*!
+     * \brief Convert 3D vector to text
+     * \param _vec 3D vector
+     * \return 3D vector as text
+     */
+    static inline QString vecText(const QVector3D &_vec)
+    {
+        return QString("[%1 × %2 × %3]").arg(_vec.x(), 0, 'f', 0).arg(_vec.y(), 0, 'f', 0).arg(_vec.z(), 0, 'f', 0);
+    }
 };
 
 /*! \brief Single material base 3D Item structure */

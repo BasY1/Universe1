@@ -9,14 +9,6 @@ namespace Video {
 /*! \brief 3D line arrow item */
 struct Item3DLineArrow : public Item3DBase
 {
-    /*! \brief Supported text position over arrow line */
-    enum TextPosition
-    {
-        _TextAtPointFrom,  //!< Draw text near point \b from
-        _TextMiddle,       //!< Draw text in the middle of the arrow line
-        _TextAtPointTo     //!< Draw text near point \b to
-    };
-
     DynamicVec3 pointFrom;            //!< Point from
     DynamicVec3 pointTo;              //!< Point to
     DynamicValue<float> arrowLength;  //!< Arrow length
@@ -24,9 +16,7 @@ struct Item3DLineArrow : public Item3DBase
     DynamicValue<float> lineRadius;   //!< Line radius
     DynamicValue<uint> quality;       //!< Circle quality
 
-    DynamicBool showText;                    //!< Show text flag
-    DynamicEnum<TextPosition> textPosition;  //!< Text position over arrow line
-    DynamicTextGroup text;                   //!< Text properties group
+    DynamicTextGroupExt text;  //!< Text properties group
 
     /*!
      * \brief Constructor
@@ -517,7 +507,7 @@ struct DBItem3DLineArrow : public DBItems3D
                          const float _lineRadius,
                          const uint _quality,
                          const QString &_text,
-                         const Item3DLineArrow::TextPosition _textPosition,
+                         const TextPosition _textPosition,
                          const float _textSize,
                          const Qt::Alignment _textAlign,
                          const bool _showText,
@@ -546,7 +536,7 @@ struct DBItem3DLineArrow : public DBItems3D
                                 const float _lineRadius,
                                 const uint _quality,
                                 const QString &_text,
-                                const Item3DLineArrow::TextPosition _textPosition,
+                                const TextPosition _textPosition,
                                 const float _textSize,
                                 const Qt::Alignment _textAlign,
                                 const Material &_material)
@@ -592,7 +582,7 @@ struct DBItem3DLineArrow : public DBItems3D
                    _lineRadius,
                    Config::cfg().qualityLine,
                    _text,
-                   Item3DLineArrow::_TextAtPointTo,
+                   _TextAtPointTo,
                    1.0f,
                    Qt::AlignHCenter | Qt::AlignTop,
                    _material);
@@ -639,7 +629,7 @@ struct DBItem3DLineArrow : public DBItems3D
                                       const float _lineRadius,
                                       const uint _quality,
                                       const QString &_text,
-                                      const Item3DLineArrow::TextPosition _textPosition,
+                                      const TextPosition _textPosition,
                                       const float _textSize,
                                       const Qt::Alignment _textAlign,
                                       const Material &_material)
@@ -685,7 +675,7 @@ struct DBItem3DLineArrow : public DBItems3D
                          _lineRadius,
                          Config::cfg().qualityLine,
                          _text,
-                         Item3DLineArrow::_TextAtPointTo,
+                         _TextAtPointTo,
                          1.0f,
                          Qt::AlignHCenter | Qt::AlignTop,
                          _material);
@@ -736,7 +726,7 @@ struct DBItem3DLineArrow : public DBItems3D
                           const float _lineRadius,
                           const uint _quality,
                           const QString &_text,
-                          const Item3DLineArrow::TextPosition _textPosition,
+                          const TextPosition _textPosition,
                           const float _textSize,
                           const Qt::Alignment _textAlign,
                           const bool _showText,
@@ -767,7 +757,7 @@ struct DBItem3DLineArrow : public DBItems3D
                                  const float _lineRadius,
                                  const uint _quality,
                                  const QString &_text,
-                                 const Item3DLineArrow::TextPosition _textPosition,
+                                 const TextPosition _textPosition,
                                  const float _textSize,
                                  const Qt::Alignment _textAlign,
                                  const Material &_material)
@@ -815,7 +805,7 @@ struct DBItem3DLineArrow : public DBItems3D
                       _lineRadius,
                       Config::cfg().qualityLine,
                       _text,
-                      Item3DLineArrow::_TextMiddle,
+                      _TextMiddle,
                       1.0f,
                       Qt::AlignHCenter | Qt::AlignTop,
                       _material);
@@ -862,7 +852,7 @@ struct DBItem3DLineArrow : public DBItems3D
                                        const float _lineRadius,
                                        const uint _quality,
                                        const QString &_text,
-                                       const Item3DLineArrow::TextPosition _textPosition,
+                                       const TextPosition _textPosition,
                                        const float _textSize,
                                        const Qt::Alignment _textAlign,
                                        const Material &_material)
@@ -910,7 +900,7 @@ struct DBItem3DLineArrow : public DBItems3D
                             _lineRadius,
                             Config::cfg().qualityLine,
                             _text,
-                            Item3DLineArrow::_TextMiddle,
+                            _TextMiddle,
                             1.0f,
                             Qt::AlignHCenter | Qt::AlignTop,
                             _material);

@@ -1,7 +1,7 @@
 #ifndef UNIVERSE1_VIDEO_CAMERA_H
 #define UNIVERSE1_VIDEO_CAMERA_H
 
-#include "dynamicproperty/dynamictextgroup.h"
+#include "dynamicproperty/group/dynamicspingroup.h"
 
 namespace Universe1 {
 namespace Video {

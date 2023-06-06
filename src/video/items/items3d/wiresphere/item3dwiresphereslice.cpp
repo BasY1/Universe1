@@ -139,6 +139,134 @@ void Universe1::Video::Item3DWireSphereSlice::buildData(std::list<Data3D> &_out,
     }
 }
 
+void Universe1::Video::Item3DWireSphereSlice::buildMultiColor(std::list<Data3D> &_out,
+                                                              const QVector3D &_center,
+                                                              const QVector3D &_normal,
+                                                              const QVector3D &_arm,
+                                                              const float _radiusSphere,
+                                                              const float _radiusLine,
+                                                              const uint _qualityLatLong,
+                                                              const uint _qualitySphere,
+                                                              const uint _qualityLine,
+                                                              const std::vector<Material> &_materials)
+{
+    if (_materials.empty())
+        return;
+
+    if (_materials.size() == 1UL)
+    {
+        Item3DWireSphere::buildData(_out,
+                                    _center,
+                                    _normal,
+                                    _arm,
+                                    _radiusSphere,
+                                    _radiusLine,
+                                    _qualityLatLong,
+                                    _qualitySphere,
+                                    _qualityLine,
+                                    _materials.front());
+        return;
+    }
+
+    if (qFuzzyIsNull(_radiusSphere) || qFuzzyIsNull(_radiusLine) || _radiusSphere < 0.0f || _radiusLine < 0.0f)
+        return;
+
+    const uint qs = std::max(_qualityLatLong, _qualitySphere);
+    const uint cntStep = circlePointCount(_qualityLatLong);
+    const uint cntLa = _qualityLatLong * 2U + 1U;
+    const float angleColor = 360.0f / static_cast<float>(_materials.size());
+    const float angleStepDeg = 360.0f / static_cast<float>(cntStep);
+    const float angleStepRad = Math::toRad<float>(angleStepDeg);
+    const QVector3D n = _normal.normalized();
+    const QVector3D a = perpendicularArm(_arm, n);
+
+    std::vector<std::list<float>> angles(_materials.size());
+    {
+        float a0 = 0.0f;
+        for (size_t im = 0UL; im < _materials.size(); ++im, a0 += angleColor)
+        {
+
+            const float stop = a0 + angleColor;
+            const float s1 = static_cast<float>(static_cast<uint>(a0 / angleStepDeg) * angleStepDeg);
+            float a1 = qFuzzyCompare(s1, a0) ? (a0 + angleStepDeg) : a0;
+            angles[im].push_back(a0);
+            while (!qFuzzyCompare(a1, stop) && a1 < stop)
+            {
+                angles[im].push_back(a1);
+                a1 += angleStepDeg;
+            }
+            angles[im].push_back(a0 + angleColor);
+        }
+    }
+
+    for (size_t im = 0UL; im < _materials.size(); ++im)
+    {
+        QVector3D aa = QQuaternion::fromAxisAndAngle(n, angles[im].front()).rotatedVector(a);
+        QVector3D nn = QVector3D ::crossProduct(n, aa).normalized();
+        Item3DTorusArcSlice::buildData(_out,
+                                       _center,
+                                       nn,
+                                       n,
+                                       0.0f,
+                                       180.0f,
+                                       180.0f,
+                                       360.0f,
+                                       _radiusSphere,
+                                       _radiusLine,
+                                       qs,
+                                       _qualityLine,
+                                       _materials[im]);
+
+        std::list<float>::const_iterator it1 = angles[im].cbegin();
+        it1++;
+        std::list<float>::const_iterator it2 = it1;
+        it2++;
+        while (it2 != angles[im].cend())
+        {
+            const float &curAngle = (*it1);
+            aa = QQuaternion::fromAxisAndAngle(n, curAngle).rotatedVector(a);
+            nn = QVector3D ::crossProduct(n, aa).normalized();
+            Item3DTorusArc::buildData(
+                _out, _center, nn, n, 180.0, _radiusSphere, _radiusLine, qs, _qualityLine, _materials[im]);
+            it1++;
+            it2++;
+        }
+
+        aa = QQuaternion::fromAxisAndAngle(n, angles[im].back()).rotatedVector(a);
+        nn = QVector3D ::crossProduct(n, aa).normalized();
+        Item3DTorusArcSlice::buildData(_out,
+                                       _center,
+                                       nn,
+                                       n,
+                                       0.0f,
+                                       180.0f,
+                                       0.0f,
+                                       180.0f,
+                                       _radiusSphere,
+                                       _radiusLine,
+                                       qs,
+                                       _qualityLine,
+                                       _materials[im]);
+
+        aa = QQuaternion::fromAxisAndAngle(n, angles[im].front()).rotatedVector(a);
+        float ang = angleStepRad;
+        for (uint la = 0U; la < cntLa; ++la, ang += angleStepRad)
+        {
+            const QVector3D cc = _center + n * (std::cos(ang) * _radiusSphere);
+            Item3DTorusArc::buildData(_out,
+                                      cc,
+                                      n,
+                                      aa,
+                                      angleColor,
+                                      std::sin(ang) * _radiusSphere,
+                                      _radiusLine,
+                                      qs,
+                                      _qualityLine,
+                                      _materials[im]);
+        }
+    }
+}
+
 Universe1::Video::DBItem3DWireSphereSlice::DBItem3DWireSphereSlice(const std::string &_footageName,
 
                                                                    std::list<Item3D *> *_items)

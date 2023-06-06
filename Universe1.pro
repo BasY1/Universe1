@@ -39,13 +39,19 @@ SOURCES += src/video/dynamicproperty/dynamicvec3.cpp
 HEADERS += src/video/dynamicproperty/dynamiccolor.h
 SOURCES += src/video/dynamicproperty/dynamiccolor.cpp
 
-HEADERS += src/video/dynamicproperty/dynamicmaterialgroup.h
-SOURCES += src/video/dynamicproperty/dynamicmaterialgroup.cpp
-
 HEADERS += src/video/dynamicproperty/dynamicstring.h
 SOURCES += src/video/dynamicproperty/dynamicstring.cpp
 
-HEADERS += src/video/dynamicproperty/dynamictextgroup.h
+HEADERS += src/video/dynamicproperty/group/dynamicmaterialgroup.h
+SOURCES += src/video/dynamicproperty/group/dynamicmaterialgroup.cpp
+
+HEADERS += src/video/dynamicproperty/group/dynamictextgroup.h
+
+HEADERS += src/video/dynamicproperty/group/dynamicanglegroup.h
+SOURCES += src/video/dynamicproperty/group/dynamicanglegroup.cpp
+
+HEADERS += src/video/dynamicproperty/group/dynamicspingroup.h
+SOURCES += src/video/dynamicproperty/group/dynamicspingroup.cpp
 
 HEADERS += src/video/camera.h
 SOURCES += src/video/camera.cpp
@@ -166,5 +172,19 @@ SOURCES += src/video/items/items3d/arrow/item3darcarrow.cpp
 HEADERS += src/video/items/items3d/arrow/item3dangledim.h
 SOURCES += src/video/items/items3d/arrow/item3dangledim.cpp
 
+HEADERS += src/video/items/items3d/space/item3dspace.h
+SOURCES += src/video/items/items3d/space/item3dspace.cpp
+
+HEADERS += src/video/items/items3d/path/item3dpath.h
+SOURCES += src/video/items/items3d/path/item3dpath.cpp
+
+HEADERS += src/video/items/items3d/hand/item3dhand.h
+SOURCES += src/video/items/items3d/hand/item3dhand.cpp
+
+HEADERS += src/video/items/items3d/spin/item3dspin.h
+SOURCES += src/video/items/items3d/spin/item3dspin.cpp
+
+HEADERS += src/video/items/items3d/spin/item3dconstellation.h
+SOURCES += src/video/items/items3d/spin/item3dconstellation.cpp
 
 SOURCES += src/main.cpp

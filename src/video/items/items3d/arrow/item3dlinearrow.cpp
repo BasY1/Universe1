@@ -21,9 +21,7 @@ Universe1::Video::Item3DLineArrow::Item3DLineArrow(const QVector3D &_pointFrom,
     , arrowRadius(_arrowRadius, _name + ".arrowRadius")
     , lineRadius(_lineRadius, _name + ".lineRadius")
     , quality(_quality, _name + ".quality")
-    , showText(_showText, _name + ".showText")
-    , textPosition(_textPosition, _name + ".textPosition")
-    , text(_text, _textSize, _textAlign, _name, props)
+    , text(_text, _textSize, _textAlign, _textPosition, _showText, _name, props)
 {
     props.push_back(&pointFrom);
     props.push_back(&pointTo);
@@ -31,8 +29,6 @@ Universe1::Video::Item3DLineArrow::Item3DLineArrow(const QVector3D &_pointFrom,
     props.push_back(&arrowRadius);
     props.push_back(&lineRadius);
     props.push_back(&quality);
-    props.push_back(&showText);
-    props.push_back(&textPosition);
 }
 
 void Universe1::Video::Item3DLineArrow::addData3D(std::list<Data3D> &_out,
@@ -48,10 +44,10 @@ void Universe1::Video::Item3DLineArrow::addData3D(std::list<Data3D> &_out,
               lineRadius.getValue(_timeStep),
               quality.getValue(_timeStep),
               text.text.getValue(_timeStep),
-              textPosition.getValue(_timeStep),
+              text.position.getValue(_timeStep),
               text.sizeMult.getValue(_timeStep),
               text.align.getValue(_timeStep),
-              showText.getValue(_timeStep),
+              text.show.getValue(_timeStep),
               material.getValue(_timeStep));
 }
 
@@ -202,10 +198,10 @@ void Universe1::Video::Item3DLineDim::addData3D(std::list<Data3D> &_out,
               lineRadius.getValue(_timeStep),
               quality.getValue(_timeStep),
               text.text.getValue(_timeStep),
-              textPosition.getValue(_timeStep),
+              text.position.getValue(_timeStep),
               text.sizeMult.getValue(_timeStep),
               text.align.getValue(_timeStep),
-              showText.getValue(_timeStep),
+              text.show.getValue(_timeStep),
               showArrowFrom.getValue(_timeStep),
               showArrowTo.getValue(_timeStep),
               material.getValue(_timeStep));
@@ -344,20 +340,19 @@ Universe1::Video::DBItem3DLineArrow::DBItem3DLineArrow(const std::string &_foota
 {
 }
 
-Universe1::Video::Item3DLineArrow *
-Universe1::Video::DBItem3DLineArrow::add(const QVector3D &_pointFrom,
-                                         const QVector3D &_pointTo,
-                                         const float _arrowLength,
-                                         const float _arrowRadius,
-                                         const float _lineRadius,
-                                         const uint _quality,
-                                         const QString &_text,
-                                         const Item3DLineArrow::TextPosition _textPosition,
-                                         const float _textSize,
-                                         const Qt::Alignment _textAlign,
-                                         const bool _showText,
-                                         const bool _visible,
-                                         const Material &_material)
+Universe1::Video::Item3DLineArrow *Universe1::Video::DBItem3DLineArrow::add(const QVector3D &_pointFrom,
+                                                                            const QVector3D &_pointTo,
+                                                                            const float _arrowLength,
+                                                                            const float _arrowRadius,
+                                                                            const float _lineRadius,
+                                                                            const uint _quality,
+                                                                            const QString &_text,
+                                                                            const TextPosition _textPosition,
+                                                                            const float _textSize,
+                                                                            const Qt::Alignment _textAlign,
+                                                                            const bool _showText,
+                                                                            const bool _visible,
+                                                                            const Material &_material)
 {
     Item3DLineArrow *result = new Item3DLineArrow(_pointFrom,
                                                   _pointTo,
@@ -377,22 +372,21 @@ Universe1::Video::DBItem3DLineArrow::add(const QVector3D &_pointFrom,
     return result;
 }
 
-Universe1::Video::Item3DLineDim *
-Universe1::Video::DBItem3DLineArrow::addDim(const QVector3D &_pointFrom,
-                                            const QVector3D &_pointTo,
-                                            const float _arrowLength,
-                                            const float _arrowRadius,
-                                            const float _lineRadius,
-                                            const uint _quality,
-                                            const QString &_text,
-                                            const Item3DLineArrow::TextPosition _textPosition,
-                                            const float _textSize,
-                                            const Qt::Alignment _textAlign,
-                                            const bool _showText,
-                                            const bool _showArrowFrom,
-                                            const bool _showArrowTo,
-                                            const bool _visible,
-                                            const Material &_material)
+Universe1::Video::Item3DLineDim *Universe1::Video::DBItem3DLineArrow::addDim(const QVector3D &_pointFrom,
+                                                                             const QVector3D &_pointTo,
+                                                                             const float _arrowLength,
+                                                                             const float _arrowRadius,
+                                                                             const float _lineRadius,
+                                                                             const uint _quality,
+                                                                             const QString &_text,
+                                                                             const TextPosition _textPosition,
+                                                                             const float _textSize,
+                                                                             const Qt::Alignment _textAlign,
+                                                                             const bool _showText,
+                                                                             const bool _showArrowFrom,
+                                                                             const bool _showArrowTo,
+                                                                             const bool _visible,
+                                                                             const Material &_material)
 {
     Item3DLineDim *result = new Item3DLineDim(_pointFrom,
                                               _pointTo,

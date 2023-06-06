@@ -12,7 +12,7 @@ Universe1::Video::Item3DAngleDim::Item3DAngleDim(const QVector3D &_center,
                                                  const bool _showArrowTo,
                                                  const bool _showText,
                                                  const QString &_text,
-                                                 const Item3DLineArrow::TextPosition _textPosition,
+                                                 const TextPosition _textPosition,
                                                  const float _textSize,
                                                  const Qt::Alignment _textAlign,
                                                  const uint _qualityAngle,
@@ -31,11 +31,9 @@ Universe1::Video::Item3DAngleDim::Item3DAngleDim(const QVector3D &_center,
     , arrowRadius(_arrowRadius, _name + ".arrowRadius")
     , showArrowFrom(_showArrowFrom, _name + ".showArrowFrom")
     , showArrowTo(_showArrowTo, _name + ".showArrowTo")
-    , showText(_showText, _name + ".showText")
-    , textPosition(_textPosition, _name + ".textPosition")
-    , text(_text, _textSize, _textAlign, _name, props)
     , qualityAngle(_qualityAngle, _name + ".qualityAngle")
     , qualityLine(_qualityLine, _name + ".qualityLine")
+    , text(_text, _textSize, _textAlign, _textPosition, _showText, _name, props)
 {
     props.push_back(&center);
     props.push_back(&normal);
@@ -47,8 +45,6 @@ Universe1::Video::Item3DAngleDim::Item3DAngleDim(const QVector3D &_center,
     props.push_back(&arrowRadius);
     props.push_back(&showArrowFrom);
     props.push_back(&showArrowTo);
-    props.push_back(&showText);
-    props.push_back(&textPosition);
     props.push_back(&qualityAngle);
     props.push_back(&qualityLine);
 }
@@ -69,9 +65,9 @@ void Universe1::Video::Item3DAngleDim::addData3D(std::list<Data3D> &_out,
               arrowRadius.getValue(_timeStep),
               showArrowFrom.getValue(_timeStep),
               showArrowTo.getValue(_timeStep),
-              showText.getValue(_timeStep),
+              text.show.getValue(_timeStep),
               text.text.getValue(_timeStep),
-              textPosition.getValue(_timeStep),
+              text.position.getValue(_timeStep),
               text.sizeMult.getValue(_timeStep),
               text.align.getValue(_timeStep),
               qualityAngle.getValue(_timeStep),
@@ -93,7 +89,7 @@ void Universe1::Video::Item3DAngleDim::buildData(std::list<Data3D> &_out,
                                                  const bool _showArrowTo,
                                                  const bool _showText,
                                                  const QString &_text,
-                                                 const Item3DLineArrow::TextPosition _textPosition,
+                                                 const TextPosition _textPosition,
                                                  const float _textSize,
                                                  const Qt::Alignment _textAlign,
                                                  const uint _qualityAngle,
@@ -211,11 +207,11 @@ void Universe1::Video::Item3DAngleDim::buildData(std::list<Data3D> &_out,
     const QString txt = _text.isEmpty() ? QString("%1°").arg(angleDeg, 0, 'f', 3) : _text;
     switch (_textPosition)
     {
-    case Item3DLineArrow::_TextAtPointFrom:
+    case _TextAtPointFrom:
         Item3DText::buildData(
             _out, _shader, txt, _textSize, _textAlign, _center + n1 * _radius + nz * _arrowLength, _material);
         break;
-    case Item3DLineArrow::_TextMiddle:
+    case _TextMiddle:
         Item3DText::buildData(
             _out,
             _shader,
@@ -226,7 +222,7 @@ void Universe1::Video::Item3DAngleDim::buildData(std::list<Data3D> &_out,
                 QVector3D(0, 0, 1) * _arrowLength,
             _material);
         break;
-    case Item3DLineArrow::_TextAtPointTo:
+    case _TextAtPointTo:
         Item3DText::buildData(
             _out, _shader, txt, _textSize, _textAlign, _center + n2 * _radius + nz * _arrowLength, _material);
         break;
@@ -238,26 +234,25 @@ Universe1::Video::DBItem3DAngleDim::DBItem3DAngleDim(const std::string &_footage
 {
 }
 
-Universe1::Video::Item3DAngleDim *
-Universe1::Video::DBItem3DAngleDim::add(const QVector3D &_center,
-                                        const QVector3D &_normal,
-                                        const QVector3D &_normalFrom,
-                                        const QVector3D &_normalTo,
-                                        const float _radius,
-                                        const float _lineRadius,
-                                        const float _arrowLength,
-                                        const float _arrowRadius,
-                                        const bool _showArrowFrom,
-                                        const bool _showArrowTo,
-                                        const bool _showText,
-                                        const QString &_text,
-                                        const Item3DLineArrow::TextPosition _textPosition,
-                                        const float _textSize,
-                                        const Qt::Alignment _textAlign,
-                                        const uint _qualityAngle,
-                                        const uint _qualityLine,
-                                        const bool _visible,
-                                        const Material &_material)
+Universe1::Video::Item3DAngleDim *Universe1::Video::DBItem3DAngleDim::add(const QVector3D &_center,
+                                                                          const QVector3D &_normal,
+                                                                          const QVector3D &_normalFrom,
+                                                                          const QVector3D &_normalTo,
+                                                                          const float _radius,
+                                                                          const float _lineRadius,
+                                                                          const float _arrowLength,
+                                                                          const float _arrowRadius,
+                                                                          const bool _showArrowFrom,
+                                                                          const bool _showArrowTo,
+                                                                          const bool _showText,
+                                                                          const QString &_text,
+                                                                          const TextPosition _textPosition,
+                                                                          const float _textSize,
+                                                                          const Qt::Alignment _textAlign,
+                                                                          const uint _qualityAngle,
+                                                                          const uint _qualityLine,
+                                                                          const bool _visible,
+                                                                          const Material &_material)
 {
     Item3DAngleDim *result = new Item3DAngleDim(_center,
                                                 _normal,

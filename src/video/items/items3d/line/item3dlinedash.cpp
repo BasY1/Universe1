@@ -150,6 +150,69 @@ void Universe1::Video::Item3DLineDashSegment::buildData(std::list<Data3D> &_out,
     }
 }
 
+void Universe1::Video::Item3DLineDashSegment::buildMultiColor(std::list<Data3D> &_out,
+                                                              const QVector3D &_point1,
+                                                              const QVector3D &_point2,
+                                                              const float _radius,
+                                                              const uint _multDash,
+                                                              const uint _multSpace,
+                                                              const uint _countDot,
+                                                              const uint _quality,
+                                                              const std::vector<Material> &_materials)
+{
+    const float len = _point1.distanceToPoint(_point2);
+    if (qFuzzyIsNull(len) || qFuzzyIsNull(_radius) || _radius < 0.0f || _materials.empty())
+        return;
+
+    if (_materials.size() == 1UL)
+    {
+        buildData(_out, _point1, _point2, _radius, _multDash, _multSpace, _countDot, _quality, _materials.front());
+        return;
+    }
+
+    const QVector3D n = (_point2 - _point1).normalized();
+
+    const float lenDash = _radius * static_cast<float>(std::max(1U, _multDash));
+    const float lenSpace = _radius * static_cast<float>(std::max(1U, _multSpace));
+
+    float t = 0.0f;
+
+    size_t mi = 0UL;
+
+    while (!qFuzzyCompare(t, len) && t < len)
+    {
+        float nextT = t + lenDash;
+        if (qFuzzyCompare(nextT, len) || nextT > len)
+        {
+            Item3DLineSegment::buildData(_out, _point1 + n * t, _point2, _radius, _quality, _materials[mi]);
+            return;
+        }
+
+        Item3DLineSegment::buildData(_out, _point1 + n * t, _point1 + n * nextT, _radius, _quality, _materials[mi]);
+
+        t = nextT + lenSpace;
+
+        for (uint d = 0U; d < _countDot; ++d)
+        {
+            if (qFuzzyCompare(t, len))
+            {
+                Item3DSphere::buildData(_out, _point2, _radius, _quality, _materials[mi]);
+                return;
+            }
+
+            if (t > len)
+                return;
+
+            Item3DSphere::buildData(_out, _point1 + n * t, _radius, _quality, _materials[mi]);
+            t += lenSpace;
+        }
+
+        mi++;
+        if (mi == _materials.size())
+            mi = 0UL;
+    }
+}
+
 //
 
 Universe1::Video::DBItem3DLineDash::DBItem3DLineDash(const std::string &_footageName, std::list<Item3D *> *_items)

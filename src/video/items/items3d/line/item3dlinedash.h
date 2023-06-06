@@ -122,7 +122,7 @@ struct Item3DLineDashSegment : public Item3DLineSegment
      * \param _multSpace Space between dash length multiplier
      * \param _countDot Dot count
      * \param _quality Line circle quality
-     * \param _material material
+     * \param _material Material
      * \return
      */
     static void buildData(std::list<Data3D> &_out,
@@ -134,6 +134,29 @@ struct Item3DLineDashSegment : public Item3DLineSegment
                           const uint _countDot,
                           const uint _quality,
                           const Material &_material);
+
+    /*!
+     * \brief Build 3D multi-color data
+     * \param _out Output 3D data list
+     * \param _point1 First point
+     * \param _point2 Second poin
+     * \param _radius Line radius
+     * \param _multDash Dash length multiplier
+     * \param _multSpace Space between dash length multiplier
+     * \param _countDot Dot count
+     * \param _quality Line circle quality
+     * \param _materials Materials
+     * \return
+     */
+    static void buildMultiColor(std::list<Data3D> &_out,
+                                const QVector3D &_point1,
+                                const QVector3D &_point2,
+                                const float _radius,
+                                const uint _multDash,
+                                const uint _multSpace,
+                                const uint _countDot,
+                                const uint _quality,
+                                const std::vector<Material> &_materials);
 };
 
 /*! \brief Footage 3D dash line database */

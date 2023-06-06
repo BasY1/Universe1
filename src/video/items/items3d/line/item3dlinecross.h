@@ -98,6 +98,45 @@ struct Item3DLineCross : public Item3DBase
                           const float _textSize,
                           const Qt::Alignment _textAlign,
                           const Material &_material);
+
+    /*!
+     * \brief Build 3D data
+     * \param _out Output 3D data list
+     * \param _center Center point
+     * \param _normal Main normal
+     * \param _arm Arm direction
+     * \param _type Cross type
+     * \param _radius Cross radius
+     * \param _radiusLine Line radius
+     * \param _quality Line circle quality
+     * \param _material Material
+     * \return
+     */
+    inline static void buildData(std::list<Data3D> &_out,
+                                 const QVector3D &_center,
+                                 const QVector3D &_normal,
+                                 const QVector3D &_arm,
+                                 const CrossType _type,
+                                 const float _radius,
+                                 const float _radiusLine,
+                                 const uint _quality,
+                                 const Material &_material)
+    {
+        buildData(_out,
+                  nullptr,
+                  _center,
+                  _normal,
+                  _arm,
+                  _type,
+                  _radius,
+                  _radiusLine,
+                  _quality,
+                  false,
+                  "",
+                  0.0f,
+                  Qt::AlignCenter,
+                  _material);
+    }
 };
 
 /*! \brief Footage 3D line cross database */

@@ -1,7 +1,7 @@
 #ifndef UNIVERSE1_VIDEO_DYNAMICSTRING_H
 #define UNIVERSE1_VIDEO_DYNAMICSTRING_H
 
-#include "dynamicmaterialgroup.h"
+#include "dynamiccolor.h"
 
 namespace Universe1 {
 namespace Video {
