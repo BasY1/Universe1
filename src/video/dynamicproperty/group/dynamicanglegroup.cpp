@@ -1,27 +1,19 @@
 #include "dynamicanglegroup.h"
 
-Universe1::Video::DynamicAngleGroup::DynamicAngleGroup(const bool _show,
-                                                       const bool _showText,
-                                                       const float _angleOffset,
-                                                       const float _radiusLine,
-                                                       const float _arrowLength,
-                                                       const float _arrowRadius,
-                                                       const float _textSize,
-                                                       const TextPosition _textPosition,
-                                                       const Qt::Alignment _textAlign,
+Universe1::Video::DynamicAngleGroup::DynamicAngleGroup(const float _angleOffset,
                                                        const Material &_material,
                                                        const std::string &_name,
                                                        std::list<DynamicProperty *> &_allProps,
                                                        std::list<DynamicMaterialGroup *> &_allMaterials)
-    : show(_show, _name + ".show")
-    , showText(_showText, _name + ".showText")
+    : show(true, _name + ".show")
+    , showText(true, _name + ".showText")
     , angleOffset(_angleOffset, _name + ".angleOffset")
-    , radiusLine(_radiusLine, _name + ".radiusLine")
-    , arrowLength(_arrowLength, _name + ".arrowLength")
-    , arrowRadius(_arrowRadius, _name + ".arrowRadius")
-    , textSize(_textSize, _name + ".textSize")
-    , textPosition(_textPosition, _name + ".textPosition")
-    , textAlign(_textAlign, _name + ".textAlign")
+    , radiusLine(Config::cfg().lineRadius, _name + ".radiusLine")
+    , arrowLength(Config::cfg().arrowLength, _name + ".arrowLength")
+    , arrowRadius(Config::cfg().arrowRadius, _name + ".arrowRadius")
+    , textSize(1.0f, _name + ".textSize")
+    , textPosition(_TextMiddle, _name + ".textPosition")
+    , textAlign(Qt::AlignHCenter | Qt::AlignBottom, _name + ".textAlign")
     , material(_material, _name + ".material", _allProps, _allMaterials)
 {
     _allProps.push_back(&show);

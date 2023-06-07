@@ -28,6 +28,26 @@ struct Item3DConstellation : public Item3D
     static const uint16_t _ANGLES_TEXT      = 0b1000000000000000; //!< Show angle labels
     // clang-format on
 
+    static const Material matV1;   //!< Default material for generation 1 velocity
+    static const Material matV2;   //!< Default material for generation 2 velocity
+    static const Material matV3;   //!< Default material for generation 3 velocity
+    static const Material matOI;   //!< Default material for color red spin
+    static const Material matOJ;   //!< Default material for color green spin
+    static const Material matOK;   //!< Default material for color blue spin
+    static const Material matOM;   //!< Default material for massive spin
+    static const Material matOT;   //!< Default material for temperature spin
+    static const Material matOG1;  //!< Default material for generation 1 curving path spin
+    static const Material matOG2;  //!< Default material for generation 2 curving path spin
+    static const Material matOG3;  //!< Default material for generation 3 curving path spin
+    static const Material matHR;   //!< Default material for right-handed helicity
+    static const Material matH0;   //!< Default material for zero helicity
+    static const Material matHL;   //!< Default material for left-handed helicity
+
+    static const Material matAngles;     //!< Default material for angle dimensions
+    static const Material matCenter;     //!< Default material for central point
+    static const Material matSphereIn;   //!< Default material inner sphere (transparent sphere)
+    static const Material matSphereOut;  //!< Default material outer sphere (transparent sphere)
+
     static const std::array<QString, 4U> spTxt;  //!< Major spin names
     static const float offsetAxis1;              //!< Offset for axis line (far points)
     static const float offsetAxis2;              //!< Offset for axis line (from vector end)
@@ -1306,15 +1326,32 @@ struct Item3DConstellation : public Item3D
      * \param _helicity Helicity type
      * \return Material by helicity type
      */
-    inline static Material getHelicityMaterial(const Math::Helicity _helicity)
+    inline static const Material &getHelicityMaterial(const Math::Helicity _helicity)
     {
         switch (_helicity)
         {
-        case Math::_HelicityLeft: return Material(Qt::darkMagenta);
-        case Math::_HelicityZero: return Material(Qt::lightGray);
-        case Math::_HelicityRight: return Material(Qt::darkYellow);
+        case Math::_HelicityLeft: return matHR;
+        case Math::_HelicityZero: return matH0;
+        case Math::_HelicityRight: return matHL;
         }
-        return Material();
+        return matH0;
+    }
+
+    /*!
+     * \brief Getter for material by helicity type
+     * \param _spinIdx Spin index
+     * \return Material by spin
+     */
+    inline static const Material &getSpinMaterial(const uint8_t _spinIdx)
+    {
+        switch (_spinIdx)
+        {
+        case 0U: return matOI;
+        case 1U: return matOJ;
+        case 2U: return matOK;
+        default: break;
+        }
+        return matOM;
     }
 };
 

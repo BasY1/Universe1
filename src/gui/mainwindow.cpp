@@ -116,12 +116,12 @@ Universe1::Video::MainWindow::MainWindow(const std::list<Universe1::Video::Foota
     connect(m_prev1, &QToolButton::clicked, this, &MainWindow::jumpPrev1);
 
     m_next10 = new QToolButton();
-    m_next10->setIcon(QIcon::fromTheme("go-next"));
+    m_next10->setIcon(QIcon::fromTheme("object-rotate-left"));
     m_next10->setToolTip(tr("Next 10 frames"));
     connect(m_next10, &QToolButton::clicked, this, &MainWindow::jumpNext10);
 
     m_prev10 = new QToolButton();
-    m_prev10->setIcon(QIcon::fromTheme("go-previous"));
+    m_prev10->setIcon(QIcon::fromTheme("object-rotate-right"));
     m_prev10->setToolTip(tr("Previous 10 frames"));
     connect(m_prev10, &QToolButton::clicked, this, &MainWindow::jumpPrev10);
 
@@ -136,22 +136,22 @@ Universe1::Video::MainWindow::MainWindow(const std::list<Universe1::Video::Foota
     connect(m_prevSubs, &QToolButton::clicked, this, &MainWindow::jumpPrevSubs);
 
     m_nextFootage = new QToolButton();
-    m_nextFootage->setIcon(QIcon::fromTheme("go-last"));
+    m_nextFootage->setIcon(QIcon::fromTheme("go-up"));
     m_nextFootage->setToolTip(tr("Next footage"));
     connect(m_nextFootage, &QToolButton::clicked, this, &MainWindow::jumpNextFootage);
 
     m_prevFootage = new QToolButton();
-    m_prevFootage->setIcon(QIcon::fromTheme("go-first"));
+    m_prevFootage->setIcon(QIcon::fromTheme("go-down"));
     m_prevFootage->setToolTip(tr("Previous footage"));
     connect(m_prevFootage, &QToolButton::clicked, this, &MainWindow::jumpPrevFootage);
 
     m_first = new QToolButton();
-    m_first->setIcon(QIcon::fromTheme("go-first"));
+    m_first->setIcon(QIcon::fromTheme("go-bottom"));
     m_first->setToolTip(tr("Next frame"));
     connect(m_first, &QToolButton::clicked, this, &MainWindow::jumpFirst);
 
     m_last = new QToolButton();
-    m_last->setIcon(QIcon::fromTheme("go-last"));
+    m_last->setIcon(QIcon::fromTheme("go-top"));
     m_last->setToolTip(tr("Previous frame"));
     connect(m_last, &QToolButton::clicked, this, &MainWindow::jumpLast);
 

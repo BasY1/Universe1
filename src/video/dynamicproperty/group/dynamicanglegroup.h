@@ -22,29 +22,13 @@ struct DynamicAngleGroup
 
     /*!
      * \brief Constructor
-     * \param _show Initial visible flag
-     * \param _showText Initial text visible flag
      * \param _angleOffset Initial offset
-     * \param _radiusLine Initial line radius
-     * \param _arrowLength Initial arrow length
-     * \param _arrowRadius Initial arrow radius
-     * \param _textSize Initial text size multiplier
-     * \param _textPosition Initial text position
-     * \param _textAlign Initial text align
      * \param _material Initial material
      * \param _name Group name
      * \param _allProps All item properties
      * \param _allMaterials All item materials
      */
-    DynamicAngleGroup(const bool _show,
-                      const bool _showText,
-                      const float _angleOffset,
-                      const float _radiusLine,
-                      const float _arrowLength,
-                      const float _arrowRadius,
-                      const float _textSize,
-                      const TextPosition _textPosition,
-                      const Qt::Alignment _textAlign,
+    DynamicAngleGroup(const float _angleOffset,
                       const Material &_material,
                       const std::string &_name,
                       std::list<DynamicProperty *> &_allProps,

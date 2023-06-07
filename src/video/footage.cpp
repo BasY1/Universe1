@@ -4,6 +4,49 @@ const QVector3D Universe1::Video::Footage::nx(1, 0, 0);
 const QVector3D Universe1::Video::Footage::ny(0, 1, 0);
 const QVector3D Universe1::Video::Footage::nz(0, 0, 1);
 
+const QString Universe1::Video::Footage::tR1("<b>ℝ</b><sub>1</sub>");
+const QString Universe1::Video::Footage::tC1("<b>ℂ</b><sub>1</sub>");
+const QString Universe1::Video::Footage::tV1("<b>V</b><sub>1</sub>");
+const QString Universe1::Video::Footage::tO1("<b>Ω</b><sub>1</sub>");
+const QString Universe1::Video::Footage::tOI("<b>Ω</b><sub>I</sub>");
+const QString Universe1::Video::Footage::tOJ("<b>Ω</b><sub>J</sub>");
+const QString Universe1::Video::Footage::tOK("<b>Ω</b><sub>K</sub>");
+const QString Universe1::Video::Footage::tOM("<b>Ω</b><sub>M</sub>");
+const QString Universe1::Video::Footage::tOT("<b>Ω</b><sub>T</sub>");
+const QString Universe1::Video::Footage::tOG("<b>ω</b><sub>G</sub>");
+const QString Universe1::Video::Footage::tOG1("<b>ω</b><sub>G1</sub>");
+const QString Universe1::Video::Footage::tOG2("<b>ω</b><sub>G2</sub>");
+const QString Universe1::Video::Footage::tOG3("<b>ω</b><sub>G3</sub>");
+
+const QString Universe1::Video::Footage::tVOL("<b>Ⓥ</b><sub>1</sub>");
+const QString Universe1::Video::Footage::tLEN("<b>Ⓛ</b><sub>1</sub>");
+const QString Universe1::Video::Footage::tPER("<b>Ⓣ</b><sub>1</sub>");
+
+const QString Universe1::Video::Footage::tM("[<i>m</i>]");
+const QString Universe1::Video::Footage::tM_2("[<i>m</i><sup>2</sup>]");
+const QString Universe1::Video::Footage::tM_3("[<i>m</i><sup>3</sup>]");
+
+const QString Universe1::Video::Footage::tRad("[<i>rad</i>]");
+const QString Universe1::Video::Footage::tS("[<i>s</i>]");
+
+const QString Universe1::Video::Footage::tM_S("[<i>m s</i><sup>-1</sup>]");
+const QString Universe1::Video::Footage::tR_S("[<i>rad s</i><sup>-1</sup>]");
+const QString Universe1::Video::Footage::tENG("[<i>m</i><sup>2</sup> <i>rad</i><sup>2</sup> <i>s</i><sup>-2</sup>]");
+
+const std::array<QString, 5> Universe1::Video::Footage::tabR1 = {QObject::tr("Particle radius"), tR1, "=", "1", tM};
+const std::array<QString, 5> Universe1::Video::Footage::tabC1 = {QObject::tr("Particle velocity"), tC1, "=", "1", tM_S};
+const std::array<QString, 5> Universe1::Video::Footage::tabO1 = {QObject::tr("Particle spin"), tO1, "=", "1", tR_S};
+const std::array<QString, 5> Universe1::Video::Footage::tabVOL = {
+    QObject::tr("Particle volume"), tVOL, "=", "4/3π " + tR1, tM_3};
+const std::array<QString, 5> Universe1::Video::Footage::tabLEN = {
+    QObject::tr("Period length"), tLEN, "=", "2π " + tR1, tM};
+const std::array<QString, 5> Universe1::Video::Footage::tabPER = {QObject::tr("Period duration"), tPER, "=", "2π", tS};
+
+const QString Universe1::Video::Footage::tab_R1_C1_O1 =
+    Universe1::Video::Footage::mkTab({{QObject::tr("Universe constants"), "-C-", "", "", ""}, tabR1, tabC1, tabO1});
+const QString Universe1::Video::Footage::tab_CONSTANTS = Universe1::Video::Footage::mkTab(
+    {{QObject::tr("Universe constants"), "-C-", "", "", ""}, tabR1, tabC1, tabO1, tabVOL, tabLEN, tabPER});
+
 Universe1::Video::Footage::Footage(const std::string &_footageName,
                                    const uint64_t _footageId,
                                    const uint64_t _footageStartTime,
@@ -55,9 +98,9 @@ Universe1::Video::Footage::Footage(const std::string &_footageName,
     , hand(footageName, &items)
     , spin(footageName, &items)
     , constellation(footageName, &items)
-    , c(Config::cfg())
+    , cfg(Config::cfg())
 {
-    if (c.verbose)
+    if (cfg.verbose)
         std::cout << "---------------- " << footageName << "[" << footageId << "] ----------------" << std::endl;
 }
 
@@ -69,7 +112,7 @@ Universe1::Video::Footage::~Footage()
 
 bool Universe1::Video::Footage::initialize()
 {
-    if (c.verbose)
+    if (cfg.verbose)
         std::cout << "---------------- " << footageName << "[" << footageId << "] ----------------" << std::endl;
 
     if (duration == 0UL)
@@ -78,19 +121,19 @@ bool Universe1::Video::Footage::initialize()
         return false;
     }
 
-    if (duration < c.frameDuration)
+    if (duration < cfg.frameDuration)
     {
         std::cerr << "Error[" << footageName << "[" << footageId << "]]: Footage duration too short [" << duration
-                  << "ms], frame time [" << c.frameDuration << "ms]" << std::endl;
+                  << "ms], frame time [" << cfg.frameDuration << "ms]" << std::endl;
         return false;
     }
 
-    framesCount = duration / c.frameDuration;
-    const uint64_t realDuration = framesCount * c.frameDuration;
+    framesCount = duration / cfg.frameDuration;
+    const uint64_t realDuration = framesCount * cfg.frameDuration;
     if (realDuration != duration)
     {
         std::cerr << "Warning[" << footageName << "[" << footageId << "]]: using aligned duration [" << realDuration
-                  << "ms], frame time [" << c.frameDuration << "ms], frame count [x" << framesCount
+                  << "ms], frame time [" << cfg.frameDuration << "ms], frame count [x" << framesCount
                   << "], invalid duration [" << duration << "ms]" << std::endl;
         duration = realDuration;
     }
@@ -115,8 +158,8 @@ bool Universe1::Video::Footage::initialize()
 
 bool Universe1::Video::Footage::saveImages() const
 {
-    const std::vector<std::pair<uint64_t, uint64_t>> pool = c.createPool(framesCount);
-    if (c.verbose)
+    const std::vector<std::pair<uint64_t, uint64_t>> pool = cfg.createPool(framesCount);
+    if (cfg.verbose)
     {
         std::cout << "Building images: " << footageName << "[" << footageId << "]"
                   << " frame count [" << framesCount << "], duration [" << duration << "ms, "
@@ -134,7 +177,7 @@ bool Universe1::Video::Footage::saveImages() const
             if (!saveImage(this, f))
                 return false;
 
-        if (c.verbose)
+        if (cfg.verbose)
         {
             const QTime tt = QTime::fromMSecsSinceStartOfDay(bt.msecsTo(QDateTime::currentDateTime()));
             std::cout << "Building images: " << footageName << "[" << footageId
@@ -172,7 +215,7 @@ bool Universe1::Video::Footage::saveImages() const
         if (t == 1)
             return false;
 
-    if (c.verbose)
+    if (cfg.verbose)
     {
         const QTime tt = QTime::fromMSecsSinceStartOfDay(bt.msecsTo(QDateTime::currentDateTime()));
         std::cout << "Building images: " << footageName << "[" << footageId
@@ -196,7 +239,7 @@ bool Universe1::Video::Footage::saveImage(const Footage *_footage, const uint64_
     _footage->paintSubs(&painter, timeStep);
     _footage->paint2DPost(&painter, timeStep);
 
-    const QString fileName = _footage->c.pathImage(_footage->footageId, _frameId);
+    const QString fileName = Config::cfg().pathImage(_footage->footageId, _frameId);
     if (!image.save(fileName))
     {
         std::cerr << "Error[" << _footage->footageName << "[" << _footage->footageId
@@ -223,17 +266,17 @@ bool Universe1::Video::Footage::getImage3D(QImage &_out, const uint64_t _timeSte
 {
     if (items.empty())
     {
-        _out = QImage(c.widthScreen, c.heightScreen, QImage::Format_ARGB32);
-        _out.fill(c.colorBG);
+        _out = QImage(cfg.widthScreen, cfg.heightScreen, QImage::Format_ARGB32);
+        _out.fill(cfg.colorBG);
         return true;
     }
 
-    const QSize imgSize = QSize(c.widthScreen, c.heightScreen);
+    const QSize imgSize = QSize(cfg.widthScreen, cfg.heightScreen);
 
     QSurfaceFormat surfaceFormat;
     surfaceFormat.setVersion(3, 3);
-    if (c.glSamples > 0U)
-        surfaceFormat.setSamples(c.glSamples);
+    if (cfg.glSamples > 0U)
+        surfaceFormat.setSamples(cfg.glSamples);
     surfaceFormat.setDepthBufferSize(24);
     surfaceFormat.setProfile(QSurfaceFormat::OpenGLContextProfile::CompatibilityProfile);
 
@@ -266,34 +309,34 @@ bool Universe1::Video::Footage::getImage3D(QImage &_out, const uint64_t _timeSte
     QOpenGLFramebufferObjectFormat fboFormat;
     // fboFormat.setAttachment(QOpenGLFramebufferObject::Depth);
     fboFormat.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
-    if (c.glSamples > 0U)
-        fboFormat.setSamples(c.glSamples);
+    if (cfg.glSamples > 0U)
+        fboFormat.setSamples(cfg.glSamples);
     QOpenGLFramebufferObject fbo(imgSize, fboFormat);
     f->glViewport(0, 0, imgSize.width(), imgSize.height());
     fbo.bind();
 
-    Shader program(f, camera.getStats(_timeStep), c.perspectiveMatrix());
+    Shader program(f, camera.getStats(_timeStep), cfg.perspectiveMatrix());
     if (!program.initialize())
         return false;
 
     program.bind();
 
-    f->glClearColor(c.colorBG.redF(), c.colorBG.greenF(), c.colorBG.blueF(), c.colorBG.alphaF());
+    f->glClearColor(cfg.colorBG.redF(), cfg.colorBG.greenF(), cfg.colorBG.blueF(), cfg.colorBG.alphaF());
     f->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     f->glEnable(GL_DEPTH_TEST);
 
-    if (c.glBlend)
+    if (cfg.glBlend)
     {
         f->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         f->glBlendEquation(GL_FUNC_ADD);
         f->glEnable(GL_BLEND);
     }
 
-    if (c.glSamples > 0U)
+    if (cfg.glSamples > 0U)
         f->glEnable(GL_MULTISAMPLE);
 
-    if (c.glCullFront)
+    if (cfg.glCullFront)
     {
         f->glEnable(GL_CULL_FACE);
         f->glCullFace(GL_FRONT);

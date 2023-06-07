@@ -1,51 +1,30 @@
 #include "dynamicspingroup.h"
 
-Universe1::Video::DynamicSpinGroup::DynamicSpinGroup(const bool _show,
-                                                     const bool _showVector,
-                                                     const bool _showAxis,
-                                                     const bool _showArrows,
-                                                     const bool _showDots,
-                                                     const bool _showSphere,
-                                                     const bool _showText,
-                                                     const float _radiusVector,
-                                                     const float _radiusLineAxis,
-                                                     const float _radiusLineSphere,
-                                                     const float _radiusDots,
-                                                     const float _twistStep,
-                                                     const float _arrowDirOffset,
-                                                     const float _arrowArmOffset,
-                                                     const float _arrowLength,
-                                                     const float _arrowRadius,
-                                                     const float _textSize,
-                                                     const TextPosition _textPosition,
-                                                     const Qt::Alignment _textAlign,
-                                                     const uint _dotsCount,
-                                                     const uint _multAxis,
-                                                     const Material &_material,
+Universe1::Video::DynamicSpinGroup::DynamicSpinGroup(const Material &_material,
                                                      const std::string &_name,
                                                      std::list<DynamicProperty *> &_allProps,
                                                      std::list<DynamicMaterialGroup *> &_allMaterials)
-    : show(_show, _name + ".show")
-    , showVector(_showVector, _name + ".showVector")
-    , showAxis(_showAxis, _name + ".showAxis")
-    , showArrows(_showArrows, _name + ".showArrows")
-    , showDots(_showDots, _name + ".showDots")
-    , showSphere(_showSphere, _name + ".showSphere")
-    , showText(_showText, _name + ".showText")
-    , radiusVector(_radiusVector, _name + ".radiusVector")
-    , radiusLineAxis(_radiusLineAxis, _name + ".radiusLineAxis")
-    , radiusLineSphere(_radiusLineSphere, _name + ".radiusLineSphere")
-    , radiusDots(_radiusDots, _name + ".radiusDots")
-    , twistStep(_twistStep, _name + ".twistStep")
-    , arrowDirOffset(_arrowDirOffset, _name + ".arrowDirOffset")
-    , arrowArmOffset(_arrowArmOffset, _name + ".arrowArmOffset")
-    , arrowLength(_arrowLength, _name + ".arrowLength")
-    , arrowRadius(_arrowRadius, _name + ".arrowRadius")
-    , textSize(_textSize, _name + ".textSize")
-    , textPosition(_textPosition, _name + ".textPosition")
-    , textAlign(_textAlign, _name + ".textAlign")
-    , dotsCount(_dotsCount, _name + ".dotsCount")
-    , multAxis(_multAxis, _name + ".multAxis")
+    : show(true, _name + ".show")
+    , showVector(true, _name + ".showVector")
+    , showAxis(true, _name + ".showAxis")
+    , showArrows(true, _name + ".showArrows")
+    , showDots(true, _name + ".showDots")
+    , showSphere(true, _name + ".showSphere")
+    , showText(true, _name + ".showText")
+    , radiusVector(Config::cfg().lineRadiusSpin, _name + ".radiusVector")
+    , radiusLineAxis(Config::cfg().lineRadius, _name + ".radiusLineAxis")
+    , radiusLineSphere(Config::cfg().lineRadius, _name + ".radiusLineSphere")
+    , radiusDots(Config::cfg().lineRadius * 5.0f, _name + ".radiusDots")
+    , twistStep(0.2f, _name + ".twistStep")
+    , arrowDirOffset(Config::cfg().spinOffsetDir, _name + ".arrowDirOffset")
+    , arrowArmOffset(Config::cfg().spinOffsetSide, _name + ".arrowArmOffset")
+    , arrowLength(Config::cfg().arrowLength, _name + ".arrowLength")
+    , arrowRadius(Config::cfg().arrowRadius, _name + ".arrowRadius")
+    , textSize(1.0f, _name + ".textSize")
+    , textPosition(_TextAtPointTo, _name + ".textPosition")
+    , textAlign(Qt::AlignHCenter | Qt::AlignBottom, _name + ".textAlign")
+    , dotsCount(1U, _name + ".dotsCount")
+    , multAxis(Config::cfg().lineMultDash, _name + ".multAxis")
     , material(_material, _name + ".material", _allProps, _allMaterials)
 {
     _allProps.push_back(&show);

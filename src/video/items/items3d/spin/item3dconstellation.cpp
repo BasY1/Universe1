@@ -6,6 +6,29 @@ const std::array<QString, 4U> Universe1::Video::Item3DConstellation::spTxt = {
 const float Universe1::Video::Item3DConstellation::offsetAxis1 = 0.5f;
 const float Universe1::Video::Item3DConstellation::offsetAxis2 = 0.05f;
 
+const Universe1::Video::Material Universe1::Video::Item3DConstellation::matV1(QColor(255, 128, 0), 8, 1);
+const Universe1::Video::Material Universe1::Video::Item3DConstellation::matV2(QColor(255, 192, 64), 8, 1);
+const Universe1::Video::Material Universe1::Video::Item3DConstellation::matV3(QColor(224, 192, 128), 8, 1);
+
+const Universe1::Video::Material Universe1::Video::Item3DConstellation::matOI(QColor(255, 0, 0), 8, 1);
+const Universe1::Video::Material Universe1::Video::Item3DConstellation::matOJ(QColor(0, 255, 0), 8, 1);
+const Universe1::Video::Material Universe1::Video::Item3DConstellation::matOK(QColor(0, 0, 255), 8, 1);
+const Universe1::Video::Material Universe1::Video::Item3DConstellation::matOM(QColor(0, 255, 255), 8, 1);
+const Universe1::Video::Material Universe1::Video::Item3DConstellation::matOT(QColor(255, 255, 0), 8, 1);
+
+const Universe1::Video::Material Universe1::Video::Item3DConstellation::matOG1(QColor(255, 0, 255), 8, 1);
+const Universe1::Video::Material Universe1::Video::Item3DConstellation::matOG2(QColor(192, 0, 255), 8, 1);
+const Universe1::Video::Material Universe1::Video::Item3DConstellation::matOG3(QColor(255, 0, 192), 8, 1);
+
+const Universe1::Video::Material Universe1::Video::Item3DConstellation::matHR(QColor(255, 255, 160), 8, 1);
+const Universe1::Video::Material Universe1::Video::Item3DConstellation::matH0(QColor(160, 160, 160), 16, 1);
+const Universe1::Video::Material Universe1::Video::Item3DConstellation::matHL(QColor(160, 255, 160), 8, 1);
+
+const Universe1::Video::Material Universe1::Video::Item3DConstellation::matAngles(QColor(255, 255, 255), 8, 1);
+const Universe1::Video::Material Universe1::Video::Item3DConstellation::matCenter(QColor(10, 150, 130), 8, 1);
+const Universe1::Video::Material Universe1::Video::Item3DConstellation::matSphereIn(QColor(130, 120, 100), 256, 0.3);
+const Universe1::Video::Material Universe1::Video::Item3DConstellation::matSphereOut(QColor(220, 230, 200), 64, 0.3);
+
 Universe1::Video::Item3DConstellation::Item3DConstellation(const uint16_t _showFlags,
                                                            const Math::ConstellationType _type,
                                                            const QVector3D &_center,
@@ -55,192 +78,22 @@ Universe1::Video::Item3DConstellation::Item3DConstellation(const uint16_t _showF
     , qualitySphere(Config::cfg().qualitySphere, _name + ".qualitySphere")
     , qualityLine(Config::cfg().qualityLine, _name + ".qualityLine")
 
-    , materialVelocity(Material(Qt::cyan), _name + ".materialVelocity", props, materials)
-    , materialCenter(Material(Qt::white), _name + ".materialCenter", props, materials)
-    , materialSphereIn(Material(QColor(220, 230, 200), 64, 0.3), _name + ".materialSphereIn", props, materials)
-    , materialSphereOut(Material(QColor(130, 120, 100), 256, 0.3), _name + ".materialSphereOut", props, materials)
+    , materialVelocity(matV1, _name + ".materialVelocity", props, materials)
+    , materialCenter(matCenter, _name + ".materialCenter", props, materials)
+    , materialSphereIn(matSphereIn, _name + ".materialSphereIn", props, materials)
+    , materialSphereOut(matSphereOut, _name + ".materialSphereOut", props, materials)
 
-    , spinI(true,
-            true,
-            true,
-            true,
-            true,
-            true,
-            true,
-            Config::cfg().lineRadiusSpin,
-            Config::cfg().lineRadius,
-            Config::cfg().lineRadius,
-            Config::cfg().lineRadius * 5.0f,
-            0.2f,
-            Config::cfg().spinOffsetDir,
-            Config::cfg().spinOffsetSide,
-            Config::cfg().arrowLength,
-            Config::cfg().arrowRadius,
-            1.0,
-            _TextAtPointTo,
-            Qt::AlignHCenter | Qt::AlignBottom,
-            1,
-            Config::cfg().lineMultDash,
-            Material(Qt::red),
-            _name + ".spinI",
-            props,
-            materials)
-    , spinJ(true,
-            true,
-            true,
-            true,
-            true,
-            true,
-            true,
-            Config::cfg().lineRadiusSpin,
-            Config::cfg().lineRadius,
-            Config::cfg().lineRadius,
-            Config::cfg().lineRadius * 5.0f,
-            0.2f,
-            Config::cfg().spinOffsetDir,
-            Config::cfg().spinOffsetSide,
-            Config::cfg().arrowLength,
-            Config::cfg().arrowRadius,
-            1.0,
-            _TextAtPointTo,
-            Qt::AlignHCenter | Qt::AlignBottom,
-            1,
-            Config::cfg().lineMultDash,
-            Material(Qt::green),
-            _name + ".spinJ",
-            props,
-            materials)
-    , spinK(true,
-            true,
-            true,
-            true,
-            true,
-            true,
-            true,
-            Config::cfg().lineRadiusSpin,
-            Config::cfg().lineRadius,
-            Config::cfg().lineRadius,
-            Config::cfg().lineRadius * 5.0f,
-            0.2f,
-            Config::cfg().spinOffsetDir,
-            Config::cfg().spinOffsetSide,
-            Config::cfg().arrowLength,
-            Config::cfg().arrowRadius,
-            1.0,
-            _TextAtPointTo,
-            Qt::AlignHCenter | Qt::AlignBottom,
-            1,
-            Config::cfg().lineMultDash,
-            Material(Qt::blue),
-            _name + ".spinK",
-            props,
-            materials)
+    , spinI(matOI, _name + ".spinI", props, materials)
+    , spinJ(matOJ, _name + ".spinJ", props, materials)
+    , spinK(matOK, _name + ".spinK", props, materials)
+    , spinM(matOM, _name + ".spinM", props, materials)
 
-    , spinM(true,
-            true,
-            true,
-            true,
-            true,
-            true,
-            true,
-            Config::cfg().lineRadiusSpin,
-            Config::cfg().lineRadius,
-            Config::cfg().lineRadius,
-            Config::cfg().lineRadius * 5.0f,
-            0.2f,
-            Config::cfg().spinOffsetDir,
-            Config::cfg().spinOffsetSide,
-            Config::cfg().arrowLength,
-            Config::cfg().arrowRadius,
-            1.0f,
-            _TextAtPointTo,
-            Qt::AlignHCenter | Qt::AlignBottom,
-            1,
-            Config::cfg().lineMultDash,
-            Material(Qt::magenta),
-            _name + ".spinM",
-            props,
-            materials)
-
-    , angleIJ(true,
-              true,
-              0.3,
-              Config::cfg().lineRadius,
-              Config::cfg().arrowLength,
-              Config::cfg().arrowRadius,
-              1.0f,
-              _TextMiddle,
-              Qt::AlignHCenter | Qt::AlignBottom,
-              Material(Qt::white),
-              _name + ".angleIJ",
-              props,
-              materials)
-    , angleJK(true,
-              true,
-              0.3,
-              Config::cfg().lineRadius,
-              Config::cfg().arrowLength,
-              Config::cfg().arrowRadius,
-              1.0f,
-              _TextMiddle,
-              Qt::AlignHCenter | Qt::AlignBottom,
-              Material(Qt::white),
-              _name + ".angleJK",
-              props,
-              materials)
-    , angleKI(true,
-              true,
-              0.3,
-              Config::cfg().lineRadius,
-              Config::cfg().arrowLength,
-              Config::cfg().arrowRadius,
-              1.0f,
-              _TextMiddle,
-              Qt::AlignHCenter | Qt::AlignBottom,
-              Material(Qt::white),
-              _name + ".angleKI",
-              props,
-              materials)
-
-    , angleIM(true,
-              true,
-              0.4,
-              Config::cfg().lineRadius,
-              Config::cfg().arrowLength,
-              Config::cfg().arrowRadius,
-              1.0f,
-              _TextMiddle,
-              Qt::AlignHCenter | Qt::AlignBottom,
-              Material(Qt::lightGray),
-              _name + ".angleIM",
-              props,
-              materials)
-    , angleJM(true,
-              true,
-              0.4,
-              Config::cfg().lineRadius,
-              Config::cfg().arrowLength,
-              Config::cfg().arrowRadius,
-              1.0f,
-              _TextMiddle,
-              Qt::AlignHCenter | Qt::AlignBottom,
-              Material(Qt::lightGray),
-              _name + ".angleJM",
-              props,
-              materials)
-    , angleKM(true,
-              true,
-              0.4,
-              Config::cfg().lineRadius,
-              Config::cfg().arrowLength,
-              Config::cfg().arrowRadius,
-              1.0f,
-              _TextMiddle,
-              Qt::AlignHCenter | Qt::AlignBottom,
-              Material(Qt::lightGray),
-              _name + ".angleKI",
-              props,
-              materials)
+    , angleIJ(0.3, matAngles, _name + ".angleIJ", props, materials)
+    , angleJK(0.3, matAngles, _name + ".angleJK", props, materials)
+    , angleKI(0.3, matAngles, _name + ".angleKI", props, materials)
+    , angleIM(0.4, matAngles.darker(), _name + ".angleIM", props, materials)
+    , angleJM(0.4, matAngles.darker(), _name + ".angleJM", props, materials)
+    , angleKM(0.4, matAngles.darker(), _name + ".angleKI", props, materials)
 
 {
     props.push_back(&showSpin);
