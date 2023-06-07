@@ -57,7 +57,21 @@ struct DynamicValue : public DynamicProperty
      */
     QString getValueText(const uint64_t _timeStep) const
     {
-        return QString::number(getValue(_timeStep));
+        if constexpr (std::is_floating_point_v<T>)
+        {
+            QString result = QString::number(getValue(_timeStep), 'f', 3);
+            if (result.endsWith(".000"))
+                result.chop(4);
+            else
+                while (result.endsWith("0"))
+                    result.chop(1);
+
+            return result;
+        }
+        else
+        {
+            return QString::number(getValue(_timeStep));
+        }
     }
 
     /*!
@@ -164,6 +178,10 @@ struct DynamicValue : public DynamicProperty
 
         const uint64_t loopTime = dur12 + dur21;
         uint64_t tt = timeOn;
+
+        if (!values.empty() && values.back().first < tt)
+            values.push_back({tt, _value1});
+
         while (tt + loopTime < timeOff)
         {
             values.push_back({tt + dur12, _value2});

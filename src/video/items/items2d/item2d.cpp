@@ -12,6 +12,24 @@ const std::set<Qt::Alignment> Universe1::Video::Item2D::supportedAlignments = {
     (Qt::AlignHCenter | Qt::AlignVCenter),
 };
 
+QString Universe1::Video::Item2D::alignToText(const Qt::Alignment _alignment)
+{
+    QStringList flags;
+    if (_alignment.testFlag(Qt::AlignLeft))
+        flags << QObject::tr("Left");
+    if (_alignment.testFlag(Qt::AlignRight))
+        flags << QObject::tr("Right");
+    if (_alignment.testFlag(Qt::AlignHCenter))
+        flags << QObject::tr("Center - horizontal");
+    if (_alignment.testFlag(Qt::AlignTop))
+        flags << QObject::tr("Top");
+    if (_alignment.testFlag(Qt::AlignVCenter))
+        flags << QObject::tr("Center vertical");
+    if (_alignment.testFlag(Qt::AlignBottom))
+        flags << QObject::tr("Bottom");
+    return flags.join(" | ");
+}
+
 Universe1::Video::Item2D::Item2D(const bool _visible,
                                  const QString &_textHtml,
                                  const float _textSize,

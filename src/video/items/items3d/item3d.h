@@ -38,6 +38,34 @@ struct Item3D : public Item
     virtual void addData3D(std::list<Data3D> &_out, const Shader *_shader, const uint64_t _timeStep) const = 0;
 
     /*!
+     * \brief Add \b on value at time-step for visible property
+     * \param _timeStep
+     */
+    inline void addOn(const uint64_t _timeStep)
+    {
+        visible.addOn(_timeStep);
+    }
+
+    /*!
+     * \brief Add \b off value at time-step for visible property
+     * \param _timeStep
+     */
+    inline void addOff(const uint64_t _timeStep)
+    {
+        visible.addOff(_timeStep);
+    }
+
+    /*!
+     * \brief Add \b on and \b off values for visible property
+     * \param _timeStepOn On time ms
+     * \param _timeStepOff Off time ms
+     */
+    inline void addOnOff(const uint64_t _timeStepOn, const uint64_t _timeStepOff)
+    {
+        visible.addOnOff(_timeStepOn, _timeStepOff);
+    }
+
+    /*!
      * \brief Add hiding process, lowering alpha and shine, at ending time visible goes off and material is restored
      * \param _startHidingTime Start hiding time-step in ms
      * \param _endHidingTime End hiding time-step in ms
@@ -103,16 +131,6 @@ struct Item3D : public Item
     {
         const std::pair<uint, uint> lola = loLaPointCount(_quality);
         return {lola.first * lola.second + 2UL, lola.first * lola.second * 6UL};
-    }
-
-    /*!
-     * \brief Convert 3D vector to text
-     * \param _vec 3D vector
-     * \return 3D vector as text
-     */
-    static inline QString vecText(const QVector3D &_vec)
-    {
-        return QString("[%1 × %2 × %3]").arg(_vec.x(), 0, 'f', 0).arg(_vec.y(), 0, 'f', 0).arg(_vec.z(), 0, 'f', 0);
     }
 };
 

@@ -53,6 +53,7 @@ Universe1::Video::MainWindow::MainWindow(const std::list<Universe1::Video::Foota
     m_splitter = new QSplitter(Qt::Horizontal);
     m_splitter->addWidget(m_viewArea);
     m_splitter->addWidget(m_info);
+    m_splitter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_splitter->restoreState(QSettings().value("MainWindow__m_splitter").toByteArray());
 
     m_curFrameSlider1 = new QSlider(Qt::Horizontal);
@@ -62,7 +63,7 @@ Universe1::Video::MainWindow::MainWindow(const std::list<Universe1::Video::Foota
 
     QGridLayout *lay = new QGridLayout();
     lay->addWidget(m_splitter, 0, 0);
-    lay->addWidget(m_curFrameSlider1, 0, 1);
+    lay->addWidget(m_curFrameSlider1, 1, 0);
 
     QWidget *widMain = new QWidget();
     widMain->setLayout(lay);
@@ -83,7 +84,7 @@ Universe1::Video::MainWindow::MainWindow(const std::list<Universe1::Video::Foota
     m_zoomSlider->setToolTip(tr("Zoom"));
     m_zoomSlider->setRange(1, 5);
     m_zoomSlider->setValue(QSettings().value("MainWindow__m_zoom", 3).toInt());
-    m_zoomSlider->setTickPosition(QSlider::TicksAbove);
+    m_zoomSlider->setTickPosition(QSlider::TicksBelow);
     m_zoomSlider->setTickInterval(1);
     m_zoomSlider->setMinimumWidth(100);
     m_zoomSlider->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
@@ -92,7 +93,7 @@ Universe1::Video::MainWindow::MainWindow(const std::list<Universe1::Video::Foota
     m_createVideo = new QToolButton();
     m_createVideo->setCheckable(true);
     m_createVideo->setIcon(QIcon::fromTheme("document-save"));
-    m_createVideo->setToolTip(tr("Create video"));
+    m_createVideo->setToolTip(tr("Create video\n%1%2.%3").arg(m_cfg.outPath, m_cfg.outFileName, m_cfg.suffixVideo));
 
     m_expand = new QToolButton();
     m_expand->setCheckable(true);
@@ -116,12 +117,12 @@ Universe1::Video::MainWindow::MainWindow(const std::list<Universe1::Video::Foota
     connect(m_prev1, &QToolButton::clicked, this, &MainWindow::jumpPrev1);
 
     m_next10 = new QToolButton();
-    m_next10->setIcon(QIcon::fromTheme("object-rotate-left"));
+    m_next10->setIcon(QIcon::fromTheme("go-up"));
     m_next10->setToolTip(tr("Next 10 frames"));
     connect(m_next10, &QToolButton::clicked, this, &MainWindow::jumpNext10);
 
     m_prev10 = new QToolButton();
-    m_prev10->setIcon(QIcon::fromTheme("object-rotate-right"));
+    m_prev10->setIcon(QIcon::fromTheme("go-down"));
     m_prev10->setToolTip(tr("Previous 10 frames"));
     connect(m_prev10, &QToolButton::clicked, this, &MainWindow::jumpPrev10);
 
@@ -136,23 +137,23 @@ Universe1::Video::MainWindow::MainWindow(const std::list<Universe1::Video::Foota
     connect(m_prevSubs, &QToolButton::clicked, this, &MainWindow::jumpPrevSubs);
 
     m_nextFootage = new QToolButton();
-    m_nextFootage->setIcon(QIcon::fromTheme("go-up"));
+    m_nextFootage->setIcon(QIcon::fromTheme("go-top"));
     m_nextFootage->setToolTip(tr("Next footage"));
     connect(m_nextFootage, &QToolButton::clicked, this, &MainWindow::jumpNextFootage);
 
     m_prevFootage = new QToolButton();
-    m_prevFootage->setIcon(QIcon::fromTheme("go-down"));
+    m_prevFootage->setIcon(QIcon::fromTheme("go-bottom"));
     m_prevFootage->setToolTip(tr("Previous footage"));
     connect(m_prevFootage, &QToolButton::clicked, this, &MainWindow::jumpPrevFootage);
 
     m_first = new QToolButton();
-    m_first->setIcon(QIcon::fromTheme("go-bottom"));
-    m_first->setToolTip(tr("Next frame"));
+    m_first->setIcon(QIcon::fromTheme("object-rotate-right"));
+    m_first->setToolTip(tr("First frame"));
     connect(m_first, &QToolButton::clicked, this, &MainWindow::jumpFirst);
 
     m_last = new QToolButton();
-    m_last->setIcon(QIcon::fromTheme("go-top"));
-    m_last->setToolTip(tr("Previous frame"));
+    m_last->setIcon(QIcon::fromTheme("object-rotate-left"));
+    m_last->setToolTip(tr("Last frame"));
     connect(m_last, &QToolButton::clicked, this, &MainWindow::jumpLast);
 
     QToolBar *toolBar = addToolBar("toolBar");

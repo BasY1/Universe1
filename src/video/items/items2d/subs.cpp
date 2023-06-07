@@ -59,6 +59,23 @@ bool Universe1::Video::Subs::initialize(const uint64_t _duration)
     }
     delete doc;
 
+    if (hideTime == 0UL)
+    {
+        hideTime = _duration;
+    }
+    else if (showTime >= hideTime)
+    {
+        std::cerr << "Error[" << name << "]: Item hide time " << hideTime << "ms before show time " << showTime
+                  << "ms !" << std::endl;
+        return false;
+    }
+    else if (hideTime > _duration)
+    {
+        std::cerr << "Warning[" << name << "]: Repaired, hide time" << hideTime << "ms, footage end time " << _duration
+                  << "ms" << std::endl;
+        hideTime = _duration;
+    }
+
     return true;
 }
 
@@ -93,30 +110,28 @@ Universe1::Video::DBSubs::~DBSubs()
         delete ii;
 }
 
-Universe1::Video::Subs *Universe1::Video::DBSubs::add(const uint64_t _showTime,
-                                                      const uint64_t _hideTime,
-                                                      const QString &_textHtml,
-                                                      const QString &_textRead)
+uint64_t Universe1::Video::DBSubs::add(const std::pair<uint64_t, uint64_t> &_times,
+                                       const QString &_textHtml,
+                                       const QString &_textRead)
 {
     const uint64_t fd = Config::cfg().frameDuration;
-    const uint64_t tmodShow = _showTime % fd;
-    const uint64_t tmodHide = _hideTime % fd;
-    const uint64_t usedShowTime = _showTime + (tmodShow == 0UL ? 0UL : (fd - tmodShow));
-    const uint64_t usedHideTime = _hideTime + (tmodHide == 0UL ? 0UL : (fd - tmodHide));
+    const uint64_t tmodShow = _times.first % fd;
+    const uint64_t tmodAdd = _times.second % fd;
+    const uint64_t usedShowTime = _times.first + (tmodShow == 0UL ? 0UL : (fd - tmodShow));
+    const uint64_t usedAddTime = _times.second + (tmodAdd == 0UL ? 0UL : (fd - tmodAdd));
     const uint64_t sid = subs.size() + 1UL;
 
     const std::string name = footageName + ".subs[" + std::to_string(sid) + "]";
 
-    if (usedShowTime != _showTime)
+    if (usedShowTime != _times.first)
         std::cerr << "Warning[" << name << "]: Using aligned show time " << usedShowTime << "ms !" << std::endl;
 
-    if (usedHideTime != _hideTime)
-        std::cerr << "Warning[" << name << "]: Using aligned hide time " << usedHideTime << "ms !" << std::endl;
+    if (usedAddTime != _times.second)
+        std::cerr << "Warning[" << name << "]: Using aligned append time " << usedAddTime << "ms !" << std::endl;
 
-    Subs *result = new Subs(_textHtml, _textRead, name, usedShowTime, usedHideTime);
+    Subs *result = new Subs(_textHtml, _textRead, name, usedShowTime, 0UL);
     subs.push_back(result);
-
-    return result;
+    return result->nextSubtitleStart(usedAddTime);
 }
 
 bool Universe1::Video::DBSubs::initialize(const uint64_t _duration)

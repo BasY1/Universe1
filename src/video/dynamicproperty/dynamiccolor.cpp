@@ -121,6 +121,10 @@ void Universe1::Video::DynamicColor::addLoop(const uint64_t _timeStepStart,
 
     const uint64_t loopTime = dur12 + dur21;
     uint64_t tt = timeOn;
+
+    if (!values.empty() && values.back().first < tt)
+        values.push_back({tt, _value1});
+
     while (tt + loopTime < timeOff)
     {
         values.push_back({tt + dur12, _value2});

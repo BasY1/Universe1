@@ -17,6 +17,18 @@ Universe1::Video::Config::Config(const QString &_outPath,
     if (!outPath.endsWith(QDir::separator()))
         outPath += QDir::separator();
 
+    if (!QFile::exists(outPath))
+        QDir().mkpath(outPath);
+
+    if (!QFile::exists(outPath + dirSpeech))
+        QDir().mkpath(outPath + dirSpeech);
+
+    if (!QFile::exists(outPath + dirImages))
+        QDir().mkpath(outPath + dirImages);
+
+    if (!QFile::exists(outPath + dirAudio))
+        QDir().mkpath(outPath + dirAudio);
+
     switch (level)
     {
     case 1U:
@@ -96,8 +108,24 @@ void Universe1::Video::Config::showInfo() const
     std::cout << "Quality:           " << qualityLine << ", " << qualitySphere << std::endl;
     std::cout << "Frame duration:    " << frameDuration << "ms" << std::endl;
     std::cout << "Frames per second: " << (1000.0f / static_cast<float>(frameDuration)) << std::endl;
+    std::cout << "Text-to-speech:    " << tts.bin.toStdString() << " [" << tts.otps.join(", ").toStdString() << "]"
+              << std::endl;
+    std::cout << "Audio bit-rate:    " << audioKhzShorcut.toStdString() << " [" << audioKhz.toStdString() << "Hz]"
+              << std::endl;
     std::cout << "Audio database:    " << Config::speechDB.size() << ", silence: " << Config::silenceDB.size()
               << std::endl;
+}
+
+void Universe1::Video::Config::showInfo2(const size_t _cntFootages, const uint64_t _totalDuration) const
+{
+    if (!verbose)
+        return;
+    std::cout << "**************** Initializing footages" << std::endl
+              << "Footage count:     " << _cntFootages << std::endl
+              << "Video duration:    " << _totalDuration << "ms ["
+              << QTime::fromMSecsSinceStartOfDay(_totalDuration).toString("HH:mm:ss.zzz").toStdString() << "]"
+              << std::endl
+              << "Frame count:       " << (_totalDuration / frameDuration) << std::endl;
 }
 
 bool Universe1::Video::Config::clearSpeechDB()
@@ -327,24 +355,24 @@ std::pair<QString, uint64_t> Universe1::Video::Config::getSpeech(const QString &
 
 bool Universe1::Video::Config::createSpeech(const QString &_fileNameOut, const QString &_speech) const
 {
-    QStringList opts = m_cfg.ttsOpts;
-    if (m_cfg.ttsAddSpace && _speech.endsWith('.'))
+    QStringList opts = m_cfg.tts.otps;
+    if (m_cfg.tts.addSpace && _speech.endsWith('.'))
         opts.append({"-w", _fileNameOut, ("'" + _speech + " '")});
     else
         opts.append({"-w", _fileNameOut, ("'" + _speech + "'")});
 
     QProcess process;
-    process.start(m_cfg.ttsBin, opts, QIODevice::ReadOnly);
+    process.start(m_cfg.tts.bin, opts, QIODevice::ReadOnly);
     if (!process.waitForFinished(-1))
     {
-        std::cerr << "Error: " << m_cfg.ttsBin.toStdString() << " " << opts.join(" ").toStdString() << std::endl;
+        std::cerr << "Error: " << m_cfg.tts.bin.toStdString() << " " << opts.join(" ").toStdString() << std::endl;
         return false;
     }
 
     const QString e = process.readAllStandardError();
     if (!e.isEmpty())
     {
-        std::cerr << "Error: " << m_cfg.ttsBin.toStdString() << " " << e.toStdString() << std::endl;
+        std::cerr << "Error: " << m_cfg.tts.bin.toStdString() << " " << e.toStdString() << std::endl;
         return false;
     }
 
@@ -420,25 +448,6 @@ bool Universe1::Video::Config::normalizeAudio(const QString &_fileNameOut, const
     return true;
 }
 
-bool Universe1::Video::Config::createIndex(const QStringList &_imageFiles) const
-{
-    const QString file = m_cfg.outPath + m_cfg.dirImages + fileIndex;
-    QFile iFile(file);
-    if (!iFile.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-        std::cerr << "Error: Can't create index file: " << file.toStdString() << std::endl;
-        return EXIT_FAILURE;
-    }
-    QTextStream ts(&iFile);
-    const float iDur = static_cast<float>(m_cfg.frameDuration) / 1000.0f;
-    for (const QString &_fn : _imageFiles)
-        ts << "file '" << _fn << "'\nduration " << iDur << "\n";
-    ts << "file '" << _imageFiles.back() << "'\n";
-    iFile.flush();
-    iFile.close();
-    return true;
-}
-
 bool Universe1::Video::Config::createVideo() const
 {
     QStringList opts;
@@ -453,7 +462,7 @@ bool Universe1::Video::Config::createVideo() const
              << "0";
 
     opts << "-i" << (m_cfg.outPath + m_cfg.dirImages + m_cfg.fileIndex);
-    opts << "-i" << (m_cfg.outPath + m_cfg.outFileName + "." + m_cfg.suffixAudio);
+    opts << "-i" << (m_cfg.outPath + m_cfg.dirAudio + "audio." + m_cfg.suffixAudio);
 
     opts << "-c:v"
          << "libx264";

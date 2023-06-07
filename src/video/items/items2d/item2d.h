@@ -18,6 +18,14 @@ struct Item2D : public Item
     static const std::set<Qt::Alignment> supportedAlignments;  //!< Supported alignments collection
 
     /*!
+     * \brief Alignment to string
+     * \param _alignment Alignment
+     * \return Alignment as string
+     */
+
+    static QString alignToText(const Qt::Alignment _alignment);
+
+    /*!
      * \brief Constructor
      * \param _visible Initial visible flag
      * \param _textHtml Initial HTML text
@@ -47,6 +55,34 @@ struct Item2D : public Item
      * \return
      */
     virtual void paint(QPainter *_painter, const uint64_t _timeStep) const;
+
+    /*!
+     * \brief Add \b on value at time-step for visible property
+     * \param _timeStep
+     */
+    inline void addOn(const uint64_t _timeStep)
+    {
+        visible.addOn(_timeStep);
+    }
+
+    /*!
+     * \brief Add \b off value at time-step for visible property
+     * \param _timeStep
+     */
+    inline void addOff(const uint64_t _timeStep)
+    {
+        visible.addOff(_timeStep);
+    }
+
+    /*!
+     * \brief Add \b on and \b off values for visible property
+     * \param _timeStepOn On time ms
+     * \param _timeStepOff Off time ms
+     */
+    inline void addOnOff(const uint64_t _timeStepOn, const uint64_t _timeStepOff)
+    {
+        visible.addOnOff(_timeStepOn, _timeStepOff);
+    }
 
  protected:
     /*!

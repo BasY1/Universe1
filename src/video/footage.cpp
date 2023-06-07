@@ -356,22 +356,3 @@ bool Universe1::Video::Footage::getImage3D(QImage &_out, const uint64_t _timeSte
 
     return true;
 }
-
-std::list<Universe1::Video::FootageFactoryInterface *> Universe1::Video::Footages::sequence = {};
-
-uint64_t Universe1::Video::Footages::init(std::list<Footage *> &_footages)
-{
-    std::pair<QVector3D, QVector3D> camera = {QVector3D(1, -8, 3), QVector3D(0, 0, 0)};
-
-    uint64_t id = 1UL, tt = 0UL;
-    for (const FootageFactoryInterface *fi : sequence)
-    {
-        Footage *next = fi->create(id, tt, camera);
-        camera = next->camera.getLastState();
-        id++;
-        tt += next->duration;
-        _footages.push_back(next);
-    }
-    return tt;
-}
-

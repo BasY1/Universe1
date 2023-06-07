@@ -10,22 +10,22 @@ namespace Video {
 struct Item3DConstellation : public Item3D
 {
     // clang-format off
-    static const uint16_t _SPIN             = 0b0000000000000001; //!< Main spin visible
-    static const uint16_t _SPIN_VECTOR      = 0b0000000000000010; //!< Show spin vector
-    static const uint16_t _SPIN_AXIS        = 0b0000000000000100; //!< Show spin axis
-    static const uint16_t _SPIN_ARROWS      = 0b0000000000001000; //!< Show spin arrows
-    static const uint16_t _SPIN_DOTS        = 0b0000000000010000; //!< Show spin dots
-    static const uint16_t _SPIN_SPHERE      = 0b0000000000100000; //!< Show spin sphere
-    static const uint16_t _SPIN_TEXT        = 0b0000000001000000; //!< Show spin text
-    static const uint16_t _VELOCITY         = 0b0000000010000000; //!< Show velocity 
-    static const uint16_t _VELOCITY_TEXT    = 0b0000000100000000; //!< Show velocity text
-    static const uint16_t _CENTER_POINT     = 0b0000001000000000; //!< Show center point
-    static const uint16_t _CENTER_TEXT_NAME = 0b0000010000000000; //!< Show center point text
-    static const uint16_t _CENTER_TEXT_POS  = 0b0000100000000000; //!< Show center point position (text)
-    static const uint16_t _SPHERE_OUT       = 0b0001000000000000; //!< Show outer transparent sphere
-    static const uint16_t _SPHERE_IN        = 0b0010000000000000; //!< Show inner transparent sphere
-    static const uint16_t _ANGLES           = 0b0100000000000000; //!< Show angles
-    static const uint16_t _ANGLES_TEXT      = 0b1000000000000000; //!< Show angle labels
+    static const uint16_t _SPIN          = 0b0000000000000001; //!< Main spin visible
+    static const uint16_t _SPIN_VECTOR   = 0b0000000000000010; //!< Show spin vector
+    static const uint16_t _SPIN_AXIS     = 0b0000000000000100; //!< Show spin axis
+    static const uint16_t _SPIN_ARROWS   = 0b0000000000001000; //!< Show spin arrows
+    static const uint16_t _SPIN_DOTS     = 0b0000000000010000; //!< Show spin dots
+    static const uint16_t _SPIN_SPHERE   = 0b0000000000100000; //!< Show spin sphere
+    static const uint16_t _SPIN_TEXT     = 0b0000000001000000; //!< Show spin text
+    static const uint16_t _VELOCITY      = 0b0000000010000000; //!< Show velocity 
+    static const uint16_t _VELOCITY_TEXT = 0b0000000100000000; //!< Show velocity text
+    static const uint16_t _CENTER_POINT  = 0b0000001000000000; //!< Show center point
+    static const uint16_t _CENTER_TEXT   = 0b0000010000000000; //!< Show center point text
+    static const uint16_t _CENTER_DOTS   = 0b0000100000000000; //!< Show center point position (text)
+    static const uint16_t _SPHERE_OUT    = 0b0001000000000000; //!< Show outer transparent sphere
+    static const uint16_t _SPHERE_IN     = 0b0010000000000000; //!< Show inner transparent sphere
+    static const uint16_t _ANGLES        = 0b0100000000000000; //!< Show angles
+    static const uint16_t _ANGLES_TEXT   = 0b1000000000000000; //!< Show angle labels
     // clang-format on
 
     static const Material matV1;   //!< Default material for generation 1 velocity
@@ -52,22 +52,22 @@ struct Item3DConstellation : public Item3D
     static const float offsetAxis1;              //!< Offset for axis line (far points)
     static const float offsetAxis2;              //!< Offset for axis line (from vector end)
 
-    DynamicBool showSpin;            //!< Main spin visible
-    DynamicBool showSpinVector;      //!< Show spin vector
-    DynamicBool showSpinAxis;        //!< Show spin axis
-    DynamicBool showSpinArrows;      //!< Show spin arrows
-    DynamicBool showSpinDots;        //!< Show spin dots
-    DynamicBool showSpinSphere;      //!< Show spin sphere
-    DynamicBool showSpinText;        //!< Show spin text
-    DynamicBool showVelocity;        //!< Show velocity arrow
-    DynamicBool showVelocityText;    //!< Show velocity text
-    DynamicBool showCenter;          //!< Show center point
-    DynamicBool showCenterTextName;  //!< Show center point text
-    DynamicBool showCenterTextPos;   //!< Show center point position (text)
-    DynamicBool showSphereOuter;     //!< Show outer transparent sphere
-    DynamicBool showSphereInner;     //!< Show inner transparent sphere
-    DynamicBool showAngles;          //!< Show angles
-    DynamicBool showAngleText;       //!< Show angle labels
+    DynamicBool showSpin;          //!< Main spin visible
+    DynamicBool showSpinVector;    //!< Show spin vector
+    DynamicBool showSpinAxis;      //!< Show spin axis
+    DynamicBool showSpinArrows;    //!< Show spin arrows
+    DynamicBool showSpinDots;      //!< Show spin dots
+    DynamicBool showSpinSphere;    //!< Show spin sphere
+    DynamicBool showSpinText;      //!< Show spin text
+    DynamicBool showVelocity;      //!< Show velocity arrow
+    DynamicBool showVelocityText;  //!< Show velocity text
+    DynamicBool showCenter;        //!< Show center point
+    DynamicBool showCenterText;    //!< Show center point text
+    DynamicBool showCenterDots;    //!< Show center point height dots (from zero XY plane)
+    DynamicBool showSphereOuter;   //!< Show outer transparent sphere
+    DynamicBool showSphereInner;   //!< Show inner transparent sphere
+    DynamicBool showAngles;        //!< Show angles
+    DynamicBool showAngleText;     //!< Show angle labels
 
     DynamicEnum<Math::ConstellationType> type;  //!< Constellation type
 
@@ -87,6 +87,7 @@ struct Item3DConstellation : public Item3D
 
     DynamicValue<float> centerRadius;      //!< Center cross radius
     DynamicValue<float> centerRadiusLine;  //!< Center cross radius line
+    DynamicValue<uint> centerDotsMult;     //!< Center dot line space multiplier
     DynamicTextGroup centerText;           //!< Center text group
 
     DynamicValue<uint> qualityLatLong;  //!< Quality for wire-frame sphere latitude-longitude steps

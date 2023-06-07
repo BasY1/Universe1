@@ -434,14 +434,7 @@ class Footage : public QObject
      */
     inline static QString tNum(const double _val)
     {
-        QString result = QString::number(_val, 'f', 3);
-        if (result.endsWith(".000"))
-            result.chop(4);
-        else
-            while (result.endsWith("0"))
-                result.chop(1);
-
-        return result;
+        return Config::cfg().tNum(_val);
     }
 
     /*!
@@ -451,7 +444,7 @@ class Footage : public QObject
      */
     inline static QString tVec(const QVector3D &_vec)
     {
-        return tr("[%1, %2, %3]").arg(tNum(_vec.x()), tNum(_vec.y()), tNum(_vec.z()));
+        return Config::cfg().tVec(_vec);
     }
 
     /*!
@@ -475,10 +468,23 @@ class Footage : public QObject
      * \param _cellpadding Table cell padding
      * \return HTML table
      */
-    static QString mkTab(const std::vector<QString> &_rows,
-                         const QString &_align = "center",
-                         const bool _border = false,
-                         const int _cellpadding = 5);
+    inline static QString mkTab(const std::vector<QString> &_rows,
+                                const QString &_align = "center",
+                                const bool _border = false,
+                                const int _cellpadding = 5)
+    {
+        QString result = "<table";
+        if (_border)
+            result += " border=\"1\"";
+        if (_cellpadding > 0)
+            result += " cellpadding=\"" + QString::number(_cellpadding) + "\"";
+        result += ">";
+
+        for (const QString &r : _rows)
+            result += "<tr><td align=\"" + _align + "\">" + r + "</td></tr>";
+        result += "</table>";
+        return result;
+    }
 
     /*!
      * \brief Make \b N column HTML table - template
@@ -592,78 +598,6 @@ class Footage : public QObject
     {
         return mkTabT<5>(_rows, _aligns, _border, _cellpadding);
     }
-};
-
-/*! \brief Footage factory interface */
-class FootageFactoryInterface
-{
- public:
-    /*!
-     * \brief Create footage
-     * \param _footageId Footage ID
-     * \param _footageStartTime Footage starting time within overall video in ms
-     * \param _lastCamera Last camera position from previous footage
-     * \return Created object
-     */
-    virtual Footage *create(const uint64_t _footageId,
-                            const uint64_t _footageStartTime,
-                            const std::pair<QVector3D, QVector3D> &_lastCamera) const = 0;
-};
-
-/*!
- * \brief Footage factory
- * \tparam T Footage class
- */
-template <typename T>
-class FootageFactory : public FootageFactoryInterface
-{
- public:
-    /*!
-     * \brief Constructor
-     */
-    template <typename = std::enable_if<std::is_base_of<Footage, T>::value>>
-    inline FootageFactory()
-    {
-    }
-
-    /*!
-     * \brief Create footage
-     * \param _footageId Footage ID
-     * \param _footageStartTime Footage starting time within overall video in ms
-     * \param _lastCamera Last camera position from previous footage
-     * \return Created object
-     */
-    Footage *create(const uint64_t _footageId,
-                    const uint64_t _footageStartTime,
-                    const std::pair<QVector3D, QVector3D> &_lastCamera) const
-    {
-        return new T(_footageId, _footageStartTime, _lastCamera);
-    }
-};
-
-/*!
- * \brief Footage database
- */
-struct Footages
-{
-    static std::list<FootageFactoryInterface *> sequence;  //!< Sequence of footage classes
-
-    /*!
-     * \brief Append footage class to sequence
-     * \return
-     */
-    template <typename T>
-    static void add()
-    {
-        sequence.push_back(new FootageFactory<T>());
-    }
-
-    /*!
-     * \brief Initialize footage
-     * \param _footages Output footage objects
-     * \return Total video duration in ms
-     */
-    static uint64_t init(std::list<Footage *> &_footages);
 };
 
 }  // namespace Video

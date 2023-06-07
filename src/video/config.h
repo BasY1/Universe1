@@ -53,16 +53,18 @@ struct Config
 
     double audioNormalize = 0.3;  //!< Normalizing factor for final audio (0 = disabled)
 
-    /*! \brief Text-to-speech engine */
-    QString ttsBin = "/usr/bin/espeak";  // "/usr/bin/pico2wave"
+    /*! \brief Text-to-speech options structure */
+    struct TTS
+    {
+        QString bin;       //!< Text-to-speech engine executable
+        QStringList otps;  //!< Options for text-to-speech engine
+        bool addSpace;     //!< Add 1 space character after last sentence dot
+    };
 
-    /*! \brief Options for text-to-speech */
-    QStringList ttsOpts = {};  // espeak
-    // QStringList ttsOpts = {"-l", "en-US"};                                   // pico2wave
-    // QStringList ttsOpts = {"-k10", "-p", "30", "-s", "150"};                 // espeak modified
-    // QStringList ttsOpts = {"-v", "slovak", "-k10", "-p", "30", "-s", "150"}; // espeak Slovak
-
-    bool ttsAddSpace = (ttsBin == "/usr/bin/espeak");  //!< Add 1 space character after last sentence dot
+    TTS tts = {"/usr/bin/espeak", {"-k10", "-p", "30", "-s", "150"}, true};  //!< Text-to-speech
+    // TTS tts = {"/usr/bin/pico2wave", {"-l", "en-US"}, false};  //!< Text-to-speech
+    // TTS tts = {"/usr/bin/espeak", {}, true};  //!< Text-to-speech
+    // TTS tts = {"/usr/bin/espeak", {"-v", "slovak", "-k10", "-p", "30", "-s", "150"}, true}; //!< Text-to-speech
 
     uint widthScreen = 1024U;       //!< Screen width
     uint heightScreen = 576U;       //!< Screen height
@@ -124,6 +126,13 @@ struct Config
     void showInfo() const;  //!< Log status
 
  public:
+    /*!
+     * \brief Log secondary status after footage creation
+     * \param _cntFootages Footage count
+     * \param _totalDuration Total video duration in ms
+     */
+    void showInfo2(const size_t _cntFootages, const uint64_t _totalDuration) const;
+
     /*!
      * \brief Initialize singleton instance
      * \param _outPath Output directory
@@ -200,6 +209,33 @@ struct Config
     {
         const uint64_t tmod = _timeStep % frameDuration;
         return _timeStep + (tmod == 0UL ? 0UL : (frameDuration - tmod));
+    }
+
+    /*!
+     * \brief Create number text
+     * \param _val Value
+     * \return Number as text
+     */
+    inline static QString tNum(const double _val)
+    {
+        QString result = QString::number(_val, 'f', 3);
+        if (result.endsWith(".000"))
+            result.chop(4);
+        else
+            while (result.endsWith("0"))
+                result.chop(1);
+
+        return result;
+    }
+
+    /*!
+     * \brief Create 3D vector as text
+     * \param _vec 3D vector
+     * \return 3D vector as text
+     */
+    inline static QString tVec(const QVector3D &_vec)
+    {
+        return QString("[%1 × %2 × %3]").arg(tNum(_vec.x()), tNum(_vec.y()), tNum(_vec.z()));
     }
 
     /*!
@@ -281,13 +317,6 @@ struct Config
      * \return Success flag
      */
     bool normalizeAudio(const QString &_fileNameOut, const QString &_fileNameIn) const;
-
-    /*!
-     * \brief Create index file for ffmpeg process
-     * \param _imageFiles List of image files
-     * \return Success flag
-     */
-    bool createIndex(const QStringList &_imageFiles) const;
 
     /*!
      * \brief Create final video

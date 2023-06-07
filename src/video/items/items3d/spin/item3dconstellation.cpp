@@ -48,8 +48,8 @@ Universe1::Video::Item3DConstellation::Item3DConstellation(const uint16_t _showF
     , showVelocity((_showFlags & _VELOCITY) != 0U, _name + ".showVelocity")
     , showVelocityText((_showFlags & _VELOCITY_TEXT) != 0U, _name + ".showVelocityText")
     , showCenter((_showFlags & _CENTER_POINT) != 0U, _name + ".showCenter")
-    , showCenterTextName((_showFlags & _CENTER_TEXT_NAME) != 0U, _name + ".showCenterName")
-    , showCenterTextPos((_showFlags & _CENTER_TEXT_POS) != 0U, _name + ".showCenterPos")
+    , showCenterText((_showFlags & _CENTER_TEXT) != 0U, _name + ".showCenterText")
+    , showCenterDots((_showFlags & _CENTER_DOTS) != 0U, _name + ".showCenterDots")
     , showSphereOuter((_showFlags & _SPHERE_OUT) != 0U, _name + ".showSphereOuter")
     , showSphereInner((_showFlags & _SPHERE_IN) != 0U, _name + ".showSphereInner")
     , showAngles((_showFlags & _ANGLES) != 0U, _name + ".showAngles")
@@ -72,6 +72,7 @@ Universe1::Video::Item3DConstellation::Item3DConstellation(const uint16_t _showF
 
     , centerRadius(Config::cfg().lineRadius * 5.0f, _name + ".centerRadius")
     , centerRadiusLine(Config::cfg().lineRadius, _name + ".centerRadiusLine")
+    , centerDotsMult(Config::cfg().lineMultSpace, _name + ".centerDotsMult")
     , centerText(_text, 1.0, Qt::AlignHCenter | Qt::AlignBottom, _name + ".centerText", props)
 
     , qualityLatLong(Config::cfg().qualityLatLong, _name + ".qualityLatLong")
@@ -104,8 +105,8 @@ Universe1::Video::Item3DConstellation::Item3DConstellation(const uint16_t _showF
     props.push_back(&showSpinSphere);
     props.push_back(&showSpinText);
     props.push_back(&showCenter);
-    props.push_back(&showCenterTextName);
-    props.push_back(&showCenterTextPos);
+    props.push_back(&showCenterText);
+    props.push_back(&showCenterDots);
     props.push_back(&showSphereOuter);
     props.push_back(&showSphereInner);
     props.push_back(&showAngles);
@@ -124,6 +125,7 @@ Universe1::Video::Item3DConstellation::Item3DConstellation(const uint16_t _showF
     props.push_back(&velocityTextAlign);
     props.push_back(&centerRadius);
     props.push_back(&centerRadiusLine);
+    props.push_back(&centerDotsMult);
     props.push_back(&qualityLatLong);
     props.push_back(&qualitySphere);
     props.push_back(&qualityLine);
@@ -144,28 +146,26 @@ void Universe1::Video::Item3DConstellation::addData3DCenter(std::list<Data3D> &_
     const float cr = centerRadius.getValue(_timeStep);
     const float lr = centerRadiusLine.getValue(_timeStep);
 
-    const bool isCenterPos = showCenterTextPos.getValue(_timeStep);
-    bool isCenterName = showCenterTextName.getValue(_timeStep);
-    const QString cTxt = isCenterName ? centerText.text.getValue(_timeStep) : QString();
-    isCenterName = (isCenterName && !cTxt.isEmpty());
-
     Item3DLineCross::buildData(_out, _center, _normal, _arm, Item3DLineCross::_Diagonals, cr, lr, _quality, mc);
 
-    QString txt;
-    if (isCenterName && isCenterPos)
-        txt = "<table><tr><td align=\"center\">" + cTxt + "</td></tr><tr><td align=\"center\"><sup>" +
-            vecText(_center) + "</sup></td></tr></table>";
-    else if (isCenterName)
-        txt = cTxt;
-    else if (isCenterPos)
-        txt = vecText(_center);
-    else
-        return;
+    if (showCenterText.getValue(_timeStep))
+    {
+        const QString cTxt = centerText.text.getValue(_timeStep).replace("$VAL$", Config::cfg().tVec(_center));
+        if (!cTxt.isEmpty())
+        {
+            const float ts = centerText.sizeMult.getValue(_timeStep);
+            const Qt::Alignment ta = centerText.align.getValue(_timeStep);
 
-    const float ts = centerText.sizeMult.getValue(_timeStep);
-    const Qt::Alignment ta = centerText.align.getValue(_timeStep);
+            Item3DText::buildData(_out, _shader, cTxt, ts, ta, _center + QVector3D(0, 0, 3) * cr, mc);
+        }
+    }
 
-    Item3DText::buildData(_out, _shader, txt, ts, ta, _center + QVector3D(0, 0, 3) * cr, mc);
+    if (showCenterDots.getValue(_timeStep) && !qFuzzyIsNull(_center.z()))
+    {
+        const uint mult = centerDotsMult.getValue(_timeStep);
+        Item3DLineDotsSegment::buildData(
+            _out, _center, {_center.x(), _center.y(), 0.0f}, lr * 0.75f, mult, _quality, mc.darker());
+    }
 }
 
 void Universe1::Video::Item3DConstellation::addData3DVelocity(std::list<Data3D> &_out,

@@ -59,13 +59,13 @@ struct Subs : public Item
     }
 
     /*!
-     * \brief Return fixed hide time
-     * \param _add Silence time addition in ms
+     * \brief Return optimum time to for showing next subtitle
+     * \param _appendTime Silence time addition in ms
      * \return Aligned total duration with addition
      */
-    inline uint64_t fixTime(const uint64_t _add = 0UL) const
+    inline uint64_t nextSubtitleStart(const uint64_t _appendTime = 0UL) const
     {
-        return showTime + audioDurationAligned() + _add;
+        return showTime + audioDurationAligned() + _appendTime;
     }
 
     /*!
@@ -109,47 +109,22 @@ struct DBSubs
 
     /*!
      * \brief Add subtitle
-     * \param _showTime Show time in ms
-     * \param _hideTime Hide time in ms
+     * \param _times Show and append time in ms
      * \param _textHtml Subtitle text
      * \param _textRead Speech text for TTS engine
-     * \return Created item
+     * \return Next subtitle optimum start
      */
-    Subs *add(const uint64_t _showTime, const uint64_t _hideTime, const QString &_textHtml, const QString &_textRead);
+    uint64_t add(const std::pair<uint64_t, uint64_t> &_times, const QString &_textHtml, const QString &_textRead);
 
     /*!
      * \brief Add subtitle
-     * \param _showTime Show time in ms
-     * \param _textHtml Subtitle text
-     * \param _textRead Speech text for TTS engine
-     * \return Created item
-     */
-    inline Subs *add(const uint64_t _showTime, const QString &_textHtml, const QString &_textRead)
-    {
-        return add(_showTime, 0UL, _textHtml, _textRead);
-    }
-
-    /*!
-     * \brief Add subtitle
-     * \param _showTime Show time in ms
-     * \param _hideTime Hide time in ms
+     * \param _times Show and append time in ms
      * \param _textHtml Subtitle and speech text
-     * \return Created item
+     * \return Next subtitle optimum start
      */
-    inline Subs *add(const uint64_t _showTime, const uint64_t _hideTime, const QString &_textHtml)
+    inline uint64_t add(const std::pair<uint64_t, uint64_t> &_times, const QString &_textHtml)
     {
-        return add(_showTime, _hideTime, _textHtml, _textHtml);
-    }
-
-    /*!
-     * \brief Add subtitle
-     * \param _showTime Show time in ms
-     * \param _textHtml Subtitle and speech text
-     * \return Created item
-     */
-    inline Subs *add(const uint64_t _showTime, const QString &_textHtml)
-    {
-        return add(_showTime, 0UL, _textHtml, _textHtml);
+        return add(_times, _textHtml, _textHtml);
     }
 
     /*!

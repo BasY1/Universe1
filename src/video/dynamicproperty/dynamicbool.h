@@ -92,7 +92,7 @@ struct DynamicBool : public DynamicProperty
     }
 
     /*!
-     * \brief Add \b off and \b off values
+     * \brief Add \b on and \b off values
      * \param _timeStepOn On time ms
      * \param _timeStepOff Off time ms
      */
