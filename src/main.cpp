@@ -5,6 +5,8 @@
 
 #include <QApplication>
 
+#include "UnitTests/test_math.cc"
+
 /*!
  * \brief The \b main procedure
  * \param argc Argument count
@@ -16,5 +18,8 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     Q_UNUSED(app)
 
-    return EXIT_SUCCESS;
+    testing::InitGoogleTest();
+    return RUN_ALL_TESTS();
+
+    // EXIT_SUCCESS;
 }

@@ -5,6 +5,7 @@
 #ifndef MATH_TYPE_H
 #define MATH_TYPE_H
 
+#include <functional>
 #include <cmath>
 #include <limits>
 #include <type_traits>
@@ -620,7 +621,7 @@ inline size_t mixHashData(const T *_data, const size_t _size)
     size_t result = 0UL;
     size_t offset = 1UL;
     for (size_t i = 0; i < _size; ++i)
-        updateHash(result, offset, std::hash<float>{}(_data[i]));
+        updateHash(result, offset, std::hash<T>{}(_data[i]));
     return result;
 }
 
@@ -821,7 +822,7 @@ inline size_t mixHash(const size_t _1,
 }
 
 /*!
- * \brief Mix 10 hash values
+ * \brief Mix 12     hash values
  * \param _1 Value 1
  * \param _2 Value 2
  * \param _3 Value 3
