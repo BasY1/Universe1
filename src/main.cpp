@@ -1,3 +1,8 @@
+/*!
+ * \file src/main.cpp
+ * \brief The \b main procedure file
+ */
+
 #include <QApplication>
 
 /*!
