@@ -11,6 +11,7 @@ HEADERS += src/Math/multithread.h
 HEADERS += src/Math/vec2.h
 HEADERS += src/Math/vec3.h
 HEADERS += src/Math/colorrgb.h
+HEADERS += src/Math/material.h
 
 SOURCES += src/main.cpp
 

@@ -51,6 +51,15 @@ struct ColorRGB
     }
 
     /*!
+     * \brief Calculate hash value
+     * \return Hash value from data
+     */
+    inline size_t toHash() const
+    {
+        return mixHash(std::hash<uint8_t>{}(red), std::hash<uint8_t>{}(green), std::hash<uint8_t>{}(blue));
+    }
+
+    /*!
      * \brief Returns half darker color
      * \return Half darker color
      * \note RGB components are divided by 2
@@ -92,15 +101,6 @@ struct ColorRGB
     }
 
     /*!
-     * \brief Calculate hash value
-     * \return Hash value from data
-     */
-    inline size_t toHash() const
-    {
-        return mixHash(std::hash<uint8_t>{}(red), std::hash<uint8_t>{}(green), std::hash<uint8_t>{}(blue));
-    }
-
-    /*!
      * \brief Compare operator
      * \param other Other color
      * \return \c true if objects equals
@@ -121,7 +121,7 @@ struct ColorRGB
     }
 
     /*!
-     * \brief Rainbow pattern
+     * \brief Color from rainbow gradient
      * \param _ratio Rainbow gradient offset (0 to 1)
      * \return Color from a rainbow gradient
      */
@@ -164,7 +164,6 @@ struct ColorRGB
 
 /*!
  * \brief Fill output text stream
- * \tparam T Template floating point type
  * \param _os Output text stream
  * \param _v Color
  * \return Output text stream

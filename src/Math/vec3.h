@@ -1777,7 +1777,6 @@ size_t Vec3<T>::mixHash(const std::pair<Vec3<T>, Vec3<T>> *_data, const size_t _
 /*!
  * \brief Calculate hash of 3D vector pair array
  * \param _data 3D vector pair array
- * \param _count Array size
  * \return Calculated hash
  */
 template <typename T>
