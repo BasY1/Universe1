@@ -205,6 +205,12 @@ struct Vec3
     }
 
     inline size_t toHash() const;
+
+    static size_t mixHash(const Vec3<T> *_data, const size_t _count);
+    inline static size_t mixHash(const std::vector<Vec3<T>> &_data);
+
+    static size_t mixHash(const std::pair<Vec3<T>, Vec3<T>> *_data, const size_t _count);
+    inline static size_t mixHash(const std::vector<std::pair<Vec3<T>, Vec3<T>>> &_data);
 };
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -220,7 +226,7 @@ struct Vec3
 inline float angleRad(const QVector3D &_v1, const QVector3D &_v2)
 {
     const float lenSq = _v1.lengthSquared() * _v2.lengthSquared();
-    if (isNull(lenSq))
+    if (Math::isNull(lenSq))
         return 0.0f;
     float result = QVector3D::dotProduct(_v1, _v2);
     if (!isUnit<float>(lenSq))
@@ -278,7 +284,7 @@ inline QVector3D rotatedVec3d(const QVector3D &_point, const QVector3D &_normal,
  */
 inline QVector3D perpendicularNormal(const QVector3D &_normal)
 {
-    if (isNull<float>(_normal.y()) && isNull<float>(_normal.z()))
+    if (Math::isNull<float>(_normal.y()) && Math::isNull<float>(_normal.z()))
         return QVector3D::crossProduct(_normal, {0, 1, 0}).normalized();
     else
         return QVector3D::crossProduct(_normal, {1, 0, 0}).normalized();
@@ -292,7 +298,7 @@ inline QVector3D perpendicularNormal(const QVector3D &_normal)
  */
 inline QVector3D perpendicularNormalUp(const QVector3D &_normal)
 {
-    if (isNull<float>(_normal.x()) && isNull<float>(_normal.y()))
+    if (Math::isNull<float>(_normal.x()) && Math::isNull<float>(_normal.y()))
         return QVector3D(1, 0, 0);
     else
         return QVector3D::crossProduct(QVector3D::crossProduct(_normal, {0, 0, 1}).normalized(), _normal).normalized();
@@ -307,7 +313,7 @@ inline QVector3D perpendicularNormalUp(const QVector3D &_normal)
 inline void fixPerpendicular(QVector3D &_normal, QVector3D &_arm)
 {
     float tmp = _normal.lengthSquared();
-    if (isNull<float>(tmp))
+    if (Math::isNull<float>(tmp))
         _normal = {1, 0, 0};
     else if (!isUnit<float>(tmp))
         _normal = _normal / std::sqrt(tmp);
@@ -317,7 +323,7 @@ inline void fixPerpendicular(QVector3D &_normal, QVector3D &_arm)
     {
         _arm = perpendicularNormal(_normal);
     }
-    else if (isNull<float>(QVector3D::dotProduct(_normal, _arm)))
+    else if (Math::isNull<float>(QVector3D::dotProduct(_normal, _arm)))
     {
         if (!isUnit<float>(tmp))
             _arm = _arm / std::sqrt(tmp);
@@ -1715,6 +1721,69 @@ template <typename T>
 inline size_t Vec3<T>::toHash() const
 {
     return Math::mixHash(std::hash<T>{}(x), std::hash<T>{}(y), std::hash<T>{}(z));
+}
+
+/*!
+ * \brief Calculate hash of 3D vector array
+ * \param _data 3D vector array
+ * \param _count Array size
+ * \return Calculated hash
+ */
+template <typename T>
+size_t Vec3<T>::mixHash(const Vec3<T> *_data, const size_t _count)
+{
+    if (_count == 0UL)
+        return 0UL;
+    size_t offset = 1UL;
+    size_t result = _data[0UL].toHash();
+    for (size_t i = 1UL; i < _count; ++i)
+        updateHash(result, offset, _data[i].toHash());
+    return result;
+}
+
+/*!
+ * \brief Calculate hash of 3D vector array
+ * \param _data 3D vector array
+ * \return Calculated hash
+ */
+template <typename T>
+size_t Vec3<T>::mixHash(const std::vector<Vec3<T>> &_data)
+{
+    return Vec3<T>::mixHash(_data.data(), _data.size());
+}
+
+/*!
+ * \brief Calculate hash of 3D vector pair array
+ * \param _data 3D vector pair array
+ * \param _count Array size
+ * \return Calculated hash
+ */
+template <typename T>
+size_t Vec3<T>::mixHash(const std::pair<Vec3<T>, Vec3<T>> *_data, const size_t _count)
+{
+    if (_count == 0UL)
+        return 0UL;
+    size_t offset = 1UL;
+    size_t result = _data[0UL].first.toHash();
+    updateHash(result, offset, _data[0UL].second.toHash());
+    for (size_t i = 1UL; i < _count; ++i)
+    {
+        updateHash(result, offset, _data[i].first.toHash());
+        updateHash(result, offset, _data[i].second.toHash());
+    }
+    return result;
+}
+
+/*!
+ * \brief Calculate hash of 3D vector pair array
+ * \param _data 3D vector pair array
+ * \param _count Array size
+ * \return Calculated hash
+ */
+template <typename T>
+size_t Vec3<T>::mixHash(const std::vector<std::pair<Vec3<T>, Vec3<T>>> &_data)
+{
+    return Vec3<T>::mixHash(_data.data(), _data.size());
 }
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

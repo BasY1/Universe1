@@ -186,6 +186,7 @@ struct Vec2
     static Vec2<T> fromQVector2D(const QVector2D &_value);
 
     inline size_t toHash() const;
+    static size_t mixHash(const Vec2<T> *_data, const size_t _count);
 };
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1216,6 +1217,24 @@ template <typename T>
 inline size_t Vec2<T>::toHash() const
 {
     return Math::mixHash(std::hash<T>{}(x), std::hash<T>{}(y));
+}
+
+/*!
+ * \brief Calculate hash of 2D vector array
+ * \param _data 2D vector array
+ * \param _count Array size
+ * \return Calculated hash
+ */
+template <typename T>
+size_t Vec2<T>::mixHash(const Vec2<T> *_data, const size_t _count)
+{
+    if (_count == 0UL)
+        return 0UL;
+    size_t offset = 1UL;
+    size_t result = _data[0UL].toHash();
+    for (size_t i = 1UL; i < _count; ++i)
+        updateHash(result, offset, _data[i].toHash());
+    return result;
 }
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
