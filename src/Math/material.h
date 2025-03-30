@@ -125,6 +125,7 @@ struct MaterialRGBA
      * \param _diffuse Initial diffuse color
      * \param _specular Initial specular color
      * \param _shine Initial shine factor
+     * \param _alpha Initial alpha factor
      */
     inline MaterialRGBA(const ColorRGB &_ambient,
                         const ColorRGB &_diffuse,
