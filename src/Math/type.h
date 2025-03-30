@@ -124,7 +124,7 @@ inline long double epsilon()
 template <typename T>
 inline typename std::enable_if<std::is_floating_point<T>::value, bool>::type isNull(const T _value)
 {
-    return -Type::epsilon<T>() < _value && Type::epsilon<T>() > _value;
+    return -Epsilon::epsilon<T>() < _value && Epsilon::epsilon<T>() > _value;
 }
 
 /*!
@@ -150,7 +150,7 @@ inline typename std::enable_if<std::is_integral<T>::value, bool>::type isNull(co
 template <typename T>
 inline typename std::enable_if<std::is_floating_point<T>::value, bool>::type isPositive(const T _value)
 {
-    return Type::epsilon<T>() < _value;
+    return Epsilon::epsilon<T>() < _value;
 }
 
 /*!
@@ -176,7 +176,7 @@ inline typename std::enable_if<std::is_integral<T>::value, bool>::type isPositiv
 template <typename T>
 inline typename std::enable_if<std::is_floating_point<T>::value, bool>::type isNegative(const T _value)
 {
-    return -Type::epsilon<T>() > _value;
+    return -Epsilon::epsilon<T>() > _value;
 }
 
 /*!
@@ -233,9 +233,7 @@ template <typename T>
 inline typename std::enable_if<std::is_floating_point<T>::value, bool>::type
 equals(const T _value1, const T _value2, const T _value3)
 {
-    return                              //
-        equals<T>(_value1, _value2) &&  //
-        equals<T>(_value1, _value3);    // && TypeEquals<T>(value2, _value3);
+    return equals<T>(_value1, _value2) && equals<T>(_value1, _value3);
 }
 
 /*!
@@ -266,7 +264,7 @@ template <typename T>
 inline typename std::enable_if<std::is_floating_point<T>::value, bool>::type isLessOrEqual(const T _value1,
                                                                                            const T _value2)
 {
-    return -Type::epsilon<T>() < (_value2 - _value1);
+    return -Epsilon::epsilon<T>() < (_value2 - _value1);
 }
 
 /*!
@@ -295,7 +293,7 @@ template <typename T>
 inline typename std::enable_if<std::is_floating_point<T>::value, bool>::type isLessNotEqual(const T _value1,
                                                                                             const T _value2)
 {
-    return Type::epsilon<T>() < (_value2 - _value1);
+    return Epsilon::epsilon<T>() < (_value2 - _value1);
 }
 
 /*!
@@ -324,7 +322,7 @@ template <typename T>
 inline typename std::enable_if<std::is_floating_point<T>::value, bool>::type isMoreOrEqual(const T _value1,
                                                                                            const T _value2)
 {
-    return -Type::epsilon<T>() < (_value1 - _value2);
+    return -Epsilon::epsilon<T>() < (_value1 - _value2);
 }
 
 /*!
@@ -353,7 +351,7 @@ template <typename T>
 inline typename std::enable_if<std::is_floating_point<T>::value, bool>::type isMoreNotEqual(const T _value1,
                                                                                             const T _value2)
 {
-    return Type::epsilon<T>() < (_value1 - _value2);
+    return Epsilon::epsilon<T>() < (_value1 - _value2);
 }
 
 /*!
@@ -886,7 +884,7 @@ int solvePolynom3(T &_out1, T &_out2, T &_out3, const T _A, const T _B, const T 
     const T q3 = q * q * q;  // q3 = q*q*q;
     const T AAA = _A / T(3);
 
-    if (r2 <= (q3 + Type::epsilon<T>()))
+    if (r2 <= (q3 + Epsilon::epsilon<T>()))
     {
         const T t = std::acos(alignedToPM1<T>(r / std::sqrt(q3)));
         const T qq = -T(2) * std::sqrt(q);
@@ -901,7 +899,7 @@ int solvePolynom3(T &_out1, T &_out2, T &_out3, const T _A, const T _B, const T 
     _out1 = (AA + BB) - AAA;
     _out2 = -T(0.5) * (AA + BB) - AAA;
     _out3 = _SQ3_2 * (AA - BB);
-    if (std::fabs(_out3) < Type::epsilon<T>())
+    if (std::fabs(_out3) < Epsilon::epsilon<T>())
     {
         _out3 = _out2;
         return 2;
