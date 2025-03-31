@@ -14,6 +14,7 @@ HEADERS += src/Math/colorrgb.h
 HEADERS += src/Math/material.h
 HEADERS += src/Math/camera.h
 HEADERS += src/Math/orientation.h
+HEADERS += src/Math/circle.h
 
 SOURCES += src/main.cpp
 
