@@ -13,6 +13,7 @@ HEADERS += src/Math/vec3.h
 HEADERS += src/Math/colorrgb.h
 HEADERS += src/Math/material.h
 HEADERS += src/Math/camera.h
+HEADERS += src/Math/orientation.h
 
 SOURCES += src/main.cpp
 

@@ -13,7 +13,10 @@
 namespace U1 {
 namespace Math {
 
-/*! \brief Open GL camera base data */
+/*!
+ * \brief Open GL camera base data
+ * \tparam T Template floating point type
+ */
 template <typename T>
 struct Camera
 {
