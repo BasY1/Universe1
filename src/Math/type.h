@@ -580,7 +580,7 @@ inline T toDeg(const T _radValue)
  * \brief Returns circle point count base on quality index
  * \param _quality Quality index
  * \return Circle point count base on quality index
- * \note Used equation \f$N = 4(Q + 1)\f$
+ * \note Used equation \f$N = 4 \times (Q + 1)\f$
  */
 inline size_t circlePointCount(const size_t _quality)
 {
