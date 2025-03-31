@@ -15,6 +15,8 @@ HEADERS += src/Math/material.h
 HEADERS += src/Math/camera.h
 HEADERS += src/Math/orientation.h
 HEADERS += src/Math/circle.h
+HEADERS += src/Math/sphere.h
+HEADERS += src/Math/spherecrosssection.h
 
 SOURCES += src/main.cpp
 
