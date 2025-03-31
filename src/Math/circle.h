@@ -38,6 +38,15 @@ struct Circle2
     {
     }
 
+    /*!
+     * \brief Calculate hash value
+     * \return Hash value from data
+     */
+    inline size_t toHash() const
+    {
+        return Math::mixHash(center.toHash(), std::hash<T>{}(radius));
+    }
+
     inline bool isValid() const;
 
     inline void clear();
@@ -83,6 +92,15 @@ struct Circle3
         , normal(_normal)
         , radius(_radius)
     {
+    }
+
+    /*!
+     * \brief Calculate hash value
+     * \return Hash value from data
+     */
+    inline size_t toHash() const
+    {
+        return Math::mixHash(center.toHash(), normal.toHash(), std::hash<T>{}(radius));
     }
 
     inline bool isValid() const;
