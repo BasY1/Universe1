@@ -90,10 +90,10 @@ struct Sphere
  * \param _position New position
  */
 template <typename T>
-inline void Sphere<T>::reset(const T _radius, const Vec3<T> &_center)
+inline void Sphere<T>::reset(const T _radius, const Vec3<T> &_position)
 {
     radius = _radius;
-    center = _center;
+    center = _position;
 }
 
 /*!
