@@ -30,6 +30,8 @@ SOURCES += src/Math/sphere.cpp
 HEADERS += src/Math/ellipsoid.h
 HEADERS += src/Math/irregellipsoid.h
 
+HEADERS += src/Math/cylinder.h
+
 HEADERS += src/Math/spherecrosssection.h
 
 SOURCES += src/main.cpp
