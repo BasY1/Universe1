@@ -1,10 +1,10 @@
 /*!
- * \file src/Math/iregellipse.h
+ * \file src/Math/irregellipse.h
  * \brief Irregular ellipse structure
  */
 
-#ifndef MATH_IREGELLIPSE_H
-#define MATH_IREGELLIPSE_H
+#ifndef MATH_IRREGELLIPSE_H
+#define MATH_IRREGELLIPSE_H
 
 #include "circle.h"
 
@@ -16,7 +16,7 @@ namespace Math {
  * \tparam T Template floating point type
  */
 template <typename T>
-struct IregEllipse
+struct IrregEllipse
 {
     /*!
      * \brief Irregular ellipse vertex count by circle quality
@@ -448,13 +448,13 @@ struct IregEllipse
  * \param _quality Circle quality
  */
 template <typename T>
-void IregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
-                                 const Orientation<T> &_orientation,
-                                 const T _radius1P,
-                                 const T _radius1M,
-                                 const T _radius2P,
-                                 const T _radius2M,
-                                 const size_t _quality)
+void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
+                                  const Orientation<T> &_orientation,
+                                  const T _radius1P,
+                                  const T _radius1M,
+                                  const T _radius2P,
+                                  const T _radius2M,
+                                  const size_t _quality)
 {
     const std::pair<std::vector<Vec2<T>>, std::vector<std::pair<size_t, size_t>>> &uc =
         Circle2<T>::unitCircle(_quality);
@@ -509,15 +509,15 @@ void IregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
  */
 
 template <typename T>
-inline void IregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
-                                        const Vec3<T> &_center,
-                                        const Vec3<T> &_normal,
-                                        const Vec3<T> &_arm,
-                                        const T _radius1P,
-                                        const T _radius1M,
-                                        const T _radius2P,
-                                        const T _radius2M,
-                                        const size_t _quality)
+inline void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
+                                         const Vec3<T> &_center,
+                                         const Vec3<T> &_normal,
+                                         const Vec3<T> &_arm,
+                                         const T _radius1P,
+                                         const T _radius1M,
+                                         const T _radius2P,
+                                         const T _radius2M,
+                                         const size_t _quality)
 {
     fillEllipse(
         _outVertex, Orientation<T>(_center, _normal, _arm), _radius1P, _radius1M, _radius2P, _radius2M, _quality);
@@ -542,16 +542,16 @@ inline void IregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _quality Circle quality
  */
 template <typename T>
-void IregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
-                                 T *_outAlpha,
-                                 const Orientation<T> &_orientation,
-                                 const T _alphaCenter,
-                                 const T _alphaBorder,
-                                 const T _radius1P,
-                                 const T _radius1M,
-                                 const T _radius2P,
-                                 const T _radius2M,
-                                 const size_t _quality)
+void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
+                                  T *_outAlpha,
+                                  const Orientation<T> &_orientation,
+                                  const T _alphaCenter,
+                                  const T _alphaBorder,
+                                  const T _radius1P,
+                                  const T _radius1M,
+                                  const T _radius2P,
+                                  const T _radius2M,
+                                  const size_t _quality)
 {
     const std::pair<std::vector<Vec2<T>>, std::vector<std::pair<size_t, size_t>>> &uc =
         Circle2<T>::unitCircle(_quality);
@@ -620,18 +620,18 @@ void IregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _quality Circle quality
  */
 template <typename T>
-inline void IregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
-                                        T *_outAlpha,
-                                        const Vec3<T> &_center,
-                                        const Vec3<T> &_normal,
-                                        const Vec3<T> &_arm,
-                                        const T _alphaCenter,
-                                        const T _alphaBorder,
-                                        const T _radius1P,
-                                        const T _radius1M,
-                                        const T _radius2P,
-                                        const T _radius2M,
-                                        const size_t _quality)
+inline void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
+                                         T *_outAlpha,
+                                         const Vec3<T> &_center,
+                                         const Vec3<T> &_normal,
+                                         const Vec3<T> &_arm,
+                                         const T _alphaCenter,
+                                         const T _alphaBorder,
+                                         const T _radius1P,
+                                         const T _radius1M,
+                                         const T _radius2P,
+                                         const T _radius2M,
+                                         const size_t _quality)
 {
     fillEllipse(_outVertex,
                 _outAlpha,
@@ -662,14 +662,14 @@ inline void IregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _quality Circle quality
  */
 template <typename T>
-void IregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
-                                 Vec2<T> *_outCoords,
-                                 const Orientation<T> &_orientation,
-                                 const T _radius1P,
-                                 const T _radius1M,
-                                 const T _radius2P,
-                                 const T _radius2M,
-                                 const size_t _quality)
+void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
+                                  Vec2<T> *_outCoords,
+                                  const Orientation<T> &_orientation,
+                                  const T _radius1P,
+                                  const T _radius1M,
+                                  const T _radius2P,
+                                  const T _radius2M,
+                                  const size_t _quality)
 {
     const std::pair<std::vector<Vec2<T>>, std::vector<std::pair<size_t, size_t>>> &uc =
         Circle2<T>::unitCircle(_quality);
@@ -728,16 +728,16 @@ void IregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _quality Circle quality
  */
 template <typename T>
-inline void IregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
-                                        Vec2<T> *_outCoords,
-                                        const Vec3<T> &_center,
-                                        const Vec3<T> &_normal,
-                                        const Vec3<T> &_arm,
-                                        const T _radius1P,
-                                        const T _radius1M,
-                                        const T _radius2P,
-                                        const T _radius2M,
-                                        const size_t _quality)
+inline void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
+                                         Vec2<T> *_outCoords,
+                                         const Vec3<T> &_center,
+                                         const Vec3<T> &_normal,
+                                         const Vec3<T> &_arm,
+                                         const T _radius1P,
+                                         const T _radius1M,
+                                         const T _radius2P,
+                                         const T _radius2M,
+                                         const size_t _quality)
 {
     fillEllipse(_outVertex,
                 _outCoords,
@@ -769,17 +769,17 @@ inline void IregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _quality Circle quality
  */
 template <typename T>
-void IregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
-                                 Vec2<T> *_outCoords,
-                                 T *_outAlpha,
-                                 const Orientation<T> &_orientation,
-                                 const T _alphaCenter,
-                                 const T _alphaBorder,
-                                 const T _radius1P,
-                                 const T _radius1M,
-                                 const T _radius2P,
-                                 const T _radius2M,
-                                 const size_t _quality)
+void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
+                                  Vec2<T> *_outCoords,
+                                  T *_outAlpha,
+                                  const Orientation<T> &_orientation,
+                                  const T _alphaCenter,
+                                  const T _alphaBorder,
+                                  const T _radius1P,
+                                  const T _radius1M,
+                                  const T _radius2P,
+                                  const T _radius2M,
+                                  const size_t _quality)
 {
     const std::pair<std::vector<Vec2<T>>, std::vector<std::pair<size_t, size_t>>> &uc =
         Circle2<T>::unitCircle(_quality);
@@ -855,19 +855,19 @@ void IregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _quality Circle quality
  */
 template <typename T>
-inline void IregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
-                                        Vec2<T> *_outCoords,
-                                        T *_outAlpha,
-                                        const Vec3<T> &_center,
-                                        const Vec3<T> &_normal,
-                                        const Vec3<T> &_arm,
-                                        const T _alphaCenter,
-                                        const T _alphaBorder,
-                                        const T _radius1P,
-                                        const T _radius1M,
-                                        const T _radius2P,
-                                        const T _radius2M,
-                                        const size_t _quality)
+inline void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
+                                         Vec2<T> *_outCoords,
+                                         T *_outAlpha,
+                                         const Vec3<T> &_center,
+                                         const Vec3<T> &_normal,
+                                         const Vec3<T> &_arm,
+                                         const T _alphaCenter,
+                                         const T _alphaBorder,
+                                         const T _radius1P,
+                                         const T _radius1M,
+                                         const T _radius2P,
+                                         const T _radius2M,
+                                         const size_t _quality)
 {
     fillEllipse(_outVertex,
                 _outCoords,
@@ -910,25 +910,25 @@ inline void IregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _quality Circle quality
  */
 template <typename T>
-void IregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
-                                 Vec3<T> *_outAmbient,
-                                 Vec3<T> *_outDiffuse,
-                                 Vec3<T> *_outSpecular,
-                                 T *_outShine,
-                                 const Orientation<T> &_orientation,
-                                 const Vec3<T> &_ambientCenter,
-                                 const Vec3<T> &_ambientBorder,
-                                 const Vec3<T> &_diffuseCenter,
-                                 const Vec3<T> &_diffuseBorder,
-                                 const Vec3<T> &_specularCenter,
-                                 const Vec3<T> &_specularBorder,
-                                 const T _shineCenter,
-                                 const T _shineBorder,
-                                 const T _radius1P,
-                                 const T _radius1M,
-                                 const T _radius2P,
-                                 const T _radius2M,
-                                 const size_t _quality)
+void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
+                                  Vec3<T> *_outAmbient,
+                                  Vec3<T> *_outDiffuse,
+                                  Vec3<T> *_outSpecular,
+                                  T *_outShine,
+                                  const Orientation<T> &_orientation,
+                                  const Vec3<T> &_ambientCenter,
+                                  const Vec3<T> &_ambientBorder,
+                                  const Vec3<T> &_diffuseCenter,
+                                  const Vec3<T> &_diffuseBorder,
+                                  const Vec3<T> &_specularCenter,
+                                  const Vec3<T> &_specularBorder,
+                                  const T _shineCenter,
+                                  const T _shineBorder,
+                                  const T _radius1P,
+                                  const T _radius1M,
+                                  const T _radius2P,
+                                  const T _radius2M,
+                                  const size_t _quality)
 {
     const std::pair<std::vector<Vec2<T>>, std::vector<std::pair<size_t, size_t>>> &uc =
         Circle2<T>::unitCircle(_quality);
@@ -1034,27 +1034,27 @@ void IregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _quality Circle quality
  */
 template <typename T>
-inline void IregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
-                                        Vec3<T> *_outAmbient,
-                                        Vec3<T> *_outDiffuse,
-                                        Vec3<T> *_outSpecular,
-                                        T *_outShine,
-                                        const Vec3<T> &_center,
-                                        const Vec3<T> &_normal,
-                                        const Vec3<T> &_arm,
-                                        const Vec3<T> &_ambientCenter,
-                                        const Vec3<T> &_ambientBorder,
-                                        const Vec3<T> &_diffuseCenter,
-                                        const Vec3<T> &_diffuseBorder,
-                                        const Vec3<T> &_specularCenter,
-                                        const Vec3<T> &_specularBorder,
-                                        const T _shineCenter,
-                                        const T _shineBorder,
-                                        const T _radius1P,
-                                        const T _radius1M,
-                                        const T _radius2P,
-                                        const T _radius2M,
-                                        const size_t _quality)
+inline void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
+                                         Vec3<T> *_outAmbient,
+                                         Vec3<T> *_outDiffuse,
+                                         Vec3<T> *_outSpecular,
+                                         T *_outShine,
+                                         const Vec3<T> &_center,
+                                         const Vec3<T> &_normal,
+                                         const Vec3<T> &_arm,
+                                         const Vec3<T> &_ambientCenter,
+                                         const Vec3<T> &_ambientBorder,
+                                         const Vec3<T> &_diffuseCenter,
+                                         const Vec3<T> &_diffuseBorder,
+                                         const Vec3<T> &_specularCenter,
+                                         const Vec3<T> &_specularBorder,
+                                         const T _shineCenter,
+                                         const T _shineBorder,
+                                         const T _radius1P,
+                                         const T _radius1M,
+                                         const T _radius2P,
+                                         const T _radius2M,
+                                         const size_t _quality)
 {
     fillEllipse(_outVertex,
                 _outAmbient,
@@ -1108,28 +1108,28 @@ inline void IregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _quality Circle quality
  */
 template <typename T>
-void IregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
-                                 Vec3<T> *_outAmbient,
-                                 Vec3<T> *_outDiffuse,
-                                 Vec3<T> *_outSpecular,
-                                 T *_outShine,
-                                 T *_outAlpha,
-                                 const Orientation<T> &_orientation,
-                                 const Vec3<T> &_ambientCenter,
-                                 const Vec3<T> &_ambientBorder,
-                                 const Vec3<T> &_diffuseCenter,
-                                 const Vec3<T> &_diffuseBorder,
-                                 const Vec3<T> &_specularCenter,
-                                 const Vec3<T> &_specularBorder,
-                                 const T _shineCenter,
-                                 const T _shineBorder,
-                                 const T _alphaCenter,
-                                 const T _alphaBorder,
-                                 const T _radius1P,
-                                 const T _radius1M,
-                                 const T _radius2P,
-                                 const T _radius2M,
-                                 const size_t _quality)
+void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
+                                  Vec3<T> *_outAmbient,
+                                  Vec3<T> *_outDiffuse,
+                                  Vec3<T> *_outSpecular,
+                                  T *_outShine,
+                                  T *_outAlpha,
+                                  const Orientation<T> &_orientation,
+                                  const Vec3<T> &_ambientCenter,
+                                  const Vec3<T> &_ambientBorder,
+                                  const Vec3<T> &_diffuseCenter,
+                                  const Vec3<T> &_diffuseBorder,
+                                  const Vec3<T> &_specularCenter,
+                                  const Vec3<T> &_specularBorder,
+                                  const T _shineCenter,
+                                  const T _shineBorder,
+                                  const T _alphaCenter,
+                                  const T _alphaBorder,
+                                  const T _radius1P,
+                                  const T _radius1M,
+                                  const T _radius2P,
+                                  const T _radius2M,
+                                  const size_t _quality)
 {
     const std::pair<std::vector<Vec2<T>>, std::vector<std::pair<size_t, size_t>>> &uc =
         Circle2<T>::unitCircle(_quality);
@@ -1245,30 +1245,30 @@ void IregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _quality Circle quality
  */
 template <typename T>
-inline void IregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
-                                        Vec3<T> *_outAmbient,
-                                        Vec3<T> *_outDiffuse,
-                                        Vec3<T> *_outSpecular,
-                                        T *_outShine,
-                                        T *_outAlpha,
-                                        const Vec3<T> &_center,
-                                        const Vec3<T> &_normal,
-                                        const Vec3<T> &_arm,
-                                        const Vec3<T> &_ambientCenter,
-                                        const Vec3<T> &_ambientBorder,
-                                        const Vec3<T> &_diffuseCenter,
-                                        const Vec3<T> &_diffuseBorder,
-                                        const Vec3<T> &_specularCenter,
-                                        const Vec3<T> &_specularBorder,
-                                        const T _shineCenter,
-                                        const T _shineBorder,
-                                        const T _alphaCenter,
-                                        const T _alphaBorder,
-                                        const T _radius1P,
-                                        const T _radius1M,
-                                        const T _radius2P,
-                                        const T _radius2M,
-                                        const size_t _quality)
+inline void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
+                                         Vec3<T> *_outAmbient,
+                                         Vec3<T> *_outDiffuse,
+                                         Vec3<T> *_outSpecular,
+                                         T *_outShine,
+                                         T *_outAlpha,
+                                         const Vec3<T> &_center,
+                                         const Vec3<T> &_normal,
+                                         const Vec3<T> &_arm,
+                                         const Vec3<T> &_ambientCenter,
+                                         const Vec3<T> &_ambientBorder,
+                                         const Vec3<T> &_diffuseCenter,
+                                         const Vec3<T> &_diffuseBorder,
+                                         const Vec3<T> &_specularCenter,
+                                         const Vec3<T> &_specularBorder,
+                                         const T _shineCenter,
+                                         const T _shineBorder,
+                                         const T _alphaCenter,
+                                         const T _alphaBorder,
+                                         const T _radius1P,
+                                         const T _radius1M,
+                                         const T _radius2P,
+                                         const T _radius2M,
+                                         const size_t _quality)
 {
     fillEllipse(_outVertex,
                 _outAmbient,
@@ -1308,7 +1308,7 @@ inline void IregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
  */
 template <typename T>
 inline void
-IregEllipse<T>::arcAngles(std::vector<T> &_out, const T _angleStart, const T _angleEnd, const size_t _quality)
+IrregEllipse<T>::arcAngles(std::vector<T> &_out, const T _angleStart, const T _angleEnd, const size_t _quality)
 {
     Circle2<T>::arcAngles(_out, _angleStart, _angleEnd, _quality);
 }
@@ -1329,13 +1329,13 @@ IregEllipse<T>::arcAngles(std::vector<T> &_out, const T _angleStart, const T _an
  * \param _angles Circle arc angles in radian
  */
 template <typename T>
-void IregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
-                                    const Orientation<T> &_orientation,
-                                    const T _radius1P,
-                                    const T _radius1M,
-                                    const T _radius2P,
-                                    const T _radius2M,
-                                    const std::vector<T> &_angles)
+void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
+                                     const Orientation<T> &_orientation,
+                                     const T _radius1P,
+                                     const T _radius1M,
+                                     const T _radius2P,
+                                     const T _radius2M,
+                                     const std::vector<T> &_angles)
 {
     _outVertex[0UL] = _orientation.center;
 
@@ -1387,15 +1387,15 @@ void IregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _angles Circle arc angles in radian
  */
 template <typename T>
-inline void IregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
-                                           const Vec3<T> &_center,
-                                           const Vec3<T> &_normal,
-                                           const Vec3<T> &_arm,
-                                           const T _radius1P,
-                                           const T _radius1M,
-                                           const T _radius2P,
-                                           const T _radius2M,
-                                           const std::vector<T> &_angles)
+inline void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
+                                            const Vec3<T> &_center,
+                                            const Vec3<T> &_normal,
+                                            const Vec3<T> &_arm,
+                                            const T _radius1P,
+                                            const T _radius1M,
+                                            const T _radius2P,
+                                            const T _radius2M,
+                                            const std::vector<T> &_angles)
 {
     fillEllipseArc(
         _outVertex, Orientation<T>(_center, _normal, _arm), _radius1P, _radius1M, _radius2P, _radius2M, _angles);
@@ -1420,16 +1420,16 @@ inline void IregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _angles Circle arc angles in radian
  */
 template <typename T>
-void IregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
-                                    T *_outAlpha,
-                                    const Orientation<T> &_orientation,
-                                    const T _alphaCenter,
-                                    const T _alphaBorder,
-                                    const T _radius1P,
-                                    const T _radius1M,
-                                    const T _radius2P,
-                                    const T _radius2M,
-                                    const std::vector<T> &_angles)
+void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
+                                     T *_outAlpha,
+                                     const Orientation<T> &_orientation,
+                                     const T _alphaCenter,
+                                     const T _alphaBorder,
+                                     const T _radius1P,
+                                     const T _radius1M,
+                                     const T _radius2P,
+                                     const T _radius2M,
+                                     const std::vector<T> &_angles)
 {
     _outVertex[0UL] = _orientation.center;
     _outAlpha[0UL] = _alphaCenter;
@@ -1491,18 +1491,18 @@ void IregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _angles Circle arc angles in radian
  */
 template <typename T>
-inline void IregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
-                                           T *_outAlpha,
-                                           const Vec3<T> &_center,
-                                           const Vec3<T> &_normal,
-                                           const Vec3<T> &_arm,
-                                           const T _alphaCenter,
-                                           const T _alphaBorder,
-                                           const T _radius1P,
-                                           const T _radius1M,
-                                           const T _radius2P,
-                                           const T _radius2M,
-                                           const std::vector<T> &_angles)
+inline void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
+                                            T *_outAlpha,
+                                            const Vec3<T> &_center,
+                                            const Vec3<T> &_normal,
+                                            const Vec3<T> &_arm,
+                                            const T _alphaCenter,
+                                            const T _alphaBorder,
+                                            const T _radius1P,
+                                            const T _radius1M,
+                                            const T _radius2P,
+                                            const T _radius2M,
+                                            const std::vector<T> &_angles)
 {
     fillEllipseArc(_outVertex,
                    _outAlpha,
@@ -1533,14 +1533,14 @@ inline void IregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _angles Circle arc angles in radian
  */
 template <typename T>
-void IregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
-                                    Vec2<T> *_outCoord,
-                                    const Orientation<T> &_orientation,
-                                    const T _radius1P,
-                                    const T _radius1M,
-                                    const T _radius2P,
-                                    const T _radius2M,
-                                    const std::vector<T> &_angles)
+void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
+                                     Vec2<T> *_outCoord,
+                                     const Orientation<T> &_orientation,
+                                     const T _radius1P,
+                                     const T _radius1M,
+                                     const T _radius2P,
+                                     const T _radius2M,
+                                     const std::vector<T> &_angles)
 {
     _outVertex[0UL] = _orientation.center;
     _outCoord[0UL] = {T(0.5), T(0.5)};
@@ -1600,16 +1600,16 @@ void IregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _angles Circle arc angles in radian
  */
 template <typename T>
-inline void IregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
-                                           Vec2<T> *_outCoord,
-                                           const Vec3<T> &_center,
-                                           const Vec3<T> &_normal,
-                                           const Vec3<T> &_arm,
-                                           const T _radius1P,
-                                           const T _radius1M,
-                                           const T _radius2P,
-                                           const T _radius2M,
-                                           const std::vector<T> &_angles)
+inline void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
+                                            Vec2<T> *_outCoord,
+                                            const Vec3<T> &_center,
+                                            const Vec3<T> &_normal,
+                                            const Vec3<T> &_arm,
+                                            const T _radius1P,
+                                            const T _radius1M,
+                                            const T _radius2P,
+                                            const T _radius2M,
+                                            const std::vector<T> &_angles)
 {
     fillEllipseArc(_outVertex,
                    _outCoord,
@@ -1641,17 +1641,17 @@ inline void IregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _angles Circle arc angles in radian
  */
 template <typename T>
-void IregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
-                                    Vec2<T> *_outCoord,
-                                    T *_outAlpha,
-                                    const Orientation<T> &_orientation,
-                                    const T _alphaCenter,
-                                    const T _alphaBorder,
-                                    const T _radius1P,
-                                    const T _radius1M,
-                                    const T _radius2P,
-                                    const T _radius2M,
-                                    const std::vector<T> &_angles)
+void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
+                                     Vec2<T> *_outCoord,
+                                     T *_outAlpha,
+                                     const Orientation<T> &_orientation,
+                                     const T _alphaCenter,
+                                     const T _alphaBorder,
+                                     const T _radius1P,
+                                     const T _radius1M,
+                                     const T _radius2P,
+                                     const T _radius2M,
+                                     const std::vector<T> &_angles)
 {
     _outVertex[0UL] = _orientation.center;
     _outAlpha[0UL] = _alphaCenter;
@@ -1719,19 +1719,19 @@ void IregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _angles Circle arc angles in radian
  */
 template <typename T>
-inline void IregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
-                                           Vec2<T> *_outCoord,
-                                           T *_outAlpha,
-                                           const Vec3<T> &_center,
-                                           const Vec3<T> &_normal,
-                                           const Vec3<T> &_arm,
-                                           const T _alphaCenter,
-                                           const T _alphaBorder,
-                                           const T _radius1P,
-                                           const T _radius1M,
-                                           const T _radius2P,
-                                           const T _radius2M,
-                                           const std::vector<T> &_angles)
+inline void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
+                                            Vec2<T> *_outCoord,
+                                            T *_outAlpha,
+                                            const Vec3<T> &_center,
+                                            const Vec3<T> &_normal,
+                                            const Vec3<T> &_arm,
+                                            const T _alphaCenter,
+                                            const T _alphaBorder,
+                                            const T _radius1P,
+                                            const T _radius1M,
+                                            const T _radius2P,
+                                            const T _radius2M,
+                                            const std::vector<T> &_angles)
 {
     fillEllipseArc(_outVertex,
                    _outCoord,
@@ -1774,25 +1774,25 @@ inline void IregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _angles Circle arc angles in radian
  */
 template <typename T>
-void IregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
-                                    Vec3<T> *_outAmbient,
-                                    Vec3<T> *_outDiffuse,
-                                    Vec3<T> *_outSpecular,
-                                    T *_outShine,
-                                    const Orientation<T> &_orientation,
-                                    const Vec3<T> &_ambientCenter,
-                                    const Vec3<T> &_ambientBorder,
-                                    const Vec3<T> &_diffuseCenter,
-                                    const Vec3<T> &_diffuseBorder,
-                                    const Vec3<T> &_specularCenter,
-                                    const Vec3<T> &_specularBorder,
-                                    const T _shineCenter,
-                                    const T _shineBorder,
-                                    const T _radius1P,
-                                    const T _radius1M,
-                                    const T _radius2P,
-                                    const T _radius2M,
-                                    const std::vector<T> &_angles)
+void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
+                                     Vec3<T> *_outAmbient,
+                                     Vec3<T> *_outDiffuse,
+                                     Vec3<T> *_outSpecular,
+                                     T *_outShine,
+                                     const Orientation<T> &_orientation,
+                                     const Vec3<T> &_ambientCenter,
+                                     const Vec3<T> &_ambientBorder,
+                                     const Vec3<T> &_diffuseCenter,
+                                     const Vec3<T> &_diffuseBorder,
+                                     const Vec3<T> &_specularCenter,
+                                     const Vec3<T> &_specularBorder,
+                                     const T _shineCenter,
+                                     const T _shineBorder,
+                                     const T _radius1P,
+                                     const T _radius1M,
+                                     const T _radius2P,
+                                     const T _radius2M,
+                                     const std::vector<T> &_angles)
 {
     _outVertex[0UL] = _orientation.center;
     _outAmbient[0UL] = _ambientCenter;
@@ -1888,27 +1888,27 @@ void IregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _angles Circle arc angles in radian
  */
 template <typename T>
-inline void IregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
-                                           Vec3<T> *_outAmbient,
-                                           Vec3<T> *_outDiffuse,
-                                           Vec3<T> *_outSpecular,
-                                           T *_outShine,
-                                           const Vec3<T> &_center,
-                                           const Vec3<T> &_normal,
-                                           const Vec3<T> &_arm,
-                                           const Vec3<T> &_ambientCenter,
-                                           const Vec3<T> &_ambientBorder,
-                                           const Vec3<T> &_diffuseCenter,
-                                           const Vec3<T> &_diffuseBorder,
-                                           const Vec3<T> &_specularCenter,
-                                           const Vec3<T> &_specularBorder,
-                                           const T _shineCenter,
-                                           const T _shineBorder,
-                                           const T _radius1P,
-                                           const T _radius1M,
-                                           const T _radius2P,
-                                           const T _radius2M,
-                                           const std::vector<T> &_angles)
+inline void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
+                                            Vec3<T> *_outAmbient,
+                                            Vec3<T> *_outDiffuse,
+                                            Vec3<T> *_outSpecular,
+                                            T *_outShine,
+                                            const Vec3<T> &_center,
+                                            const Vec3<T> &_normal,
+                                            const Vec3<T> &_arm,
+                                            const Vec3<T> &_ambientCenter,
+                                            const Vec3<T> &_ambientBorder,
+                                            const Vec3<T> &_diffuseCenter,
+                                            const Vec3<T> &_diffuseBorder,
+                                            const Vec3<T> &_specularCenter,
+                                            const Vec3<T> &_specularBorder,
+                                            const T _shineCenter,
+                                            const T _shineBorder,
+                                            const T _radius1P,
+                                            const T _radius1M,
+                                            const T _radius2P,
+                                            const T _radius2M,
+                                            const std::vector<T> &_angles)
 {
     fillEllipseArc(_outVertex,
                    _outAmbient,
@@ -1961,28 +1961,28 @@ inline void IregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _angles Circle arc angles in radian
  */
 template <typename T>
-void IregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
-                                    Vec3<T> *_outAmbient,
-                                    Vec3<T> *_outDiffuse,
-                                    Vec3<T> *_outSpecular,
-                                    T *_outShine,
-                                    T *_outAlpha,
-                                    const Orientation<T> &_orientation,
-                                    const Vec3<T> &_ambientCenter,
-                                    const Vec3<T> &_ambientBorder,
-                                    const Vec3<T> &_diffuseCenter,
-                                    const Vec3<T> &_diffuseBorder,
-                                    const Vec3<T> &_specularCenter,
-                                    const Vec3<T> &_specularBorder,
-                                    const T _shineCenter,
-                                    const T _shineBorder,
-                                    const T _alphaCenter,
-                                    const T _alphaBorder,
-                                    const T _radius1P,
-                                    const T _radius1M,
-                                    const T _radius2P,
-                                    const T _radius2M,
-                                    const std::vector<T> &_angles)
+void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
+                                     Vec3<T> *_outAmbient,
+                                     Vec3<T> *_outDiffuse,
+                                     Vec3<T> *_outSpecular,
+                                     T *_outShine,
+                                     T *_outAlpha,
+                                     const Orientation<T> &_orientation,
+                                     const Vec3<T> &_ambientCenter,
+                                     const Vec3<T> &_ambientBorder,
+                                     const Vec3<T> &_diffuseCenter,
+                                     const Vec3<T> &_diffuseBorder,
+                                     const Vec3<T> &_specularCenter,
+                                     const Vec3<T> &_specularBorder,
+                                     const T _shineCenter,
+                                     const T _shineBorder,
+                                     const T _alphaCenter,
+                                     const T _alphaBorder,
+                                     const T _radius1P,
+                                     const T _radius1M,
+                                     const T _radius2P,
+                                     const T _radius2M,
+                                     const std::vector<T> &_angles)
 {
     _outVertex[0UL] = _orientation.center;
     _outAmbient[0UL] = _ambientCenter;
@@ -2087,30 +2087,30 @@ void IregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _angles Circle arc angles in radian
  */
 template <typename T>
-inline void IregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
-                                           Vec3<T> *_outAmbient,
-                                           Vec3<T> *_outDiffuse,
-                                           Vec3<T> *_outSpecular,
-                                           T *_outShine,
-                                           T *_outAlpha,
-                                           const Vec3<T> &_center,
-                                           const Vec3<T> &_normal,
-                                           const Vec3<T> &_arm,
-                                           const Vec3<T> &_ambientCenter,
-                                           const Vec3<T> &_ambientBorder,
-                                           const Vec3<T> &_diffuseCenter,
-                                           const Vec3<T> &_diffuseBorder,
-                                           const Vec3<T> &_specularCenter,
-                                           const Vec3<T> &_specularBorder,
-                                           const T _shineCenter,
-                                           const T _shineBorder,
-                                           const T _alphaCenter,
-                                           const T _alphaBorder,
-                                           const T _radius1P,
-                                           const T _radius1M,
-                                           const T _radius2P,
-                                           const T _radius2M,
-                                           const std::vector<T> &_angles)
+inline void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
+                                            Vec3<T> *_outAmbient,
+                                            Vec3<T> *_outDiffuse,
+                                            Vec3<T> *_outSpecular,
+                                            T *_outShine,
+                                            T *_outAlpha,
+                                            const Vec3<T> &_center,
+                                            const Vec3<T> &_normal,
+                                            const Vec3<T> &_arm,
+                                            const Vec3<T> &_ambientCenter,
+                                            const Vec3<T> &_ambientBorder,
+                                            const Vec3<T> &_diffuseCenter,
+                                            const Vec3<T> &_diffuseBorder,
+                                            const Vec3<T> &_specularCenter,
+                                            const Vec3<T> &_specularBorder,
+                                            const T _shineCenter,
+                                            const T _shineBorder,
+                                            const T _alphaCenter,
+                                            const T _alphaBorder,
+                                            const T _radius1P,
+                                            const T _radius1M,
+                                            const T _radius2P,
+                                            const T _radius2M,
+                                            const std::vector<T> &_angles)
 {
     fillEllipseArc(_outVertex,
                    _outAmbient,
@@ -2140,11 +2140,11 @@ inline void IregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
 //
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef IregEllipse<float> IregEllipseF;        //!< 32 bit floating point precision 3D irregular ellipse
-typedef IregEllipse<double> IregEllipseD;       //!< 64 bit floating point precision 3D irregular ellipse
-typedef IregEllipse<long double> IregEllipseL;  //!< 128 bit floating point precision 3D irregular ellipse
+typedef IrregEllipse<float> IrregEllipseF;        //!< 32 bit floating point precision 3D irregular ellipse
+typedef IrregEllipse<double> IrregEllipseD;       //!< 64 bit floating point precision 3D irregular ellipse
+typedef IrregEllipse<long double> IrregEllipseL;  //!< 128 bit floating point precision 3D irregular ellipse
 
 }  // namespace Math
 }  // namespace U1
 
-#endif  // MATH_IREGELLIPSE_H
+#endif  // MATH_IRREGELLIPSE_H

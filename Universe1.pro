@@ -19,13 +19,16 @@ HEADERS += src/Math/circle.h
 SOURCES += src/Math/circle.cpp
 
 HEADERS += src/Math/ellipse.h
-HEADERS += src/Math/iregellipse.h
+HEADERS += src/Math/irregellipse.h
 
 HEADERS += src/Math/planeindices.h
 SOURCES += src/Math/planeindices.cpp
 
 HEADERS += src/Math/sphere.h
 SOURCES += src/Math/sphere.cpp
+
+HEADERS += src/Math/ellipsoid.h
+HEADERS += src/Math/irregellipsoid.h
 
 HEADERS += src/Math/spherecrosssection.h
 
