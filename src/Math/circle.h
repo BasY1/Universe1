@@ -1441,7 +1441,7 @@ void Circle2<T>::arcAngles(std::vector<T> &_out, const T _angleStart, const T _a
  * \param _quality Circle quality
  */
 template <typename T>
-void Circle3<T>::arcAngles(std::vector<T> &_out, const T _angleStart, const T _angleEnd, const size_t _quality)
+inline void Circle3<T>::arcAngles(std::vector<T> &_out, const T _angleStart, const T _angleEnd, const size_t _quality)
 {
     Circle2<T>::arcAngles(_out, _angleStart, _angleEnd, _quality);
 }

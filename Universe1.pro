@@ -18,6 +18,8 @@ HEADERS += src/Math/orientation.h
 HEADERS += src/Math/circle.h
 SOURCES += src/Math/circle.cpp
 
+HEADERS += src/Math/ellipse.h
+
 HEADERS += src/Math/sphere.h
 HEADERS += src/Math/spherecrosssection.h
 
