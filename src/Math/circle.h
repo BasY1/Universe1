@@ -633,13 +633,13 @@ Circle2<T>::unitCircle(const size_t _quality)
     typename std::map<size_t, std::vector<Vec2<T>>>::iterator it = m_unitCircles.find(_quality);
     if (it == m_unitCircles.end())
     {
-        it = m_unitCircles.insert({_quality, std::vector<Vec2<T>>()}).first;
+        it = m_unitCircles.insert({_quality, {std::vector<Vec2<T>>(), std::vector<std::pair<size_t, size_t>>()}}).first;
 
         std::vector<Vec2<T>> &vertex = (*it).second.first;
         std::vector<std::pair<size_t, size_t>> &pool = (*it).second.second;
 
         const size_t cntVertex = circlePointCount(_quality);
-        const float angle = float(2.0 * M_PI) / float(cntVertex);
+        const T angle = T(2.0l * M_PIl) / T(cntVertex);
         pool = createPool(cntVertex);
 
         if (pool.empty())
@@ -647,7 +647,7 @@ Circle2<T>::unitCircle(const size_t _quality)
             vertex.reserve(cntVertex);
             for (size_t i = 0UL; i < cntVertex; ++i)
             {
-                const float a = angle * float(i);
+                const T a = angle * T(i);
                 vertex.push_back({std::sin(a), std::cos(a)});
             }
         }
@@ -658,11 +658,11 @@ Circle2<T>::unitCircle(const size_t _quality)
             threads.reserve(pool.size());
             for (const std::pair<size_t, size_t> &t : std::as_const(pool))
                 threads.push_back(std::thread(
-                    [t, angle](Vec2F *__out) {
+                    [t, angle](Vec2<T> *__out) {
                         const size_t end = t.first + t.second;
                         for (size_t i = t.first; i < end; ++i)
                         {
-                            const float a = angle * float(i);
+                            const T a = angle * T(i);
                             __out[i] = {std::sin(a), std::cos(a)};
                         }
                     },

@@ -21,7 +21,12 @@ SOURCES += src/Math/circle.cpp
 HEADERS += src/Math/ellipse.h
 HEADERS += src/Math/iregellipse.h
 
+HEADERS += src/Math/planeindices.h
+SOURCES += src/Math/planeindices.cpp
+
 HEADERS += src/Math/sphere.h
+SOURCES += src/Math/sphere.cpp
+
 HEADERS += src/Math/spherecrosssection.h
 
 SOURCES += src/main.cpp

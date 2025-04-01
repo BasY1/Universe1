@@ -6,7 +6,8 @@
 #ifndef MATH_SPHERE_H
 #define MATH_SPHERE_H
 
-#include "vec3.h"
+#include "orientation.h"
+#include "planeindices.h"
 
 namespace U1 {
 namespace Math {
@@ -18,6 +19,11 @@ namespace Math {
 template <typename T>
 struct Sphere
 {
+ private:
+    /*! \brief Unit sphere cache */
+    static std::map<size_t, std::pair<std::vector<Vec3<T>>, std::vector<std::pair<size_t, size_t>>>> m_unitSpheres;
+
+ public:
     Vec3<T> center;    //!< Sphere position
     T radius;          //!< Sphere radius
 
@@ -77,6 +83,171 @@ struct Sphere
     void createSurfacePoints(const T _density, std::vector<Vec3<T>> &_outPositions) const;
 
     std::vector<Vec3<T>> lineIntersections(const Vec3<T> &_linePoint, const Vec3<T> &_lineNormal) const;
+
+    static const std::pair<std::vector<Vec3<T>>, std::vector<std::pair<size_t, size_t>>> &
+    unitSphere(const size_t _quality);
+
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /*!
+     * \brief Sphere vertex count by circle quality
+     * \param _quality Circle quality
+     * \return Sphere vertex count
+     */
+    inline static size_t sphereVertexCount(const size_t _quality)
+    {
+        const size_t cntCircle = circlePointCount(_quality);
+        const size_t cntLon = cntCircle;
+        const size_t cntLat = cntCircle / 2UL;
+        return (cntLon + 1UL) * (cntLat + 1UL);
+    }
+
+    /*!
+     * \brief Sphere index count by circle quality
+     * \param _quality Circle quality
+     * \return Sphere index count
+     */
+    inline static size_t sphereIndexCount(const size_t _quality)
+    {
+        const size_t cntCircle = circlePointCount(_quality);
+        const size_t cntLon = cntCircle;
+        const size_t cntLat = cntCircle / 2UL;
+        return cntLon * cntLat * 4UL;
+    }
+
+    /*!
+     * \brief Sphere step angle for given circle quality
+     * \param _quality Circle quality
+     * \return Sphere step angle in radians
+     */
+    inline static size_t sphereStepAngle(const size_t _quality)
+    {
+        return T(2.0l * M_PIl) / T(circlePointCount(_quality));
+    }
+
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    static void fillSphereOuter(Vec3<T> *_outVertex,
+                                Vec3<T> *_outNormal,
+                                uint *_outIndex,
+                                const Orientation<T> &_orientation,
+                                const T _radius,
+                                const size_t _quality);
+
+    static void fillSphereInner(Vec3<T> *_outVertex,
+                                Vec3<T> *_outNormal,
+                                uint *_outIndex,
+                                const Orientation<T> &_orientation,
+                                const T _radius,
+                                const size_t _quality);
+
+    inline static void fillSphereOuter(Vec3<T> *_outVertex,
+                                       Vec3<T> *_outNormal,
+                                       uint *_outIndex,
+                                       const Vec3<T> &_center,
+                                       const Vec3<T> &_normal,
+                                       const Vec3<T> &_arm,
+                                       const T _radius,
+                                       const size_t _quality);
+
+    inline static void fillSphereInner(Vec3<T> *_outVertex,
+                                       Vec3<T> *_outNormal,
+                                       uint *_outIndex,
+                                       const Vec3<T> &_center,
+                                       const Vec3<T> &_normal,
+                                       const Vec3<T> &_arm,
+                                       const T _radius,
+                                       const size_t _quality);
+
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    static void fillSphereOuter(Vec3<T> *_outVertex,
+                                Vec2<T> *_outCoords,
+                                uint *_outIndex,
+                                const Orientation<T> &_orientation,
+                                const T _radius,
+                                const size_t _quality);
+
+    static void fillSphereInner(Vec3<T> *_outVertex,
+                                Vec2<T> *_outCoords,
+                                uint *_outIndex,
+                                const Orientation<T> &_orientation,
+                                const T _radius,
+                                const size_t _quality);
+
+    inline static void fillSphereOuter(Vec3<T> *_outVertex,
+                                       Vec2<T> *_outCoords,
+                                       uint *_outIndex,
+                                       const Vec3<T> &_center,
+                                       const Vec3<T> &_normal,
+                                       const Vec3<T> &_arm,
+                                       const T _radius,
+                                       const size_t _quality);
+
+    inline static void fillSphereInner(Vec3<T> *_outVertex,
+                                       Vec2<T> *_outCoords,
+                                       uint *_outIndex,
+                                       const Vec3<T> &_center,
+                                       const Vec3<T> &_normal,
+                                       const Vec3<T> &_arm,
+                                       const T _radius,
+                                       const size_t _quality);
+
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    inline static void arcAngles(std::vector<T> &_outLon,
+                                 std::vector<T> &_outLat,
+                                 const T _angleLonStart,
+                                 const T _angleLonEnd,
+                                 const T _angleLatStart,
+                                 const T _angleLatEnd,
+                                 const size_t _quality);
+
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    static void fillSphereArcOuter(Vec3<T> *_outVertex,
+                                   Vec3<T> *_outNormal,
+                                   uint *_outIndex,
+                                   const Orientation<T> &_orientation,
+                                   const T _radius,
+                                   const std::vector<T> &_anglesLon,
+                                   const std::vector<T> &_anglesLat);
+
+    static void fillSphereArcInner(Vec3<T> *_outVertex,
+                                   Vec3<T> *_outNormal,
+                                   uint *_outIndex,
+                                   const Orientation<T> &_orientation,
+                                   const T _radius,
+                                   const std::vector<T> &_anglesLon,
+                                   const std::vector<T> &_anglesLat);
+
+    inline static void fillSphereArcOuter(Vec3<T> *_outVertex,
+                                          Vec3<T> *_outNormal,
+                                          uint *_outIndex,
+                                          const Vec3<T> &_center,
+                                          const Vec3<T> &_normal,
+                                          const Vec3<T> &_arm,
+                                          const T _radius,
+                                          const std::vector<T> &_anglesLon,
+                                          const std::vector<T> &_anglesLat);
+
+    inline static void fillSphereArcInner(Vec3<T> *_outVertex,
+                                          Vec3<T> *_outNormal,
+                                          uint *_outIndex,
+                                          const Vec3<T> &_center,
+                                          const Vec3<T> &_normal,
+                                          const Vec3<T> &_arm,
+                                          const T _radius,
+                                          const std::vector<T> &_anglesLon,
+                                          const std::vector<T> &_anglesLat);
 };
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -115,7 +286,7 @@ inline bool Sphere<T>::isNull() const
 template <typename T>
 inline bool Sphere<T>::isValid() const
 {
-    return Math::isPositive<T>(radius);
+    return isPositive<T>(radius);
 }
 
 /*!
@@ -241,9 +412,617 @@ std::vector<Vec3<T>> Sphere<T>::lineIntersections(const Vec3<T> &_linePoint, con
     const T t1 = (-B - SD) / (T(2) * A);
     const T t2 = (-B + SD) / (T(2) * A);
 
-    if (Math::isMoreOrEqual(t1, t2))
+    if (isMoreOrEqual(t1, t2))
         return {_linePoint + v * t1, _linePoint + v * t2};
     return {_linePoint + v * t2, _linePoint + v * t1};
+}
+
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Sphere vertices by circle quality
+ * \tparam T Template floating point type
+ * \param _quality Circle quality
+ * \return Sphere vertices
+ * \note Point count equation \f$A = 4 \times (Q + 1); N = (A + 1) \times (\frac{A}{2} + 1)\f$
+ * \sa circlePointCount(const size_t)
+ */
+template <typename T>
+const std::pair<std::vector<Vec3<T>>, std::vector<std::pair<size_t, size_t>>> &
+Sphere<T>::unitSphere(const size_t _quality)
+{
+    typename std::map<size_t, std::vector<Vec3<T>>>::iterator it = m_unitSpheres.find(_quality);
+    if (it == m_unitSpheres.end())
+    {
+        it = m_unitSpheres.insert({_quality, {std::vector<Vec3<T>>(), std::vector<std::pair<size_t, size_t>>()}}).first;
+
+        std::vector<Vec3<T>> &vertex = (*it).second.first;
+        std::vector<std::pair<size_t, size_t>> &pool = (*it).second.second;
+
+        static const Vec3<T> N1 = Vec3<T>::unitZ();
+        static const Vec3<T> N2 = Vec3<T>::unitX();
+
+        const size_t cntCircle = circlePointCount(_quality);
+        const size_t cntLon = cntCircle;
+        const size_t cntLat = cntCircle / 2UL;
+        const size_t cntVertex = (cntLon + 1UL) * (cntLat + 1UL);
+        const size_t offset = (cntLat + 1UL);
+        const T stepRad = T(2.0l * M_PIl) / T(cntCircle);
+        pool = createPool(cntVertex);
+
+        if (pool.empty())
+        {
+            for (size_t i = 0UL; i < cntVertex; ++i)
+            {
+                const Vec3<T> N3 = N2.rotated(N1, float(i / offset) * stepRad).normalized();
+                vertex[i] = N1.rotated(N3, float(i % offset) * stepRad).normalized();
+            }
+        }
+        else
+        {
+            std::vector<std::thread> threads;
+            threads.reserve(pool.size());
+            for (const std::pair<size_t, size_t> &t : std::as_const(pool))
+                threads.push_back(std::thread(
+                    [t, offset, stepRad](Vec3<T> *__out) {
+                        const size_t end = t.first + t.second;
+                        for (size_t i = t.first; i < end; ++i)
+                        {
+                            const Vec3<T> N3 = N2.rotated(N1, float(i / offset) * stepRad).normalized();
+                            __out[i] = N1.rotated(N3, float(i % offset) * stepRad).normalized();
+                        }
+                    },
+                    vertex.data()));
+            for (std::thread &t : threads)
+                t.join();
+        }
+    }
+
+    return (*it).second;
+}
+
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Fill sphere vertices - sphere visible from outside
+ * \tparam T Template floating point type
+ * \param _outVertex Output vertex array
+ * \param _outNormal Output normal array
+ * \param _outIndex Output index array
+ * \param _orientation Sphere orientation in 3D space
+ * \param _radius Sphere radius
+ * \param _quality Circle quality
+ */
+template <typename T>
+void Sphere<T>::fillSphereOuter(Vec3<T> *_outVertex,
+                                Vec3<T> *_outNormal,
+                                uint *_outIndex,
+                                const Orientation<T> &_orientation,
+                                const T _radius,
+                                const size_t _quality)
+{
+    const std::pair<std::vector<Vec3<T>>, std::vector<std::pair<size_t, size_t>>> &us = Sphere<T>::unitSphere(_quality);
+    const std::vector<Vec3<T>> &data = us.first;
+    const std::vector<std::pair<size_t, size_t>> &pool = us.second;
+
+    if (pool.empty())
+    {
+        for (size_t i = 0UL; i < data.size(); ++i)
+        {
+            const Vec3<T> &N0 = data[i];
+            const Vec3<T> N =
+                (_orientation.normal1 * N0.x + _orientation.normal2 * N0.y + _orientation.normal3 * N0.z).normalized();
+            _outVertex[i] = _orientation.center + N * _radius;
+            _outNormal[i] = N;
+        }
+    }
+    else
+    {
+        std::vector<std::thread> threads;
+        threads.reserve(pool.size());
+        for (const std::pair<size_t, size_t> &t : std::as_const(pool))
+            threads.push_back(std::thread(
+                [t, _orientation, _radius](Vec3<T> *__outVertex, Vec3<T> *__outNormal, const Vec3<T> *_data) {
+                    const size_t end = t.first + t.second;
+                    for (size_t i = t.first; i < end; ++i)
+                    {
+                        const Vec3<T> &N0 = _data[i];
+                        const Vec3<T> N =
+                            (_orientation.normal1 * N0.x + _orientation.normal2 * N0.y + _orientation.normal3 * N0.z)
+                                .normalized();
+                        __outVertex[i] = _orientation.center + N * _radius;
+                        __outNormal[i] = N;
+                    }
+                },
+                _outVertex,
+                _outNormal,
+                data.data()));
+        for (std::thread &t : threads)
+            t.join();
+    }
+
+    const size_t cntCircle = circlePointCount(_quality);
+    const size_t cntLon = cntCircle;
+    const size_t cntLat = cntCircle / 2UL;
+    const std::pair<std::vector<uint>, std::vector<std::pair<size_t, size_t>>> &ui =
+        PlaneIndices::getQuadIndexes(cntLon + 1UL, cntLat + 1UL);
+
+    copyData<uint, size_t>(_outIndex, ui.first.data(), ui.first.size(), ui.second);
+}
+
+/*!
+ * \brief Fill sphere vertices - sphere visible from inside
+ * \tparam T Template floating point type
+ * \param _outVertex Output vertex array
+ * \param _outNormal Output normal array
+ * \param _outIndex Output index array
+ * \param _orientation Sphere orientation in 3D space
+ * \param _radius Sphere radius
+ * \param _quality Circle quality
+ */
+template <typename T>
+void Sphere<T>::fillSphereInner(Vec3<T> *_outVertex,
+                                Vec3<T> *_outNormal,
+                                uint *_outIndex,
+                                const Orientation<T> &_orientation,
+                                const T _radius,
+                                const size_t _quality)
+{
+
+    const std::pair<std::vector<Vec3<T>>, std::vector<std::pair<size_t, size_t>>> &us = Sphere<T>::unitSphere(_quality);
+    const std::vector<Vec3<T>> &data = us.first;
+    const std::vector<std::pair<size_t, size_t>> &pool = us.second;
+
+    if (pool.empty())
+    {
+        for (size_t i = 0UL; i < data.size(); ++i)
+        {
+            const Vec3<T> &N0 = data[i];
+            const Vec3<T> N =
+                (_orientation.normal1 * N0.x + _orientation.normal2 * N0.y + _orientation.normal3 * N0.z).normalized();
+            _outVertex[i] = _orientation.center + N * _radius;
+            _outNormal[i] = -N;
+        }
+    }
+    else
+    {
+        std::vector<std::thread> threads;
+        threads.reserve(pool.size());
+        for (const std::pair<size_t, size_t> &t : std::as_const(pool))
+            threads.push_back(std::thread(
+                [t, _orientation, _radius](Vec3<T> *__outVertex, Vec3<T> *__outNormal, const Vec3<T> *_data) {
+                    const size_t end = t.first + t.second;
+                    for (size_t i = t.first; i < end; ++i)
+                    {
+                        const Vec3<T> &N0 = _data[i];
+                        const Vec3<T> N =
+                            (_orientation.normal1 * N0.x + _orientation.normal2 * N0.y + _orientation.normal3 * N0.z)
+                                .normalized();
+                        __outVertex[i] = _orientation.center + N * _radius;
+                        __outNormal[i] = -N;
+                    }
+                },
+                _outVertex,
+                _outNormal,
+                data.data()));
+        for (std::thread &t : threads)
+            t.join();
+    }
+
+    const size_t cntCircle = circlePointCount(_quality);
+    const size_t cntLon = cntCircle;
+    const size_t cntLat = cntCircle / 2UL;
+    const std::pair<std::vector<uint>, std::vector<std::pair<size_t, size_t>>> &ui =
+        PlaneIndices::getQuadIndexesInverted(cntLon + 1UL, cntLat + 1UL);
+
+    copyData<uint, size_t>(_outIndex, ui.first.data(), ui.first.size(), ui.second);
+}
+
+/*!
+ * \brief Fill sphere vertices - sphere visible from outside
+ * \tparam T Template floating point type
+ * \param _outVertex Output vertex array
+ * \param _outNormal Output normal array
+ * \param _outIndex Output index array
+ * \param _center Sphere center point
+ * \param _normal Sphere plane normal
+ * \param _arm Sphere start arm
+ * \param _radius Sphere radius
+ * \param _quality Circle quality
+ */
+template <typename T>
+inline void Sphere<T>::fillSphereOuter(Vec3<T> *_outVertex,
+                                       Vec3<T> *_outNormal,
+                                       uint *_outIndex,
+                                       const Vec3<T> &_center,
+                                       const Vec3<T> &_normal,
+                                       const Vec3<T> &_arm,
+                                       const T _radius,
+                                       const size_t _quality)
+{
+    fillSphereOuter(_outVertex, _outNormal, _outIndex, Orientation<T>(_center, _normal, _arm), _radius, _quality);
+}
+
+/*!
+ * \brief Fill sphere vertices - sphere visible from inside
+ * \tparam T Template floating point type
+ * \param _outVertex Output vertex array
+ * \param _outNormal Output normal array
+ * \param _outIndex Output index array
+ * \param _center Sphere center point
+ * \param _normal Sphere plane normal
+ * \param _arm Sphere start arm
+ * \param _radius Sphere radius
+ * \param _quality Circle quality
+ */
+template <typename T>
+inline void Sphere<T>::fillSphereInner(Vec3<T> *_outVertex,
+                                       Vec3<T> *_outNormal,
+                                       uint *_outIndex,
+                                       const Vec3<T> &_center,
+                                       const Vec3<T> &_normal,
+                                       const Vec3<T> &_arm,
+                                       const T _radius,
+                                       const size_t _quality)
+{
+    fillSphereInner(_outVertex, _outNormal, _outIndex, Orientation<T>(_center, _normal, _arm), _radius, _quality);
+}
+
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Fill sphere vertices - sphere visible from outside
+ * \tparam T Template floating point type
+ * \param _outVertex Output vertex array
+ * \param _outCoords Output texture coordinates array
+ * \param _outIndex Output index array
+ * \param _orientation Sphere orientation in 3D space
+ * \param _radius Sphere radius
+ * \param _quality Circle quality
+ */
+template <typename T>
+void Sphere<T>::fillSphereOuter(Vec3<T> *_outVertex,
+                                Vec2<T> *_outCoords,
+                                uint *_outIndex,
+                                const Orientation<T> &_orientation,
+                                const T _radius,
+                                const size_t _quality)
+{
+    const size_t cntCircle = circlePointCount(_quality);
+    const size_t cntLon = cntCircle;
+    const size_t cntLat = cntCircle / 2UL;
+
+    const std::pair<std::vector<Vec3<T>>, std::vector<std::pair<size_t, size_t>>> &us = Sphere<T>::unitSphere(_quality);
+    const std::pair<std::vector<Vec2<T>>, std::vector<std::pair<size_t, size_t>>> &uc =
+        PlaneCoords<T>::getCoords(cntLon + 1UL, cntLat + 1UL);
+    const std::pair<std::vector<uint>, std::vector<std::pair<size_t, size_t>>> &ui =
+        PlaneIndices::getQuadIndexes(cntLon + 1UL, cntLat + 1UL);
+
+    _orientation.transformPoints(_outVertex, us.first.data(), _radius, us.first.size(), us.second);
+    copyData<Vec2<T>, size_t>(_outCoords, uc.first.data(), uc.first.size(), uc.second);
+    copyData<uint, size_t>(_outIndex, ui.first.data(), ui.first.size(), ui.second);
+}
+
+/*!
+ * \brief Fill sphere vertices - sphere visible from inside
+ * \tparam T Template floating point type
+ * \param _outVertex Output vertex array
+ * \param _outCoords Output texture coordinates array
+ * \param _outIndex Output index array
+ * \param _orientation Sphere orientation in 3D space
+ * \param _radius Sphere radius
+ * \param _quality Circle quality
+ */
+template <typename T>
+void Sphere<T>::fillSphereInner(Vec3<T> *_outVertex,
+                                Vec2<T> *_outCoords,
+                                uint *_outIndex,
+                                const Orientation<T> &_orientation,
+                                const T _radius,
+                                const size_t _quality)
+{
+    const size_t cntCircle = circlePointCount(_quality);
+    const size_t cntLon = cntCircle;
+    const size_t cntLat = cntCircle / 2UL;
+
+    const std::pair<std::vector<Vec3<T>>, std::vector<std::pair<size_t, size_t>>> &us = Sphere<T>::unitSphere(_quality);
+    const std::pair<std::vector<Vec2<T>>, std::vector<std::pair<size_t, size_t>>> &uc =
+        PlaneCoords<T>::getCoords(cntLon + 1UL, cntLat + 1UL);
+    const std::pair<std::vector<uint>, std::vector<std::pair<size_t, size_t>>> &ui =
+        PlaneIndices::getQuadIndexesInverted(cntLon + 1UL, cntLat + 1UL);
+
+    _orientation.transformPoints(_outVertex, us.first.data(), _radius, us.first.size(), us.second);
+    copyData<Vec2<T>, size_t>(_outCoords, uc.first.data(), uc.first.size(), uc.second);
+    copyData<uint, size_t>(_outIndex, ui.first.data(), ui.first.size(), ui.second);
+}
+
+/*!
+ * \brief Fill sphere vertices - sphere visible from outside
+ * \tparam T Template floating point type
+ * \param _outVertex Output vertex array
+ * \param _outCoords Output texture coordinates array
+ * \param _outIndex Output index array
+ * \param _center Sphere center point
+ * \param _normal Sphere plane normal
+ * \param _arm Sphere start arm
+ * \param _radius Sphere radius
+ * \param _quality Circle quality
+ */
+template <typename T>
+void Sphere<T>::fillSphereOuter(Vec3<T> *_outVertex,
+                                Vec2<T> *_outCoords,
+                                uint *_outIndex,
+                                const Vec3<T> &_center,
+                                const Vec3<T> &_normal,
+                                const Vec3<T> &_arm,
+                                const T _radius,
+                                const size_t _quality)
+{
+    fillSphereOuter(_outVertex, _outCoords, _outIndex, Orientation<T>(_center, _normal, _arm), _radius, _quality);
+}
+
+/*!
+ * \brief Fill sphere vertices - sphere visible from inside
+ * \tparam T Template floating point type
+ * \param _outVertex Output vertex array
+ * \param _outCoords Output texture coordinates array
+ * \param _outIndex Output index array
+ * \param _center Sphere center point
+ * \param _normal Sphere plane normal
+ * \param _arm Sphere start arm
+ * \param _radius Sphere radius
+ * \param _quality Circle quality
+ */
+template <typename T>
+void Sphere<T>::fillSphereInner(Vec3<T> *_outVertex,
+                                Vec2<T> *_outCoords,
+                                uint *_outIndex,
+                                const Vec3<T> &_center,
+                                const Vec3<T> &_normal,
+                                const Vec3<T> &_arm,
+                                const T _radius,
+                                const size_t _quality)
+{
+    fillSphereInner(_outVertex, _outCoords, _outIndex, Orientation<T>(_center, _normal, _arm), _radius, _quality);
+}
+
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Create sphere arc angles for longitudes and latitudes, aligned with circle quality
+ * \tparam T Template floating point type
+ * \param _outLon Output longitude arc angles
+ * \param _outLat Output latitude arc angles
+ * \param _angleLonStart Start longitude angle in radians
+ * \param _angleLonEnd End longitude angle in radians
+ * \param _angleLatStart Start latitude angle in radians
+ * \param _angleLatEnd End latitude angle in radians
+ * \param _quality Circle quality
+ */
+template <typename T>
+void Sphere<T>::arcAngles(std::vector<T> &_outLon,
+                          std::vector<T> &_outLat,
+                          const T _angleLonStart,
+                          const T _angleLonEnd,
+                          const T _angleLatStart,
+                          const T _angleLatEnd,
+                          const size_t _quality)
+{
+    static const T _2PI = T(2.0l * M_PIl);
+    static const T _PI = T(M_PIl);
+    const T angle = _2PI / T(circlePointCount(_quality));
+
+    if (isMoreOrEqual(std::fabs(_angleLonEnd - _angleLonStart), _2PI))
+        fillAlignedSteps<T>(_outLon, T(0), _2PI, angle);
+    else
+        fillAlignedSteps<T>(_outLon, _angleLonStart, _angleLonEnd, angle);
+
+    if (isMoreOrEqual(std::fabs(_angleLatEnd - _angleLatStart), _PI))
+        fillAlignedSteps<T>(_outLat, T(0), _PI, angle);
+    else
+        fillAlignedSteps<T>(_outLat, _angleLatStart, _angleLatEnd, angle);
+}
+
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Fill sphere arc vertices - sphere visible from outside
+ * \tparam T Template floating point type
+ * \param _outVertex Output vertex array
+ * \param _outNormal Output normal array
+ * \param _outIndex Output index array
+ * \param _orientation Sphere orientation in 3D space
+ * \param _radius Sphere radius
+ * \param _anglesLon Longitudes angles
+ * \param _anglesLat Latitude angles
+ */
+template <typename T>
+void Sphere<T>::fillSphereArcOuter(Vec3<T> *_outVertex,
+                                   Vec3<T> *_outNormal,
+                                   uint *_outIndex,
+                                   const Orientation<T> &_orientation,
+                                   const T _radius,
+                                   const std::vector<T> &_anglesLon,
+                                   const std::vector<T> &_anglesLat)
+{
+    const size_t cntVertex = _anglesLon.size() * _anglesLat.size();
+    const size_t offset = _anglesLat.size();
+    const std::vector<std::pair<size_t, size_t>> pool = createPool(cntVertex);
+
+    if (pool.empty())
+    {
+        for (size_t i = 0UL; i < cntVertex; ++i)
+        {
+            const Vec3<T> N1 =
+                _orientation.normal2.rotated(_orientation.normal1, _anglesLon[(i / offset)]).normalized();
+            const Vec3<T> N = _orientation.normal1.rotated(N1, _anglesLat[(i % offset)]).normalized();
+            _outVertex[i] = _orientation.center + N * _radius;
+            _outNormal[i] = N;
+        }
+    }
+    else
+    {
+        std::vector<std::thread> threads;
+        threads.reserve(pool.size());
+        for (const std::pair<size_t, size_t> &t : std::as_const(pool))
+            threads.push_back(std::thread(
+                [t, _orientation, _radius, offset](
+                    Vec3<T> *__outVertex, Vec3<T> *__outNormal, const T *__anglesLon, const T *__anglesLat) {
+                    const size_t end = t.first + t.second;
+                    for (size_t i = t.first; i < end; ++i)
+                    {
+                        const Vec3<T> N1 =
+                            _orientation.normal2.rotated(_orientation.normal1, __anglesLon[(i / offset)]).normalized();
+                        const Vec3<T> N = _orientation.normal1.rotated(N1, __anglesLat[(i % offset)]).normalized();
+                        __outVertex[i] = _orientation.center + N * _radius;
+                        __outNormal[i] = N;
+                    }
+                },
+                _outVertex,
+                _outNormal,
+                _anglesLon.data(),
+                _anglesLat.data()));
+        for (std::thread &t : threads)
+            t.join();
+    }
+
+    const std::pair<std::vector<uint>, std::vector<std::pair<size_t, size_t>>> &ui =
+        PlaneIndices::getQuadIndexes(_anglesLon.size(), _anglesLat.size());
+
+    copyData<uint, size_t>(_outIndex, ui.first.data(), ui.first.size(), ui.second);
+}
+
+/*!
+ * \brief Fill sphere arc vertices - sphere visible from inside
+ * \tparam T Template floating point type
+ * \param _outVertex Output vertex array
+ * \param _outNormal Output normal array
+ * \param _outIndex Output index array
+ * \param _orientation Sphere orientation in 3D space
+ * \param _radius Sphere radius
+ * \param _anglesLon Longitudes angles
+ * \param _anglesLat Latitude angles
+ */
+template <typename T>
+void Sphere<T>::fillSphereArcInner(Vec3<T> *_outVertex,
+                                   Vec3<T> *_outNormal,
+                                   uint *_outIndex,
+                                   const Orientation<T> &_orientation,
+                                   const T _radius,
+                                   const std::vector<T> &_anglesLon,
+                                   const std::vector<T> &_anglesLat)
+{
+    const size_t cntVertex = _anglesLon.size() * _anglesLat.size();
+    const size_t offset = _anglesLat.size();
+    const std::vector<std::pair<size_t, size_t>> pool = createPool(cntVertex);
+
+    if (pool.empty())
+    {
+        for (size_t i = 0UL; i < cntVertex; ++i)
+        {
+            const Vec3<T> N1 =
+                _orientation.normal2.rotated(_orientation.normal1, _anglesLon[(i / offset)]).normalized();
+            const Vec3<T> N = _orientation.normal1.rotated(N1, _anglesLat[(i % offset)]).normalized();
+            _outVertex[i] = _orientation.center + N * _radius;
+            _outNormal[i] = -N;
+        }
+    }
+    else
+    {
+        std::vector<std::thread> threads;
+        threads.reserve(pool.size());
+        for (const std::pair<size_t, size_t> &t : std::as_const(pool))
+            threads.push_back(std::thread(
+                [t, _orientation, _radius, offset](
+                    Vec3<T> *__outVertex, Vec3<T> *__outNormal, const T *__anglesLon, const T *__anglesLat) {
+                    const size_t end = t.first + t.second;
+                    for (size_t i = t.first; i < end; ++i)
+                    {
+                        const Vec3<T> N1 =
+                            _orientation.normal2.rotated(_orientation.normal1, __anglesLon[(i / offset)]).normalized();
+                        const Vec3<T> N = _orientation.normal1.rotated(N1, __anglesLat[(i % offset)]).normalized();
+                        __outVertex[i] = _orientation.center + N * _radius;
+                        __outNormal[i] = -N;
+                    }
+                },
+                _outVertex,
+                _outNormal,
+                _anglesLon.data(),
+                _anglesLat.data()));
+        for (std::thread &t : threads)
+            t.join();
+    }
+
+    const std::pair<std::vector<uint>, std::vector<std::pair<size_t, size_t>>> &ui =
+        PlaneIndices::getQuadIndexesInverted(_anglesLon.size(), _anglesLat.size());
+
+    copyData<uint, size_t>(_outIndex, ui.first.data(), ui.first.size(), ui.second);
+}
+
+/*!
+ * \brief Fill sphere arc vertices - sphere visible from outside
+ * \tparam T Template floating point type
+ * \param _outVertex Output vertex array
+ * \param _outNormal Output normal array
+ * \param _outIndex Output index array
+ * \param _center Sphere center point
+ * \param _normal Sphere plane normal
+ * \param _arm Sphere start arm
+ * \param _radius Sphere radius
+ * \param _anglesLon Longitudes angles
+ * \param _anglesLat Latitude angles
+ */
+template <typename T>
+void Sphere<T>::fillSphereArcOuter(Vec3<T> *_outVertex,
+                                   Vec3<T> *_outNormal,
+                                   uint *_outIndex,
+                                   const Vec3<T> &_center,
+                                   const Vec3<T> &_normal,
+                                   const Vec3<T> &_arm,
+                                   const T _radius,
+                                   const std::vector<T> &_anglesLon,
+                                   const std::vector<T> &_anglesLat)
+{
+    fillSphereArcOuter(
+        _outVertex, _outNormal, _outIndex, Orientation<T>(_center, _normal, _arm), _radius, _anglesLon, _anglesLat);
+}
+
+/*!
+ * \brief Fill sphere arc vertices - sphere visible from inside
+ * \tparam T Template floating point type
+ * \param _outVertex Output vertex array
+ * \param _outNormal Output normal array
+ * \param _outIndex Output index array
+ * \param _center Sphere center point
+ * \param _normal Sphere plane normal
+ * \param _arm Sphere start arm
+ * \param _radius Sphere radius
+ * \param _anglesLon Longitudes angles
+ * \param _anglesLat Latitude angles
+ */
+template <typename T>
+void Sphere<T>::fillSphereArcInner(Vec3<T> *_outVertex,
+                                   Vec3<T> *_outNormal,
+                                   uint *_outIndex,
+                                   const Vec3<T> &_center,
+                                   const Vec3<T> &_normal,
+                                   const Vec3<T> &_arm,
+                                   const T _radius,
+                                   const std::vector<T> &_anglesLon,
+                                   const std::vector<T> &_anglesLat)
+{
+    fillSphereArcInner(
+        _outVertex, _outNormal, _outIndex, Orientation<T>(_center, _normal, _arm), _radius, _anglesLon, _anglesLat);
 }
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
