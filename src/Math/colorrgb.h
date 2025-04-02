@@ -89,8 +89,16 @@ struct ColorRGB
     inline static ColorRGB fromVec3(const Vec3<T> &_vector);
 
     /*!
+     * \brief Conversion to 3D \c QVector3D
+     * \return Color as 3D \c QVector3D
+     */
+    inline QVector3D toQVec3() const
+    {
+        return QVector3D(float(red) / float(255), float(green) / float(255), float(blue) / float(255));
+    }
+
+    /*!
      * \brief Create color from a \c QVector3D
-     * \tparam T Template floating point type
      * \param _vector \c QVector3D
      * \return Color constructed from a \c QVector3D
      */

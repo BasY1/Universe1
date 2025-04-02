@@ -35,6 +35,22 @@ HEADERS += src/Math/cylinderarc.h
 
 HEADERS += src/Math/spherecrosssection.h
 
+######################################################3
+
+HEADERS += src/Data3D/data3d.h
+SOURCES += src/Data3D/data3d.cpp
+
+HEADERS += src/Data3D/data3dpointsbase.h
+SOURCES += src/Data3D/data3dpointsbase.cpp
+
+HEADERS += src/Data3D/data3dpointssize.h
+SOURCES += src/Data3D/data3dpointssize.cpp
+
+HEADERS += src/Data3D/data3dpointsalpha.h
+SOURCES += src/Data3D/data3dpointsalpha.cpp
+
+######################################################3
+
 SOURCES += src/main.cpp
 
 
