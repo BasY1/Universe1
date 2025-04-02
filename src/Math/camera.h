@@ -23,21 +23,32 @@ struct Camera
     Vec3<T> position;   //!< Camera look from position
     Vec3<T> lookAt;     //!< Camera look at position
     Vec3<T> up;         //!< Camera up direction
+    uint screenWidth;   //!< Screen width
+    uint screenHeight;  //!< Screen height
     T fieldOfView;      //!< Field of view (in degrees)
     T nearPlane;        //!< Near plane distance
     T farPlane;         //!< Far plane distance
-    uint screenWidth;   //!< Screen width
-    uint screenHeight;  //!< Screen height
     size_t valueHash;   //!< Calculated hash
 
+    /*!
+     * \brief Constructor
+     * \param _position Camera look from position
+     * \param _lookAt Camera look at position
+     * \param _up Camera up direction
+     * \param _screenWidth Screen width
+     * \param _screenHeight Screen height
+     * \param _fieldOfView Field of view (in degrees)
+     * \param _nearPlane Near plane distance
+     * \param _farPlane Far plane distance
+     */
     inline Camera(const Vec3<T> &_position,
                   const Vec3<T> &_lookAt,
                   const Vec3<T> &_up,
                   const uint &_screenWidth,
                   const uint &_screenHeight,
-                  const float _fieldOfView,
-                  const float _nearPlane,
-                  const float _farPlane)
+                  const T _fieldOfView,
+                  const T _nearPlane,
+                  const T _farPlane)
         : position(_position)
         , lookAt(_lookAt)
         , up(_up)

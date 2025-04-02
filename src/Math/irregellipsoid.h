@@ -192,6 +192,7 @@ struct IrregEllipsoid
  * \param _radius3P Ellipsoid radius in normal 3 direction
  * \param _radius3M Ellipsoid radius in normal 3 inverted direction
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void IrregEllipsoid<T>::fillEllipsoidOuter(Vec3<T> *_outVertex,
@@ -286,6 +287,7 @@ void IrregEllipsoid<T>::fillEllipsoidOuter(Vec3<T> *_outVertex,
  * \param _radius3P Ellipsoid radius in normal 3 direction
  * \param _radius3M Ellipsoid radius in normal 3 inverted direction
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void IrregEllipsoid<T>::fillEllipsoidInner(Vec3<T> *_outVertex,
@@ -380,6 +382,7 @@ void IrregEllipsoid<T>::fillEllipsoidInner(Vec3<T> *_outVertex,
  * \param _radius3P Ellipsoid radius in normal 3 direction
  * \param _radius3M Ellipsoid radius in normal 3 inverted direction
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 inline void IrregEllipsoid<T>::fillEllipsoidOuter(Vec3<T> *_outVertex,
@@ -425,6 +428,7 @@ inline void IrregEllipsoid<T>::fillEllipsoidOuter(Vec3<T> *_outVertex,
  * \param _radius3P Ellipsoid radius in normal 3 direction
  * \param _radius3M Ellipsoid radius in normal 3 inverted direction
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 inline void IrregEllipsoid<T>::fillEllipsoidInner(Vec3<T> *_outVertex,
@@ -468,6 +472,7 @@ inline void IrregEllipsoid<T>::fillEllipsoidInner(Vec3<T> *_outVertex,
  * \param _angleLatStart Start latitude angle in radians
  * \param _angleLatEnd End latitude angle in radians
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 inline void IrregEllipsoid<T>::arcAngles(std::vector<T> &_outLon,
@@ -500,6 +505,7 @@ inline void IrregEllipsoid<T>::arcAngles(std::vector<T> &_outLon,
  * \param _radius3M Ellipsoid radius in normal 3 inverted direction
  * \param _anglesLon Longitudes angles
  * \param _anglesLat Latitude angles
+ * \return
  */
 template <typename T>
 void IrregEllipsoid<T>::fillEllipsoidArcOuter(Vec3<T> *_outVertex,
@@ -594,6 +600,7 @@ void IrregEllipsoid<T>::fillEllipsoidArcOuter(Vec3<T> *_outVertex,
  * \param _radius3M Ellipsoid radius in normal 3 inverted direction
  * \param _anglesLon Longitudes angles
  * \param _anglesLat Latitude angles
+ * \return
  */
 template <typename T>
 void IrregEllipsoid<T>::fillEllipsoidArcInner(Vec3<T> *_outVertex,
@@ -690,6 +697,7 @@ void IrregEllipsoid<T>::fillEllipsoidArcInner(Vec3<T> *_outVertex,
  * \param _radius3M Ellipsoid radius in normal 3 inverted direction
  * \param _anglesLon Longitudes angles
  * \param _anglesLat Latitude angles
+ * \return
  */
 template <typename T>
 void IrregEllipsoid<T>::fillEllipsoidArcOuter(Vec3<T> *_outVertex,
@@ -738,6 +746,7 @@ void IrregEllipsoid<T>::fillEllipsoidArcOuter(Vec3<T> *_outVertex,
  * \param _radius3M Ellipsoid radius in normal 3 inverted direction
  * \param _anglesLon Longitudes angles
  * \param _anglesLat Latitude angles
+ * \return
  */
 template <typename T>
 void IrregEllipsoid<T>::fillEllipsoidArcInner(Vec3<T> *_outVertex,

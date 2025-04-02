@@ -14,6 +14,8 @@ std::map<size_t, std::map<size_t, std::pair<std::vector<uint>, std::vector<std::
 std::map<size_t, std::map<size_t, std::pair<std::vector<uint>, std::vector<std::pair<size_t, size_t>>>>>
     PlaneIndices::m_cacheInverted = {};
 
+#ifndef DOXYGEN_SKIP
+
 template <>
 std::map<size_t, std::map<size_t, std::pair<std::vector<Vec2<float>>, std::vector<std::pair<size_t, size_t>>>>>
     PlaneCoords<float>::m_cache = {};
@@ -25,6 +27,8 @@ std::map<size_t, std::map<size_t, std::pair<std::vector<Vec2<double>>, std::vect
 template <>
 std::map<size_t, std::map<size_t, std::pair<std::vector<Vec2<long double>>, std::vector<std::pair<size_t, size_t>>>>>
     PlaneCoords<long double>::m_cache = {};
+
+#endif  // DOXYGEN_SKIP
 
 const std::pair<std::vector<uint>, std::vector<std::pair<size_t, size_t>>> &
 PlaneIndices::getQuadIndexes(const size_t _width, const size_t _height)

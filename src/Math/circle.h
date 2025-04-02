@@ -26,6 +26,9 @@ struct Circle2
     /*! \brief  Unit 2D circle cache */
     static std::map<size_t, std::pair<std::vector<Vec2<T>>, std::vector<std::pair<size_t, size_t>>>> m_unitCircles;
 
+    /*! \brief  Evenly distributed angles over the circle */
+    static std::map<size_t, std::pair<std::vector<T>, std::vector<std::pair<size_t, size_t>>>> m_circleAngles;
+
  public:
     Vec2<T> center;  //!< Circle center
     T radius;        //!< Circle radius
@@ -69,6 +72,8 @@ struct Circle2
 
     static const std::pair<std::vector<Vec2<T>>, std::vector<std::pair<size_t, size_t>>> &
     unitCircle(const size_t _quality);
+
+    static const std::pair<std::vector<T>, std::vector<std::pair<size_t, size_t>>> &circleAngles(const size_t _quality);
 
     inline static void arcAngles(std::vector<T> &_out, const T _angleStart, const T _angleEnd, const size_t _quality);
 };
@@ -675,6 +680,57 @@ Circle2<T>::unitCircle(const size_t _quality)
     return (*it).second;
 }
 
+/*!
+ * \brief Evenly distributed circle angles (in radians) by circle quality, in range: \f$\langle 0, \pi \langle\f$
+ * \tparam T Template floating point type
+ * \param _quality Circle quality
+ * \return Evenly distributed circle angles
+ * \note Point count equation \f$N = 1 + 4 \times (Q + 1)\f$
+ * \sa circlePointCount(const size_t)
+ */
+template <typename T>
+const std::pair<std::vector<T>, std::vector<std::pair<size_t, size_t>>> &Circle2<T>::circleAngles(const size_t _quality)
+{
+    typename std::map<size_t, std::vector<T>>::iterator it = m_circleAngles.find(_quality);
+    if (it == m_circleAngles.end())
+    {
+        it = m_circleAngles.insert({_quality, {std::vector<T>(), std::vector<std::pair<size_t, size_t>>()}}).first;
+
+        std::vector<T> &angles = (*it).second.first;
+        std::vector<std::pair<size_t, size_t>> &pool = (*it).second.second;
+
+        const size_t cntCircle = circlePointCount(_quality);
+        const size_t cntVertex = cntCircle + 1UL;
+        const T angleStep = T(2.0l * M_PIl) / T(cntCircle);
+        pool = createPool(cntVertex);
+
+        if (pool.empty())
+        {
+            angles.reserve(cntVertex);
+            for (size_t i = 0UL; i < cntVertex; ++i)
+                angles.push_back(angleStep * T(i));
+        }
+        else
+        {
+            angles.resize(cntVertex);
+            std::vector<std::thread> threads;
+            threads.reserve(pool.size());
+            for (const std::pair<size_t, size_t> &t : std::as_const(pool))
+                threads.push_back(std::thread(
+                    [t, angleStep](T *__out) {
+                        const size_t end = t.first + t.second;
+                        for (size_t i = t.first; i < end; ++i)
+                            __out[i] = angleStep * T(i);
+                    },
+                    angles.data()));
+            for (std::thread &t : threads)
+                t.join();
+        }
+    }
+
+    return (*it).second;
+}
+
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -686,6 +742,7 @@ Circle2<T>::unitCircle(const size_t _quality)
  * \param _orientation Circle plane orientation in 3D space
  * \param _radius Circle radius
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Circle3<T>::fillCircle(Vec3<T> *_outVertex,
@@ -738,6 +795,7 @@ void Circle3<T>::fillCircle(Vec3<T> *_outVertex,
  * \param _arm Circle start arm
  * \param _radius Circle radius
  * \param _quality Circle quality
+ * \return
  */
 
 template <typename T>
@@ -765,6 +823,7 @@ inline void Circle3<T>::fillCircle(Vec3<T> *_outVertex,
  * \param _alphaBorder Alpha at circle border
  * \param _radius Circle radius
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Circle3<T>::fillCircle(Vec3<T> *_outVertex,
@@ -834,6 +893,7 @@ void Circle3<T>::fillCircle(Vec3<T> *_outVertex,
  * \param _alphaBorder Alpha at circle border
  * \param _radius Circle radius
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 inline void Circle3<T>::fillCircle(Vec3<T> *_outVertex,
@@ -862,6 +922,7 @@ inline void Circle3<T>::fillCircle(Vec3<T> *_outVertex,
  * \param _orientation Circle plane orientation in 3D space
  * \param _radius Circle radius
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Circle3<T>::fillCircle(Vec3<T> *_outVertex,
@@ -919,6 +980,7 @@ void Circle3<T>::fillCircle(Vec3<T> *_outVertex,
  * \param _arm Circle start arm
  * \param _radius Circle radius
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 inline void Circle3<T>::fillCircle(Vec3<T> *_outVertex,
@@ -947,6 +1009,7 @@ inline void Circle3<T>::fillCircle(Vec3<T> *_outVertex,
  * \param _alphaBorder Alpha at circle border
  * \param _radius Circle radius
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Circle3<T>::fillCircle(Vec3<T> *_outVertex,
@@ -1025,6 +1088,7 @@ void Circle3<T>::fillCircle(Vec3<T> *_outVertex,
  * \param _alphaBorder Alpha at circle border
  * \param _radius Circle radius
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 inline void Circle3<T>::fillCircle(Vec3<T> *_outVertex,
@@ -1071,6 +1135,7 @@ inline void Circle3<T>::fillCircle(Vec3<T> *_outVertex,
  * \param _shineBorder Shine at circle border
  * \param _radius Circle radius
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Circle3<T>::fillCircle(Vec3<T> *_outVertex,
@@ -1179,6 +1244,7 @@ void Circle3<T>::fillCircle(Vec3<T> *_outVertex,
  * \param _shineBorder Shine at circle border
  * \param _radius Circle radius
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 inline void Circle3<T>::fillCircle(Vec3<T> *_outVertex,
@@ -1244,6 +1310,7 @@ inline void Circle3<T>::fillCircle(Vec3<T> *_outVertex,
  * \param _alphaBorder Alpha at circle border
  * \param _radius Circle radius
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Circle3<T>::fillCircle(Vec3<T> *_outVertex,
@@ -1364,6 +1431,7 @@ void Circle3<T>::fillCircle(Vec3<T> *_outVertex,
  * \param _alphaBorder Alpha at circle border
  * \param _radius Circle radius
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 inline void Circle3<T>::fillCircle(Vec3<T> *_outVertex,
@@ -1420,6 +1488,7 @@ inline void Circle3<T>::fillCircle(Vec3<T> *_outVertex,
  * \param _angleStart Start angle in radians
  * \param _angleEnd End angle in radians
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Circle2<T>::arcAngles(std::vector<T> &_out, const T _angleStart, const T _angleEnd, const size_t _quality)
@@ -1439,6 +1508,7 @@ void Circle2<T>::arcAngles(std::vector<T> &_out, const T _angleStart, const T _a
  * \param _angleStart Start angle in radians
  * \param _angleEnd End angle in radians
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 inline void Circle3<T>::arcAngles(std::vector<T> &_out, const T _angleStart, const T _angleEnd, const size_t _quality)
@@ -1457,6 +1527,7 @@ inline void Circle3<T>::arcAngles(std::vector<T> &_out, const T _angleStart, con
  * \param _orientation Circle plane orientation in 3D space
  * \param _radius Circle radius
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 void Circle3<T>::fillCircleArc(Vec3<T> *_outVertex,
@@ -1507,6 +1578,7 @@ void Circle3<T>::fillCircleArc(Vec3<T> *_outVertex,
  * \param _arm Circle start arm
  * \param _radius Circle radius
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 inline void Circle3<T>::fillCircleArc(Vec3<T> *_outVertex,
@@ -1533,6 +1605,7 @@ inline void Circle3<T>::fillCircleArc(Vec3<T> *_outVertex,
  * \param _alphaBorder Alpha at circle border
  * \param _radius Circle radius
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 void Circle3<T>::fillCircleArc(Vec3<T> *_outVertex,
@@ -1595,6 +1668,7 @@ void Circle3<T>::fillCircleArc(Vec3<T> *_outVertex,
  * \param _alphaBorder Alpha at circle border
  * \param _radius Circle radius
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 inline void Circle3<T>::fillCircleArc(Vec3<T> *_outVertex,
@@ -1623,6 +1697,7 @@ inline void Circle3<T>::fillCircleArc(Vec3<T> *_outVertex,
  * \param _orientation Circle plane orientation in 3D space
  * \param _radius Circle radius
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 void Circle3<T>::fillCircleArc(Vec3<T> *_outVertex,
@@ -1681,6 +1756,7 @@ void Circle3<T>::fillCircleArc(Vec3<T> *_outVertex,
  * \param _arm Circle start arm
  * \param _radius Circle radius
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 inline void Circle3<T>::fillCircleArc(Vec3<T> *_outVertex,
@@ -1709,6 +1785,7 @@ inline void Circle3<T>::fillCircleArc(Vec3<T> *_outVertex,
  * \param _alphaBorder Alpha at circle border
  * \param _radius Circle radius
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 void Circle3<T>::fillCircleArc(Vec3<T> *_outVertex,
@@ -1779,6 +1856,7 @@ void Circle3<T>::fillCircleArc(Vec3<T> *_outVertex,
  * \param _alphaBorder Alpha at circle border
  * \param _radius Circle radius
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 inline void Circle3<T>::fillCircleArc(Vec3<T> *_outVertex,
@@ -1825,6 +1903,7 @@ inline void Circle3<T>::fillCircleArc(Vec3<T> *_outVertex,
  * \param _shineBorder Shine at circle border
  * \param _radius Circle radius
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 void Circle3<T>::fillCircleArc(Vec3<T> *_outVertex,
@@ -1923,6 +2002,7 @@ void Circle3<T>::fillCircleArc(Vec3<T> *_outVertex,
  * \param _shineBorder Shine at circle border
  * \param _radius Circle radius
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 inline void Circle3<T>::fillCircleArc(Vec3<T> *_outVertex,
@@ -1987,6 +2067,7 @@ inline void Circle3<T>::fillCircleArc(Vec3<T> *_outVertex,
  * \param _alphaBorder Shine at circle border
  * \param _radius Circle radius
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 void Circle3<T>::fillCircleArc(Vec3<T> *_outVertex,
@@ -2096,6 +2177,7 @@ void Circle3<T>::fillCircleArc(Vec3<T> *_outVertex,
  * \param _alphaBorder Alpha at circle border
  * \param _radius Circle radius
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 inline void Circle3<T>::fillCircleArc(Vec3<T> *_outVertex,

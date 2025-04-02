@@ -91,6 +91,7 @@ struct ColorRGB
     /*!
      * \brief Create color from a \c QVector3D
      * \tparam T Template floating point type
+     * \param _vector \c QVector3D
      * \return Color constructed from a \c QVector3D
      */
     inline static ColorRGB fromQVec3(const QVector3D &_vector)

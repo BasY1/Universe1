@@ -318,6 +318,7 @@ struct Cylinder
  * \param _radius1 Cylinder radius at start
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Cylinder<T>::fillCylinderOuter(Vec3<T> *_outVertex,
@@ -453,6 +454,7 @@ void Cylinder<T>::fillCylinderOuter(Vec3<T> *_outVertex,
  * \param _radius1 Cylinder radius at start
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Cylinder<T>::fillCylinderInner(Vec3<T> *_outVertex,
@@ -590,6 +592,7 @@ void Cylinder<T>::fillCylinderInner(Vec3<T> *_outVertex,
  * \param _radius1 Cylinder radius at start
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Cylinder<T>::fillCylinderOuter(Vec3<T> *_outVertex,
@@ -618,6 +621,7 @@ void Cylinder<T>::fillCylinderOuter(Vec3<T> *_outVertex,
  * \param _radius1 Cylinder radius at start
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Cylinder<T>::fillCylinderInner(Vec3<T> *_outVertex,
@@ -651,6 +655,7 @@ void Cylinder<T>::fillCylinderInner(Vec3<T> *_outVertex,
  * \param _radius1 Cylinder radius at start
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Cylinder<T>::fillCylinderOuter(Vec3<T> *_outVertex,
@@ -807,6 +812,7 @@ void Cylinder<T>::fillCylinderOuter(Vec3<T> *_outVertex,
  * \param _radius1 Cylinder radius at start
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Cylinder<T>::fillCylinderInner(Vec3<T> *_outVertex,
@@ -965,6 +971,7 @@ void Cylinder<T>::fillCylinderInner(Vec3<T> *_outVertex,
  * \param _radius1 Cylinder radius at start
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Cylinder<T>::fillCylinderOuter(Vec3<T> *_outVertex,
@@ -1007,6 +1014,7 @@ void Cylinder<T>::fillCylinderOuter(Vec3<T> *_outVertex,
  * \param _radius1 Cylinder radius at start
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Cylinder<T>::fillCylinderInner(Vec3<T> *_outVertex,
@@ -1060,6 +1068,7 @@ void Cylinder<T>::fillCylinderInner(Vec3<T> *_outVertex,
  * \param _radius1 Cylinder radius at start
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Cylinder<T>::fillCylinderOuter(Vec3<T> *_outVertex,
@@ -1303,6 +1312,7 @@ void Cylinder<T>::fillCylinderOuter(Vec3<T> *_outVertex,
  * \param _radius1 Cylinder radius at start
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Cylinder<T>::fillCylinderInner(Vec3<T> *_outVertex,
@@ -1548,6 +1558,7 @@ void Cylinder<T>::fillCylinderInner(Vec3<T> *_outVertex,
  * \param _radius1 Cylinder radius at start
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Cylinder<T>::fillCylinderOuter(Vec3<T> *_outVertex,
@@ -1617,6 +1628,7 @@ void Cylinder<T>::fillCylinderOuter(Vec3<T> *_outVertex,
  * \param _radius1 Cylinder radius at start
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Cylinder<T>::fillCylinderInner(Vec3<T> *_outVertex,
@@ -1691,6 +1703,7 @@ void Cylinder<T>::fillCylinderInner(Vec3<T> *_outVertex,
  * \param _radius1 Cylinder radius at start
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Cylinder<T>::fillCylinderOuter(Vec3<T> *_outVertex,
@@ -1959,6 +1972,7 @@ void Cylinder<T>::fillCylinderOuter(Vec3<T> *_outVertex,
  * \param _radius1 Cylinder radius at start
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Cylinder<T>::fillCylinderInner(Vec3<T> *_outVertex,
@@ -2229,6 +2243,7 @@ void Cylinder<T>::fillCylinderInner(Vec3<T> *_outVertex,
  * \param _radius1 Cylinder radius at start
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Cylinder<T>::fillCylinderOuter(Vec3<T> *_outVertex,
@@ -2307,6 +2322,7 @@ void Cylinder<T>::fillCylinderOuter(Vec3<T> *_outVertex,
  * \param _radius1 Cylinder radius at start
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Cylinder<T>::fillCylinderInner(Vec3<T> *_outVertex,

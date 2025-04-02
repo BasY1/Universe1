@@ -165,6 +165,7 @@ struct Ellipsoid
  * \param _radius2 Ellipsoid radius 2
  * \param _radius3 Ellipsoid radius 3
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Ellipsoid<T>::fillEllipsoidOuter(Vec3<T> *_outVertex,
@@ -246,6 +247,7 @@ void Ellipsoid<T>::fillEllipsoidOuter(Vec3<T> *_outVertex,
  * \param _radius2 Ellipsoid radius 2
  * \param _radius3 Ellipsoid radius 3
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Ellipsoid<T>::fillEllipsoidInner(Vec3<T> *_outVertex,
@@ -329,6 +331,7 @@ void Ellipsoid<T>::fillEllipsoidInner(Vec3<T> *_outVertex,
  * \param _radius2 Ellipsoid radius 2
  * \param _radius3 Ellipsoid radius 3
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 inline void Ellipsoid<T>::fillEllipsoidOuter(Vec3<T> *_outVertex,
@@ -365,6 +368,7 @@ inline void Ellipsoid<T>::fillEllipsoidOuter(Vec3<T> *_outVertex,
  * \param _radius2 Ellipsoid radius 2
  * \param _radius3 Ellipsoid radius 3
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 inline void Ellipsoid<T>::fillEllipsoidInner(Vec3<T> *_outVertex,
@@ -402,6 +406,7 @@ inline void Ellipsoid<T>::fillEllipsoidInner(Vec3<T> *_outVertex,
  * \param _angleLatStart Start latitude angle in radians
  * \param _angleLatEnd End latitude angle in radians
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 inline void Ellipsoid<T>::arcAngles(std::vector<T> &_outLon,
@@ -431,6 +436,7 @@ inline void Ellipsoid<T>::arcAngles(std::vector<T> &_outLon,
  * \param _radius3 Ellipsoid radius 3
  * \param _anglesLon Longitudes angles
  * \param _anglesLat Latitude angles
+ * \return
  */
 template <typename T>
 void Ellipsoid<T>::fillEllipsoidArcOuter(Vec3<T> *_outVertex,
@@ -512,6 +518,7 @@ void Ellipsoid<T>::fillEllipsoidArcOuter(Vec3<T> *_outVertex,
  * \param _radius3 Ellipsoid radius 3
  * \param _anglesLon Longitudes angles
  * \param _anglesLat Latitude angles
+ * \return
  */
 template <typename T>
 void Ellipsoid<T>::fillEllipsoidArcInner(Vec3<T> *_outVertex,
@@ -595,6 +602,7 @@ void Ellipsoid<T>::fillEllipsoidArcInner(Vec3<T> *_outVertex,
  * \param _radius3 Ellipsoid radius 3
  * \param _anglesLon Longitudes angles
  * \param _anglesLat Latitude angles
+ * \return
  */
 template <typename T>
 void Ellipsoid<T>::fillEllipsoidArcOuter(Vec3<T> *_outVertex,
@@ -634,6 +642,7 @@ void Ellipsoid<T>::fillEllipsoidArcOuter(Vec3<T> *_outVertex,
  * \param _radius3 Ellipsoid radius 3
  * \param _anglesLon Longitudes angles
  * \param _anglesLat Latitude angles
+ * \return
  */
 template <typename T>
 void Ellipsoid<T>::fillEllipsoidArcInner(Vec3<T> *_outVertex,

@@ -396,6 +396,7 @@ struct Ellipse
  * \param _radius1 Ellipse radius 1
  * \param _radius2 Ellipse radius 2
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Ellipse<T>::fillEllipse(
@@ -447,6 +448,7 @@ void Ellipse<T>::fillEllipse(
  * \param _radius1 Ellipse radius 1
  * \param _radius2 Ellipse radius 2
  * \param _quality Circle quality
+ * \return
  */
 
 template <typename T>
@@ -476,6 +478,7 @@ inline void Ellipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _radius1 Ellipse radius 1
  * \param _radius2 Ellipse radius 2
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Ellipse<T>::fillEllipse(Vec3<T> *_outVertex,
@@ -548,6 +551,7 @@ void Ellipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _radius1 Ellipse radius 1
  * \param _radius2 Ellipse radius 2
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 inline void Ellipse<T>::fillEllipse(Vec3<T> *_outVertex,
@@ -584,6 +588,7 @@ inline void Ellipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _radius1 Ellipse radius 1
  * \param _radius2 Ellipse radius 2
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Ellipse<T>::fillEllipse(Vec3<T> *_outVertex,
@@ -644,6 +649,7 @@ void Ellipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _radius1 Ellipse radius 1
  * \param _radius2 Ellipse radius 2
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 inline void Ellipse<T>::fillEllipse(Vec3<T> *_outVertex,
@@ -674,6 +680,7 @@ inline void Ellipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _radius1 Ellipse radius 1
  * \param _radius2 Ellipse radius 2
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Ellipse<T>::fillEllipse(Vec3<T> *_outVertex,
@@ -754,6 +761,7 @@ void Ellipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _radius1 Ellipse radius 1
  * \param _radius2 Ellipse radius 2
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 inline void Ellipse<T>::fillEllipse(Vec3<T> *_outVertex,
@@ -803,6 +811,7 @@ inline void Ellipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _radius1 Ellipse radius 1
  * \param _radius2 Ellipse radius 2
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Ellipse<T>::fillEllipse(Vec3<T> *_outVertex,
@@ -913,6 +922,7 @@ void Ellipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _radius1 Ellipse radius 1
  * \param _radius2 Ellipse radius 2
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 inline void Ellipse<T>::fillEllipse(Vec3<T> *_outVertex,
@@ -981,6 +991,7 @@ inline void Ellipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _radius1 Ellipse radius 1
  * \param _radius2 Ellipse radius 2
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Ellipse<T>::fillEllipse(Vec3<T> *_outVertex,
@@ -1110,6 +1121,7 @@ void Ellipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _radius1 Ellipse radius 1
  * \param _radius2 Ellipse radius 2
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 inline void Ellipse<T>::fillEllipse(Vec3<T> *_outVertex,
@@ -1168,6 +1180,7 @@ inline void Ellipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _angleStart Start angle in radians
  * \param _angleEnd End angle in radians
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 inline void Ellipse<T>::arcAngles(std::vector<T> &_out, const T _angleStart, const T _angleEnd, const size_t _quality)
@@ -1187,6 +1200,7 @@ inline void Ellipse<T>::arcAngles(std::vector<T> &_out, const T _angleStart, con
  * \param _radius1 Ellipse radius 1
  * \param _radius2 Ellipse radius 2
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 void Ellipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
@@ -1239,6 +1253,7 @@ void Ellipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _radius1 Ellipse radius 1
  * \param _radius2 Ellipse radius 2
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 inline void Ellipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
@@ -1267,6 +1282,7 @@ inline void Ellipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _radius1 Ellipse radius 1
  * \param _radius2 Ellipse radius 2
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 void Ellipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
@@ -1332,6 +1348,7 @@ void Ellipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _radius1 Ellipse radius 1
  * \param _radius2 Ellipse radius 2
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 inline void Ellipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
@@ -1368,6 +1385,7 @@ inline void Ellipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _radius1 Ellipse radius 1
  * \param _radius2 Ellipse radius 2
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 void Ellipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
@@ -1428,6 +1446,7 @@ void Ellipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _radius1 Ellipse radius 1
  * \param _radius2 Ellipse radius 2
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 inline void Ellipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
@@ -1458,6 +1477,7 @@ inline void Ellipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _radius1 Ellipse radius 1
  * \param _radius2 Ellipse radius 2
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 void Ellipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
@@ -1530,6 +1550,7 @@ void Ellipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _radius1 Ellipse radius 1
  * \param _radius2 Ellipse radius 2
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 inline void Ellipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
@@ -1579,6 +1600,7 @@ inline void Ellipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _radius1 Ellipse radius 1
  * \param _radius2 Ellipse radius 2
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 void Ellipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
@@ -1679,6 +1701,7 @@ void Ellipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _radius1 Ellipse radius 1
  * \param _radius2 Ellipse radius 2
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 inline void Ellipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
@@ -1746,6 +1769,7 @@ inline void Ellipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _radius1 Ellipse radius 1
  * \param _radius2 Ellipse radius 2
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 void Ellipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
@@ -1864,6 +1888,7 @@ void Ellipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _radius1 Ellipse radius 1
  * \param _radius2 Ellipse radius 2
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 inline void Ellipse<T>::fillEllipseArc(Vec3<T> *_outVertex,

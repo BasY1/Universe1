@@ -26,7 +26,10 @@ struct PlaneIndices
         m_cacheInverted;
 
  public:
-    /*! \brief Clear cache */
+    /*!
+     * \brief Clear cache
+     * \return
+     */
     inline static void clearCache()
     {
         m_cache.clear();

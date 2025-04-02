@@ -30,6 +30,15 @@ struct CylinderArc
         return 2UL * circlePointCount(_quality) + 2UL;
     }
 
+    /*!
+     * \brief Prepare cylinder arc angles
+     * \param _out Output cylinder arc angles in radians
+     * \param _radiusArc Cylinder arc radius
+     * \param _cylinderLength Cylinder length
+     * \param _quality Cylinder arc quality
+     * \param _offsetAngle Start angle in radians
+     * \return
+     */
     inline static void cylinderArcAngles(std::vector<T> &_out,
                                          const T _radiusArc,
                                          const T _cylinderLength,
@@ -365,6 +374,7 @@ struct CylinderArc
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
  * \param _angles Cylinder arc angles in radians
+ * \return
  */
 template <typename T>
 void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
@@ -377,9 +387,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
                                        const size_t _quality,
                                        const std::vector<T> &_angles)
 {
-    const std::pair<std::vector<Vec2<T>>, std::vector<std::pair<size_t, size_t>>> &uc =
-        Circle2<T>::unitCircle(_quality);
-    const std::vector<Vec2<T>> &data2D = uc.first;
+    const std::vector<Vec2<T>> &data2D = Circle2<T>::unitCircle(_quality).first;
     const size_t cntCircle = circlePointCount(_quality);
     const size_t offset = cntCircle + 1UL;
     const size_t cntVertex = offset * _angles.size();
@@ -510,6 +518,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
  * \param _angles Cylinder arc angles in radians
+ * \return
  */
 template <typename T>
 void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
@@ -522,9 +531,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
                                        const size_t _quality,
                                        const std::vector<T> &_angles)
 {
-    const std::pair<std::vector<Vec2<T>>, std::vector<std::pair<size_t, size_t>>> &uc =
-        Circle2<T>::unitCircle(_quality);
-    const std::vector<Vec2<T>> &data2D = uc.first;
+    const std::vector<Vec2<T>> &data2D = Circle2<T>::unitCircle(_quality).first;
     const size_t cntCircle = circlePointCount(_quality);
     const size_t offset = cntCircle + 1UL;
     const size_t cntVertex = offset * _angles.size();
@@ -657,6 +664,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
  * \param _angles Cylinder arc angles in radians
+ * \return
  */
 template <typename T>
 void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
@@ -696,6 +704,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
  * \param _angles Cylinder arc angles in radians
+ * \return
  */
 template <typename T>
 void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
@@ -740,6 +749,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
  * \param _angles Cylinder arc angles in radians
+ * \return
  */
 template <typename T>
 void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
@@ -755,9 +765,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
                                        const size_t _quality,
                                        const std::vector<T> &_angles)
 {
-    const std::pair<std::vector<Vec2<T>>, std::vector<std::pair<size_t, size_t>>> &uc =
-        Circle2<T>::unitCircle(_quality);
-    const std::vector<Vec2<T>> &data2D = uc.first;
+    const std::vector<Vec2<T>> &data2D = Circle2<T>::unitCircle(_quality).first;
     const size_t cntCircle = circlePointCount(_quality);
     const size_t offset = cntCircle + 1UL;
     const size_t cntVertex = offset * _angles.size();
@@ -922,6 +930,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
  * \param _angles Cylinder arc angles in radians
+ * \return
  */
 template <typename T>
 void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
@@ -937,9 +946,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
                                        const size_t _quality,
                                        const std::vector<T> &_angles)
 {
-    const std::pair<std::vector<Vec2<T>>, std::vector<std::pair<size_t, size_t>>> &uc =
-        Circle2<T>::unitCircle(_quality);
-    const std::vector<Vec2<T>> &data2D = uc.first;
+    const std::vector<Vec2<T>> &data2D = Circle2<T>::unitCircle(_quality).first;
     const size_t cntCircle = circlePointCount(_quality);
     const size_t offset = cntCircle + 1UL;
     const size_t cntVertex = offset * _angles.size();
@@ -1106,6 +1113,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
  * \param _angles Cylinder arc angles in radians
+ * \return
  */
 template <typename T>
 void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
@@ -1154,6 +1162,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
  * \param _angles Cylinder arc angles in radians
+ * \return
  */
 template <typename T>
 void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
@@ -1213,6 +1222,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
  * \param _angles Cylinder arc angles in radians
+ * \return
  */
 template <typename T>
 void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
@@ -1237,9 +1247,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
                                        const size_t _quality,
                                        const std::vector<T> &_angles)
 {
-    const std::pair<std::vector<Vec2<T>>, std::vector<std::pair<size_t, size_t>>> &uc =
-        Circle2<T>::unitCircle(_quality);
-    const std::vector<Vec2<T>> &data2D = uc.first;
+    const std::vector<Vec2<T>> &data2D = Circle2<T>::unitCircle(_quality).first;
     const size_t cntCircle = circlePointCount(_quality);
     const size_t offset = cntCircle + 1UL;
     const size_t cntVertex = offset * _angles.size();
@@ -1460,6 +1468,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
  * \param _angles Cylinder arc angles in radians
+ * \return
  */
 template <typename T>
 void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
@@ -1484,9 +1493,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
                                        const size_t _quality,
                                        const std::vector<T> &_angles)
 {
-    const std::pair<std::vector<Vec2<T>>, std::vector<std::pair<size_t, size_t>>> &uc =
-        Circle2<T>::unitCircle(_quality);
-    const std::vector<Vec2<T>> &data2D = uc.first;
+    const std::vector<Vec2<T>> &data2D = Circle2<T>::unitCircle(_quality).first;
     const size_t cntCircle = circlePointCount(_quality);
     const size_t offset = cntCircle + 1UL;
     const size_t cntVertex = offset * _angles.size();
@@ -1709,6 +1716,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
  * \param _angles Cylinder arc angles in radians
+ * \return
  */
 template <typename T>
 void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
@@ -1784,6 +1792,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
  * \param _angles Cylinder arc angles in radians
+ * \return
  */
 template <typename T>
 void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
@@ -1864,6 +1873,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
  * \param _angles Cylinder arc angles in radians
+ * \return
  */
 template <typename T>
 void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
@@ -1891,9 +1901,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
                                        const size_t _quality,
                                        const std::vector<T> &_angles)
 {
-    const std::pair<std::vector<Vec2<T>>, std::vector<std::pair<size_t, size_t>>> &uc =
-        Circle2<T>::unitCircle(_quality);
-    const std::vector<Vec2<T>> &data2D = uc.first;
+    const std::vector<Vec2<T>> &data2D = Circle2<T>::unitCircle(_quality).first;
     const size_t cntCircle = circlePointCount(_quality);
     const size_t offset = cntCircle + 1UL;
     const size_t cntVertex = offset * _angles.size();
@@ -2130,6 +2138,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
  * \param _angles Cylinder arc angles in radians
+ * \return
  */
 template <typename T>
 void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
@@ -2157,9 +2166,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
                                        const size_t _quality,
                                        const std::vector<T> &_angles)
 {
-    const std::pair<std::vector<Vec2<T>>, std::vector<std::pair<size_t, size_t>>> &uc =
-        Circle2<T>::unitCircle(_quality);
-    const std::vector<Vec2<T>> &data2D = uc.first;
+    const std::vector<Vec2<T>> &data2D = Circle2<T>::unitCircle(_quality).first;
     const size_t cntCircle = circlePointCount(_quality);
     const size_t offset = cntCircle + 1UL;
     const size_t cntVertex = offset * _angles.size();
@@ -2398,6 +2405,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
  * \param _angles Cylinder arc angles in radians
+ * \return
  */
 template <typename T>
 void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
@@ -2482,6 +2490,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
  * \param _radius2 Cylinder radius at end
  * \param _quality Circle quality
  * \param _angles Cylinder arc angles in radians
+ * \return
  */
 template <typename T>
 void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,

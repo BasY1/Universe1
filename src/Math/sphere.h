@@ -78,10 +78,6 @@ struct Sphere
     inline T volume() const;
     inline T volumeCup(const T _height) const;
 
-    //
-    void createBodyPoints(const T _density, std::vector<Vec3<T>> &_outPositions) const;
-    void createSurfacePoints(const T _density, std::vector<Vec3<T>> &_outPositions) const;
-
     std::vector<Vec3<T>> lineIntersections(const Vec3<T> &_linePoint, const Vec3<T> &_lineNormal) const;
 
     static const std::pair<std::vector<Vec3<T>>, std::vector<std::pair<size_t, size_t>>> &
@@ -496,6 +492,7 @@ Sphere<T>::unitSphere(const size_t _quality)
  * \param _orientation Sphere orientation in 3D space
  * \param _radius Sphere radius
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Sphere<T>::fillSphereOuter(Vec3<T> *_outVertex,
@@ -563,6 +560,7 @@ void Sphere<T>::fillSphereOuter(Vec3<T> *_outVertex,
  * \param _orientation Sphere orientation in 3D space
  * \param _radius Sphere radius
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Sphere<T>::fillSphereInner(Vec3<T> *_outVertex,
@@ -633,6 +631,7 @@ void Sphere<T>::fillSphereInner(Vec3<T> *_outVertex,
  * \param _arm Sphere start arm
  * \param _radius Sphere radius
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 inline void Sphere<T>::fillSphereOuter(Vec3<T> *_outVertex,
@@ -658,6 +657,7 @@ inline void Sphere<T>::fillSphereOuter(Vec3<T> *_outVertex,
  * \param _arm Sphere start arm
  * \param _radius Sphere radius
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 inline void Sphere<T>::fillSphereInner(Vec3<T> *_outVertex,
@@ -685,6 +685,7 @@ inline void Sphere<T>::fillSphereInner(Vec3<T> *_outVertex,
  * \param _orientation Sphere orientation in 3D space
  * \param _radius Sphere radius
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Sphere<T>::fillSphereOuter(Vec3<T> *_outVertex,
@@ -718,6 +719,7 @@ void Sphere<T>::fillSphereOuter(Vec3<T> *_outVertex,
  * \param _orientation Sphere orientation in 3D space
  * \param _radius Sphere radius
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Sphere<T>::fillSphereInner(Vec3<T> *_outVertex,
@@ -753,6 +755,7 @@ void Sphere<T>::fillSphereInner(Vec3<T> *_outVertex,
  * \param _arm Sphere start arm
  * \param _radius Sphere radius
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Sphere<T>::fillSphereOuter(Vec3<T> *_outVertex,
@@ -778,6 +781,7 @@ void Sphere<T>::fillSphereOuter(Vec3<T> *_outVertex,
  * \param _arm Sphere start arm
  * \param _radius Sphere radius
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Sphere<T>::fillSphereInner(Vec3<T> *_outVertex,
@@ -806,6 +810,7 @@ void Sphere<T>::fillSphereInner(Vec3<T> *_outVertex,
  * \param _angleLatStart Start latitude angle in radians
  * \param _angleLatEnd End latitude angle in radians
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void Sphere<T>::arcAngles(std::vector<T> &_outLon,
@@ -845,6 +850,7 @@ void Sphere<T>::arcAngles(std::vector<T> &_outLon,
  * \param _radius Sphere radius
  * \param _anglesLon Longitudes angles
  * \param _anglesLat Latitude angles
+ * \return
  */
 template <typename T>
 void Sphere<T>::fillSphereArcOuter(Vec3<T> *_outVertex,
@@ -912,6 +918,7 @@ void Sphere<T>::fillSphereArcOuter(Vec3<T> *_outVertex,
  * \param _radius Sphere radius
  * \param _anglesLon Longitudes angles
  * \param _anglesLat Latitude angles
+ * \return
  */
 template <typename T>
 void Sphere<T>::fillSphereArcInner(Vec3<T> *_outVertex,
@@ -981,6 +988,7 @@ void Sphere<T>::fillSphereArcInner(Vec3<T> *_outVertex,
  * \param _radius Sphere radius
  * \param _anglesLon Longitudes angles
  * \param _anglesLat Latitude angles
+ * \return
  */
 template <typename T>
 void Sphere<T>::fillSphereArcOuter(Vec3<T> *_outVertex,
@@ -1009,6 +1017,7 @@ void Sphere<T>::fillSphereArcOuter(Vec3<T> *_outVertex,
  * \param _radius Sphere radius
  * \param _anglesLon Longitudes angles
  * \param _anglesLat Latitude angles
+ * \return
  */
 template <typename T>
 void Sphere<T>::fillSphereArcInner(Vec3<T> *_outVertex,

@@ -52,6 +52,10 @@ struct MaterialRGB
     {
     }
 
+    /*!
+     * \brief Constructor from \c QColor
+     * \param _color \c QColor
+     */
     inline MaterialRGB(const QColor &_color)
         : ambient(ColorRGB(_color).darker())
         , diffuse(ColorRGB(_color))
@@ -140,6 +144,10 @@ struct MaterialRGBA
     {
     }
 
+    /*!
+     * \brief Constructor from \c QColor
+     * \param _color \c QColor
+     */
     inline MaterialRGBA(const QColor &_color)
         : ambient(ColorRGB(_color).darker())
         , diffuse(ColorRGB(_color))

@@ -446,6 +446,7 @@ struct IrregEllipse
  * \param _radius2P Ellipse radius within axis 2 in positive direction
  * \param _radius2M Ellipse radius within axis 2 in negative direction
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
@@ -506,6 +507,7 @@ void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _radius2P Ellipse radius within axis 2 in positive direction
  * \param _radius2M Ellipse radius within axis 2 in negative direction
  * \param _quality Circle quality
+ * \return
  */
 
 template <typename T>
@@ -540,6 +542,7 @@ inline void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _radius2P Ellipse radius within axis 2 in positive direction
  * \param _radius2M Ellipse radius within axis 2 in negative direction
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
@@ -618,6 +621,7 @@ void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _radius2P Ellipse radius within axis 2 in positive direction
  * \param _radius2M Ellipse radius within axis 2 in negative direction
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 inline void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
@@ -660,6 +664,7 @@ inline void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _radius2P Ellipse radius within axis 2 in positive direction
  * \param _radius2M Ellipse radius within axis 2 in negative direction
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
@@ -726,6 +731,7 @@ void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _radius2P Ellipse radius within axis 2 in positive direction
  * \param _radius2M Ellipse radius within axis 2 in negative direction
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 inline void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
@@ -767,6 +773,7 @@ inline void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _radius2P Ellipse radius within axis 2 in positive direction
  * \param _radius2M Ellipse radius within axis 2 in negative direction
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
@@ -853,6 +860,7 @@ void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _radius2P Ellipse radius within axis 2 in positive direction
  * \param _radius2M Ellipse radius within axis 2 in negative direction
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 inline void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
@@ -908,6 +916,7 @@ inline void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _radius2P Ellipse radius within axis 2 in positive direction
  * \param _radius2M Ellipse radius within axis 2 in negative direction
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
@@ -1032,6 +1041,7 @@ void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _radius2P Ellipse radius within axis 2 in positive direction
  * \param _radius2M Ellipse radius within axis 2 in negative direction
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 inline void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
@@ -1106,6 +1116,7 @@ inline void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _radius2P Ellipse radius within axis 2 in positive direction
  * \param _radius2M Ellipse radius within axis 2 in negative direction
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
@@ -1243,6 +1254,7 @@ void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _radius2P Ellipse radius within axis 2 in positive direction
  * \param _radius2M Ellipse radius within axis 2 in negative direction
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 inline void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
@@ -1305,6 +1317,7 @@ inline void IrregEllipse<T>::fillEllipse(Vec3<T> *_outVertex,
  * \param _angleStart Start angle in radians
  * \param _angleEnd End angle in radians
  * \param _quality Circle quality
+ * \return
  */
 template <typename T>
 inline void
@@ -1327,6 +1340,7 @@ IrregEllipse<T>::arcAngles(std::vector<T> &_out, const T _angleStart, const T _a
  * \param _radius2P Ellipse radius within axis 2 in positive direction
  * \param _radius2M Ellipse radius within axis 2 in negative direction
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
@@ -1385,6 +1399,7 @@ void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _radius2P Ellipse radius within axis 2 in positive direction
  * \param _radius2M Ellipse radius within axis 2 in negative direction
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 inline void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
@@ -1418,6 +1433,7 @@ inline void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _radius2P Ellipse radius within axis 2 in positive direction
  * \param _radius2M Ellipse radius within axis 2 in negative direction
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
@@ -1489,6 +1505,7 @@ void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _radius2P Ellipse radius within axis 2 in positive direction
  * \param _radius2M Ellipse radius within axis 2 in negative direction
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 inline void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
@@ -1531,6 +1548,7 @@ inline void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _radius2P Ellipse radius within axis 2 in positive direction
  * \param _radius2M Ellipse radius within axis 2 in negative direction
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
@@ -1598,6 +1616,7 @@ void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _radius2P Ellipse radius within axis 2 in positive direction
  * \param _radius2M Ellipse radius within axis 2 in negative direction
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 inline void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
@@ -1639,6 +1658,7 @@ inline void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _radius2P Ellipse radius within axis 2 in positive direction
  * \param _radius2M Ellipse radius within axis 2 in negative direction
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
@@ -1717,6 +1737,7 @@ void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _radius2P Ellipse radius within axis 2 in positive direction
  * \param _radius2M Ellipse radius within axis 2 in negative direction
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 inline void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
@@ -1772,6 +1793,7 @@ inline void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _radius2P Ellipse radius within axis 2 in positive direction
  * \param _radius2M Ellipse radius within axis 2 in negative direction
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
@@ -1886,6 +1908,7 @@ void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _radius2P Ellipse radius within axis 2 in positive direction
  * \param _radius2M Ellipse radius within axis 2 in negative direction
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 inline void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
@@ -1959,6 +1982,7 @@ inline void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _radius2P Ellipse radius within axis 2 in positive direction
  * \param _radius2M Ellipse radius within axis 2 in negative direction
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
@@ -2085,6 +2109,7 @@ void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,
  * \param _radius2P Ellipse radius within axis 2 in positive direction
  * \param _radius2M Ellipse radius within axis 2 in negative direction
  * \param _angles Circle arc angles in radian
+ * \return
  */
 template <typename T>
 inline void IrregEllipse<T>::fillEllipseArc(Vec3<T> *_outVertex,

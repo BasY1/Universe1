@@ -990,6 +990,7 @@ inline Vec3<T> Vec3<T>::perpendicularNormalUp() const
  * \tparam T Template floating point type
  * \param _normal1 Main normal
  * \param _normal2 Secondary normal
+ * \return
  */
 template <typename T>
 void Vec3<T>::makePerpendicularNormals(Vec3<T> &_normal1, Vec3<T> &_normal2)
