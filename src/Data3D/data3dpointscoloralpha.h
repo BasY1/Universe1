@@ -15,7 +15,7 @@ namespace OpenGL {
  * \brief Open GL point-cloud object with per vertex color and alpha
  * \details Uses uniform values for vertex point size
  */
-class Data3DPointsColor : public Data3D
+class Data3DPointsColorAlpha : public Data3D
 {
  public:
     static const std::string vs;  //!< Vertex shader source code
@@ -39,9 +39,7 @@ class Data3DPointsColor : public Data3D
      * \param _indexCount Count of indices
      * \param _pointSize Point size used for all vertices
      */
-    Data3DPointsColor(const size_t _vertexCount,
-                      const size_t _indexCount,
-                      const float _pointSize);
+    Data3DPointsColorAlpha(const size_t _vertexCount, const size_t _indexCount, const float _pointSize);
 
     /*!
      * \brief Constructor
@@ -54,13 +52,13 @@ class Data3DPointsColor : public Data3D
      * \param _pointSize Point size used for all vertices
      * \details DO NOT allocate memory for vertices and indices, but creates and fills Open GL buffers
      */
-    Data3DPointsColor(const size_t _vertexCount,
-                      const size_t _indexCount,
-                      const Math::Vec3F *_vertexData,
-                      const Math::Vec3F *_colorData,
-                      const float *_alphaData,
-                      const uint *_indexData,
-                      const float _pointSize);
+    Data3DPointsColorAlpha(const size_t _vertexCount,
+                           const size_t _indexCount,
+                           const Math::Vec3F *_vertexData,
+                           const Math::Vec3F *_colorData,
+                           const float *_alphaData,
+                           const uint *_indexData,
+                           const float _pointSize);
 
     /*!
      * \brief Constructor
@@ -71,12 +69,12 @@ class Data3DPointsColor : public Data3D
      * \param _pointSize Point size used for all vertices
      * \details DO NOT allocate memory for vertices, but creates and fills Open GL buffer. Indices are not used
      */
-    inline Data3DPointsColor(const size_t _vertexCount,
-                             const Math::Vec3F *_vertexData,
-                             const Math::Vec3F *_colorData,
-                             const float *_alphaData,
-                             const float _pointSize)
-        : Data3DPointsColor(_vertexCount, 0UL, _vertexData, _colorData, _alphaData, nullptr, _pointSize)
+    inline Data3DPointsColorAlpha(const size_t _vertexCount,
+                                  const Math::Vec3F *_vertexData,
+                                  const Math::Vec3F *_colorData,
+                                  const float *_alphaData,
+                                  const float _pointSize)
+        : Data3DPointsColorAlpha(_vertexCount, 0UL, _vertexData, _colorData, _alphaData, nullptr, _pointSize)
     {
     }
 

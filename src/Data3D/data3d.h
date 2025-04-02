@@ -13,6 +13,10 @@
 #include <QOpenGLShaderProgram>
 
 namespace U1 {
+/*!
+ * \namespace U1::OpenGL
+ * \brief Open GL tools
+ */
 namespace OpenGL {
 
 /*! \brief Base Open GL vertex data object */
@@ -32,12 +36,12 @@ class Data3D
         GL_POINTS_SizeColorAlpha,  //!< Point-cloud object with per vertex color, alpha and size
 
         GL_MATERIAL_SINGLE_Base,         //!< Polygon like objects
-        GL_MATERIAL_SINGLE_Normal,       //!< Polygon like objects with per vertex normal
         GL_MATERIAL_SINGLE_Alpha,        //!< Polygon like objects with per vertex alpha
+        GL_MATERIAL_SINGLE_Normal,       //!< Polygon like objects with per vertex normal
         GL_MATERIAL_SINGLE_NormalAlpha,  //!< Polygon like objects with per vertex normal and alpha
         GL_MATERIAL_VERTEX_Base,         //!< Polygon like objects with per vertex material
-        GL_MATERIAL_VERTEX_Normal,       //!< Polygon like objects with per vertex material and normal
         GL_MATERIAL_VERTEX_Alpha,        //!< Polygon like objects with per vertex material and alpha
+        GL_MATERIAL_VERTEX_Normal,       //!< Polygon like objects with per vertex material and normal
         GL_MATERIAL_VERTEX_NormalAlpha,  //!< Polygon like objects with per vertex material, normal and alpha
 
         GL_TEXTURE_Base,   //!< Polygon like objects with textures and texture coordinates
@@ -52,6 +56,9 @@ class Data3D
     static const std::string VS_Header;     //!< General vertex shared program header - version + position buffer
     static const std::string VS_Uniforms;   //!< General vertex shared program uniforms - clip-planes + view matrix
     static const std::string VS_InMain;     //!< General vertex shared program calculation - clip-planes + gl_Position
+
+    static const std::string FS_CamLightUniform;  //!< General fragment shader camera and lights
+    static const std::string FS_Header;           //!< General fragment shared program header: version, camera, lights
 
     const GLDataType glDataType;  //!< Open GL data type
     const GLuint glPrimitive;     //!< Open GL primitive to draw (\c GL_POINTS, \c GL_TRIANGLES, \c GL_QUADS, ...)

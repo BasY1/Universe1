@@ -635,7 +635,8 @@ template <typename T>
 const std::pair<std::vector<Vec2<T>>, std::vector<std::pair<size_t, size_t>>> &
 Circle2<T>::unitCircle(const size_t _quality)
 {
-    typename std::map<size_t, std::vector<Vec2<T>>>::iterator it = m_unitCircles.find(_quality);
+    typename std::map<size_t, std::pair<std::vector<Vec2<T>>, std::vector<std::pair<size_t, size_t>>>>::iterator it =
+        m_unitCircles.find(_quality);
     if (it == m_unitCircles.end())
     {
         it = m_unitCircles.insert({_quality, {std::vector<Vec2<T>>(), std::vector<std::pair<size_t, size_t>>()}}).first;
@@ -691,7 +692,8 @@ Circle2<T>::unitCircle(const size_t _quality)
 template <typename T>
 const std::pair<std::vector<T>, std::vector<std::pair<size_t, size_t>>> &Circle2<T>::circleAngles(const size_t _quality)
 {
-    typename std::map<size_t, std::vector<T>>::iterator it = m_circleAngles.find(_quality);
+    typename std::map<size_t, std::pair<std::vector<T>, std::vector<std::pair<size_t, size_t>>>>::iterator it =
+        m_circleAngles.find(_quality);
     if (it == m_circleAngles.end())
     {
         it = m_circleAngles.insert({_quality, {std::vector<T>(), std::vector<std::pair<size_t, size_t>>()}}).first;

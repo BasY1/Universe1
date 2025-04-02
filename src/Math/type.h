@@ -18,7 +18,7 @@ namespace U1 {
 
 /*!
  * \namespace U1::Math
- * \brief Mathematics namespace
+ * \brief Mathematics tools
  */
 namespace Math {
 

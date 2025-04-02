@@ -40,6 +40,7 @@ HEADERS += src/Math/spherecrosssection.h
 HEADERS += src/Data3D/data3d.h
 SOURCES += src/Data3D/data3d.cpp
 
+
 HEADERS += src/Data3D/data3dpointsbase.h
 SOURCES += src/Data3D/data3dpointsbase.cpp
 
@@ -63,6 +64,13 @@ SOURCES += src/Data3D/data3dpointssizecolor.cpp
 
 HEADERS += src/Data3D/data3dpointssizecoloralpha.h
 SOURCES += src/Data3D/data3dpointssizecoloralpha.cpp
+
+
+HEADERS += src/Data3D/data3dmaterialbase.h
+SOURCES += src/Data3D/data3dmaterialbase.cpp
+
+HEADERS += src/Data3D/data3dmaterialalpha.h
+SOURCES += src/Data3D/data3dmaterialalpha.cpp
 
 ######################################################3
 

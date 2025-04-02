@@ -8,7 +8,7 @@
 namespace U1 {
 namespace OpenGL {
 
-const std::string Data3DPointsColor::vs =        //
+const std::string Data3DPointsColorAlpha::vs =   //
     Data3D::VS_Header +                          //
     "layout (location = 1) in vec3 color;\n" +   //
     "layout (location = 2) in float alpha;\n" +  //
@@ -23,16 +23,18 @@ const std::string Data3DPointsColor::vs =        //
     Data3D::VS_InMain +                          //
     "}\n";
 
-const std::string Data3DPointsColor::fs =     //
-    Data3D::GLSL_Version +                    //
-    "in vec3 colorOut;\n" +                   //
-    "in float alphaOut;\n" +                  //
-    "out vec4 color;\n" +                     //
-    "void main() {\n" +                       //
-    " color = vec4(colorOut, alphaOut);\n" +  //
+const std::string Data3DPointsColorAlpha::fs =  //
+    Data3D::GLSL_Version +                      //
+    "in vec3 colorOut;\n" +                     //
+    "in float alphaOut;\n" +                    //
+    "out vec4 color;\n" +                       //
+    "void main() {\n" +                         //
+    " color = vec4(colorOut, alphaOut);\n" +    //
     "}\n";
 
-Data3DPointsColor::Data3DPointsColor(const size_t _vertexCount, const size_t _indexCount, const float _pointSize)
+Data3DPointsColorAlpha::Data3DPointsColorAlpha(const size_t _vertexCount,
+                                               const size_t _indexCount,
+                                               const float _pointSize)
     : Data3D(GL_POINTS_ColorAlpha, GL_POINTS, _vertexCount, _indexCount)
     , m_pointSize(_pointSize)
 {
@@ -43,13 +45,13 @@ Data3DPointsColor::Data3DPointsColor(const size_t _vertexCount, const size_t _in
     }
 }
 
-Data3DPointsColor::Data3DPointsColor(const size_t _vertexCount,
-                                     const size_t _indexCount,
-                                     const Math::Vec3F *_vertexData,
-                                     const Math::Vec3F *_colorData,
-                                     const float *_alphaData,
-                                     const uint *_indexData,
-                                     const float _pointSize)
+Data3DPointsColorAlpha::Data3DPointsColorAlpha(const size_t _vertexCount,
+                                               const size_t _indexCount,
+                                               const Math::Vec3F *_vertexData,
+                                               const Math::Vec3F *_colorData,
+                                               const float *_alphaData,
+                                               const uint *_indexData,
+                                               const float _pointSize)
     : Data3D(GL_POINTS_ColorAlpha, GL_POINTS, _vertexCount, _indexCount, _vertexData, _indexData)
     , m_pointSize(_pointSize)
 {
@@ -65,7 +67,7 @@ Data3DPointsColor::Data3DPointsColor(const size_t _vertexCount,
         }
         else
         {
-            std::cerr << "[Data3DPointsColor::constructor] Can't create m_colorBuffer !\n";
+            std::cerr << "[Data3DPointsColorAlpha::constructor] Can't create m_colorBuffer !\n";
         }
 
         m_alphaBuffer = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
@@ -78,17 +80,17 @@ Data3DPointsColor::Data3DPointsColor(const size_t _vertexCount,
         }
         else
         {
-            std::cerr << "[Data3DPointsColor::constructor] Can't create m_alphaBuffer !\n";
+            std::cerr << "[Data3DPointsColorAlpha::constructor] Can't create m_alphaBuffer !\n";
         }
     }
 }
 
-bool Data3DPointsColor::isTransparent() const
+bool Data3DPointsColorAlpha::isTransparent() const
 {
     return m_isTransparent;
 }
 
-bool Data3DPointsColor::drawSetup(QOpenGLFunctions *_functions, QOpenGLShaderProgram *_program)
+bool Data3DPointsColorAlpha::drawSetup(QOpenGLFunctions *_functions, QOpenGLShaderProgram *_program)
 {
     Q_UNUSED(_functions)
     glEnable(GL_PROGRAM_POINT_SIZE);
@@ -96,13 +98,13 @@ bool Data3DPointsColor::drawSetup(QOpenGLFunctions *_functions, QOpenGLShaderPro
     return true;
 }
 
-bool Data3DPointsColor::createBuffersImpl()
+bool Data3DPointsColorAlpha::createBuffersImpl()
 {
     m_colorBuffer = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
     m_colorBuffer->setUsagePattern(QOpenGLBuffer::StaticDraw);
     if (!m_colorBuffer->create())
     {
-        std::cerr << "[Data3DPointsColor::createBuffersImpl] Can't create m_colorBuffer !\n";
+        std::cerr << "[Data3DPointsColorAlpha::createBuffersImpl] Can't create m_colorBuffer !\n";
         return false;
     }
 
@@ -114,7 +116,7 @@ bool Data3DPointsColor::createBuffersImpl()
     m_alphaBuffer->setUsagePattern(QOpenGLBuffer::StaticDraw);
     if (!m_alphaBuffer->create())
     {
-        std::cerr << "[Data3DPointsColor::createBuffersImpl] Can't create m_alphaBuffer !\n";
+        std::cerr << "[Data3DPointsColorAlpha::createBuffersImpl] Can't create m_alphaBuffer !\n";
         return false;
     }
 
@@ -125,7 +127,7 @@ bool Data3DPointsColor::createBuffersImpl()
     return true;
 }
 
-bool Data3DPointsColor::destroyBuffersImpl()
+bool Data3DPointsColorAlpha::destroyBuffersImpl()
 {
     if (m_colorBuffer->isCreated())
         m_colorBuffer->destroy();
@@ -142,11 +144,11 @@ bool Data3DPointsColor::destroyBuffersImpl()
     return true;
 }
 
-bool Data3DPointsColor::bindBuffersImpl(QOpenGLShaderProgram *_program)
+bool Data3DPointsColorAlpha::bindBuffersImpl(QOpenGLShaderProgram *_program)
 {
     if (!m_colorBuffer->bind())
     {
-        std::cerr << "[Data3DPointsColor::bindBuffersImpl] m_colorBuffer->bind() failed!\n";
+        std::cerr << "[Data3DPointsColorAlpha::bindBuffersImpl] m_colorBuffer->bind() failed!\n";
         return false;
     }
 
@@ -155,7 +157,7 @@ bool Data3DPointsColor::bindBuffersImpl(QOpenGLShaderProgram *_program)
 
     if (!m_alphaBuffer->bind())
     {
-        std::cerr << "[Data3DPointsColor::bindBuffersImpl] m_alphaBuffer->bind() failed!\n";
+        std::cerr << "[Data3DPointsColorAlpha::bindBuffersImpl] m_alphaBuffer->bind() failed!\n";
         return false;
     }
 
@@ -165,7 +167,7 @@ bool Data3DPointsColor::bindBuffersImpl(QOpenGLShaderProgram *_program)
     return true;
 }
 
-bool Data3DPointsColor::releaseBuffersImpl(QOpenGLShaderProgram *_program)
+bool Data3DPointsColorAlpha::releaseBuffersImpl(QOpenGLShaderProgram *_program)
 {
     _program->disableAttributeArray(1);
     _program->disableAttributeArray(2);

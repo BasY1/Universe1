@@ -25,6 +25,13 @@ const std::string Data3D::VS_Uniforms = Data3D::ClipPlanesUniforms + "uniform ma
 
 const std::string Data3D::VS_InMain = " gl_Position = view * vec4(pos, 1.0);\n" + Data3D::ClipPlanesDetection;
 
+const std::string Data3D::FS_CamLightUniform = "uniform vec3 camera;\n"          //
+                                               "uniform vec3 lightDir;\n"        //
+                                               "uniform vec3 lightColor;\n"      //
+                                               "uniform float lightAmbient;\n";  //
+
+const std::string Data3D::FS_Header = Data3D::GLSL_Version + Data3D::FS_CamLightUniform;
+
 Data3D::Data3D(const GLDataType _glDataType,
                const GLuint _glPrimitive,
                const size_t _vertexCount,
