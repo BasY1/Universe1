@@ -1,34 +1,33 @@
 /*!
- * \file src/Data3D/data3dpointssize.h
- * \brief Open GL point-cloud object with per vertex point size
+ * \file src/Data3D/data3dpointssizecolor.h
+ * \brief Open GL point-cloud object with per vertex point size and color
  */
 
-#ifndef OPENGL_DATA3DPOINTSSIZE_H
-#define OPENGL_DATA3DPOINTSSIZE_H
+#ifndef OPENGL_DATA3DPOINTSSIZECOLOR_H
+#define OPENGL_DATA3DPOINTSSIZECOLOR_H
 
 #include "data3d.h"
-
-#include "../Math/colorrgb.h"
 
 namespace U1 {
 namespace OpenGL {
 
 /*!
- * \brief Open GL point-cloud object with per vertex point size
- * \details Uses uniform values for vertex color and alpha
+ * \brief Open GL point-cloud object with per vertex point size and color
+ * \details Uses uniform value for vertex alpha
  */
-class Data3DPointsSize : public Data3D
+class Data3DPointsSizeColor : public Data3D
 {
  public:
     static const std::string vs;  //!< Vertex shader source code
     static const std::string fs;  //!< Fragment shader source code
 
  protected:
-    Math::ColorRGB m_color;  //!< Color used for all vertices
     uint8_t m_alpha;         //!< Alpha used for all vertices
 
+    Math::Vec3F *m_colorData = nullptr;  //!< Per vertex point color data array pointer
     float *m_pointSizeData = nullptr;  //!< Per vertex point size data array pointer
 
+    QOpenGLBuffer *m_colorBuffer = nullptr;      //!< Open GL buffer for point color
     QOpenGLBuffer *m_pointSizeBuffer = nullptr;  //!< Open GL buffer for point sizes
 
  public:
@@ -36,67 +35,45 @@ class Data3DPointsSize : public Data3D
      * \brief Constructor
      * \param _vertexCount Count of vertices
      * \param _indexCount Count of indices
-     * \param _color Color used for all vertices
      * \param _alpha Alpha used for all vertices
      */
-    Data3DPointsSize(const size_t _vertexCount,
-                     const size_t _indexCount,
-                     const Math::ColorRGB &_color,
-                     const uint8_t _alpha);
+    Data3DPointsSizeColor(const size_t _vertexCount, const size_t _indexCount, const uint8_t _alpha);
 
     /*!
      * \brief Constructor
      * \param _vertexCount Count of vertices
      * \param _indexCount Count of indices
      * \param _vertexData Vertex position data pointer
+     * \param _colorData Vertex color data pointer
      * \param _pointSizeData Vertex point sizes array pointer
      * \param _indexData Index data pointer
-     * \param _color Color used for all vertices
      * \param _alpha Alpha used for all vertices
      * \details DO NOT allocate memory for vertices and indices, but creates and fills Open GL buffers
      */
-    Data3DPointsSize(const size_t _vertexCount,
-                     const size_t _indexCount,
-                     const Math::Vec3F *_vertexData,
-                     const float *_pointSizeData,
-                     const uint *_indexData,
-                     const Math::ColorRGB &_color,
-                     const uint8_t _alpha);
+    Data3DPointsSizeColor(const size_t _vertexCount,
+                          const size_t _indexCount,
+                          const Math::Vec3F *_vertexData,
+                          const Math::Vec3F *_colorData,
+                          const float *_pointSizeData,
+                          const uint *_indexData,
+                          const uint8_t _alpha);
 
     /*!
      * \brief Constructor
      * \param _vertexCount Count of vertices
      * \param _vertexData Vertex position data pointer
+     * \param _colorData Vertex color data pointer
      * \param _pointSizeData Vertex point sizes array pointer
-     * \param _color Color used for all vertices
      * \param _alpha Alpha used for all vertices
      * \details DO NOT allocate memory for vertices, but creates and fills Open GL buffers. Indices are not used
      */
-    inline Data3DPointsSize(const size_t _vertexCount,
-                            const Math::Vec3F *_vertexData,
-                            const float *_pointSizeData,
-                            const Math::ColorRGB &_color,
-                            const uint8_t _alpha)
-        : Data3DPointsSize(_vertexCount, 0UL, _vertexData, _pointSizeData, nullptr, _color, _alpha)
+    inline Data3DPointsSizeColor(const size_t _vertexCount,
+                                 const Math::Vec3F *_vertexData,
+                                 const Math::Vec3F *_colorData,
+                                 const float *_pointSizeData,
+                                 const uint8_t _alpha)
+        : Data3DPointsSizeColor(_vertexCount, 0UL, _vertexData, _colorData, _pointSizeData, nullptr, _alpha)
     {
-    }
-
-    /*!
-     * \brief Vertex color getter
-     * \return Vertex color
-     */
-    inline const Math::ColorRGB &color() const
-    {
-        return m_color;
-    }
-
-    /*!
-     * \brief Setup vertex color
-     * \param _color New vertex color
-     */
-    inline void setColor(const Math::ColorRGB &_color)
-    {
-        m_color = _color;
     }
 
     /*!
@@ -133,26 +110,26 @@ class Data3DPointsSize : public Data3D
 
  protected:
     /*!
-     * \brief Create point size Open GL buffer
+     * \brief Create point size and color Open GL buffers
      * \return Success flag
      */
     bool createBuffersImpl() override;
 
     /*!
-     * \brief Destroy point size Open GL buffer
+     * \brief Destroy point size and color Open GL buffers
      * \return Success flag
      */
     bool destroyBuffersImpl() override;
 
     /*!
-     * \brief Bind point size Open GL buffer
+     * \brief Bind point size and color Open GL buffers
      * \param _program Open GL program
      * \return Success flag
      */
     bool bindBuffersImpl(QOpenGLShaderProgram *_program) override;
 
     /*!
-     * \brief Release point size Open GL buffer
+     * \brief Release point size and color Open GL buffers
      * \param _program Open GL program
      * \return Success flag
      */
@@ -162,4 +139,4 @@ class Data3DPointsSize : public Data3D
 }  // namespace OpenGL
 }  // namespace U1
 
-#endif  // OPENGL_DATA3DPOINTSSIZE_H
+#endif  // OPENGL_DATA3DPOINTSSIZECOLOR_H

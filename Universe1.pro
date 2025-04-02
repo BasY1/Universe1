@@ -49,6 +49,21 @@ SOURCES += src/Data3D/data3dpointssize.cpp
 HEADERS += src/Data3D/data3dpointsalpha.h
 SOURCES += src/Data3D/data3dpointsalpha.cpp
 
+HEADERS += src/Data3D/data3dpointscolor.h
+SOURCES += src/Data3D/data3dpointscolor.cpp
+
+HEADERS += src/Data3D/data3dpointscoloralpha.h
+SOURCES += src/Data3D/data3dpointscoloralpha.cpp
+
+HEADERS += src/Data3D/data3dpointssizealpha.h
+SOURCES += src/Data3D/data3dpointssizealpha.cpp
+
+HEADERS += src/Data3D/data3dpointssizecolor.h
+SOURCES += src/Data3D/data3dpointssizecolor.cpp
+
+HEADERS += src/Data3D/data3dpointssizecoloralpha.h
+SOURCES += src/Data3D/data3dpointssizecoloralpha.cpp
+
 ######################################################3
 
 SOURCES += src/main.cpp

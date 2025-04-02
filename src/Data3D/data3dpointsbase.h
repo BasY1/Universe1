@@ -53,7 +53,7 @@ class Data3DPointsBase : public Data3D
      * \brief Constructor
      * \param _vertexCount Count of vertices
      * \param _indexCount Count of indices
-     * \param _vertexData Vertex data pointer
+     * \param _vertexData Vertex position data pointer
      * \param _indexData Index data pointer
      * \param _color Color used for all vertices
      * \param _alpha Alpha used for all vertices
@@ -77,7 +77,7 @@ class Data3DPointsBase : public Data3D
     /*!
      * \brief Constructor
      * \param _vertexCount Count of vertices
-     * \param _vertexData Vertex data pointer
+     * \param _vertexData Vertex position data pointer
      * \param _color Color used for all vertices
      * \param _alpha Alpha used for all vertices
      * \param _pointSize Point size used for all vertices

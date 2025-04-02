@@ -1,10 +1,10 @@
 /*!
- * \file src/Data3D/data3dpointsalpha.h
- * \brief Open GL point-cloud object with per vertex alpha
+ * \file src/Data3D/data3dpointssizealpha.h
+ * \brief Open GL point-cloud object with per vertex point size and alpha
  */
 
-#ifndef OPENGL_DATA3DPOINTSALPHA_H
-#define OPENGL_DATA3DPOINTSALPHA_H
+#ifndef OPENGL_DATA3DPOINTSSIZEALPHA_H
+#define OPENGL_DATA3DPOINTSSIZEALPHA_H
 
 #include "data3d.h"
 
@@ -14,10 +14,10 @@ namespace U1 {
 namespace OpenGL {
 
 /*!
- * \brief Open GL point-cloud object with per vertex alpha
- * \details Uses uniform values for vertex color and point size
+ * \brief Open GL point-cloud object with per vertex point size and alpha
+ * \details Uses uniform value for vertex color
  */
-class Data3DPointsAlpha : public Data3D
+class Data3DPointsSizeAlpha : public Data3D
 {
  public:
     static const std::string vs;  //!< Vertex shader source code
@@ -25,12 +25,14 @@ class Data3DPointsAlpha : public Data3D
 
  protected:
     Math::ColorRGB m_color;  //!< Color used for all vertices
-    float m_pointSize;       //!< Point size used for all vertices
 
     bool m_isTransparent = false;  //!< Transparency flag
 
-    float *m_alphaData = nullptr;            //!< Per vertex point alpha data array pointer
-    QOpenGLBuffer *m_alphaBuffer = nullptr;  //!< Open GL buffer for point alpha
+    float *m_pointSizeData = nullptr;  //!< Per vertex point size data array pointer
+    float *m_alphaData = nullptr;      //!< Per vertex alpha data array pointer
+
+    QOpenGLBuffer *m_pointSizeBuffer = nullptr;  //!< Open GL buffer for point sizes
+    QOpenGLBuffer *m_alphaBuffer = nullptr;      //!< Open GL buffer for point alpha
 
  public:
     /*!
@@ -38,47 +40,43 @@ class Data3DPointsAlpha : public Data3D
      * \param _vertexCount Count of vertices
      * \param _indexCount Count of indices
      * \param _color Color used for all vertices
-     * \param _pointSize Point size used for all vertices
      */
-    Data3DPointsAlpha(const size_t _vertexCount,
-                      const size_t _indexCount,
-                      const Math::ColorRGB &_color,
-                      const float _pointSize);
+    Data3DPointsSizeAlpha(const size_t _vertexCount, const size_t _indexCount, const Math::ColorRGB &_color);
 
     /*!
      * \brief Constructor
      * \param _vertexCount Count of vertices
      * \param _indexCount Count of indices
      * \param _vertexData Vertex position data pointer
-     * \param _alphaData Per vertex alpha data pointer
+     * \param _pointSizeData Vertex point sizes array pointer
+     * \param _alphaData Vertex alpha data pointer
      * \param _indexData Index data pointer
      * \param _color Color used for all vertices
-     * \param _pointSize Point size used for all vertices
      * \details DO NOT allocate memory for vertices and indices, but creates and fills Open GL buffers
      */
-    Data3DPointsAlpha(const size_t _vertexCount,
-                      const size_t _indexCount,
-                      const Math::Vec3F *_vertexData,
-                      const float *_alphaData,
-                      const uint *_indexData,
-                      const Math::ColorRGB &_color,
-                      const float _pointSize);
+    Data3DPointsSizeAlpha(const size_t _vertexCount,
+                          const size_t _indexCount,
+                          const Math::Vec3F *_vertexData,
+                          const float *_pointSizeData,
+                          const float *_alphaData,
+                          const uint *_indexData,
+                          const Math::ColorRGB &_color);
 
     /*!
      * \brief Constructor
      * \param _vertexCount Count of vertices
      * \param _vertexData Vertex position data pointer
-     * \param _alphaData Per vertex alpha data pointer
+     * \param _pointSizeData Vertex point sizes array pointer
+     * \param _alphaData Vertex alpha data pointer
      * \param _color Color used for all vertices
-     * \param _pointSize Point size used for all vertices
-     * \details DO NOT allocate memory for vertices, but creates and fills Open GL buffer. Indices are not used
+     * \details DO NOT allocate memory for vertices, but creates and fills Open GL buffers. Indices are not used
      */
-    inline Data3DPointsAlpha(const size_t _vertexCount,
-                             const Math::Vec3F *_vertexData,
-                             const float *_alphaData,
-                             const Math::ColorRGB &_color,
-                             const float _pointSize)
-        : Data3DPointsAlpha(_vertexCount, 0UL, _vertexData, _alphaData, nullptr, _color, _pointSize)
+    inline Data3DPointsSizeAlpha(const size_t _vertexCount,
+                                 const Math::Vec3F *_vertexData,
+                                 const float *_pointSizeData,
+                                 const float *_alphaData,
+                                 const Math::ColorRGB &_color)
+        : Data3DPointsSizeAlpha(_vertexCount, 0UL, _vertexData, _pointSizeData, _alphaData, nullptr, _color)
     {
     }
 
@@ -98,24 +96,6 @@ class Data3DPointsAlpha : public Data3D
     inline void setColor(const Math::ColorRGB &_color)
     {
         m_color = _color;
-    }
-
-    /*!
-     * \brief Vertex point size getter
-     * \return Vertex point size
-     */
-    inline float pointSize() const
-    {
-        return m_pointSize;
-    }
-
-    /*!
-     * \brief Setup vertex point size
-     * \param _pointSize New vertex point size
-     */
-    inline void setPointSize(const float _pointSize)
-    {
-        m_pointSize = _pointSize;
     }
 
     /*!
@@ -141,29 +121,28 @@ class Data3DPointsAlpha : public Data3D
      */
     bool drawSetup(QOpenGLFunctions *_functions, QOpenGLShaderProgram *_program) override;
 
-
  protected:
     /*!
-     * \brief Create alpha Open GL buffer
+     * \brief Create point size and alpha Open GL buffers
      * \return Success flag
      */
     bool createBuffersImpl() override;
 
     /*!
-     * \brief Destroy alpha Open GL buffer
+     * \brief Destroy point size and alpha Open GL buffers
      * \return Success flag
      */
     bool destroyBuffersImpl() override;
 
     /*!
-     * \brief Bind alpha Open GL buffer
+     * \brief Bind point size and alpha Open GL buffers
      * \param _program Open GL program
      * \return Success flag
      */
     bool bindBuffersImpl(QOpenGLShaderProgram *_program) override;
 
     /*!
-     * \brief Release alpha Open GL buffer
+     * \brief Release point size and alpha Open GL buffers
      * \param _program Open GL program
      * \return Success flag
      */
@@ -173,4 +152,4 @@ class Data3DPointsAlpha : public Data3D
 }  // namespace OpenGL
 }  // namespace U1
 
-#endif  // OPENGL_DATA3DPOINTSALPHA_H
+#endif  // OPENGL_DATA3DPOINTSSIZEALPHA_H

@@ -26,13 +26,10 @@ class Data3D
         GL_POINTS_Size,            //!< Point-cloud object with per vertex size (Vertices has the same color and alpha)
         GL_POINTS_Color,           //!< Point-cloud object with per vertex color (Vertices has the same color and size)
         GL_POINTS_Alpha,           //!< Point-cloud object with per vertex alpha (Vertices has the same size and alpha)
-        GL_POINTS_SizeAlpha,       //!< Point-cloud object with per vertex size and alpha (Vertices has the same color)
         GL_POINTS_ColorAlpha,      //!< Point-cloud object with per vertex color and alpha (Vertices has the same size)
-        GL_POINTS_ColorSize,       //!< Point-cloud object with per vertex color and size (Vertices has the same alpha)
-        GL_POINTS_ColorAlphaSize,  //!< Point-cloud object with per vertex color, alpha and size
-
-        GL_TEXTURE_Base,   //!< Polygon like objects with textures and texture coordinates
-        GL_TEXTURE_Alpha,  //!< Polygon like objects with textures and texture coordinates and per vertex alpha
+        GL_POINTS_SizeAlpha,       //!< Point-cloud object with per vertex size and alpha (Vertices has the same color)
+        GL_POINTS_SizeColor,       //!< Point-cloud object with per vertex color and size (Vertices has the same alpha)
+        GL_POINTS_SizeColorAlpha,  //!< Point-cloud object with per vertex color, alpha and size
 
         GL_MATERIAL_SINGLE_Base,         //!< Polygon like objects
         GL_MATERIAL_SINGLE_Normal,       //!< Polygon like objects with per vertex normal
@@ -42,6 +39,9 @@ class Data3D
         GL_MATERIAL_VERTEX_Normal,       //!< Polygon like objects with per vertex material and normal
         GL_MATERIAL_VERTEX_Alpha,        //!< Polygon like objects with per vertex material and alpha
         GL_MATERIAL_VERTEX_NormalAlpha,  //!< Polygon like objects with per vertex material, normal and alpha
+
+        GL_TEXTURE_Base,   //!< Polygon like objects with textures and texture coordinates
+        GL_TEXTURE_Alpha,  //!< Polygon like objects with textures and texture coordinates and per vertex alpha
     };
 
     static const size_t MaxClipPlanes;             //!< Maximal count of clipping planes
@@ -89,7 +89,7 @@ class Data3D
      * \param _glPrimitive Open GL primitive
      * \param _vertexCount Count of vertices
      * \param _indexCount Count of indices
-     * \param _vertexData Vertex data pointer
+     * \param _vertexData Vertex position data pointer
      * \param _indexData Index data pointer
      * \details DO NOT allocate memory for vertices and indices, but creates and fills Open GL buffers
      */
@@ -105,7 +105,7 @@ class Data3D
      * \param _glDataType Open GL data type
      * \param _glPrimitive Open GL primitive
      * \param _vertexCount Count of vertices
-     * \param _vertexData Vertex data pointer
+     * \param _vertexData Vertex position data pointer
      * \details DO NOT allocate memory for vertices, but creates and fills Open GL buffer. Indices are not used
      */
     inline explicit Data3D(const GLDataType _glDataType,
