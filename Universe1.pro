@@ -31,6 +31,7 @@ HEADERS += src/Math/ellipsoid.h
 HEADERS += src/Math/irregellipsoid.h
 
 HEADERS += src/Math/cylinder.h
+HEADERS += src/Math/cylinderarc.h
 
 HEADERS += src/Math/spherecrosssection.h
 
