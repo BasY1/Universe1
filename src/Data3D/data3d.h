@@ -39,6 +39,7 @@ class Data3D
         GL_MATERIAL_SINGLE_Alpha,        //!< Polygon like objects with per vertex alpha
         GL_MATERIAL_SINGLE_Normal,       //!< Polygon like objects with per vertex normal
         GL_MATERIAL_SINGLE_NormalAlpha,  //!< Polygon like objects with per vertex normal and alpha
+
         GL_MATERIAL_VERTEX_Base,         //!< Polygon like objects with per vertex material
         GL_MATERIAL_VERTEX_Alpha,        //!< Polygon like objects with per vertex material and alpha
         GL_MATERIAL_VERTEX_Normal,       //!< Polygon like objects with per vertex material and normal

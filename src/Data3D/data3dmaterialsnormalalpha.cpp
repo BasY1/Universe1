@@ -1,0 +1,615 @@
+/*!
+ * \file src/Data3D/data3dmaterialsnormalalpha.cpp
+ * \brief Open GL object with per vertex material, and uniform alpha and normal
+ */
+
+#include "data3dmaterialsnormalalpha.h"
+
+#include "../Math/cylinder.h"
+#include "../Math/cylinderarc.h"
+
+namespace U1 {
+namespace OpenGL {
+
+const std::string Data3DMaterialsNormalAlpha::vs =  //
+    Data3D::VS_Header +                             //
+    "layout (location = 1) in vec3 normal;\n" +     //
+    "layout (location = 2) in vec3 ambient;\n" +    //
+    "layout (location = 3) in vec3 diffuse;\n" +    //
+    "layout (location = 4) in vec3 specular;\n" +   //
+    "layout (location = 5) in float shine;\n" +     //
+    "layout (location = 6) in float alpha;\n" +     //
+    Data3D::VS_Uniforms +                           //
+    "out vec3 posOut;\n" +                          //
+    "out vec3 norOut;\n" +                          //
+    "out vec3 ambientOut;\n" +                      //
+    "out vec3 diffuseOut;\n" +                      //
+    "out vec3 specularOut;\n" +                     //
+    "out float shineOut;\n" +                       //
+    "out float alphaOut;\n" +                       //
+    "void main() {\n" +                             //
+    " posOut = pos;\n" +                            //
+    " norOut = normal;\n" +                         //
+    " ambientOut = ambient;\n" +                    //
+    " diffuseOut = diffuse;\n" +                    //
+    " specularOut = specular;\n" +                  //
+    " shineOut = shine;\n" +                        //
+    " alphaOut = alpha;\n" +                        //
+    Data3D::VS_InMain +                             //
+    "}\n";
+
+const std::string Data3DMaterialsNormalAlpha::fs =              //
+    Data3D::FS_Header +                                         //
+    "in vec3 posOut;\n" +                                       //
+    "in vec3 norOut;\n" +                                       //
+    "in vec3 ambientOut;\n" +                                   //
+    "in vec3 diffuseOut;\n" +                                   //
+    "in vec3 specularOut;\n" +                                  //
+    "in float shineOut;\n" +                                    //
+    "in float alphaOut;\n" +                                    //
+    "out vec4 color;\n" +                                       //
+    "void main() {\n" +                                         //
+    " vec3 norm = normalize(norOut);\n" +                       //
+    " vec3 lDir = normalize(-lightDir);\n" +                    //
+    " vec3 vDir = normalize(camera - posOut);\n" +              //
+    " vec3 rDir = reflect(-lDir, norm);\n" +                    //
+    " float d = max(dot(norm, lDir), 0.0);\n" +                 //
+    " float s = pow(max(dot(vDir, rDir), 0.0), shineOut);\n" +  //
+    " color = vec4(lightAmbient * ambientOut +\n" +             //
+    "              d * lightColor * diffuseOut +\n" +           //
+    "              s * lightColor * specularOut,\n" +           //
+    "              alphaOut);\n" +                              //
+    "}\n";
+
+Data3DMaterialsNormalAlpha::Data3DMaterialsNormalAlpha(const GLuint _glPrimitive,
+                                                       const size_t _vertexCount,
+                                                       const size_t _indexCount)
+    : Data3D(GL_MATERIAL_VERTEX_Normal, _glPrimitive, _vertexCount, _indexCount)
+{
+    if (vertexCount > 0UL)
+    {
+        m_normalData = reinterpret_cast<Math::Vec3F *>(std::malloc(vertexCount * sizeof(Math::Vec3F)));
+        m_ambientData = reinterpret_cast<Math::Vec3F *>(std::malloc(vertexCount * sizeof(Math::Vec3F)));
+        m_diffuseData = reinterpret_cast<Math::Vec3F *>(std::malloc(vertexCount * sizeof(Math::Vec3F)));
+        m_specularData = reinterpret_cast<Math::Vec3F *>(std::malloc(vertexCount * sizeof(Math::Vec3F)));
+        m_shineData = reinterpret_cast<float *>(std::malloc(vertexCount * sizeof(float)));
+        m_alphaData = reinterpret_cast<float *>(std::malloc(vertexCount * sizeof(float)));
+    }
+}
+
+Data3DMaterialsNormalAlpha::Data3DMaterialsNormalAlpha(const GLuint _glPrimitive,
+                                                       const size_t _vertexCount,
+                                                       const size_t _indexCount,
+                                                       const Math::Vec3F *_vertexData,
+                                                       const Math::Vec3F *_normalData,
+                                                       const Math::Vec3F *_ambientData,
+                                                       const Math::Vec3F *_diffuseData,
+                                                       const Math::Vec3F *_specularData,
+                                                       const float *_shineData,
+                                                       const float *_alphaData,
+                                                       const uint *_indexData)
+    : Data3D(GL_MATERIAL_VERTEX_Normal, _glPrimitive, _vertexCount, _indexCount, _vertexData, _indexData)
+{
+    if (vertexCount > 0UL)
+    {
+        m_normalBuffer = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+        m_normalBuffer->setUsagePattern(QOpenGLBuffer::StaticDraw);
+        if (m_normalBuffer->create())
+        {
+            m_normalBuffer->bind();
+            m_normalBuffer->allocate(_normalData, vertexCount * sizeof(Math::Vec3F));
+            m_normalBuffer->release();
+        }
+        else
+        {
+            std::cerr << "[Data3DMaterialsNormalAlpha::constructor] Can't create m_normalBuffer !\n";
+        }
+
+        m_ambientBuffer = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+        m_ambientBuffer->setUsagePattern(QOpenGLBuffer::StaticDraw);
+        if (m_ambientBuffer->create())
+        {
+            m_ambientBuffer->bind();
+            m_ambientBuffer->allocate(_ambientData, vertexCount * sizeof(Math::Vec3F));
+            m_ambientBuffer->release();
+        }
+        else
+        {
+            std::cerr << "[Data3DMaterialsNormalAlpha::constructor] Can't create m_ambientBuffer !\n";
+        }
+
+        m_diffuseBuffer = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+        m_diffuseBuffer->setUsagePattern(QOpenGLBuffer::StaticDraw);
+        if (m_diffuseBuffer->create())
+        {
+            m_diffuseBuffer->bind();
+            m_diffuseBuffer->allocate(_diffuseData, vertexCount * sizeof(Math::Vec3F));
+            m_diffuseBuffer->release();
+        }
+        else
+        {
+            std::cerr << "[Data3DMaterialsNormalAlpha::constructor] Can't create m_diffuseBuffer !\n";
+        }
+
+        m_specularBuffer = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+        m_specularBuffer->setUsagePattern(QOpenGLBuffer::StaticDraw);
+        if (m_specularBuffer->create())
+        {
+            m_specularBuffer->bind();
+            m_specularBuffer->allocate(_specularData, vertexCount * sizeof(Math::Vec3F));
+            m_specularBuffer->release();
+        }
+        else
+        {
+            std::cerr << "[Data3DMaterialsNormalAlpha::constructor] Can't create m_specularBuffer !\n";
+        }
+
+        m_shineBuffer = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+        m_shineBuffer->setUsagePattern(QOpenGLBuffer::StaticDraw);
+        if (m_shineBuffer->create())
+        {
+            m_shineBuffer->bind();
+            m_shineBuffer->allocate(_shineData, vertexCount * sizeof(float));
+            m_shineBuffer->release();
+        }
+        else
+        {
+            std::cerr << "[Data3DMaterialsNormalAlpha::constructor] Can't create m_shineBuffer !\n";
+        }
+
+        m_alphaBuffer = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+        m_alphaBuffer->setUsagePattern(QOpenGLBuffer::StaticDraw);
+        if (m_alphaBuffer->create())
+        {
+            m_alphaBuffer->bind();
+            m_alphaBuffer->allocate(_alphaData, vertexCount * sizeof(float));
+            m_alphaBuffer->release();
+        }
+        else
+        {
+            std::cerr << "[Data3DMaterialsNormalAlpha::constructor] Can't create m_alphaBuffer !\n";
+        }
+    }
+}
+
+bool Data3DMaterialsNormalAlpha::isTransparent() const
+{
+    return m_isTransparent;
+}
+
+bool Data3DMaterialsNormalAlpha::createBuffersImpl()
+{
+    m_normalBuffer = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+    m_normalBuffer->setUsagePattern(QOpenGLBuffer::StaticDraw);
+    if (!m_normalBuffer->create())
+    {
+        std::cerr << "[Data3DMaterialsNormalAlpha::createBuffersImpl] Can't create m_normalBuffer !\n";
+        return false;
+    }
+
+    m_normalBuffer->bind();
+    m_normalBuffer->allocate(m_normalData, vertexCount * sizeof(Math::Vec3F));
+    m_normalBuffer->release();
+
+    m_ambientBuffer = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+    m_ambientBuffer->setUsagePattern(QOpenGLBuffer::StaticDraw);
+    if (!m_ambientBuffer->create())
+    {
+        std::cerr << "[Data3DMaterialsNormalAlpha::createBuffersImpl] Can't create m_ambientBuffer !\n";
+        return false;
+    }
+
+    m_ambientBuffer->bind();
+    m_ambientBuffer->allocate(m_ambientData, vertexCount * sizeof(Math::Vec3F));
+    m_ambientBuffer->release();
+
+    m_diffuseBuffer = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+    m_diffuseBuffer->setUsagePattern(QOpenGLBuffer::StaticDraw);
+    if (!m_diffuseBuffer->create())
+    {
+        std::cerr << "[Data3DMaterialsNormalAlpha::createBuffersImpl] Can't create m_diffuseBuffer !\n";
+        return false;
+    }
+
+    m_diffuseBuffer->bind();
+    m_diffuseBuffer->allocate(m_diffuseData, vertexCount * sizeof(Math::Vec3F));
+    m_diffuseBuffer->release();
+
+    m_specularBuffer = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+    m_specularBuffer->setUsagePattern(QOpenGLBuffer::StaticDraw);
+    if (!m_specularBuffer->create())
+    {
+        std::cerr << "[Data3DMaterialsNormalAlpha::createBuffersImpl] Can't create m_specularBuffer !\n";
+        return false;
+    }
+
+    m_specularBuffer->bind();
+    m_specularBuffer->allocate(m_specularData, vertexCount * sizeof(Math::Vec3F));
+    m_specularBuffer->release();
+
+    m_shineBuffer = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+    m_shineBuffer->setUsagePattern(QOpenGLBuffer::StaticDraw);
+    if (!m_shineBuffer->create())
+    {
+        std::cerr << "[Data3DMaterialsNormalAlpha::createBuffersImpl] Can't create m_shineBuffer !\n";
+        return false;
+    }
+
+    m_shineBuffer->bind();
+    m_shineBuffer->allocate(m_shineData, vertexCount * sizeof(float));
+    m_shineBuffer->release();
+
+    m_alphaBuffer = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+    m_alphaBuffer->setUsagePattern(QOpenGLBuffer::StaticDraw);
+    if (!m_alphaBuffer->create())
+    {
+        std::cerr << "[Data3DMaterialsNormalAlpha::createBuffersImpl] Can't create m_alphaBuffer !\n";
+        return false;
+    }
+
+    m_alphaBuffer->bind();
+    m_alphaBuffer->allocate(m_alphaData, vertexCount * sizeof(float));
+    m_alphaBuffer->release();
+
+    return true;
+}
+
+bool Data3DMaterialsNormalAlpha::destroyBuffersImpl()
+{
+    if (m_normalBuffer->isCreated())
+        m_normalBuffer->destroy();
+
+    delete m_normalBuffer;
+    m_normalBuffer = nullptr;
+
+    if (m_ambientBuffer->isCreated())
+        m_ambientBuffer->destroy();
+
+    delete m_ambientBuffer;
+    m_ambientBuffer = nullptr;
+
+    if (m_diffuseBuffer->isCreated())
+        m_diffuseBuffer->destroy();
+
+    delete m_diffuseBuffer;
+    m_diffuseBuffer = nullptr;
+
+    if (m_specularBuffer->isCreated())
+        m_specularBuffer->destroy();
+
+    delete m_specularBuffer;
+    m_specularBuffer = nullptr;
+
+    if (m_shineBuffer->isCreated())
+        m_shineBuffer->destroy();
+
+    delete m_shineBuffer;
+    m_shineBuffer = nullptr;
+
+    if (m_alphaBuffer->isCreated())
+        m_alphaBuffer->destroy();
+
+    delete m_alphaBuffer;
+    m_alphaBuffer = nullptr;
+
+    return true;
+}
+
+bool Data3DMaterialsNormalAlpha::bindBuffersImpl(QOpenGLShaderProgram *_program)
+{
+    if (!m_normalBuffer->bind())
+    {
+        std::cerr << "[Data3DMaterialsNormalAlpha::bindBuffersImpl] m_normalBuffer->bind() failed!\n";
+        return false;
+    }
+
+    _program->enableAttributeArray(1);
+    _program->setAttributeBuffer(1, GL_FLOAT, 0, 3);
+
+    if (!m_ambientBuffer->bind())
+    {
+        std::cerr << "[Data3DMaterialsNormalAlpha::bindBuffersImpl] m_ambientBuffer->bind() failed!\n";
+        return false;
+    }
+
+    _program->enableAttributeArray(2);
+    _program->setAttributeBuffer(2, GL_FLOAT, 0, 3);
+
+    if (!m_diffuseBuffer->bind())
+    {
+        std::cerr << "[Data3DMaterialsNormalAlpha::bindBuffersImpl] m_diffuseBuffer->bind() failed!\n";
+        return false;
+    }
+
+    _program->enableAttributeArray(3);
+    _program->setAttributeBuffer(3, GL_FLOAT, 0, 3);
+
+    if (!m_specularBuffer->bind())
+    {
+        std::cerr << "[Data3DMaterialsNormalAlpha::bindBuffersImpl] m_specularBuffer->bind() failed!\n";
+        return false;
+    }
+
+    _program->enableAttributeArray(4);
+    _program->setAttributeBuffer(4, GL_FLOAT, 0, 3);
+
+    if (!m_shineBuffer->bind())
+    {
+        std::cerr << "[Data3DMaterialsNormalAlpha::bindBuffersImpl] m_shineBuffer->bind() failed!\n";
+        return false;
+    }
+
+    _program->enableAttributeArray(5);
+    _program->setAttributeBuffer(5, GL_FLOAT, 0, 1);
+
+    if (!m_alphaBuffer->bind())
+    {
+        std::cerr << "[Data3DMaterialsNormalAlpha::bindBuffersImpl] m_alphaBuffer->bind() failed!\n";
+        return false;
+    }
+
+    _program->enableAttributeArray(6);
+    _program->setAttributeBuffer(6, GL_FLOAT, 0, 1);
+
+    return true;
+}
+
+bool Data3DMaterialsNormalAlpha::releaseBuffersImpl(QOpenGLShaderProgram *_program)
+{
+    _program->disableAttributeArray(1);
+    _program->disableAttributeArray(2);
+    _program->disableAttributeArray(3);
+    _program->disableAttributeArray(4);
+    _program->disableAttributeArray(5);
+    _program->disableAttributeArray(6);
+    m_normalBuffer->release();
+    m_ambientBuffer->release();
+    m_diffuseBuffer->release();
+    m_specularBuffer->release();
+    m_shineBuffer->release();
+    m_alphaBuffer->release();
+    return true;
+}
+
+Data3DMaterialsNormalAlpha *Data3DMaterialsNormalAlpha::cylinder(const Math::OrientF &_orientation,
+                                                                 const float _length,
+                                                                 const float _radius1,
+                                                                 const float _radius2,
+                                                                 const size_t _quality,
+                                                                 const Math::MaterialRGBA &_material1,
+                                                                 const Math::MaterialRGBA &_material2)
+{
+    const size_t N = Math::CylinderF::cylinderVertexCount(_quality);
+
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
+    Math::Vec3F *t3 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
+    Math::Vec3F *t4 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
+    Math::Vec3F *t5 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
+    float *t6 = reinterpret_cast<float *>(N * sizeof(float));
+    float *t7 = reinterpret_cast<float *>(N * sizeof(float));
+
+    Math::CylinderF::fillCylinderOuter(t1,
+                                       t2,
+                                       t3,
+                                       t4,
+                                       t5,
+                                       t6,
+                                       t7,
+                                       _orientation,
+                                       _material1.ambient.toVec3F(),
+                                       _material2.ambient.toVec3F(),
+                                       _material1.diffuse.toVec3F(),
+                                       _material2.diffuse.toVec3F(),
+                                       _material1.specular.toVec3F(),
+                                       _material2.specular.toVec3F(),
+                                       _material1.shine,
+                                       _material2.shine,
+                                       float(_material1.alpha) / 255.0f,
+                                       float(_material2.alpha) / 255.0f,
+                                       _length,
+                                       _radius1,
+                                       _radius2,
+                                       _quality);
+
+    Data3DMaterialsNormalAlpha *result = new Data3DMaterialsNormalAlpha(GL_QUAD_STRIP, N, t1, t2, t3, t4, t5, t6, t7);
+
+    std::free(t1);
+    std::free(t2);
+    std::free(t3);
+    std::free(t4);
+    std::free(t5);
+    std::free(t6);
+    std::free(t7);
+
+    return result;
+}
+
+Data3DMaterialsNormalAlpha *Data3DMaterialsNormalAlpha::cylinderInn(const Math::OrientF &_orientation,
+                                                                    const float _length,
+                                                                    const float _radius1,
+                                                                    const float _radius2,
+                                                                    const size_t _quality,
+                                                                    const Math::MaterialRGBA &_material1,
+                                                                    const Math::MaterialRGBA &_material2)
+{
+    const size_t N = Math::CylinderF::cylinderVertexCount(_quality);
+
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
+    Math::Vec3F *t3 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
+    Math::Vec3F *t4 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
+    Math::Vec3F *t5 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
+    float *t6 = reinterpret_cast<float *>(N * sizeof(float));
+    float *t7 = reinterpret_cast<float *>(N * sizeof(float));
+
+    Math::CylinderF::fillCylinderInner(t1,
+                                       t2,
+                                       t3,
+                                       t4,
+                                       t5,
+                                       t6,
+                                       t7,
+                                       _orientation,
+                                       _material1.ambient.toVec3F(),
+                                       _material2.ambient.toVec3F(),
+                                       _material1.diffuse.toVec3F(),
+                                       _material2.diffuse.toVec3F(),
+                                       _material1.specular.toVec3F(),
+                                       _material2.specular.toVec3F(),
+                                       _material1.shine,
+                                       _material2.shine,
+                                       float(_material1.alpha) / 255.0f,
+                                       float(_material2.alpha) / 255.0f,
+                                       _length,
+                                       _radius1,
+                                       _radius2,
+                                       _quality);
+
+    Data3DMaterialsNormalAlpha *result = new Data3DMaterialsNormalAlpha(GL_QUAD_STRIP, N, t1, t2, t3, t4, t5, t6, t7);
+
+    std::free(t1);
+    std::free(t2);
+    std::free(t3);
+    std::free(t4);
+    std::free(t5);
+    std::free(t6);
+    std::free(t7);
+
+    return result;
+}
+
+Data3DMaterialsNormalAlpha *Data3DMaterialsNormalAlpha::cylinderArc(const Math::OrientF &_orientation,
+                                                                    const float _length,
+                                                                    const float _radiusArc,
+                                                                    const float _radius1,
+                                                                    const float _radius2,
+                                                                    const size_t _qualityArc,
+                                                                    const size_t _qualityCylinder,
+                                                                    const Math::MaterialRGBA &_material1,
+                                                                    const Math::MaterialRGBA &_material2,
+                                                                    const float _offsetAngle)
+{
+    std::vector<float> a;
+    Math::CylinderArcF::cylinderArcAngles(a, _radiusArc, _length, _qualityArc, _offsetAngle);
+
+    const size_t C = Math::circlePointCount(_qualityCylinder);
+    const size_t N = a.size() * (C + 1UL);
+    const size_t I = (a.size() - 1UL) * C * 4UL;
+
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
+    Math::Vec3F *t3 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
+    Math::Vec3F *t4 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
+    Math::Vec3F *t5 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
+    float *t6 = reinterpret_cast<float *>(N * sizeof(float));
+    float *t7 = reinterpret_cast<float *>(N * sizeof(float));
+    uint *t8 = reinterpret_cast<uint *>(I * sizeof(uint));
+
+    Math::CylinderArcF::fillCylinderOuter(t1,
+                                          t2,
+                                          t3,
+                                          t4,
+                                          t5,
+                                          t6,
+                                          t7,
+                                          t8,
+                                          _orientation,
+                                          _material1.ambient.toVec3F(),
+                                          _material2.ambient.toVec3F(),
+                                          _material1.diffuse.toVec3F(),
+                                          _material2.diffuse.toVec3F(),
+                                          _material1.specular.toVec3F(),
+                                          _material2.specular.toVec3F(),
+                                          _material1.shine,
+                                          _material2.shine,
+                                          float(_material1.alpha) / 255.0f,
+                                          float(_material2.alpha) / 255.0f,
+                                          _radiusArc,
+                                          _radius1,
+                                          _radius2,
+                                          _qualityCylinder,
+                                          a);
+
+    Data3DMaterialsNormalAlpha *result = new Data3DMaterialsNormalAlpha(GL_QUADS, N, I, t1, t2, t3, t4, t5, t6, t7, t8);
+
+    std::free(t1);
+    std::free(t2);
+    std::free(t3);
+    std::free(t4);
+    std::free(t5);
+    std::free(t6);
+    std::free(t7);
+    std::free(t8);
+
+    return result;
+}
+
+Data3DMaterialsNormalAlpha *Data3DMaterialsNormalAlpha::cylinderArcInn(const Math::OrientF &_orientation,
+                                                                       const float _length,
+                                                                       const float _radiusArc,
+                                                                       const float _radius1,
+                                                                       const float _radius2,
+                                                                       const size_t _qualityArc,
+                                                                       const size_t _qualityCylinder,
+                                                                       const Math::MaterialRGBA &_material1,
+                                                                       const Math::MaterialRGBA &_material2,
+                                                                       const float _offsetAngle)
+{
+    std::vector<float> a;
+    Math::CylinderArcF::cylinderArcAngles(a, _radiusArc, _length, _qualityArc, _offsetAngle);
+
+    const size_t C = Math::circlePointCount(_qualityCylinder);
+    const size_t N = a.size() * (C + 1UL);
+    const size_t I = (a.size() - 1UL) * C * 4UL;
+
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
+    Math::Vec3F *t3 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
+    Math::Vec3F *t4 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
+    Math::Vec3F *t5 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
+    float *t6 = reinterpret_cast<float *>(N * sizeof(float));
+    float *t7 = reinterpret_cast<float *>(N * sizeof(float));
+    uint *t8 = reinterpret_cast<uint *>(I * sizeof(uint));
+
+    Math::CylinderArcF::fillCylinderInner(t1,
+                                          t2,
+                                          t3,
+                                          t4,
+                                          t5,
+                                          t6,
+                                          t7,
+                                          t8,
+                                          _orientation,
+                                          _material1.ambient.toVec3F(),
+                                          _material2.ambient.toVec3F(),
+                                          _material1.diffuse.toVec3F(),
+                                          _material2.diffuse.toVec3F(),
+                                          _material1.specular.toVec3F(),
+                                          _material2.specular.toVec3F(),
+                                          _material1.shine,
+                                          _material2.shine,
+                                          float(_material1.alpha) / 255.0f,
+                                          float(_material2.alpha) / 255.0f,
+                                          _radiusArc,
+                                          _radius1,
+                                          _radius2,
+                                          _qualityCylinder,
+                                          a);
+
+    Data3DMaterialsNormalAlpha *result = new Data3DMaterialsNormalAlpha(GL_QUADS, N, I, t1, t2, t3, t4, t5, t6, t7, t8);
+
+    std::free(t1);
+    std::free(t2);
+    std::free(t3);
+    std::free(t4);
+    std::free(t5);
+    std::free(t6);
+    std::free(t7);
+    std::free(t8);
+
+    return result;
+}
+
+}  // namespace OpenGL
+}  // namespace U1

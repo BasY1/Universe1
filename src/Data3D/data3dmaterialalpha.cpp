@@ -27,8 +27,8 @@ const std::string Data3DMaterialAlpha::fs =                  //
     "uniform vec3 diffuse;\n" +                              //
     "uniform vec3 specular;\n" +                             //
     "uniform float shine;\n" +                               //
-    "in float alphaOut;\n" +                                 //
     "in vec3 posOut;\n" +                                    //
+    "in float alphaOut;\n" +                                 //
     "out vec4 color;\n" +                                    //
     "void main() {\n" +                                      //
     " vec3 norm = normalize(normal);\n" +                    //

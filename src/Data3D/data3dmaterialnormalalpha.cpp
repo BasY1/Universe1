@@ -53,7 +53,7 @@ Data3DMaterialNormalAlpha::Data3DMaterialNormalAlpha(const GLuint _glPrimitive,
                                                      const size_t _vertexCount,
                                                      const size_t _indexCount,
                                                      const Math::MaterialRGB &_material)
-    : Data3D(GL_MATERIAL_SINGLE_Normal, _glPrimitive, _vertexCount, _indexCount)
+    : Data3D(GL_MATERIAL_SINGLE_NormalAlpha, _glPrimitive, _vertexCount, _indexCount)
     , m_material(_material)
 {
     if (vertexCount > 0UL)
@@ -71,7 +71,7 @@ Data3DMaterialNormalAlpha::Data3DMaterialNormalAlpha(const GLuint _glPrimitive,
                                                      const float *_alphaData,
                                                      const uint *_indexData,
                                                      const Math::MaterialRGB &_material)
-    : Data3D(GL_MATERIAL_SINGLE_Normal, _glPrimitive, _vertexCount, _indexCount, _vertexData, _indexData)
+    : Data3D(GL_MATERIAL_SINGLE_NormalAlpha, _glPrimitive, _vertexCount, _indexCount, _vertexData, _indexData)
     , m_material(_material)
 {
     if (vertexCount > 0UL)

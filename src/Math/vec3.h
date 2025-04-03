@@ -1673,6 +1673,16 @@ inline Vec3<T> ColorRGB::toVec3() const
 }
 
 /*!
+ * \brief Conversion to 32 bit 3D vector
+ * \tparam T Template floating point type
+ * \return Color as 3D vector
+ */
+inline Vec3<float> ColorRGB::toVec3F() const
+{
+    return toVec3<float>();
+}
+
+/*!
  * \brief Create color from a 3D vector
  * \tparam T Template floating point type
  * \param _vector 3D vector

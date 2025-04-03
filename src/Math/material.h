@@ -145,6 +145,20 @@ struct MaterialRGBA
     }
 
     /*!
+     * \brief Constructor
+     * \param _material Material without alpha
+     * \param _alpha Initial alpha factor
+     */
+    inline MaterialRGBA(const MaterialRGB &_material, const uint8_t _alpha = 255U)
+        : ambient(_material.ambient)
+        , diffuse(_material.diffuse)
+        , specular(_material.specular)
+        , shine(_material.shine)
+        , alpha(_alpha)
+    {
+    }
+
+    /*!
      * \brief Constructor from \c QColor
      * \param _color \c QColor
      */

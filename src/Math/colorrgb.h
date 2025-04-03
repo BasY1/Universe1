@@ -85,6 +85,8 @@ struct ColorRGB
     template <typename T>
     inline Vec3<T> toVec3() const;
 
+    inline Vec3<float> toVec3F() const;
+
     template <typename T>
     inline static ColorRGB fromVec3(const Vec3<T> &_vector);
 

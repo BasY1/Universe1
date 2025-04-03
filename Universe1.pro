@@ -78,6 +78,18 @@ SOURCES += src/Data3D/data3dmaterialnormal.cpp
 HEADERS += src/Data3D/data3dmaterialnormalalpha.h
 SOURCES += src/Data3D/data3dmaterialnormalalpha.cpp
 
+HEADERS += src/Data3D/data3dmaterialsbase.h
+SOURCES += src/Data3D/data3dmaterialsbase.cpp
+
+HEADERS += src/Data3D/data3dmaterialsalpha.h
+SOURCES += src/Data3D/data3dmaterialsalpha.cpp
+
+HEADERS += src/Data3D/data3dmaterialsnormal.h
+SOURCES += src/Data3D/data3dmaterialsnormal.cpp
+
+HEADERS += src/Data3D/data3dmaterialsnormalalpha.h
+SOURCES += src/Data3D/data3dmaterialsnormalalpha.cpp
+
 ######################################################3
 
 SOURCES += src/main.cpp
