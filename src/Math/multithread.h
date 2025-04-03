@@ -9,6 +9,7 @@
 
 #include <thread>
 #include <vector>
+#include <list>
 
 namespace U1 {
 namespace Math {
@@ -460,6 +461,257 @@ size_t fillAlignedSteps(std::vector<T> &_out, const T _valueStart, const T _valu
         t.join();
 
     return _out.size();
+}
+// clang-format off
+#define PATTERN_SOLID          0b1111111111111111111111111111111111111111111111111111111111111111  //!< Solid line
+#define PATTERN_DASH_L         0b1111111111111111111111111111111111111111111111110000000000000000  //!< Dash long-short
+#define PATTERN_DASH_S         0b1111111111111111000000000000000000000000000000000000000000000000  //!< Dash short-long
+#define PATTERN_DASH_1         0b1111111111111111111111111111111100000000000000000000000000000000  //!< Dash 1 - longest
+#define PATTERN_DASH_2         0b1111111111111111000000000000000011111111111111110000000000000000  //!< Dash 2
+#define PATTERN_DASH_3         0b1111111100000000111111110000000011111111000000001111111100000000  //!< Dash 3
+#define PATTERN_DASH_4         0b1111000011110000111100001111000011110000111100001111000011110000  //!< Dash 4 - shortest
+#define PATTERN_DOTS_1         0b1100110011001100110011001100110011001100110011001100110011001100  //!< Dots 1 short space
+#define PATTERN_DOTS_2         0b1010101010101010101010101010101010101010101010101010101010101010  //!< Dots 2 short space
+#define PATTERN_DOTS_1S        0b1100000011000000110000001100000011000000110000001100000011000000  //!< Dots 1 
+#define PATTERN_DOTS_2S        0b1000100010001000100010001000100010001000100010001000100010001000  //!< Dots 2 
+#define PATTERN_DOTS_1XS       0b1100000000000000110000000000000011000000000000001100000000000000  //!< Dots 1       
+#define PATTERN_DOTS_2XS       0b1000000010000000100000001000000010000000100000001000000010000000  //!< Dots 2       
+#define PATTERN_DOTS_1XXS      0b1100000000000000000000000000000011000000000000000000000000000000  //!< Dots 1 long space
+#define PATTERN_DOTS_2XXS      0b1000000000000000100000000000000010000000000000001000000000000000  //!< Dots 2 long space
+#define PATTERN_DASH_DOT_1     0b1111111111111111111111111111111100000000000011111111000000000000  //!< Dash-dot 1    
+#define PATTERN_DASH_DOT_2     0b1111111111111111000000111100000011111111111111110000001111000000  //!< Dash-dot 2    
+#define PATTERN_DASH_DOT_3     0b1111111100011000111111110001100011111111000110001111111100011000  //!< Dash-dot 3    
+#define PATTERN_DASH_DOT_DOT_1 0b1111111111111111111111111111111100000011111110000001111111000000  //!< Dash-dot-dot 1
+#define PATTERN_DASH_DOT_DOT_2 0b1111111111110000111100001111000011111111111100001111000011110000  //!< Dash-dot-dot 2
+#define PATTERN_DASH_DOT_DOT_3 0b1111110011001100111111001100110011111100110011001111110011001100  //!< Dash-dot-dot 3
+// clang-format on
+
+/*!
+ * \brief fillDashPattern
+ * \param _out Output collection
+ * \param _pattern Pattern binary mask
+ * \param _start Start value
+ * \param _end End value
+ * \param _step Step for single bit
+ */
+template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
+void fillDashPattern(
+    std::vector<std::pair<T, T>> &_out, const uint64_t _pattern, const T _start, const T _end, const T _step)
+{
+    _out.clear();
+    if (_pattern == 0UL)
+        return;
+
+    if (_pattern == PATTERN_SOLID)
+    {
+        _out = {{_start, _end}};
+        return;
+    }
+
+    std::list<std::pair<uint64_t, uint64_t>> pl;
+    {
+        uint64_t mask = (1UL << 63UL);
+        uint64_t start = 0UL;
+        uint64_t idx = 1UL;
+        bool is1 = ((_pattern & mask) == mask);
+        uint64_t cnt = is1 ? 1UL : 0UL;
+
+        mask >>= 1UL;
+        while (mask != 0UL)
+        {
+            const bool nextIs1 = ((_pattern & mask) == mask);
+            if (is1 && nextIs1)
+            {
+                cnt++;
+            }
+            else if (is1 && !nextIs1)
+            {
+                pl.push_back({start, cnt});
+                is1 = nextIs1;
+            }
+            else if (!is1 && nextIs1)
+            {
+                is1 = nextIs1;
+                start = idx;
+                cnt = 1UL;
+            }
+
+            idx++;
+            mask >>= 1UL;
+        }
+    }
+
+    const uint64_t cntSeg = pl.size();
+    std::vector<std::pair<T, T>> p;
+    p.reserve(cntSeg);
+    for (const std::pair<uint64_t, uint64_t> &i : std::as_const(pl))
+        p.push_back({T(i.first) * _step, T(i.first + i.second) * _step});
+
+    const T beg = std::min(_start, _end);
+    const T end = std::max(_start, _end);
+    const T pLen = T(64) * _step;
+
+    int64_t oBeg = int64_t(beg / pLen);
+    int64_t oEnd = int64_t(end / pLen);
+    while (Math::isMoreNotEqual(T(oBeg) * pLen, beg))
+        --oBeg;
+
+    while (Math::isLessNotEqual(T(oEnd) * pLen, end))
+        ++oEnd;
+
+    const T beg2 = T(oBeg) * pLen;
+    const T end2 = T(oEnd) * pLen;
+    const bool isBeg = Math::equals(beg, beg2);
+    const bool isEnd = Math::equals(end, end2);
+
+    if (isBeg && isEnd)
+    {
+        const uint64_t cntSegs = uint64_t(oEnd - oBeg);
+        const uint64_t cntItems = cntSegs * cntSeg;
+        const std::vector<std::pair<uint64_t, uint64_t>> pool = createPool(cntItems);
+        if (pool.empty())
+        {
+            _out.reserve(cntItems);
+            for (uint64_t s1 = 0UL; s1 < cntSegs; ++s1)
+            {
+                const T beg3 = beg2 + T(s1) * pLen;
+                for (uint64_t s2 = 0UL; s2 < cntSeg; ++s2)
+                    _out.push_back({beg3 + p[s2].first, beg3 + p[s2].second});
+            }
+        }
+        else
+        {
+            _out.resize(cntItems);
+            std::vector<std::thread> threads;
+            threads.reserve(pool.size());
+            for (const std::pair<uint64_t, uint64_t> &t : std::as_const(pool))
+                threads.push_back(std::thread(
+                    [t, cntSeg, beg2, pLen](std::pair<T, T> *__out, const std::pair<T, T> *__seg) {
+                        const uint64_t end = t.first + t.second;
+                        for (uint64_t i = t.first; i < end; ++i)
+                        {
+                            const uint64_t s2 = i % cntSeg;
+                            const T beg3 = beg2 + T(i / cntSeg) * pLen;
+                            __out[i] = {beg3 + __seg[s2].first, beg3 + __seg[s2].second};
+                        }
+                    },
+                    _out.data(),
+                    p.data()));
+
+            for (std::thread &t : threads)
+                t.join();
+        }
+
+        return;
+    }
+
+    std::list<std::pair<T, T>> pBeg;
+    if (!isBeg)
+    {
+        for (uint64_t s2 = 0UL; s2 < cntSeg; ++s2)
+        {
+            const T x2 = beg2 + p[s2].second;
+            if (Math::isLessOrEqual(x2, beg))
+                continue;
+
+            const T x1 = beg2 + p[s2].first;
+            if (Math::isMoreOrEqual(x1, end))
+            {
+                if (!pBeg.empty())
+                {
+                    _out.reserve(pBeg.size());
+                    _out.insert(_out.end(), pBeg.cbegin(), pBeg.cend());
+                }
+                return;
+            }
+
+            T xx1 = x1;
+            if (Math::isLessOrEqual(x1, beg))
+                xx1 = beg;
+
+            if (Math::isMoreOrEqual(x2, end))
+            {
+                pBeg.push_back({xx1, end});
+                _out.reserve(pBeg.size());
+                _out.insert(_out.end(), pBeg.cbegin(), pBeg.cend());
+                return;
+            }
+
+            pBeg.push_back({xx1, x2});
+        }
+    }
+
+    std::list<std::pair<T, T>> pEnd;
+    if (!isEnd)
+    {
+        const T beg3 = end2 - pLen;
+        for (uint64_t s2 = 0UL; s2 < cntSeg; ++s2)
+        {
+            const T x1 = beg3 + p[s2].first;
+            if (Math::isMoreOrEqual(x1, end))
+                break;
+
+            const T x2 = beg3 + p[s2].second;
+            if (Math::isMoreOrEqual(x2, end))
+            {
+                pEnd.push_back({x1, end});
+                break;
+            }
+            pEnd.push_back({x1, x2});
+        }
+    }
+
+    const uint64_t cntSegsIn = (oEnd - (isEnd ? 0UL : 1UL)) - (oBeg + (isBeg ? 0UL : 1UL));
+    const uint64_t cntItemsIn = cntSegsIn * cntSeg;
+    const uint64_t cntItems = cntItemsIn + pBeg.size() + pEnd.size();
+
+    _out.resize(cntItems);
+
+    uint64_t i = 0;
+    for (const std::pair<T, T> &x : std::as_const(pBeg))
+        _out[i++] = x;
+
+    i = cntItemsIn + pBeg.size();
+    for (const std::pair<T, T> &x : std::as_const(pEnd))
+        _out[i++] = x;
+
+    if (cntSegsIn == 0UL)
+        return;
+
+    const T beg3 = isBeg ? beg : (beg2 + pLen);
+    const std::vector<std::pair<uint64_t, uint64_t>> pool = createPool(cntItemsIn);
+    if (pool.empty())
+    {
+        i = pBeg.size();
+        for (uint64_t s1 = 0UL; s1 < cntSegsIn; ++s1)
+        {
+            const T beg4 = beg3 + T(s1) * pLen;
+            for (uint64_t s2 = 0UL; s2 < cntSeg; ++s2)
+                _out[i++] = {beg4 + p[s2].first, beg4 + p[s2].second};
+        }
+    }
+    else
+    {
+        const uint64_t pbs = pBeg.size();
+        std::vector<std::thread> threads;
+        threads.reserve(pool.size());
+        for (const std::pair<uint64_t, uint64_t> &t : std::as_const(pool))
+            threads.push_back(std::thread(
+                [t, pbs, cntSeg, beg3, pLen](std::pair<T, T> *__out, const std::pair<T, T> *__seg) {
+                    const uint64_t end = t.first + t.second;
+                    for (uint64_t i = t.first; i < end; ++i)
+                    {
+                        const uint64_t s2 = i % cntSeg;
+                        const T beg4 = beg3 + T(i / cntSeg) * pLen;
+                        __out[i + pbs] = {beg4 + __seg[s2].first, beg4 + __seg[s2].second};
+                    }
+                },
+                _out.data(),
+                p.data()));
+
+        for (std::thread &t : threads)
+            t.join();
+    }
 }
 
 }  // namespace Math

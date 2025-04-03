@@ -35,7 +35,7 @@ HEADERS += src/Math/cylinderarc.h
 
 HEADERS += src/Math/spherecrosssection.h
 
-######################################################3
+######################################################
 
 HEADERS += src/Data3D/data3d.h
 SOURCES += src/Data3D/data3d.cpp
@@ -101,7 +101,41 @@ SOURCES += src/Data3D/data3dtexturealpha.cpp
 HEADERS += src/Data3D/shaders.h
 SOURCES += src/Data3D/shaders.cpp
 
-######################################################3
+######################################################
+
+HEADERS += src/ItemProps/itemproperty.h
+
+HEADERS += src/ItemProps/itempropertygroup.h
+SOURCES += src/ItemProps/itempropertygroup.cpp
+
+HEADERS += src/ItemProps/itempropertybool.h
+SOURCES += src/ItemProps/itempropertybool.cpp
+
+HEADERS += src/ItemProps/itempropertynum.h
+SOURCES += src/ItemProps/itempropertynum.cpp
+
+HEADERS += src/ItemProps/itempropertypattern.h
+SOURCES += src/ItemProps/itempropertypattern.cpp
+
+HEADERS += src/ItemProps/itempropertyvec2.h
+SOURCES += src/ItemProps/itempropertyvec2.cpp
+
+HEADERS += src/ItemProps/itempropertyvec3.h
+SOURCES += src/ItemProps/itempropertyvec3.cpp
+
+HEADERS += src/ItemProps/itempropertytext.h
+SOURCES += src/ItemProps/itempropertytext.cpp
+
+HEADERS += src/ItemProps/itempropertyenum.h
+SOURCES += src/ItemProps/itempropertyenum.cpp
+
+HEADERS += src/ItemProps/itempropertycolor.h
+SOURCES += src/ItemProps/itempropertycolor.cpp
+
+HEADERS += src/ItemProps/itempropertymaterial.h
+SOURCES += src/ItemProps/itempropertymaterial.cpp
+
+######################################################
 
 SOURCES += src/main.cpp
 
