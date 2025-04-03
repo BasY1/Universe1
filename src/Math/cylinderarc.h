@@ -20,17 +20,6 @@ template <typename T>
 struct CylinderArc
 {
     /*!
-     * \brief Cylinder vertex count by circle quality
-     * \param _quality Circle quality
-     * \return Cylinder vertex count
-     * \sa circlePointCount(const size_t)
-     */
-    inline static size_t cylinderVertexCount(const size_t _quality)
-    {
-        return 2UL * circlePointCount(_quality) + 2UL;
-    }
-
-    /*!
      * \brief Prepare cylinder arc angles
      * \param _out Output cylinder arc angles in radians
      * \param _radiusArc Cylinder arc radius
@@ -471,7 +460,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
             threads.reserve(pool.size());
             for (const std::pair<size_t, size_t> &t : std::as_const(pool))
                 threads.push_back(std::thread(
-                    [t, RD, AP, offset, cntCircle, angleStep, _orientation, _radius1, _radius2, _radiusArc](
+                    [t, RD, AP, AD, offset, cntCircle, angleStep, _orientation, _radius1, _radius2, _radiusArc](
                         Vec3<T> *__outVertex, Vec3<T> *__outNormal, const Vec2<T> *_data2D, const T *__angles) {
                         const size_t end = t.first + t.second;
                         for (size_t i = t.first; i < end; ++i)
@@ -615,7 +604,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
             threads.reserve(pool.size());
             for (const std::pair<size_t, size_t> &t : std::as_const(pool))
                 threads.push_back(std::thread(
-                    [t, RD, AP, offset, cntCircle, angleStep, _orientation, _radius1, _radius2, _radiusArc](
+                    [t, RD, AP, AD, offset, cntCircle, angleStep, _orientation, _radius1, _radius2, _radiusArc](
                         Vec3<T> *__outVertex, Vec3<T> *__outNormal, const Vec2<T> *_data2D, const T *__angles) {
                         const size_t end = t.first + t.second;
                         for (size_t i = t.first; i < end; ++i)

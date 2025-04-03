@@ -64,7 +64,7 @@ Data3DMaterialAlpha::Data3DMaterialAlpha(const GLuint _glPrimitive,
                                          const uint *_indexData,
                                          const Math::Vec3F &_normal,
                                          const Math::MaterialRGB &_material)
-    : Data3D(GL_MATERIAL_SINGLE_Base, _glPrimitive, _vertexCount, _indexCount, _vertexData, _indexData)
+    : Data3D(GL_MATERIAL_SINGLE_Alpha, _glPrimitive, _vertexCount, _indexCount, _vertexData, _indexData)
     , m_normal(_normal)
     , m_material(_material)
 {

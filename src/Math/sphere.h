@@ -429,7 +429,8 @@ template <typename T>
 const std::pair<std::vector<Vec3<T>>, std::vector<std::pair<size_t, size_t>>> &
 Sphere<T>::unitSphere(const size_t _quality)
 {
-    typename std::map<size_t, std::vector<Vec3<T>>>::iterator it = m_unitSpheres.find(_quality);
+    typename std::map<size_t, std::pair<std::vector<Vec3<T>>, std::vector<std::pair<size_t, size_t>>>>::iterator it =
+        m_unitSpheres.find(_quality);
     if (it == m_unitSpheres.end())
     {
         it = m_unitSpheres.insert({_quality, {std::vector<Vec3<T>>(), std::vector<std::pair<size_t, size_t>>()}}).first;
