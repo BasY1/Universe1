@@ -90,6 +90,24 @@ class Data3DMaterialAlpha : public Data3D
     }
 
     /*!
+     * \brief Getter for alpha data pointer (constant version)
+     * \return Vertex alpha data pointer
+     */
+    inline const float *alphaData() const
+    {
+        return m_alphaData;
+    }
+
+    /*!
+     * \brief Getter for alpha data pointer
+     * \return Vertex alpha data pointer
+     */
+    inline float *alphaData()
+    {
+        return m_alphaData;
+    }
+
+    /*!
      * \brief Vertex material getter
      * \return Vertex material
      */

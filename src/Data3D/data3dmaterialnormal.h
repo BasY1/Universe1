@@ -85,6 +85,24 @@ class Data3DMaterialNormal : public Data3D
     }
 
     /*!
+     * \brief Getter for normal data pointer (constant version)
+     * \return Vertex normal data pointer
+     */
+    inline const Math::Vec3F *normalData() const
+    {
+        return m_normalData;
+    }
+
+    /*!
+     * \brief Getter for normal data pointer
+     * \return Vertex normal data pointer
+     */
+    inline Math::Vec3F *normalData()
+    {
+        return m_normalData;
+    }
+
+    /*!
      * \brief Vertex material getter
      * \return Vertex material
      */

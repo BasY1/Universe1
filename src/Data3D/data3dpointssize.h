@@ -82,6 +82,24 @@ class Data3DPointsSize : public Data3D
     }
 
     /*!
+     * \brief Getter for point size data pointer (constant version)
+     * \return Vertex point size data pointer
+     */
+    inline const float *pointSizeData() const
+    {
+        return m_pointSizeData;
+    }
+
+    /*!
+     * \brief Getter for point size data pointer
+     * \return Vertex point size data pointer
+     */
+    inline float *pointSizeData()
+    {
+        return m_pointSizeData;
+    }
+
+    /*!
      * \brief Vertex color getter
      * \return Vertex color
      */

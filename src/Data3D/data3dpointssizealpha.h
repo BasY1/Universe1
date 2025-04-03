@@ -81,6 +81,42 @@ class Data3DPointsSizeAlpha : public Data3D
     }
 
     /*!
+     * \brief Getter for point size data pointer (constant version)
+     * \return Vertex point size data pointer
+     */
+    inline const float *pointSizeData() const
+    {
+        return m_pointSizeData;
+    }
+
+    /*!
+     * \brief Getter for point size data pointer
+     * \return Vertex point size data pointer
+     */
+    inline float *pointSizeData()
+    {
+        return m_pointSizeData;
+    }
+
+    /*!
+     * \brief Getter for alpha data pointer (constant version)
+     * \return Vertex alpha data pointer
+     */
+    inline const float *alphaData() const
+    {
+        return m_alphaData;
+    }
+
+    /*!
+     * \brief Getter for alpha data pointer
+     * \return Vertex alpha data pointer
+     */
+    inline float *alphaData()
+    {
+        return m_alphaData;
+    }
+
+    /*!
      * \brief Vertex color getter
      * \return Vertex color
      */

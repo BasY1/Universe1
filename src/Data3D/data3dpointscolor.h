@@ -79,6 +79,24 @@ class Data3DPointsColor : public Data3D
     }
 
     /*!
+     * \brief Getter for color data pointer (constant version)
+     * \return Vertex color data pointer
+     */
+    inline const Math::Vec3F *colorData() const
+    {
+        return m_colorData;
+    }
+
+    /*!
+     * \brief Getter for color data pointer
+     * \return Vertex color data pointer
+     */
+    inline Math::Vec3F *colorData()
+    {
+        return m_colorData;
+    }
+
+    /*!
      * \brief Vertex alpha getter
      * \return Vertex alpha
      */

@@ -75,6 +75,60 @@ class Data3DPointsSizeColorAlpha : public Data3D
     }
 
     /*!
+     * \brief Getter for point size data pointer (constant version)
+     * \return Vertex point size data pointer
+     */
+    inline const float *pointSizeData() const
+    {
+        return m_pointSizeData;
+    }
+
+    /*!
+     * \brief Getter for point size data pointer
+     * \return Vertex point size data pointer
+     */
+    inline float *pointSizeData()
+    {
+        return m_pointSizeData;
+    }
+
+    /*!
+     * \brief Getter for color data pointer (constant version)
+     * \return Vertex color data pointer
+     */
+    inline const Math::Vec3F *colorData() const
+    {
+        return m_colorData;
+    }
+
+    /*!
+     * \brief Getter for color data pointer
+     * \return Vertex color data pointer
+     */
+    inline Math::Vec3F *colorData()
+    {
+        return m_colorData;
+    }
+
+    /*!
+     * \brief Getter for alpha data pointer (constant version)
+     * \return Vertex alpha data pointer
+     */
+    inline const float *alphaData() const
+    {
+        return m_alphaData;
+    }
+
+    /*!
+     * \brief Getter for alpha data pointer
+     * \return Vertex alpha data pointer
+     */
+    inline float *alphaData()
+    {
+        return m_alphaData;
+    }
+
+    /*!
      * \brief Setup transparency flag
      * \param _isTransparent New transparency flag
      */

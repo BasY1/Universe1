@@ -134,7 +134,7 @@ class Data3D
      * \brief Getter for vertex data pointer (constant version)
      * \return Vertex data pointer
      */
-    inline const Math::Vec3F *getVertexData() const
+    inline const Math::Vec3F *vertexData() const
     {
         return m_vertexData;
     }
@@ -143,7 +143,7 @@ class Data3D
      * \brief Getter for vertex data pointer
      * \return Vertex data pointer
      */
-    inline Math::Vec3F *getVertexData()
+    inline Math::Vec3F *vertexData()
     {
         return m_vertexData;
     }
@@ -152,7 +152,7 @@ class Data3D
      * \brief Getter for index data pointer (constant version)
      * \return Index data pointer
      */
-    inline const uint *getIndexData() const
+    inline const uint *indexData() const
     {
         return m_indexData;
     }
@@ -161,7 +161,7 @@ class Data3D
      * \brief Getter for index data pointer
      * \return Index data pointer
      */
-    inline uint *getIndexData()
+    inline uint *indexData()
     {
         return m_indexData;
     }
