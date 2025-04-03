@@ -97,6 +97,10 @@ SOURCES += src/Data3D/data3dtexture.cpp
 HEADERS += src/Data3D/data3dtexturealpha.h
 SOURCES += src/Data3D/data3dtexturealpha.cpp
 
+
+HEADERS += src/Data3D/shaders.h
+SOURCES += src/Data3D/shaders.cpp
+
 ######################################################3
 
 SOURCES += src/main.cpp
