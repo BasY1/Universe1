@@ -112,6 +112,8 @@ class Data3DMaterialsNormal : public Data3D
     {
     }
 
+    ~Data3DMaterialsNormal();  //!< Destructor
+
     /*!
      * \brief Getter for normal data pointer (constant version)
      * \return Vertex normal data pointer

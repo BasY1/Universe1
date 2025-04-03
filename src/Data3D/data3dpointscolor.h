@@ -78,6 +78,8 @@ class Data3DPointsColor : public Data3D
     {
     }
 
+    ~Data3DPointsColor();  //!< Destructor
+
     /*!
      * \brief Getter for color data pointer (constant version)
      * \return Vertex color data pointer

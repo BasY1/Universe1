@@ -116,6 +116,8 @@ class Data3DMaterialsBase : public Data3D
     {
     }
 
+    ~Data3DMaterialsBase();  //!< Destructor
+
     /*!
      * \brief Getter for ambient color data pointer (constant version)
      * \return Vertex ambient color data pointer
@@ -294,8 +296,10 @@ class Data3DMaterialsBase : public Data3D
             _material1.specular.toVec3F(), _material2.specular.toVec3F(), _material3.specular.toVec3F()};
         const std::vector<float> t5 = {_material1.shine, _material2.shine, _material3.shine};
         const Math::Vec3F N = Math::Vec3F::cross((_p2 - _p1), (_p3 - _p1)).normalized();
-        return new Data3DMaterialsBase(
+        Data3DMaterialsBase *result = new Data3DMaterialsBase(
             GL_TRIANGLES, 3UL, t1.data(), t2.data(), t3.data(), t4.data(), t5.data(), N, _alpha);
+        result->setCentralPoint((_p1 + _p2 + _p3) / 3.0f);
+        return result;
     }
 
     /*!
@@ -338,8 +342,10 @@ class Data3DMaterialsBase : public Data3D
                                              _material4.specular.toVec3F()};
         const std::vector<float> t5 = {_material1.shine, _material2.shine, _material3.shine, _material4.shine};
 
-        return new Data3DMaterialsBase(
+        Data3DMaterialsBase *result = new Data3DMaterialsBase(
             GL_QUADS, 4UL, t1.data(), t2.data(), t3.data(), t4.data(), t5.data(), _orientation.normal1, _alpha);
+        result->setCentralPoint(_orientation.center);
+        return result;
     }
 
     /*!
@@ -385,6 +391,7 @@ class Data3DMaterialsBase : public Data3D
 
         Data3DMaterialsBase *result =
             new Data3DMaterialsBase(GL_TRIANGLE_FAN, N, t1, t2, t3, t4, t5, _orientation.normal1, _alpha);
+        result->setCentralPoint(_orientation.center);
 
         std::free(t1);
         std::free(t2);
@@ -441,6 +448,7 @@ class Data3DMaterialsBase : public Data3D
 
         Data3DMaterialsBase *result =
             new Data3DMaterialsBase(GL_TRIANGLE_FAN, N, t1, t2, t3, t4, t5, _orientation.normal1, _alpha);
+        result->setCentralPoint(_orientation.center);
 
         std::free(t1);
         std::free(t2);
@@ -503,6 +511,7 @@ class Data3DMaterialsBase : public Data3D
 
         Data3DMaterialsBase *result =
             new Data3DMaterialsBase(GL_TRIANGLE_FAN, N, t1, t2, t3, t4, t5, _orientation.normal1, _alpha);
+        result->setCentralPoint(_orientation.center);
 
         std::free(t1);
         std::free(t2);

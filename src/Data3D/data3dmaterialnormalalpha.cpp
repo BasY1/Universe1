@@ -104,6 +104,29 @@ Data3DMaterialNormalAlpha::Data3DMaterialNormalAlpha(const GLuint _glPrimitive,
     }
 }
 
+Data3DMaterialNormalAlpha::~Data3DMaterialNormalAlpha()
+{
+    if (m_normalData != nullptr)
+        std::free(m_normalData);
+
+    if (m_alphaData != nullptr)
+        std::free(m_alphaData);
+
+    if (m_normalBuffer != nullptr)
+    {
+        if (m_normalBuffer->isCreated())
+            m_normalBuffer->destroy();
+        delete m_normalBuffer;
+    }
+
+    if (m_alphaBuffer != nullptr)
+    {
+        if (m_alphaBuffer->isCreated())
+            m_alphaBuffer->destroy();
+        delete m_alphaBuffer;
+    }
+}
+
 bool Data3DMaterialNormalAlpha::isTransparent() const
 {
     return m_isTransparent;
@@ -224,6 +247,8 @@ Data3DMaterialNormalAlpha *Data3DMaterialNormalAlpha::cylinder(const Math::Orien
                                        _quality);
 
     Data3DMaterialNormalAlpha *result = new Data3DMaterialNormalAlpha(GL_QUAD_STRIP, N, t1, t2, t3, _material);
+    result->setCentralPoint(_orientation.center + _orientation.normal1 * (_length * 0.5f));
+    result->setTransparent(_alpha1 != 255U || _alpha2 != 255U);
 
     std::free(t1);
     std::free(t2);
@@ -259,6 +284,8 @@ Data3DMaterialNormalAlpha *Data3DMaterialNormalAlpha::cylinderInn(const Math::Or
                                        _quality);
 
     Data3DMaterialNormalAlpha *result = new Data3DMaterialNormalAlpha(GL_QUAD_STRIP, N, t1, t2, t3, _material);
+    result->setCentralPoint(_orientation.center + _orientation.normal1 * (_length * 0.5f));
+    result->setTransparent(_alpha1 != 255U || _alpha2 != 255U);
 
     std::free(t1);
     std::free(t2);
@@ -305,6 +332,8 @@ Data3DMaterialNormalAlpha *Data3DMaterialNormalAlpha::cylinderArc(const Math::Or
                                           a);
 
     Data3DMaterialNormalAlpha *result = new Data3DMaterialNormalAlpha(GL_QUADS, N, I, t1, t2, t3, t4, _material);
+    result->setCentralPoint(_orientation.center);
+    result->setTransparent(_alpha1 != 255U || _alpha2 != 255U);
 
     std::free(t1);
     std::free(t2);
@@ -351,6 +380,8 @@ Data3DMaterialNormalAlpha *Data3DMaterialNormalAlpha::cylinderArcInn(const Math:
                                           a);
 
     Data3DMaterialNormalAlpha *result = new Data3DMaterialNormalAlpha(GL_QUADS, N, I, t1, t2, t3, t4, _material);
+    result->setCentralPoint(_orientation.center);
+    result->setTransparent(_alpha1 != 255U || _alpha2 != 255U);
 
     std::free(t1);
     std::free(t2);

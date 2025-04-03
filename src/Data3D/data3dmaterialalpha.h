@@ -89,6 +89,8 @@ class Data3DMaterialAlpha : public Data3D
     {
     }
 
+    ~Data3DMaterialAlpha();  //!< Destructor
+
     /*!
      * \brief Getter for alpha data pointer (constant version)
      * \return Vertex alpha data pointer
@@ -216,7 +218,11 @@ class Data3DMaterialAlpha : public Data3D
         const std::vector<Math::Vec3F> tmp1 = {_p1, _p2, _p3};
         const std::vector<float> tmp2 = {float(_alpha1) / 255.0f, float(_alpha2) / 255.0f, float(_alpha3) / 255.0f};
         const Math::Vec3F N = Math::Vec3F::cross((_p2 - _p1), (_p3 - _p1)).normalized();
-        return new Data3DMaterialAlpha(GL_TRIANGLES, 3UL, tmp1.data(), tmp2.data(), N, _material);
+        Data3DMaterialAlpha *result =
+            new Data3DMaterialAlpha(GL_TRIANGLES, 3UL, tmp1.data(), tmp2.data(), N, _material);
+        result->setCentralPoint((_p1 + _p2 + _p3) / 3.0f);
+        result->setTransparent(_alpha1 != 255U || _alpha2 != 255U || _alpha3 != 255U);
+        return result;
     }
 
     /*!
@@ -247,7 +253,11 @@ class Data3DMaterialAlpha : public Data3D
             _orientation.center + _orientation.normal2 * _radius1 + _orientation.normal3 * _radius2};
         const std::vector<float> tmp2 = {
             float(_alpha1) / 255.0f, float(_alpha2) / 255.0f, float(_alpha3) / 255.0f, float(_alpha4) / 255.0f};
-        return new Data3DMaterialAlpha(GL_QUADS, 4UL, tmp1.data(), tmp2.data(), _orientation.normal1, _material);
+        Data3DMaterialAlpha *result =
+            new Data3DMaterialAlpha(GL_QUADS, 4UL, tmp1.data(), tmp2.data(), _orientation.normal1, _material);
+        result->setCentralPoint(_orientation.center);
+        result->setTransparent(_alpha1 != 255U || _alpha2 != 255U || _alpha3 != 255U || _alpha4 != 255U);
+        return result;
     }
 
     /*!
@@ -275,6 +285,8 @@ class Data3DMaterialAlpha : public Data3D
             tmp1, tmp2, _orientation, float(_alphaCenter) / 255.0f, float(_alphaBorder) / 255.0f, _radius, _quality);
         Data3DMaterialAlpha *result =
             new Data3DMaterialAlpha(GL_TRIANGLE_FAN, N, tmp1, tmp2, _orientation.normal1, _material);
+        result->setCentralPoint(_orientation.center);
+        result->setTransparent(_alphaCenter != 255U || _alphaBorder != 255U);
         std::free(tmp1);
         std::free(tmp2);
         return result;
@@ -312,6 +324,8 @@ class Data3DMaterialAlpha : public Data3D
                                     _quality);
         Data3DMaterialAlpha *result =
             new Data3DMaterialAlpha(GL_TRIANGLE_FAN, N, tmp1, tmp2, _orientation.normal1, _material);
+        result->setCentralPoint(_orientation.center);
+        result->setTransparent(_alphaCenter != 255U || _alphaBorder != 255U);
         std::free(tmp1);
         std::free(tmp2);
         return result;
@@ -355,6 +369,8 @@ class Data3DMaterialAlpha : public Data3D
                                          _quality);
         Data3DMaterialAlpha *result =
             new Data3DMaterialAlpha(GL_TRIANGLE_FAN, N, tmp1, tmp2, _orientation.normal1, _material);
+        result->setCentralPoint(_orientation.center);
+        result->setTransparent(_alphaCenter != 255U || _alphaBorder != 255U);
         std::free(tmp1);
         std::free(tmp2);
         return result;

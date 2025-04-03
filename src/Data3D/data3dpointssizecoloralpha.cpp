@@ -95,6 +95,37 @@ Data3DPointsSizeColorAlpha::Data3DPointsSizeColorAlpha(const size_t _vertexCount
     }
 }
 
+Data3DPointsSizeColorAlpha::~Data3DPointsSizeColorAlpha()
+{
+    if (m_pointSizeData != nullptr)
+        std::free(m_pointSizeData);
+    if (m_colorData != nullptr)
+        std::free(m_colorData);
+    if (m_alphaData != nullptr)
+        std::free(m_alphaData);
+
+    if (m_pointSizeBuffer != nullptr)
+    {
+        if (m_pointSizeBuffer->isCreated())
+            m_pointSizeBuffer->destroy();
+        delete m_pointSizeBuffer;
+    }
+
+    if (m_colorBuffer != nullptr)
+    {
+        if (m_colorBuffer->isCreated())
+            m_colorBuffer->destroy();
+        delete m_colorBuffer;
+    }
+
+    if (m_alphaBuffer != nullptr)
+    {
+        if (m_alphaBuffer->isCreated())
+            m_alphaBuffer->destroy();
+        delete m_alphaBuffer;
+    }
+}
+
 bool Data3DPointsSizeColorAlpha::isTransparent() const
 {
     return m_isTransparent;

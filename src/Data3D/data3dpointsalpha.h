@@ -82,6 +82,8 @@ class Data3DPointsAlpha : public Data3D
     {
     }
 
+    ~Data3DPointsAlpha();  //!< Destructor
+
     /*!
      * \brief Getter for alpha data pointer (constant version)
      * \return Vertex alpha data pointer

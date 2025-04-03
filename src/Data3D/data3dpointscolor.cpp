@@ -69,6 +69,19 @@ Data3DPointsColor::Data3DPointsColor(const size_t _vertexCount,
     }
 }
 
+Data3DPointsColor::~Data3DPointsColor()
+{
+    if (m_colorData != nullptr)
+        std::free(m_colorData);
+
+    if (m_colorBuffer != nullptr)
+    {
+        if (m_colorBuffer->isCreated())
+            m_colorBuffer->destroy();
+        delete m_colorBuffer;
+    }
+}
+
 bool Data3DPointsColor::isTransparent() const
 {
     return m_alpha != 255U;

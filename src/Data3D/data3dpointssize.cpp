@@ -66,6 +66,19 @@ Data3DPointsSize::Data3DPointsSize(const size_t _vertexCount,
     }
 }
 
+Data3DPointsSize::~Data3DPointsSize()
+{
+    if (m_pointSizeData != nullptr)
+        std::free(m_pointSizeData);
+
+    if (m_pointSizeBuffer != nullptr)
+    {
+        if (m_pointSizeBuffer->isCreated())
+            m_pointSizeBuffer->destroy();
+        delete m_pointSizeBuffer;
+    }
+}
+
 bool Data3DPointsSize::isTransparent() const
 {
     return m_alpha != 255U;

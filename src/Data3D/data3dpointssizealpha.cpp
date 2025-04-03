@@ -82,6 +82,28 @@ Data3DPointsSizeAlpha::Data3DPointsSizeAlpha(const size_t _vertexCount,
     }
 }
 
+Data3DPointsSizeAlpha::~Data3DPointsSizeAlpha()
+{
+    if (m_pointSizeData != nullptr)
+        std::free(m_pointSizeData);
+    if (m_alphaData != nullptr)
+        std::free(m_alphaData);
+
+    if (m_pointSizeBuffer != nullptr)
+    {
+        if (m_pointSizeBuffer->isCreated())
+            m_pointSizeBuffer->destroy();
+        delete m_pointSizeBuffer;
+    }
+
+    if (m_alphaBuffer != nullptr)
+    {
+        if (m_alphaBuffer->isCreated())
+            m_alphaBuffer->destroy();
+        delete m_alphaBuffer;
+    }
+}
+
 bool Data3DPointsSizeAlpha::isTransparent() const
 {
     return m_isTransparent;

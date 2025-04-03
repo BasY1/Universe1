@@ -141,6 +141,46 @@ Data3DMaterialsBase::Data3DMaterialsBase(const GLuint _glPrimitive,
     }
 }
 
+Data3DMaterialsBase::~Data3DMaterialsBase()
+{
+    if (m_ambientData != nullptr)
+        std::free(m_ambientData);
+    if (m_diffuseData != nullptr)
+        std::free(m_diffuseData);
+    if (m_specularData != nullptr)
+        std::free(m_specularData);
+    if (m_shineData != nullptr)
+        std::free(m_shineData);
+
+    if (m_ambientBuffer != nullptr)
+    {
+        if (m_ambientBuffer->isCreated())
+            m_ambientBuffer->destroy();
+        delete m_ambientBuffer;
+    }
+
+    if (m_diffuseBuffer != nullptr)
+    {
+        if (m_diffuseBuffer->isCreated())
+            m_diffuseBuffer->destroy();
+        delete m_diffuseBuffer;
+    }
+
+    if (m_specularBuffer != nullptr)
+    {
+        if (m_specularBuffer->isCreated())
+            m_specularBuffer->destroy();
+        delete m_specularBuffer;
+    }
+
+    if (m_shineBuffer != nullptr)
+    {
+        if (m_shineBuffer->isCreated())
+            m_shineBuffer->destroy();
+        delete m_shineBuffer;
+    }
+}
+
 bool Data3DMaterialsBase::isTransparent() const
 {
     return m_alpha != 255U;

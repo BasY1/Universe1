@@ -211,7 +211,9 @@ class Data3DMaterialBase : public Data3D
     {
         const std::vector<Math::Vec3F> tmp = {_p1, _p2, _p3};
         const Math::Vec3F N = Math::Vec3F::cross((_p2 - _p1), (_p3 - _p1)).normalized();
-        return new Data3DMaterialBase(GL_TRIANGLES, 3UL, tmp.data(), N, _material, _alpha);
+        Data3DMaterialBase *result = new Data3DMaterialBase(GL_TRIANGLES, 3UL, tmp.data(), N, _material, _alpha);
+        result->setCentralPoint((_p1 + _p2 + _p3) / 3.0f);
+        return result;
     }
 
     /*!
@@ -234,7 +236,10 @@ class Data3DMaterialBase : public Data3D
             _orientation.center - _orientation.normal2 * _radius1 - _orientation.normal3 * _radius2,
             _orientation.center + _orientation.normal2 * _radius1 - _orientation.normal3 * _radius2,
             _orientation.center + _orientation.normal2 * _radius1 + _orientation.normal3 * _radius2};
-        return new Data3DMaterialBase(GL_QUADS, 4UL, tmp.data(), _orientation.normal1, _material, _alpha);
+        Data3DMaterialBase *result =
+            new Data3DMaterialBase(GL_QUADS, 4UL, tmp.data(), _orientation.normal1, _material, _alpha);
+        result->setCentralPoint(_orientation.center);
+        return result;
     }
 
     /*!
@@ -257,6 +262,7 @@ class Data3DMaterialBase : public Data3D
         Math::Circle3F::fillCircle(tmp, _orientation, _radius, _quality);
         Data3DMaterialBase *result =
             new Data3DMaterialBase(GL_TRIANGLE_FAN, N, tmp, _orientation.normal1, _material, _alpha);
+        result->setCentralPoint(_orientation.center);
         std::free(tmp);
         return result;
     }
@@ -283,6 +289,7 @@ class Data3DMaterialBase : public Data3D
         Math::EllipseF::fillEllipse(tmp, _orientation, _radius1, _radius2, _quality);
         Data3DMaterialBase *result =
             new Data3DMaterialBase(GL_TRIANGLE_FAN, N, tmp, _orientation.normal1, _material, _alpha);
+        result->setCentralPoint(_orientation.center);
         std::free(tmp);
         return result;
     }
@@ -313,6 +320,7 @@ class Data3DMaterialBase : public Data3D
         Math::IrregEllipseF::fillEllipse(tmp, _orientation, _radius1P, _radius1M, _radius2P, _radius2M, _quality);
         Data3DMaterialBase *result =
             new Data3DMaterialBase(GL_TRIANGLE_FAN, N, tmp, _orientation.normal1, _material, _alpha);
+        result->setCentralPoint(_orientation.center);
         std::free(tmp);
         return result;
     }

@@ -110,6 +110,8 @@ class Data3DMaterialsNormalAlpha : public Data3D
     {
     }
 
+    ~Data3DMaterialsNormalAlpha();  //!< Destructor
+
     /*!
      * \brief Getter for normal data pointer (constant version)
      * \return Vertex normal data pointer

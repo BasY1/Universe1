@@ -155,6 +155,55 @@ Data3DMaterialsAlpha::Data3DMaterialsAlpha(const GLuint _glPrimitive,
     }
 }
 
+Data3DMaterialsAlpha::~Data3DMaterialsAlpha()
+{
+    if (m_ambientData != nullptr)
+        std::free(m_ambientData);
+    if (m_diffuseData != nullptr)
+        std::free(m_diffuseData);
+    if (m_specularData != nullptr)
+        std::free(m_specularData);
+    if (m_shineData != nullptr)
+        std::free(m_shineData);
+    if (m_alphaData != nullptr)
+        std::free(m_alphaData);
+
+    if (m_ambientBuffer != nullptr)
+    {
+        if (m_ambientBuffer->isCreated())
+            m_ambientBuffer->destroy();
+        delete m_ambientBuffer;
+    }
+
+    if (m_diffuseBuffer != nullptr)
+    {
+        if (m_diffuseBuffer->isCreated())
+            m_diffuseBuffer->destroy();
+        delete m_diffuseBuffer;
+    }
+
+    if (m_specularBuffer != nullptr)
+    {
+        if (m_specularBuffer->isCreated())
+            m_specularBuffer->destroy();
+        delete m_specularBuffer;
+    }
+
+    if (m_shineBuffer != nullptr)
+    {
+        if (m_shineBuffer->isCreated())
+            m_shineBuffer->destroy();
+        delete m_shineBuffer;
+    }
+
+    if (m_alphaBuffer != nullptr)
+    {
+        if (m_alphaBuffer->isCreated())
+            m_alphaBuffer->destroy();
+        delete m_alphaBuffer;
+    }
+}
+
 bool Data3DMaterialsAlpha::isTransparent() const
 {
     return m_isTransparent;

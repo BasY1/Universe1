@@ -158,6 +158,55 @@ Data3DMaterialsNormal::Data3DMaterialsNormal(const GLuint _glPrimitive,
     }
 }
 
+Data3DMaterialsNormal::~Data3DMaterialsNormal()
+{
+    if (m_normalData != nullptr)
+        std::free(m_normalData);
+    if (m_ambientData != nullptr)
+        std::free(m_ambientData);
+    if (m_diffuseData != nullptr)
+        std::free(m_diffuseData);
+    if (m_specularData != nullptr)
+        std::free(m_specularData);
+    if (m_shineData != nullptr)
+        std::free(m_shineData);
+
+    if (m_normalBuffer != nullptr)
+    {
+        if (m_normalBuffer->isCreated())
+            m_normalBuffer->destroy();
+        delete m_normalBuffer;
+    }
+
+    if (m_ambientBuffer != nullptr)
+    {
+        if (m_ambientBuffer->isCreated())
+            m_ambientBuffer->destroy();
+        delete m_ambientBuffer;
+    }
+
+    if (m_diffuseBuffer != nullptr)
+    {
+        if (m_diffuseBuffer->isCreated())
+            m_diffuseBuffer->destroy();
+        delete m_diffuseBuffer;
+    }
+
+    if (m_specularBuffer != nullptr)
+    {
+        if (m_specularBuffer->isCreated())
+            m_specularBuffer->destroy();
+        delete m_specularBuffer;
+    }
+
+    if (m_shineBuffer != nullptr)
+    {
+        if (m_shineBuffer->isCreated())
+            m_shineBuffer->destroy();
+        delete m_shineBuffer;
+    }
+}
+
 bool Data3DMaterialsNormal::isTransparent() const
 {
     return m_alpha != 255U;
@@ -373,6 +422,7 @@ Data3DMaterialsNormal *Data3DMaterialsNormal::cylinder(const Math::OrientF &_ori
                                        _quality);
 
     Data3DMaterialsNormal *result = new Data3DMaterialsNormal(GL_QUAD_STRIP, N, t1, t2, t3, t4, t5, t6, _alpha);
+    result->setCentralPoint(_orientation.center + _orientation.normal1 * (_length * 0.5f));
 
     std::free(t1);
     std::free(t2);
@@ -423,6 +473,7 @@ Data3DMaterialsNormal *Data3DMaterialsNormal::cylinderInn(const Math::OrientF &_
                                        _quality);
 
     Data3DMaterialsNormal *result = new Data3DMaterialsNormal(GL_QUAD_STRIP, N, t1, t2, t3, t4, t5, t6, _alpha);
+    result->setCentralPoint(_orientation.center + _orientation.normal1 * (_length * 0.5f));
 
     std::free(t1);
     std::free(t2);
@@ -484,6 +535,7 @@ Data3DMaterialsNormal *Data3DMaterialsNormal::cylinderArc(const Math::OrientF &_
                                           a);
 
     Data3DMaterialsNormal *result = new Data3DMaterialsNormal(GL_QUADS, N, I, t1, t2, t3, t4, t5, t6, t7, _alpha);
+    result->setCentralPoint(_orientation.center);
 
     std::free(t1);
     std::free(t2);
@@ -545,6 +597,7 @@ Data3DMaterialsNormal *Data3DMaterialsNormal::cylinderArcInn(const Math::OrientF
                                           a);
 
     Data3DMaterialsNormal *result = new Data3DMaterialsNormal(GL_QUADS, N, I, t1, t2, t3, t4, t5, t6, t7, _alpha);
+    result->setCentralPoint(_orientation.center);
 
     std::free(t1);
     std::free(t2);

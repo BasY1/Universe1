@@ -80,6 +80,8 @@ class Data3DPointsSizeAlpha : public Data3D
     {
     }
 
+    ~Data3DPointsSizeAlpha();  //!< Destructor
+
     /*!
      * \brief Getter for point size data pointer (constant version)
      * \return Vertex point size data pointer

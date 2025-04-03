@@ -85,6 +85,19 @@ Data3DMaterialAlpha::Data3DMaterialAlpha(const GLuint _glPrimitive,
     }
 }
 
+Data3DMaterialAlpha::~Data3DMaterialAlpha()
+{
+    if (m_alphaData != nullptr)
+        std::free(m_alphaData);
+
+    if (m_alphaBuffer != nullptr)
+    {
+        if (m_alphaBuffer->isCreated())
+            m_alphaBuffer->destroy();
+        delete m_alphaBuffer;
+    }
+}
+
 bool Data3DMaterialAlpha::isTransparent() const
 {
     return m_isTransparent;

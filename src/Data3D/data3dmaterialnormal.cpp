@@ -91,6 +91,19 @@ Data3DMaterialNormal::Data3DMaterialNormal(const GLuint _glPrimitive,
     }
 }
 
+Data3DMaterialNormal::~Data3DMaterialNormal()
+{
+    if (m_normalData != nullptr)
+        std::free(m_normalData);
+
+    if (m_normalBuffer != nullptr)
+    {
+        if (m_normalBuffer->isCreated())
+            m_normalBuffer->destroy();
+        delete m_normalBuffer;
+    }
+}
+
 bool Data3DMaterialNormal::isTransparent() const
 {
     return m_alpha != 255U;
@@ -172,6 +185,7 @@ Data3DMaterialNormal *Data3DMaterialNormal::sphere(const Math::OrientF &_orienta
     Math::SphereF::fillSphereOuter(t1, t2, t3, _orientation, _radius, _quality);
 
     Data3DMaterialNormal *result = new Data3DMaterialNormal(GL_QUADS, N, I, t1, t2, t3, _material, _alpha);
+    result->setCentralPoint(_orientation.center);
 
     std::free(t1);
     std::free(t2);
@@ -195,6 +209,7 @@ Data3DMaterialNormal *Data3DMaterialNormal::sphereInn(const Math::OrientF &_orie
     Math::SphereF::fillSphereInner(t1, t2, t3, _orientation, _radius, _quality);
 
     Data3DMaterialNormal *result = new Data3DMaterialNormal(GL_QUADS, N, I, t1, t2, t3, _material, _alpha);
+    result->setCentralPoint(_orientation.center);
 
     std::free(t1);
     std::free(t2);
@@ -225,6 +240,7 @@ Data3DMaterialNormal *Data3DMaterialNormal::sphereArc(const Math::OrientF &_orie
     Math::SphereF::fillSphereArcOuter(t1, t2, t3, _orientation, _radius, alo, ala);
 
     Data3DMaterialNormal *result = new Data3DMaterialNormal(GL_QUADS, N, I, t1, t2, t3, _material, _alpha);
+    result->setCentralPoint(_orientation.center);
 
     std::free(t1);
     std::free(t2);
@@ -255,6 +271,7 @@ Data3DMaterialNormal *Data3DMaterialNormal::sphereArcInn(const Math::OrientF &_o
     Math::SphereF::fillSphereArcInner(t1, t2, t3, _orientation, _radius, alo, ala);
 
     Data3DMaterialNormal *result = new Data3DMaterialNormal(GL_QUADS, N, I, t1, t2, t3, _material, _alpha);
+    result->setCentralPoint(_orientation.center);
 
     std::free(t1);
     std::free(t2);
@@ -280,6 +297,7 @@ Data3DMaterialNormal *Data3DMaterialNormal::ellipsoid(const Math::OrientF &_orie
     Math::EllipsoidF::fillEllipsoidOuter(t1, t2, t3, _orientation, _radius1, _radius2, _radius3, _quality);
 
     Data3DMaterialNormal *result = new Data3DMaterialNormal(GL_QUADS, N, I, t1, t2, t3, _material, _alpha);
+    result->setCentralPoint(_orientation.center);
 
     std::free(t1);
     std::free(t2);
@@ -305,6 +323,7 @@ Data3DMaterialNormal *Data3DMaterialNormal::ellipsoidInn(const Math::OrientF &_o
     Math::EllipsoidF::fillEllipsoidInner(t1, t2, t3, _orientation, _radius1, _radius2, _radius3, _quality);
 
     Data3DMaterialNormal *result = new Data3DMaterialNormal(GL_QUADS, N, I, t1, t2, t3, _material, _alpha);
+    result->setCentralPoint(_orientation.center);
 
     std::free(t1);
     std::free(t2);
@@ -337,6 +356,7 @@ Data3DMaterialNormal *Data3DMaterialNormal::ellipsoidArc(const Math::OrientF &_o
     Math::EllipsoidF::fillEllipsoidArcOuter(t1, t2, t3, _orientation, _radius1, _radius2, _radius3, alo, ala);
 
     Data3DMaterialNormal *result = new Data3DMaterialNormal(GL_QUADS, N, I, t1, t2, t3, _material, _alpha);
+    result->setCentralPoint(_orientation.center);
 
     std::free(t1);
     std::free(t2);
@@ -369,6 +389,7 @@ Data3DMaterialNormal *Data3DMaterialNormal::ellipsoidArcInn(const Math::OrientF 
     Math::EllipsoidF::fillEllipsoidArcInner(t1, t2, t3, _orientation, _radius1, _radius2, _radius3, alo, ala);
 
     Data3DMaterialNormal *result = new Data3DMaterialNormal(GL_QUADS, N, I, t1, t2, t3, _material, _alpha);
+    result->setCentralPoint(_orientation.center);
 
     std::free(t1);
     std::free(t2);
@@ -398,6 +419,7 @@ Data3DMaterialNormal *Data3DMaterialNormal::irregEllipsoid(const Math::OrientF &
         t1, t2, t3, _orientation, _radius1P, _radius1M, _radius2P, _radius2M, _radius3P, _radius3M, _quality);
 
     Data3DMaterialNormal *result = new Data3DMaterialNormal(GL_QUADS, N, I, t1, t2, t3, _material, _alpha);
+    result->setCentralPoint(_orientation.center);
 
     std::free(t1);
     std::free(t2);
@@ -427,6 +449,7 @@ Data3DMaterialNormal *Data3DMaterialNormal::irregEllipsoidInn(const Math::Orient
         t1, t2, t3, _orientation, _radius1P, _radius1M, _radius2P, _radius2M, _radius3P, _radius3M, _quality);
 
     Data3DMaterialNormal *result = new Data3DMaterialNormal(GL_QUADS, N, I, t1, t2, t3, _material, _alpha);
+    result->setCentralPoint(_orientation.center);
 
     std::free(t1);
     std::free(t2);
@@ -463,6 +486,7 @@ Data3DMaterialNormal *Data3DMaterialNormal::irregEllipsoidArc(const Math::Orient
         t1, t2, t3, _orientation, _radius1P, _radius1M, _radius2P, _radius2M, _radius3P, _radius3M, alo, ala);
 
     Data3DMaterialNormal *result = new Data3DMaterialNormal(GL_QUADS, N, I, t1, t2, t3, _material, _alpha);
+    result->setCentralPoint(_orientation.center);
 
     std::free(t1);
     std::free(t2);
@@ -499,6 +523,7 @@ Data3DMaterialNormal *Data3DMaterialNormal::irregEllipsoidArcInn(const Math::Ori
         t1, t2, t3, _orientation, _radius1P, _radius1M, _radius2P, _radius2M, _radius3P, _radius3M, alo, ala);
 
     Data3DMaterialNormal *result = new Data3DMaterialNormal(GL_QUADS, N, I, t1, t2, t3, _material, _alpha);
+    result->setCentralPoint(_orientation.center);
 
     std::free(t1);
     std::free(t2);
@@ -522,6 +547,7 @@ Data3DMaterialNormal *Data3DMaterialNormal::cylinder(const Math::OrientF &_orien
     Math::CylinderF::fillCylinderOuter(t1, t2, _orientation, _length, _radius1, _radius2, _quality);
 
     Data3DMaterialNormal *result = new Data3DMaterialNormal(GL_QUAD_STRIP, N, t1, t2, _material, _alpha);
+    result->setCentralPoint(_orientation.center + _orientation.normal1 * (_length * 0.5f));
 
     std::free(t1);
     std::free(t2);
@@ -545,6 +571,7 @@ Data3DMaterialNormal *Data3DMaterialNormal::cylinderInn(const Math::OrientF &_or
     Math::CylinderF::fillCylinderInner(t1, t2, _orientation, _length, _radius1, _radius2, _quality);
 
     Data3DMaterialNormal *result = new Data3DMaterialNormal(GL_QUAD_STRIP, N, t1, t2, _material, _alpha);
+    result->setCentralPoint(_orientation.center + _orientation.normal1 * (_length * 0.5f));
 
     std::free(t1);
     std::free(t2);
@@ -578,6 +605,7 @@ Data3DMaterialNormal *Data3DMaterialNormal::cylinderArc(const Math::OrientF &_or
         t1, t2, t3, _orientation, _radiusArc, _radius1, _radius2, _qualityCylinder, a);
 
     Data3DMaterialNormal *result = new Data3DMaterialNormal(GL_QUADS, N, I, t1, t2, t3, _material, _alpha);
+    result->setCentralPoint(_orientation.center);
 
     std::free(t1);
     std::free(t2);
@@ -611,6 +639,7 @@ Data3DMaterialNormal *Data3DMaterialNormal::cylinderArcInn(const Math::OrientF &
         t1, t2, t3, _orientation, _radiusArc, _radius1, _radius2, _qualityCylinder, a);
 
     Data3DMaterialNormal *result = new Data3DMaterialNormal(GL_QUADS, N, I, t1, t2, t3, _material, _alpha);
+    result->setCentralPoint(_orientation.center);
 
     std::free(t1);
     std::free(t2);
