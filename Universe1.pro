@@ -150,6 +150,11 @@ SOURCES += src/Audio/footageaudio.cpp
 
 ######################################################
 
+HEADERS += src/Items/item.h
+SOURCES += src/Items/item.cpp
+
+######################################################
+
 SOURCES += src/main.cpp
 
 
