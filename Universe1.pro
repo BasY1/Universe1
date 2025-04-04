@@ -155,6 +155,10 @@ SOURCES += src/Items/item.cpp
 
 HEADERS += src/Items/item2d.h
 
+HEADERS += src/Items/clipplane.h
+
+HEADERS += src/Items/item3d.h
+
 ######################################################
 
 SOURCES += src/main.cpp

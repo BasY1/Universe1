@@ -167,6 +167,23 @@ bool Data3D::drawSetup(QOpenGLFunctions *_functions, QOpenGLShaderProgram *_prog
     return true;
 }
 
+void Data3D::setClipPlanes(const std::vector<QVector4D> &_planes)
+{
+    if (_planes.size() > MaxClipPlanes)
+    {
+        std::cerr << "Warning: setClipPlanes(" << _planes.size() << ") Can use only " << MaxClipPlanes
+                  << " clipping planes!\n";
+        m_clipPlanes.clear();
+        m_clipPlanes.reserve(MaxClipPlanes);
+        for (size_t i = 0UL; i < MaxClipPlanes; ++i)
+            m_clipPlanes.push_back(_planes.at(i));
+    }
+    else
+    {
+        m_clipPlanes = _planes;
+    }
+}
+
 void Data3D::setClipPlanes(const std::vector<std::pair<Math::Vec3F, Math::Vec3F>> &_planes)
 {
     if (_planes.size() > MaxClipPlanes)

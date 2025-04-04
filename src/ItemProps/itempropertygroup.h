@@ -29,6 +29,8 @@ class ItemPropertyGroup : public ItemProperty
     }
 
  public:
+    ~ItemPropertyGroup();  //!< Destructor delete all item properties
+
     /*!
      * \brief Getter for collection of item properties
      * \return Getter for collection of item properties

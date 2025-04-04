@@ -177,6 +177,12 @@ class Data3D
     };
 
     /*!
+     * \brief Set clipping plane equations
+     * \param _planes Clipping plane equation components
+     */
+    void setClipPlanes(const std::vector<QVector4D> &_planes);
+
+    /*!
      * \brief Setup new clipping planes
      * \param _planes New clipping planes, collection of pairs: plane-normal (\c first) and plane-point (\c second)
      */
