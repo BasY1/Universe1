@@ -241,8 +241,6 @@ bool ScenarioAudioTTS::insertSpeech(const size_t _timeStart,
         args << ttsArgFile;
     args << fn;
 
-    if (!ttsArgSpeech.isEmpty())
-        args << ttsArgSpeech;
     args << speechText;
 
     SettingsAudio::runProcess(ttsBin, args);
