@@ -10,6 +10,8 @@
 #include <limits>
 #include <type_traits>
 
+#include <QStringList>
+
 /*!
  * \namespace U1
  * \brief Major Universe 1 projects namespace
@@ -622,6 +624,34 @@ inline size_t mixHashData(const T *_data, const size_t _size)
     size_t offset = 1UL;
     for (size_t i = 0; i < _size; ++i)
         updateHash(result, offset, std::hash<T>{}(_data[i]));
+    return result;
+}
+
+/*!
+ * \brief Calculate \c QString hash
+ * \param _text \c QString text
+ * \return \c QString hash
+ */
+inline size_t mixTextHash(const QString &_text)
+{
+    size_t result = 0UL;
+    size_t offset = 1UL;
+    for (qsizetype i = 0; i < _text.length(); ++i)
+        updateHash(result, offset, std::hash<char16_t>{}(_text[i].unicode()));
+    return result;
+}
+
+/*!
+ * \brief Calculate \c QStringList hash
+ * \param _text Collection of \c QString
+ * \return \c QStringList hash
+ */
+inline size_t mixTextHash(const QStringList &_text)
+{
+    size_t result = 0UL;
+    size_t offset = 1UL;
+    for (const QString &t : std::as_const(_text))
+        updateHash(result, offset, mixTextHash(t));
     return result;
 }
 

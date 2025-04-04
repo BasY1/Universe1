@@ -137,6 +137,16 @@ SOURCES += src/ItemProps/itempropertymaterial.cpp
 
 ######################################################
 
+HEADERS += src/Audio/settingsaudio.h
+SOURCES += src/Audio/settingsaudio.cpp
+
+HEADERS += src/Audio/itemaudio.h
+
+HEADERS += src/Audio/scenarioaudio.h
+SOURCES += src/Audio/scenarioaudio.cpp
+
+######################################################
+
 SOURCES += src/main.cpp
 
 
