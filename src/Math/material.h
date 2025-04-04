@@ -169,6 +169,15 @@ struct MaterialRGBA
     }
 
     /*!
+     * \brief Conversion to RGB material without alpha
+     * \return \c this as RGB material
+     */
+    inline MaterialRGB toRGB() const
+    {
+        return MaterialRGB(ambient, diffuse, specular, shine);
+    }
+
+    /*!
      * \brief Calculate hash value
      * \return Hash value from data
      */

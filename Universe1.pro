@@ -158,6 +158,10 @@ HEADERS += src/Items/item2d.h
 HEADERS += src/Items/clipplane.h
 
 HEADERS += src/Items/item3d.h
+SOURCES += src/Items/item3d.cpp
+
+HEADERS += src/Items/Triangle/itemtriangle.h
+SOURCES += src/Items/Triangle/itemtriangle.cpp
 
 ######################################################
 

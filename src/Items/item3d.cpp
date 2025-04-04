@@ -1,3 +1,8 @@
+/*!
+ * \file src/Items/item3d.cpp
+ * \brief Basic 3D video item
+ */
+
 #include "item3d.h"
 
 namespace U1 {
@@ -30,6 +35,9 @@ void Item3D::createData(std::list<OpenGL::Data3D *> &_data,
                         const std::vector<QVector4D> &_clipPlanes,
                         const size_t _timeStep) const
 {
+    if (!visible.value(_timeStep))
+        return;
+
     std::list<OpenGL::Data3D *> tmp;
 
     std::vector<QVector4D> planes = _clipPlanes;

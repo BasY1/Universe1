@@ -492,6 +492,26 @@ class Data3DMaterialNormal : public Data3D
      * \param _radius1 Cylinder radius at start
      * \param _radius2 Cylinder radius at end
      * \param _quality Circle quality
+     * \param _material Material with alpha
+     * \return 3D cylinder object
+     */
+    inline static Data3DMaterialNormal *cylinder(const Math::OrientF &_orientation,
+                                                 const float _length,
+                                                 const float _radius1,
+                                                 const float _radius2,
+                                                 const size_t _quality,
+                                                 const Math::MaterialRGBA &_material)
+    {
+        return cylinder(_orientation, _length, _radius1, _radius2, _quality, _material.toRGB(), _material.alpha);
+    }
+
+    /*!
+     * \brief Create a cylinder 3D object - visible from outside
+     * \param _orientation Orientation of cylinder in space
+     * \param _length Cylinder length
+     * \param _radius1 Cylinder radius at start
+     * \param _radius2 Cylinder radius at end
+     * \param _quality Circle quality
      * \param _material Material
      * \param _alpha Alpha
      * \return 3D cylinder object

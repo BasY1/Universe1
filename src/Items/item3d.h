@@ -11,6 +11,7 @@
 #include "item.h"
 #include "clipplane.h"
 
+#include "../Math/orientation.h"
 #include "../Math/camera.h"
 #include "../Data3D/data3d.h"
 
@@ -29,8 +30,8 @@ class Item3D : public Item
      * \param _alpha Initial alpha factor
      * \param _visible Initial visible flag
      */
-    inline Item3D(const std::string &_name, const uint8_t _initialApha = 255U, const bool _initialVisible = true)
-        : Item(_name, _initialApha, _initialVisible)
+    inline Item3D(const std::string &_name, const uint8_t _alpha = 255U, const bool _visible = true)
+        : Item(_name, _alpha, _visible)
     {
     }
 
@@ -67,6 +68,7 @@ class Item3D : public Item
      * \brief Create 3D Open GL data objects
      * \param _data Output data objects
      * \param _cameraData Output data objects that are dependent on camera position
+     * \param _clipPlanes Master clipping planes
      * \param _timeStep Time-step
      * \return
      */
@@ -93,6 +95,52 @@ class Item3D : public Item
      */
     virtual void
     createDataImpl(std::list<OpenGL::Data3D *> &_data, const Math::CamF &_camera, const size_t _timeStep) const;
+};
+
+/*! \brief 3D video item with orientation */
+class Item3DExt : public Item3D
+{
+ public:
+    Props::ItemPropertyVec3F center;  //!< Central point
+    Props::ItemPropertyVec3F normal;  //!< Major normal
+    Props::ItemPropertyVec3F arm;     //!< Secondary normal (perpendicular to major normal)
+
+ protected:
+    /*!
+     * \brief Protected constructor
+     * \param _name Item name
+     * \param _center Initial center point
+     * \param _normal Initial major normal
+     * \param _arm Initial secondary normal
+     * \param _alpha Initial alpha factor
+     * \param _visible Initial visible flag
+     */
+    inline Item3DExt(const std::string &_name,
+                     const Math::Vec3F &_center,
+                     const Math::Vec3F &_normal,
+                     const Math::Vec3F &_arm,
+                     const uint8_t _alpha = 255U,
+                     const bool _visible = true)
+        : Item3D(_name, _alpha, _visible)
+        , center("center", _center)
+        , normal("normal", true, _normal.normalized())
+        , arm("arm", true, _arm.normalized())
+    {
+        addProperty(&center);
+        addProperty(&normal);
+        addProperty(&arm);
+    }
+
+ public:
+    /*!
+     * \brief Orientation at given time-step
+     * \param _timeStep Time-step
+     * \return Orientation at given time-step
+     */
+    inline Math::OrientF valueOrientation(const size_t _timeStep) const
+    {
+        return Math::OrientF(center.value(_timeStep), normal.value(_timeStep), arm.value(_timeStep));
+    }
 };
 
 }  // namespace Items

@@ -13,11 +13,7 @@ Item::Item(const std::string &_name, const uint8_t _alpha, const bool _visible)
     , alpha("alpha", _alpha)
     , visible("visible", _visible)
 {
-}
-
-bool Item::isVisible(const size_t _timeStep) const
-{
-    return visible.value(_timeStep) && alpha.value(_timeStep) != 0U;
+    setupProperties({&alpha, &visible});
 }
 
 }  // namespace Items

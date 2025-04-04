@@ -35,14 +35,6 @@ class Item : public Props::ItemPropertyGroup
      * \param _visible Initial visible flag
      */
     Item(const std::string &_name, const uint8_t _alpha = 255U, const bool _visible = true);
-
- public:
-    /*!
-     * \brief Test if item is visible at given time-step
-     * \param _timeStep Time step
-     * \return \c true if item is visible at given time-step
-     */
-    virtual bool isVisible(const size_t _timeStep) const;
 };
 
 }  // namespace Items

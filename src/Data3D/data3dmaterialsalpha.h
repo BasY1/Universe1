@@ -283,6 +283,41 @@ class Data3DMaterialsAlpha : public Data3D
      * \param _p1 Vertex 1
      * \param _p2 Vertex 2
      * \param _p3 Vertex 3
+     * \param _material1 Material with alpha for vertex 1
+     * \param _material2 Material with alpha for vertex 2
+     * \param _material3 Material with alpha for vertex 3
+     * \return 3D triangle object
+     */
+    inline static Data3DMaterialsAlpha *triangle(const Math::Vec3F &_p1,
+                                                 const Math::Vec3F &_p2,
+                                                 const Math::Vec3F &_p3,
+                                                 const Math::MaterialRGBA &_material1,
+                                                 const Math::MaterialRGBA &_material2,
+                                                 const Math::MaterialRGBA &_material3)
+    {
+        const std::vector<Math::Vec3F> t1 = {_p1, _p2, _p3};
+        const std::vector<Math::Vec3F> t2 = {
+            _material1.ambient.toVec3F(), _material2.ambient.toVec3F(), _material3.ambient.toVec3F()};
+        const std::vector<Math::Vec3F> t3 = {
+            _material1.diffuse.toVec3F(), _material2.diffuse.toVec3F(), _material3.diffuse.toVec3F()};
+        const std::vector<Math::Vec3F> t4 = {
+            _material1.specular.toVec3F(), _material2.specular.toVec3F(), _material3.specular.toVec3F()};
+        const std::vector<float> t5 = {_material1.shine, _material2.shine, _material3.shine};
+        const std::vector<float> t6 = {
+            float(_material1.alpha) / 255.0f, float(_material2.alpha) / 255.0f, float(_material3.alpha) / 255.0f};
+        const Math::Vec3F N = Math::Vec3F::cross((_p2 - _p1), (_p3 - _p1)).normalized();
+        Data3DMaterialsAlpha *result = new Data3DMaterialsAlpha(
+            GL_TRIANGLES, 3UL, t1.data(), t2.data(), t3.data(), t4.data(), t5.data(), t6.data(), N);
+        result->setCentralPoint((_p1 + _p2 + _p3) / 3.0f);
+        result->setTransparent(_material1.alpha != 255U || _material2.alpha != 255U || _material3.alpha != 255U);
+        return result;
+    }
+
+    /*!
+     * \brief Create a triangle 3D object
+     * \param _p1 Vertex 1
+     * \param _p2 Vertex 2
+     * \param _p3 Vertex 3
      * \param _material1 Material for vertex 1
      * \param _material2 Material for vertex 2
      * \param _material3 Material for vertex 3
@@ -301,21 +336,7 @@ class Data3DMaterialsAlpha : public Data3D
                                                  const uint8_t _alpha2,
                                                  const uint8_t _alpha3)
     {
-        const std::vector<Math::Vec3F> t1 = {_p1, _p2, _p3};
-        const std::vector<Math::Vec3F> t2 = {
-            _material1.ambient.toVec3F(), _material2.ambient.toVec3F(), _material3.ambient.toVec3F()};
-        const std::vector<Math::Vec3F> t3 = {
-            _material1.diffuse.toVec3F(), _material2.diffuse.toVec3F(), _material3.diffuse.toVec3F()};
-        const std::vector<Math::Vec3F> t4 = {
-            _material1.specular.toVec3F(), _material2.specular.toVec3F(), _material3.specular.toVec3F()};
-        const std::vector<float> t5 = {_material1.shine, _material2.shine, _material3.shine};
-        const std::vector<float> t6 = {float(_alpha1) / 255.0f, float(_alpha2) / 255.0f, float(_alpha3) / 255.0f};
-        const Math::Vec3F N = Math::Vec3F::cross((_p2 - _p1), (_p3 - _p1)).normalized();
-        Data3DMaterialsAlpha *result = new Data3DMaterialsAlpha(
-            GL_TRIANGLES, 3UL, t1.data(), t2.data(), t3.data(), t4.data(), t5.data(), t6.data(), N);
-        result->setCentralPoint((_p1 + _p2 + _p3) / 3.0f);
-        result->setTransparent(_alpha1 != 255U || _alpha2 != 255U || _alpha3 != 255U);
-        return result;
+        return triangle(_p1, _p2, _p3, {_material1, _alpha1}, {_material2, _alpha2}, {_material3, _alpha3});
     }
 
     /*!
