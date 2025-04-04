@@ -145,6 +145,9 @@ HEADERS += src/Audio/itemaudio.h
 HEADERS += src/Audio/scenarioaudio.h
 SOURCES += src/Audio/scenarioaudio.cpp
 
+HEADERS += src/Audio/footageaudio.h
+SOURCES += src/Audio/footageaudio.cpp
+
 ######################################################
 
 SOURCES += src/main.cpp

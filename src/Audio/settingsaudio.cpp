@@ -69,6 +69,12 @@ bool SettingsAudio::convertAudio(const QString &_toFileName, const QString &_fro
     return QFile::exists(_toFileName);
 }
 
+bool SettingsAudio::normalizeAudio(const QString &_toFileName, const QString &_fromFileName) const
+{
+    runProcess("usr/bin/sox", {"--norm", _fromFileName, _toFileName});
+    return QFile::exists(_toFileName);
+}
+
 bool SettingsAudio::joinAudioFiles(const QString &_toFileName, const QStringList &_fromFileName) const
 {
     QStringList args = {_fromFileName};

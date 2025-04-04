@@ -88,6 +88,14 @@ struct SettingsAudio
     bool convertAudio(const QString &_outFileName, const QString &_fromFile) const;
 
     /*!
+     * \brief Normalize audio file using \b sox
+     * \param _outFileName Output file name
+     * \param _fromFile Input file name
+     * \return Success flag
+     */
+    bool normalizeAudio(const QString &_outFileName, const QString &_fromFile) const;
+
+    /*!
      * \brief Join audio files using \b sox
      * \param _outFileName Output file name
      * \param _files Files to join
