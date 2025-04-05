@@ -506,6 +506,60 @@ class Data3DMaterialNormal : public Data3D
     }
 
     /*!
+     * \brief Create a line cylinder 3D object - visible from outside
+     * \param _point1 Orientation of cylinder in space
+     * \param _point2 Orientation of cylinder in space
+     * \param _radius1 Cylinder radius at start
+     * \param _radius2 Cylinder radius at end
+     * \param _quality Circle quality
+     * \param _material Material
+     * \param _alpha Alpha
+     * \return 3D cylinder object
+     */
+    inline static Data3DMaterialNormal *line(const Math::Vec3F &_point1,
+                                             const Math::Vec3F &_point2,
+                                             const float _radius1,
+                                             const float _radius2,
+                                             const size_t _quality,
+                                             const Math::MaterialRGB &_material,
+                                             const uint8_t _alpha)
+    {
+        return cylinder({_point1, (_point2 - _point1).normalized()},
+                        _point1.distanceToPoint(_point2),
+                        _radius1,
+                        _radius2,
+                        _quality,
+                        _material,
+                        _alpha);
+    }
+
+    /*!
+     * \brief Create a line cylinder 3D object - visible from outside
+     * \param _point1 Orientation of cylinder in space
+     * \param _point2 Orientation of cylinder in space
+     * \param _radius1 Cylinder radius at start
+     * \param _radius2 Cylinder radius at end
+     * \param _quality Circle quality
+     * \param _material Material with alpha
+     * \return 3D cylinder object
+     */
+    inline static Data3DMaterialNormal *line(const Math::Vec3F &_point1,
+                                             const Math::Vec3F &_point2,
+                                             const float _radius1,
+                                             const float _radius2,
+                                             const size_t _quality,
+                                             const Math::MaterialRGBA &_material)
+    {
+        return cylinder({_point1, (_point2 - _point1).normalized()},
+                        _point1.distanceToPoint(_point2),
+                        _radius1,
+                        _radius2,
+                        _quality,
+                        _material.toRGB(),
+                        _material.alpha);
+    }
+
+    /*!
      * \brief Create a cylinder 3D object - visible from outside
      * \param _orientation Orientation of cylinder in space
      * \param _length Cylinder length

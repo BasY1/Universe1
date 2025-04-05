@@ -31,7 +31,7 @@ ItemTriangle::ItemTriangle(const std::string &_name,
                            const size_t _qualityWire,
                            const uint8_t _alpha,
                            const bool _visible)
-    : Item3D(_name, _visible, _alpha)
+    : Item3D(_name, _alpha, _visible)
     , point1("point1", _point1)
     , point2("point2", _point2)
     , point3("point3", _point3)

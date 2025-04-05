@@ -52,11 +52,11 @@ struct Camera
         : position(_position)
         , lookAt(_lookAt)
         , up(_up)
+        , screenWidth(_screenWidth)
+        , screenHeight(_screenHeight)
         , fieldOfView(_fieldOfView)
         , nearPlane(_nearPlane)
         , farPlane(_farPlane)
-        , screenWidth(_screenWidth)
-        , screenHeight(_screenHeight)
         , valueHash(mixHash(position.toHash(),
                             lookAt.toHash(),
                             up.toHash(),

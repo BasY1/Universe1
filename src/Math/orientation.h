@@ -29,6 +29,19 @@ struct Orientation
      * \brief Constructor
      * \param _center Initial central point
      * \param _normal Initial major axis
+     */
+    inline Orientation(const Vec3<T> &_center, const Vec3<T> &_normal)
+        : center(_center)
+        , normal1(_normal.normalized())
+        , normal2(normal1.perpendicularNormal())
+        , normal3(Vec3<T>::cross(normal1, normal2).normalized())
+    {
+    }
+
+    /*!
+     * \brief Constructor
+     * \param _center Initial central point
+     * \param _normal Initial major axis
      * \param _arm Initial secondary axis
      */
     inline Orientation(const Vec3<T> &_center, const Vec3<T> &_normal, const Vec3<T> &_arm)
