@@ -13,6 +13,9 @@
 namespace U1 {
 namespace Audio {
 
+QString SettingsAudio::soxBin = "/usr/bin/sox";
+QString SettingsAudio::soxiBin = "/usr/bin/soxi";
+
 bool SettingsAudio::isValid() const
 {
     if (channels != 1 && channels != 2)
@@ -56,7 +59,7 @@ bool SettingsAudio::createSilenceAudio(const QString &_audioFileName, const size
     args << "trim";
     args << "0.0";
     args << QString::number(static_cast<float>(_duration) / 1000.0f, 'f', 3);
-    runProcess("usr/bin/sox", args);
+    runProcess(soxBin, args);
     return QFile::exists(_audioFileName);
 }
 
@@ -65,13 +68,13 @@ bool SettingsAudio::convertAudio(const QString &_toFileName, const QString &_fro
     QStringList args = {_fromFileName};
     args << soxArgs();
     args << _toFileName;
-    runProcess("usr/bin/sox", args);
+    runProcess(soxBin, args);
     return QFile::exists(_toFileName);
 }
 
 bool SettingsAudio::normalizeAudio(const QString &_toFileName, const QString &_fromFileName) const
 {
-    runProcess("usr/bin/sox", {"--norm", _fromFileName, _toFileName});
+    runProcess(soxBin, {"--norm", _fromFileName, _toFileName});
     return QFile::exists(_toFileName);
 }
 
@@ -79,7 +82,7 @@ bool SettingsAudio::joinAudioFiles(const QString &_toFileName, const QStringList
 {
     QStringList args = {_fromFileName};
     args << _toFileName;
-    runProcess("usr/bin/sox", args);
+    runProcess(soxBin, args);
     return QFile::exists(_toFileName);
 }
 
@@ -88,7 +91,7 @@ bool SettingsAudio::mixAudioFiles(const QString &_toFileName, const QStringList 
     QStringList args = {"-m"};
     args << _fromFileName;
     args << _toFileName;
-    runProcess("usr/bin/sox", args);
+    runProcess(soxBin, args);
     return QFile::exists(_toFileName);
 }
 
@@ -97,7 +100,7 @@ size_t SettingsAudio::readAudioFileDuration(const QString &_audioFileName)
     QString scriptText;
 
     const QStringList args = {"-DT", _audioFileName};
-    const QString scriptError = runProcess("usr/bin/soxi", args, &scriptText);
+    const QString scriptError = runProcess(soxiBin, args, &scriptText);
     if (!scriptText.isEmpty())
     {
         bool ok;

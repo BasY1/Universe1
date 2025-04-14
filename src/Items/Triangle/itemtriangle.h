@@ -80,86 +80,25 @@ class ItemTriangle : public Item3D
      * \param _alpha Initial value for general alpha
      * \param _visible Initial value for visible flag
      */
-    ItemTriangle(const std::string &_name,
-                 const Math::Vec3F &_point1,
-                 const Math::Vec3F &_point2,
-                 const Math::Vec3F &_point3,
-                 const Triangle::ShowTriangleType _show,
-                 const bool _showWire,
-                 const Math::MaterialRGB &_materialFront,
-                 const Math::MaterialRGB &_materialBack,
-                 const Math::MaterialRGBA &_material1Front,
-                 const Math::MaterialRGBA &_material2Front,
-                 const Math::MaterialRGBA &_material3Front,
-                 const Math::MaterialRGBA &_material1Back,
-                 const Math::MaterialRGBA &_material2Back,
-                 const Math::MaterialRGBA &_material3Back,
-                 const Math::MaterialRGBA &_materialWire,
-                 const float _radiusWire,
-                 const size_t _qualityWire,
-                 const uint8_t _alpha,
-                 const bool _visible);
-
-    /*!
-     * \brief Constructor
-     * \param _point1 Initial value for dynamic position of point 1
-     * \param _point2 Initial value for dynamic position of point 2
-     * \param _point3 Initial value for dynamic position of point 3
-     * \param _show Initial value for show triangle mode
-     * \param _showWire Initial value for show triangle wire-frame
-     * \param _materialFront Initial value for front side material
-     * \param _materialBack Initial value for back side material
-     * \param _material1Front Initial value for vertex 1 front side material
-     * \param _material2Front Initial value for vertex 2 front side material
-     * \param _material3Front Initial value for vertex 3 front side material
-     * \param _material1Back Initial value for vertex 1 back side material
-     * \param _material2Back Initial value for vertex 2 back side material
-     * \param _material3Back Initial value for vertex 3 back side material
-     * \param _materialWire Initial value for wire material
-     * \param _radiusWire Initial value for wire radius
-     * \param _qualityWire Initial value for wire circle quality
-     * \param _alpha Initial value for general alpha
-     * \param _visible Initial value for visible flag
-     */
-    inline ItemTriangle(const Math::Vec3F &_point1,
-                        const Math::Vec3F &_point2,
-                        const Math::Vec3F &_point3,
-                        const Triangle::ShowTriangleType _show,
-                        const bool _showWire,
-                        const Math::MaterialRGB &_materialFront,
-                        const Math::MaterialRGB &_materialBack,
-                        const Math::MaterialRGBA &_material1Front,
-                        const Math::MaterialRGBA &_material2Front,
-                        const Math::MaterialRGBA &_material3Front,
-                        const Math::MaterialRGBA &_material1Back,
-                        const Math::MaterialRGBA &_material2Back,
-                        const Math::MaterialRGBA &_material3Back,
-                        const Math::MaterialRGBA &_materialWire,
-                        const float _radiusWire,
-                        const size_t _qualityWire,
-                        const uint8_t _alpha,
-                        const bool _visible)
-        : ItemTriangle("Triangle",
-                       _point1,
-                       _point2,
-                       _point3,
-                       _show,
-                       _showWire,
-                       _materialFront,
-                       _materialBack,
-                       _material1Front,
-                       _material2Front,
-                       _material3Front,
-                       _material1Back,
-                       _material2Back,
-                       _material3Back,
-                       _materialWire,
-                       _radiusWire,
-                       _qualityWire,
-                       _alpha,
-                       _visible)
-    {
-    }
+    ItemTriangle(const std::string &_name = "Triangle",
+                 const Math::Vec3F &_point1 = {0.0F, +0.5F, -0.5F},
+                 const Math::Vec3F &_point2 = {0.0F, -0.5F, -0.5F},
+                 const Math::Vec3F &_point3 = {0.0F, 0.0F, 0.5F},
+                 const Triangle::ShowTriangleType _show = Triangle::TriangleFrontBack,
+                 const bool _showWire = false,
+                 const Math::MaterialRGB &_materialFront = {Qt::white},
+                 const Math::MaterialRGB &_materialBack = {Qt::gray},
+                 const Math::MaterialRGBA &_material1Front = {Qt::red},
+                 const Math::MaterialRGBA &_material2Front = {Qt::green},
+                 const Math::MaterialRGBA &_material3Front = {Qt::blue},
+                 const Math::MaterialRGBA &_material1Back = {Qt::yellow},
+                 const Math::MaterialRGBA &_material2Back = {Qt::cyan},
+                 const Math::MaterialRGBA &_material3Back = {Qt::magenta},
+                 const Math::MaterialRGBA &_materialWire = {ItemDefaultValues::lineColor},
+                 const float _radiusWire = ItemDefaultValues::lineRadius,
+                 const size_t _qualityWire = ItemDefaultValues::lineQuality,
+                 const uint8_t _alpha = 255U,
+                 const bool _visible = true);
 
  protected:
     /*!

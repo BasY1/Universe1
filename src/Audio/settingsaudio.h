@@ -36,6 +36,9 @@ namespace Audio {
  */
 struct SettingsAudio
 {
+    static QString soxBin;   //!< \b sox tool binary (/usr/bin/sox)
+    static QString soxiBin;  //!< \b soxi tool binary (/usr/bin/soxi)
+
     uint channels = 1;                                              //!< Audio channel count
     uint sampleRate = 44100;                                        //!< Sample rate
     QAudioFormat::SampleFormat sampleFormat = QAudioFormat::Int16;  //!< Sample format

@@ -24,16 +24,16 @@ ItemCamera::ItemCamera(const std::string &_name,
                        const float _imagePixelSize,
                        const bool _imagePositionDynamic,
                        const float _bodySize,
-                       const float _lineRadius,
-                       const size_t _bodyQuality,
-                       const size_t _lineQuality,
+                       const float _radiusWire,
+                       const size_t _quality,
+                       const size_t _qualityWire,
                        const bool _showImage,
                        const bool _showBody,
                        const bool _showViewArrow,
                        const bool _showViewPyramid,
                        const Math::MaterialRGB &_materialBody1,
                        const Math::MaterialRGB &_materialBody2,
-                       const Math::MaterialRGB &_materialLines,
+                       const Math::MaterialRGB &_materialWire,
                        const uint8_t _alpha,
                        const bool _visible)
     : Item3D(_name, _alpha, _visible)
@@ -48,16 +48,16 @@ ItemCamera::ItemCamera(const std::string &_name,
     , imagePixelSize("imagePixelSize", _imagePixelSize, 0.0f, std::numeric_limits<float>::max())
     , imagePositionDynamic("imagePositionDynamic", _imagePositionDynamic)
     , bodySize("bodySize", _bodySize, 0.0f, std::numeric_limits<float>::max())
-    , lineRadius("lineRadius", _lineRadius, 0.0f, std::numeric_limits<float>::max())
-    , bodyQuality("bodyQuality", _bodyQuality)
-    , lineQuality("lineQuality", _lineQuality)
+    , radiusWire("radiusWire", _radiusWire, 0.0f, std::numeric_limits<float>::max())
+    , quality("quality", _quality)
+    , qualityWire("qualityWire", _qualityWire)
     , showImage("showImage", _showImage)
     , showBody("showBody", _showBody)
     , showViewArrow("showViewArrow", _showViewArrow)
     , showViewPyramid("showViewPyramid", _showViewPyramid)
     , materialBody1("materialBody1", _materialBody1)
     , materialBody2("materialBody2", _materialBody2)
-    , materialLines("materialLines", _materialLines)
+    , materialWire("materialWire", _materialWire)
 {
     addProperty(&position);
     addProperty(&lookAt);
@@ -70,16 +70,16 @@ ItemCamera::ItemCamera(const std::string &_name,
     addProperty(&imagePixelSize);
     addProperty(&imagePositionDynamic);
     addProperty(&bodySize);
-    addProperty(&lineRadius);
-    addProperty(&bodyQuality);
-    addProperty(&lineQuality);
+    addProperty(&radiusWire);
+    addProperty(&quality);
+    addProperty(&qualityWire);
     addProperty(&showImage);
     addProperty(&showBody);
     addProperty(&showViewArrow);
     addProperty(&showViewPyramid);
     addProperty(&materialBody1);
     addProperty(&materialBody2);
-    addProperty(&materialLines);
+    addProperty(&materialWire);
 }
 
 void ItemCamera::createDataImpl(std::list<OpenGL::Data3D *> &_out, const size_t _timeStep) const
@@ -107,7 +107,7 @@ void ItemCamera::createDataImpl(std::list<OpenGL::Data3D *> &_out, const size_t 
         {
             const Math::MaterialRGB m1 = materialBody1.value(_timeStep);
             const Math::MaterialRGB m2 = materialBody2.value(_timeStep);
-            const size_t q = bodyQuality.value(_timeStep);
+            const size_t q = quality.value(_timeStep);
             const float w2 = r * 0.5f * float(c.screenWidth) / mwh;
             const float h2 = r * 0.5f * float(c.screenHeight) / mwh;
             const float zz = r * 0.2f;
@@ -136,12 +136,12 @@ void ItemCamera::createDataImpl(std::list<OpenGL::Data3D *> &_out, const size_t 
     if (!sa && !sp)
         return;
 
-    const float r = lineRadius.value(_timeStep);
+    const float r = radiusWire.value(_timeStep);
     if (!Math::isPositive(r))
         return;
 
-    const size_t q = lineQuality.value(_timeStep);
-    const Math::MaterialRGB ml = materialLines.value(_timeStep);
+    const size_t q = qualityWire.value(_timeStep);
+    const Math::MaterialRGB ml = materialWire.value(_timeStep);
 
     if (sa)
         _out.push_back(OpenGL::Data3DMaterialNormal::line(c.position, c.lookAt, r, r, q, ml, a));
@@ -260,11 +260,11 @@ void ItemCamera::createTexture(std::list<OpenGL::Data3D *> &_out,
 
             _out.push_back(OpenGL::Data3DTexture::rectangle(_texture, o, (uw * 0.5f), (uh * 0.5f), a));
 
-            const float lr = lineRadius.value(_timeStep);
+            const float lr = radiusWire.value(_timeStep);
             if (Math::isPositive(lr))
             {
-                const size_t q = lineQuality.value(_timeStep);
-                const Math::MaterialRGB ml = materialLines.value(_timeStep);
+                const size_t q = qualityWire.value(_timeStep);
+                const Math::MaterialRGB ml = materialWire.value(_timeStep);
                 const Math::Vec3F p1 = pp + cr2 * (uw * 0.5f) + cu2 * uh;
                 const Math::Vec3F p2 = pp + cr2 * (uw * 0.5f);
                 const Math::Vec3F p3 = pp - cr2 * (uw * 0.5f);
@@ -285,11 +285,11 @@ void ItemCamera::createTexture(std::list<OpenGL::Data3D *> &_out,
         const Math::OrientF o(pp, cf2, -cr2);
         _out.push_back(OpenGL::Data3DTexture::rectangle(_texture, o, (uw * 0.5f), (uh * 0.5f), a));
 
-        const float lr = lineRadius.value(_timeStep);
+        const float lr = radiusWire.value(_timeStep);
         if (Math::isPositive(lr))
         {
-            const size_t q = lineQuality.value(_timeStep);
-            const Math::MaterialRGB ml = materialLines.value(_timeStep);
+            const size_t q = qualityWire.value(_timeStep);
+            const Math::MaterialRGB ml = materialWire.value(_timeStep);
             const Math::Vec3F p1 = pp + cr2 * (uw * 0.5f) + cu2 * uh;
             const Math::Vec3F p2 = pp + cr2 * (uw * 0.5f);
             const Math::Vec3F p3 = pp - cr2 * (uw * 0.5f);
@@ -305,11 +305,11 @@ void ItemCamera::createTexture(std::list<OpenGL::Data3D *> &_out,
         const Math::OrientF o(c.position, -cf, cr);
         _out.push_back(OpenGL::Data3DTexture::rectangle(_texture, o, (uw * 0.5f), (uh * 0.5f), a));
 
-        const float lr = lineRadius.value(_timeStep);
+        const float lr = radiusWire.value(_timeStep);
         if (Math::isPositive(lr))
         {
-            const size_t q = lineQuality.value(_timeStep);
-            const Math::MaterialRGB ml = materialLines.value(_timeStep);
+            const size_t q = qualityWire.value(_timeStep);
+            const Math::MaterialRGB ml = materialWire.value(_timeStep);
             const Math::Vec3F p1 = c.position + cr * (uw * 0.5f) + cu * uh;
             const Math::Vec3F p2 = c.position + cr * (uw * 0.5f);
             const Math::Vec3F p3 = c.position - cr * (uw * 0.5f);

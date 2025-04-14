@@ -168,6 +168,11 @@ SOURCES += src/Items/Triangle/itemtriangle.cpp
 
 ######################################################
 
+HEADERS += src/Video/settingsvideo.h
+SOURCES += src/Video/settingsvideo.cpp
+
+######################################################
+
 SOURCES += src/main.cpp
 
 
