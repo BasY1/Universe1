@@ -13,6 +13,24 @@
 namespace U1 {
 namespace Audio {
 
+FootageAudio::~FootageAudio()
+{
+    for (ScenarioAudio *a : m_audio)
+        delete a;
+}
+
+QString FootageAudio::subs(const size_t _timeStep) const
+{
+    QStringList result;
+    for (const ScenarioAudio *const &as : std::as_const(m_audio))
+    {
+        const QString tmp = as->subs(_timeStep);
+        if (!tmp.isEmpty())
+            result.push_back(tmp);
+    }
+    return result.join("<BR/>");
+}
+
 bool FootageAudio::createAudio(const SettingsAudio &_settings,
                                const QString &_workDir,
                                const QString &_fileName,
@@ -61,7 +79,7 @@ bool FootageAudio::createAudio(const SettingsAudio &_settings,
         const QString trackDir = _workDir + "data_" + QString::number(idx) + "_" + QDir::separator();
         if (!QDir().mkpath(trackDir))
         {
-            std::cerr << "AudioError: Can't create sceario workDir:" << qPrintable(trackDir) << "!\n";
+            std::cerr << "AudioError: Can't create working directory:" << qPrintable(trackDir) << "!\n";
             return false;
         }
 

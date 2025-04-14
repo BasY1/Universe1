@@ -24,6 +24,8 @@ class ScenarioAudio
     std::map<size_t, ItemAudio> m_items = {};  //!< Audio items
 
  public:
+    virtual ~ScenarioAudio() = default;  //!< Destructor
+
     /*!
      * \brief Constructor
      * \param _name Scenario name

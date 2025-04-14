@@ -18,6 +18,15 @@ struct FootageAudio
     std::vector<ScenarioAudio *> m_audio = {};  //!< Audio scenarios
 
  public:
+    virtual ~FootageAudio();  //!< Destructor
+
+    /*!
+     * \brief Return subtitles at given time-step
+     * \param _timeStep Time step
+     * \return Subtitles at given time-step
+     */
+    QString subs(const size_t _timeStep) const;
+
     /*!
      * \brief Latest active time-step of all audio scenarios
      * \return Latest active time-step of all audio scenarios

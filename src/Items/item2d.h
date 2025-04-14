@@ -37,7 +37,7 @@ class Item2D : public Item
      * \param _timeStep Time-step
      * \return
      */
-    virtual void paintItem(QPainter &_painter, const QSize &_screenSize, const size_t _timeStep) = 0;
+    virtual void paintItem(QPainter &_painter, const QSize &_screenSize, const size_t _timeStep) const = 0;
 };
 
 }  // namespace Items

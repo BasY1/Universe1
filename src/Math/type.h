@@ -23,6 +23,7 @@ namespace U1 {
  * \brief Mathematics tools
  */
 namespace Math {
+Q_NAMESPACE
 
 /*! \brief Enumeration of helicity types */
 enum Helicity : int
@@ -39,6 +40,21 @@ enum FloatingPointType : int
     _FloatingPoint_double,       //!< 64bit \c double
     _FloatingPoint_long_double,  //!< 128bit \c long \c double
 };
+
+/*! \brief The Alignment type name */
+enum AlignType : int
+{
+    _AlignTopLeft = 0,   //!< Align top-left
+    _AlignTopCenter,     //!< Align top-center
+    _AlignTopRight,      //!< Align top-right
+    _AlignCenterLeft,    //!< Align center-left
+    _AlignCenterCenter,  //!< Align center-center
+    _AlignCenterRight,   //!< Align center-right
+    _AlignBottomLeft,    //!< Align bottom-left
+    _AlignBottomCenter,  //!< Align bottom-center
+    _AlignBottomRight,   //!< Align bottom-right
+};
+Q_ENUM_NS(AlignType)
 
 /*!
  * \brief Floating point type to enumeration literal

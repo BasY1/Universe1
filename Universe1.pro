@@ -155,6 +155,9 @@ SOURCES += src/Items/item.cpp
 
 HEADERS += src/Items/item2d.h
 
+HEADERS += src/Items/Items2D/item2dtext.h
+SOURCES += src/Items/Items2D/item2dtext.cpp
+
 HEADERS += src/Items/clipplane.h
 
 HEADERS += src/Items/item3d.h
@@ -170,6 +173,9 @@ SOURCES += src/Items/Triangle/itemtriangle.cpp
 
 HEADERS += src/Video/settingsvideo.h
 SOURCES += src/Video/settingsvideo.cpp
+
+HEADERS += src/Video/footage.h
+SOURCES += src/Video/footage.cpp
 
 ######################################################
 
