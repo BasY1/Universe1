@@ -66,12 +66,12 @@ class Footage : public Props::ItemPropertyGroup, public Audio::FootageAudio
     }
 
     /*!
-     * \brief Add clip plane for this object
+     * \brief Add clip plane for this footage
      * \param _center Plane central point
      * \param _normal Plane normal
      * \param _enabled Clipping plane enabled flag
      * \param _name Clipping plane name
-     * \return Success flag
+     * \return Clip plane object
      */
     Items::ClipPlane *addClipPlane(const Math::Vec3F &_center,
                                    const Math::Vec3F &_normal,
@@ -144,7 +144,7 @@ class Footage : public Props::ItemPropertyGroup, public Audio::FootageAudio
                      const Audio::SettingsAudio &_settingsAudio) const;
 
     /*!
-     * \brief Capture single frame from video footage
+     * \brief Capture single frame for video footage
      * \param _fileName Output image file name
      * \param _timeStep The time-step for capturing an image
      * \param _settingsSubtitles Subtitles settings

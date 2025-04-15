@@ -219,5 +219,59 @@ bool SettingsVideo::createVideo(const QString &_outFileName,
     return QFile::exists(_outFileName);
 }
 
+bool SettingsVideo::joinVideos(const QString &_outFileName,
+                               const Audio::SettingsAudio &_audioSettings,
+                               const QStringList &_videoFiles,
+                               const size_t _hash) const
+{
+    if (QFile::exists(_outFileName))
+    {
+        if (!QFile::remove(_outFileName))
+        {
+            std::cerr << "File already exists, can't remove: " << qPrintable(_outFileName) << "!\n";
+            return false;
+        }
+    }
+
+    const QString tmpFN = _outFileName + ".txt";
+    QFile iFile(tmpFN);
+    if (!iFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        std::cerr << "Can't create image index file!\n";
+        return false;
+    }
+    QTextStream ts(&iFile);
+    for (const QString &f : std::as_const(_videoFiles))
+        ts << "file '" << f << "'\n";
+
+    iFile.flush();
+    iFile.close();
+
+    QStringList args = {"-y", "-f", "concat", "-safe", "0", "-threads", "0", "-i", tmpFN};
+    args << "-c:v" << videoCodec;
+    args << "-vsync";
+    args << "vfr";
+    args << "-pix_fmt" << videoPixelFormat;
+
+    args << "-c:a";
+    args << "aac";
+    args << "-ac" << QString::number(_audioSettings.channels);
+    args << "-ar" << QString::number(_audioSettings.sampleRate);
+
+    if (_hash > 0UL)
+    {
+        args << "-metadata";
+        args << "comment=\"" + QString::number(_hash) + "\"";
+    }
+
+    args << _outFileName;
+
+    Audio::SettingsAudio::runProcess(ffmpegBin, args);
+
+    QFile::remove(tmpFN);
+
+    return QFile::exists(_outFileName);
+}
+
 }  // namespace Video
 }  // namespace U1

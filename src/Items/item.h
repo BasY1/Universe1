@@ -57,6 +57,8 @@ class Item : public Props::ItemPropertyGroup
 /*! \brief The default initial values for similar properties */
 struct ItemDefaultValues
 {
+    static QString latexWorkDir;  //!< Directory for generated LaTeX images
+
     static size_t sphereQuality;  //!< Default circle quality index for spheres
     static size_t lineQuality;    //!< Default circle quality index for lines (cylinders)
 
@@ -68,8 +70,7 @@ struct ItemDefaultValues
     static QColor lineColor;  //!< Default line color
     static QColor textColor;  //!< Default text color
 
-    static QString latexWorkDir;  //!< Default text font name
-    static QString textFont;      //!< Default text font name
+    static QString textFont;  //!< Default text font name
 
     static uint fontHeight;  //!< Default font height [6|7|8|9|10|11|12|14|16|18|20|22|24|26|28|36|48|72]
 };

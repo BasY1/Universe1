@@ -181,6 +181,19 @@ struct SettingsVideo
                      const QString &_audioFileName,
                      const QStringList &_images,
                      const size_t _hash = 0UL) const;
+
+    /*!
+     * \brief Join video files
+     * \param _outFileName Output video file name
+     * \param _audioSettings Audio setting
+     * \param _videoFiles Video file names to join
+     * \param _hash Video hash value
+     * \return Success flag
+     */
+    bool joinVideos(const QString &_outFileName,
+                    const Audio::SettingsAudio &_audioSettings,
+                    const QStringList &_videoFiles,
+                    const size_t _hash = 0UL) const;
 };
 
 }  // namespace Video

@@ -57,7 +57,7 @@ class Item3D : public Item
      * \param _normal Plane normal
      * \param _enabled Clipping plane enabled flag
      * \param _name Clipping plane name
-     * \return Success flag
+     * \return Clip plane object
      */
     virtual ClipPlane *addClipPlane(const Math::Vec3F &_center,
                                     const Math::Vec3F &_normal,

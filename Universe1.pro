@@ -177,6 +177,9 @@ SOURCES += src/Video/settingsvideo.cpp
 HEADERS += src/Video/footage.h
 SOURCES += src/Video/footage.cpp
 
+HEADERS += src/Video/project.h
+SOURCES += src/Video/project.cpp
+
 ######################################################
 
 SOURCES += src/main.cpp

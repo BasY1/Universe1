@@ -16,9 +16,6 @@
 #include <QOffscreenSurface>
 #include <QOpenGLFramebufferObject>
 
-// #include <QPainter>
-// #include <QTextDocument>
-
 namespace U1 {
 namespace Video {
 
@@ -115,12 +112,9 @@ bool Footage::createVideo(const QString &_workDir,
         }
     }
 
-    const QString audioFile = m_audio.empty() ? QString() : (wd + "audio." + _settingsAudio.fileSuffix);
-    if (!m_audio.empty())
-    {
-        if (!createAudio(_settingsAudio, wd + "audio" + QDir::separator(), audioFile, duration))
-            return false;
-    }
+    const QString audioFile = wd + "audio." + _settingsAudio.fileSuffix;
+    if (!createAudio(_settingsAudio, wd + "audio" + QDir::separator(), audioFile, duration))
+        return false;
 
     QStringList images;
     const size_t cntImages = 2UL + static_cast<size_t>(static_cast<float>(duration) / _settingsVideo.frameDuration);
