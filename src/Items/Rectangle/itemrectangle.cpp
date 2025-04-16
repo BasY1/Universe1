@@ -272,6 +272,7 @@ ItemRectangleCamera::ItemRectangleCamera(const std::string &_name,
     , qualityWire("qualityWire", _qualityWire)
     , materialWire("materialWire", _materialWire)
 {
+    addProperty(&center);
     addProperty(&radius1);
     addProperty(&radius2);
     addProperty(&spin);

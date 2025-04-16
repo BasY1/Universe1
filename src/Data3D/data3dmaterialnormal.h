@@ -604,6 +604,103 @@ class Data3DMaterialNormal : public Data3D
                                              const float _offsetAngle = 0.0f);
 
     /*!
+     * \brief Create a cylinder arc 3D object - visible from outside
+     * \param _orientation Orientation of cylinder in space
+     * \param _length Cylinder length
+     * \param _radiusArc Cylinder arc radius
+     * \param _radius1 Cylinder radius at start
+     * \param _radius2 Cylinder radius at end
+     * \param _qualityArc Cylinder arc quality
+     * \param _qualityCylinder Cylinder body circle quality
+     * \param _material Material with alpha
+     * \param _offsetAngle Start angle in radians
+     * \return 3D cylinder arc object
+     */
+    inline static Data3DMaterialNormal *cylinderArc(const Math::OrientF &_orientation,
+                                                    const float _length,
+                                                    const float _radiusArc,
+                                                    const float _radius1,
+                                                    const float _radius2,
+                                                    const size_t _qualityArc,
+                                                    const size_t _qualityCylinder,
+                                                    const Math::MaterialRGBA &_material,
+                                                    const float _offsetAngle = 0.0f)
+    {
+        return cylinderArc(_orientation,
+                           _length,
+                           _radiusArc,
+                           _radius1,
+                           _radius2,
+                           _qualityArc,
+                           _qualityCylinder,
+                           _material.toRGB(),
+                           _material.alpha,
+                           _offsetAngle);
+    }
+
+    /*!
+     * \brief Create a torus from cylinder arc 3D object - visible from outside
+     * \param _orientation Orientation of cylinder in space
+     * \param _radiusTorus Cylinder radius at start
+     * \param _radiusRing Cylinder radius at end
+     * \param _qualityTorus Cylinder arc quality
+     * \param _qualityRing Cylinder body circle quality
+     * \param _material Material
+     * \param _alpha Alpha
+     * \param _offsetAngle Start angle in radians
+     * \return 3D cylinder arc object
+     */
+    inline static Data3DMaterialNormal *torus(const Math::OrientF &_orientation,
+                                              const float _radiusTorus,
+                                              const float _radiusRing,
+                                              const size_t _qualityTorus,
+                                              const size_t _qualityRing,
+                                              const Math::MaterialRGB &_material,
+                                              const uint8_t _alpha,
+                                              const float _offsetAngle = 0.0f)
+    {
+        return cylinderArc(_orientation,
+                           2.0f * M_PI * _radiusTorus,
+                           _radiusTorus,
+                           _radiusRing,
+                           _radiusRing,
+                           _qualityTorus,
+                           _qualityRing,
+                           _material,
+                           _alpha,
+                           _offsetAngle);
+    }
+
+    /*!
+     * \brief Create a torus from cylinder arc 3D object - visible from outside
+     * \param _orientation Orientation of cylinder in space
+     * \param _radiusTorus Cylinder radius at start
+     * \param _radiusRing Cylinder radius at end
+     * \param _qualityTorus Cylinder arc quality
+     * \param _qualityRing Cylinder body circle quality
+     * \param _material Material with alpha
+     * \param _offsetAngle Start angle in radians
+     * \return 3D cylinder arc object
+     */
+    inline static Data3DMaterialNormal *torus(const Math::OrientF &_orientation,
+                                              const float _radiusTorus,
+                                              const float _radiusRing,
+                                              const size_t _qualityTorus,
+                                              const size_t _qualityRing,
+                                              const Math::MaterialRGBA &_material,
+                                              const float _offsetAngle = 0.0f)
+    {
+        return torus(_orientation,
+                     _radiusTorus,
+                     _radiusRing,
+                     _qualityTorus,
+                     _qualityRing,
+                     _material.toRGB(),
+                     _material.alpha,
+                     _offsetAngle);
+    }
+
+    /*!
      * \brief Create a cylinder arc 3D object - visible from inside
      * \param _orientation Orientation of cylinder in space
      * \param _length Cylinder length

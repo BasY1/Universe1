@@ -645,7 +645,7 @@ Circle2<T>::unitCircle(const size_t _quality)
         std::vector<std::pair<size_t, size_t>> &pool = (*it).second.second;
 
         const size_t cntVertex = circlePointCount(_quality);
-        const T angle = T(2.0l * M_PIl) / T(cntVertex);
+        const T angle = -T(2.0l * M_PIl) / T(cntVertex);
         pool = createPool(cntVertex);
 
         if (pool.empty())

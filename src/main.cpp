@@ -11,6 +11,7 @@
 #else
 #include "Examples/example_triangle.cc"
 #include "Examples/example_rectangle.cc"
+#include "Examples/example_circle.cc"
 #endif
 
 /*!
@@ -33,7 +34,7 @@ int main(int argc, char *argv[])
     static const QString workDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) +
         QDir::separator() + "U1" + QDir::separator();
 
-    if (U1::Examples::exampleRectangle(workDir, "/home/basy/Documents/img/socer_ball.png"))
+    if (U1::Examples::exampleCircle(workDir))
     {
         U1::Audio::SettingsAudio::runProcess("/usr/bin/vlc", {"--loop", workDir + "video.avi"});
         return EXIT_SUCCESS;
