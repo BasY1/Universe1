@@ -198,6 +198,33 @@ class Data3DTexture : public Data3D
     }
 
     /*!
+     * \brief Create a texture rectangle 3D object that is visible from back
+     * \param _texture Open GL texture
+     * \param _orientation Orientation of rectangle in space
+     * \param _radius1 Radius 1 (within the \c normal2 in \a _orientation)
+     * \param _radius2 Radius 2 (within the \c normal3 in \a _orientation)
+     * \param _alpha Alpha
+     * \return 3D texture rectangle object
+     */
+    inline static Data3DTexture *rectangleInverted(QOpenGLTexture *_texture,
+                                                   const Math::OrientF &_orientation,
+                                                   const float _radius1,
+                                                   const float _radius2,
+                                                   const uint8_t _alpha)
+    {
+        static const std::vector<Math::Vec2F> t2 = {{0, 0}, {1, 0}, {1, 1}, {0, 1}};
+        const std::vector<Math::Vec3F> t1 = {
+            _orientation.center - _orientation.normal2 * _radius1 + _orientation.normal3 * _radius2,
+            _orientation.center + _orientation.normal2 * _radius1 + _orientation.normal3 * _radius2,
+            _orientation.center + _orientation.normal2 * _radius1 - _orientation.normal3 * _radius2,
+            _orientation.center - _orientation.normal2 * _radius1 - _orientation.normal3 * _radius2};
+
+        Data3DTexture *result = new Data3DTexture(_texture, GL_QUADS, 4UL, t1.data(), t2.data(), _alpha);
+        result->setCentralPoint(_orientation.center);
+        return result;
+    }
+
+    /*!
      * \brief Create a texture sphere 3D object - visible from outside
      * \param _texture Open GL texture
      * \param _orientation Orientation of sphere in space

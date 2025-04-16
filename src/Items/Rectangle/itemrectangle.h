@@ -9,6 +9,7 @@
 #include "../item3d.h"
 
 #include "../../ItemProps/itempropertyenum.h"
+#include "../../ItemProps/itempropertytext.h"
 #include "../../ItemProps/itempropertymaterial.h"
 
 namespace U1 {
@@ -23,12 +24,15 @@ Q_NAMESPACE
 /*! \brief Show rectangle modes */
 enum ShowRectangleType : int
 {
-    RectangleFrontBack,        //!< Show single color rectangle visible from both front and back
-    RectangleFront,            //!< Show single color rectangle visible from front
-    RectangleBack,             //!< Show single color rectangle visible from back
-    RectangleVertexFrontBack,  //!< Show rectangle visible from both front and back (per vertex color)
-    RectangleVertexFront,      //!< Show rectangle visible from front (per vertex color)
-    RectangleVertexBack,       //!< Show rectangle visible from back (per vertex color)
+    RectangleFrontBack,         //!< Show single color rectangle visible from both front and back
+    RectangleFront,             //!< Show single color rectangle visible from front
+    RectangleBack,              //!< Show single color rectangle visible from back
+    RectangleVertexFrontBack,   //!< Show rectangle visible from both front and back (per vertex color)
+    RectangleVertexFront,       //!< Show rectangle visible from front (per vertex color)
+    RectangleVertexBack,        //!< Show rectangle visible from back (per vertex color)
+    RectangleTextureFrontBack,  //!< Show rectangular texture visible from both front and back
+    RectangleTextureFront,      //!< Show rectangular texture visible from front
+    RectangleTextureBack,       //!< Show rectangular texture visible from back
 };
 Q_ENUM_NS(ShowRectangleType)
 
@@ -53,6 +57,8 @@ class ItemRectangle : public Item3DExt
     Props::ItemPropertyMaterialRGBA material3Back;   //!< Vertex 3 back side material
     Props::ItemPropertyMaterialRGBA material4Back;   //!< Vertex 3 back side material
 
+    Props::ItemPropertyText textureImage;  //!< Path to the texture image file
+
     Props::ItemPropertyBool showWire;              //!< Show rectangle wire-frame
     Props::ItemPropertyFloat radiusWire;           //!< Wire radius
     Props::ItemPropertyQuality qualityWire;        //!< Wire circle quality
@@ -68,6 +74,7 @@ class ItemRectangle : public Item3DExt
      * \param _radius2 Initial secondary rectangle radius (within the perpendicular direction to the arm and normal)
      * \param _show Initial value for show rectangle mode
      * \param _showWire Initial value for show rectangle wire-frame
+     * \param _textureImage Initial value for path to the texture image file
      * \param _materialFront Initial value for front side material
      * \param _materialBack Initial value for back side material
      * \param _material1Front Initial value for vertex 1 front side material
@@ -92,6 +99,7 @@ class ItemRectangle : public Item3DExt
                   const float _radius2 = 0.5f,
                   const Rectangle::ShowRectangleType _show = Rectangle::RectangleFrontBack,
                   const bool _showWire = false,
+                  const QString &_textureImage = "",
                   const Math::MaterialRGB &_materialFront = {Qt::white},
                   const Math::MaterialRGB &_materialBack = {Qt::lightGray},
                   const Math::MaterialRGBA &_material1Front = {Qt::red},

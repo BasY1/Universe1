@@ -84,6 +84,9 @@ Data3DTexture::~Data3DTexture()
             m_coordBuffer->destroy();
         delete m_coordBuffer;
     }
+
+    if (m_texture != nullptr)
+        delete m_texture;
 }
 
 bool Data3DTexture::isTransparent() const

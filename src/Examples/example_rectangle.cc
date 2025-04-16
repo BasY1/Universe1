@@ -9,9 +9,10 @@ namespace Examples {
 /*!
  * \brief Rectangle item example
  * \param _workDir Working directory
+ * \param _img Texture image file
  * \return Success flag
  */
-bool exampleRectangle(const QString &_workDir)
+bool exampleRectangle(const QString &_workDir, const QString &_img = "")
 {
     using namespace U1::Audio;
     using namespace U1::Video;
@@ -69,9 +70,18 @@ bool exampleRectangle(const QString &_workDir)
     as->addSpeechSUBS(500, "A rectangle example. ", 1000);
 
     ItemRectangle *rect = footage1->add3D(new ItemRectangle());
-    rect->show.initValue(Rectangle::RectangleVertexFrontBack);
+    if (QFile::exists(_img))
+    {
+        rect->show.initValue(Rectangle::RectangleTextureFrontBack);
+        rect->textureImage.initValue(_img);
+    }
+    else
+    {
+        rect->show.initValue(Rectangle::RectangleVertexFrontBack);
+    }
+
     rect->showWire.initOn();
-    // rect->arm.addRotated(dur, {}, {1, 0, 0}, rot1);
+    rect->arm.addRotated(dur, {}, {1, 0, 0}, rot1);
 
     footage1->addCamera("Camera 1", {+2, 0, 0});
     footage1->addCamera("Camera 2", {-2, 0, 0});

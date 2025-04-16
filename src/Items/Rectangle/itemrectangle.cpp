@@ -8,6 +8,7 @@
 #include "../../Data3D/data3dmaterialbase.h"
 #include "../../Data3D/data3dmaterialsalpha.h"
 #include "../../Data3D/data3dmaterialnormal.h"
+#include "../../Data3D/data3dtexture.h"
 
 namespace U1 {
 namespace Items {
@@ -20,6 +21,7 @@ ItemRectangle::ItemRectangle(const std::string &_name,
                              const float _radius2,
                              const Rectangle::ShowRectangleType _show,
                              const bool _showWire,
+                             const QString &_textureImage,
                              const Math::MaterialRGB &_materialFront,
                              const Math::MaterialRGB &_materialBack,
                              const Math::MaterialRGBA &_material1Front,
@@ -49,6 +51,7 @@ ItemRectangle::ItemRectangle(const std::string &_name,
     , material2Back("material2Back", _material2Back)
     , material3Back("material3Back", _material3Back)
     , material4Back("material4Back", _material4Back)
+    , textureImage("textureImage", _textureImage)
     , showWire("showWire", _showWire)
     , radiusWire("radiusWire", _radiusWire, 0.0f, std::numeric_limits<float>::max())
     , qualityWire("qualityWire", _qualityWire)
@@ -67,6 +70,7 @@ ItemRectangle::ItemRectangle(const std::string &_name,
     addProperty(&material2Back);
     addProperty(&material3Back);
     addProperty(&material4Back);
+    addProperty(&textureImage);
     addProperty(&showWire);
     addProperty(&radiusWire);
     addProperty(&qualityWire);
@@ -84,7 +88,34 @@ void ItemRectangle::createDataImpl(std::list<OpenGL::Data3D *> &_data, const siz
     if (!Math::isPositive(r2))
         return;
 
-    const Rectangle::ShowRectangleType st = show.valueEnum<Rectangle::ShowRectangleType>(_timeStep);
+    Rectangle::ShowRectangleType st = show.valueEnum<Rectangle::ShowRectangleType>(_timeStep);
+
+    QImage img;
+    switch (st)
+    {
+    case Rectangle::RectangleFrontBack:
+    case Rectangle::RectangleFront:
+    case Rectangle::RectangleBack:
+    case Rectangle::RectangleVertexFrontBack:
+    case Rectangle::RectangleVertexFront:
+    case Rectangle::RectangleVertexBack: break;
+    case Rectangle::RectangleTextureFrontBack:
+        img = QImage(textureImage.value(_timeStep));
+        if (img.isNull())
+            st = Rectangle::RectangleFrontBack;
+        break;
+    case Rectangle::RectangleTextureFront:
+        img = QImage(textureImage.value(_timeStep));
+        if (img.isNull())
+            st = Rectangle::RectangleFront;
+        break;
+    case Rectangle::RectangleTextureBack:
+        img = QImage(textureImage.value(_timeStep));
+        if (img.isNull())
+            st = Rectangle::RectangleBack;
+        break;
+    }
+
     switch (st)
     {
     case Rectangle::RectangleFrontBack: {
@@ -158,6 +189,29 @@ void ItemRectangle::createDataImpl(std::list<OpenGL::Data3D *> &_data, const siz
                                                                 material2Back.value(_timeStep),
                                                                 material1Back.value(_timeStep)));
         break;
+
+    case Rectangle::RectangleTextureFrontBack: {
+        const uint8_t a = alpha.value(_timeStep);
+        if (a > 0U)
+        {
+            _data.push_back(OpenGL::Data3DTexture::rectangle(new QOpenGLTexture(img), o, r1, r2, a));
+            _data.push_back(OpenGL::Data3DTexture::rectangleInverted(new QOpenGLTexture(img), o, r1, r2, a));
+        }
+    }
+    break;
+
+    case Rectangle::RectangleTextureFront: {
+        const uint8_t a = alpha.value(_timeStep);
+        if (a > 0U)
+            _data.push_back(OpenGL::Data3DTexture::rectangle(new QOpenGLTexture(img), o, r1, r2, a));
+    }
+    break;
+    case Rectangle::RectangleTextureBack: {
+        const uint8_t a = alpha.value(_timeStep);
+        if (a > 0U)
+            _data.push_back(OpenGL::Data3DTexture::rectangleInverted(new QOpenGLTexture(img), o, r1, r2, a));
+    }
+    break;
     }
 
     if (showWire.value(_timeStep))

@@ -302,13 +302,8 @@ bool Footage::createImageAt(const QString &_fileName,
 
     shaders.setupCamera(cam);
 
-    std::vector<QOpenGLTexture *> camTextures;
     for (size_t i = 1UL; i < camObj.size(); ++i)
-    {
-        QOpenGLTexture *texture = new QOpenGLTexture(camImages.at(i - 1UL));
-        camObj.at(i)->createTexture(data, texture, cam, _timeStep);
-        camTextures.push_back(texture);
-    }
+        camObj.at(i)->createTexture(data, new QOpenGLTexture(camImages.at(i - 1UL)), cam, _timeStep);
 
     std::list<std::pair<float, OpenGL::Data3D *>> alphaData;
     for (OpenGL::Data3D *const &d : std::as_const(data))
@@ -338,9 +333,6 @@ bool Footage::createImageAt(const QString &_fileName,
         d.second->draw(fun, shaders.getShader(d.second));
         delete d.second;
     }
-
-    for (QOpenGLTexture *const &t : std::as_const(camTextures))
-        delete t;
 
     QImage curImg = fbo.toImage();
     fbo.release();

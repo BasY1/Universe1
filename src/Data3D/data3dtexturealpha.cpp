@@ -107,6 +107,9 @@ Data3DTextureAlpha::~Data3DTextureAlpha()
             m_alphaBuffer->destroy();
         delete m_alphaBuffer;
     }
+
+    if (m_texture != nullptr)
+        delete m_texture;
 }
 
 bool Data3DTextureAlpha::isTransparent() const
