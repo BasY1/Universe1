@@ -512,20 +512,16 @@ class Data3DMaterialsAlpha : public Data3D
      * \param _radius1 Ellipse radius (within the \c normal2 in \a _orientation)
      * \param _radius2 Ellipse radius (within the \c normal3 in \a _orientation)
      * \param _quality Circle quality
-     * \param _material1 Material at center
-     * \param _material2 Material at border
-     * \param _alpha1 Alpha at center
-     * \param _alpha2 Alpha at border
+     * \param _material1 Material with alpha at center
+     * \param _material2 Material with alpha at border
      * \return 3D ellipse object
      */
     inline static Data3DMaterialsAlpha *ellipse(const Math::OrientF &_orientation,
                                                 const float _radius1,
                                                 const float _radius2,
                                                 const size_t _quality,
-                                                const Math::MaterialRGB &_material1,
-                                                const Math::MaterialRGB &_material2,
-                                                const uint8_t _alpha1,
-                                                const uint8_t _alpha2)
+                                                const Math::MaterialRGBA &_material1,
+                                                const Math::MaterialRGBA &_material2)
     {
         const size_t N = 2UL + Math::EllipseF::ellipseVertexCount(_quality);
         Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
@@ -550,8 +546,8 @@ class Data3DMaterialsAlpha : public Data3D
                                     _material2.specular.toVec3F(),
                                     _material1.shine,
                                     _material2.shine,
-                                    float(_alpha1) / 255.0f,
-                                    float(_alpha2) / 255.0f,
+                                    float(_material1.alpha) / 255.0f,
+                                    float(_material2.alpha) / 255.0f,
                                     _radius1,
                                     _radius2,
                                     _quality);
@@ -559,7 +555,98 @@ class Data3DMaterialsAlpha : public Data3D
         Data3DMaterialsAlpha *result =
             new Data3DMaterialsAlpha(GL_TRIANGLE_FAN, N, t1, t2, t3, t4, t5, t6, _orientation.normal1);
         result->setCentralPoint(_orientation.center);
-        result->setTransparent(_alpha1 != 255U || _alpha2 != 255U);
+        result->setTransparent(_material1.alpha != 255U || _material2.alpha != 255U);
+
+        std::free(t1);
+        std::free(t2);
+        std::free(t3);
+        std::free(t4);
+        std::free(t5);
+        std::free(t6);
+
+        return result;
+    }
+
+    /*!
+     * \brief Create a ellipse 3D object
+     * \param _orientation Orientation of ellipse in space
+     * \param _radius1 Ellipse radius (within the \c normal2 in \a _orientation)
+     * \param _radius2 Ellipse radius (within the \c normal3 in \a _orientation)
+     * \param _quality Circle quality
+     * \param _material1 Material at center
+     * \param _material2 Material at border
+     * \param _alpha1 Alpha at center
+     * \param _alpha2 Alpha at border
+     * \return 3D ellipse object
+     */
+    inline static Data3DMaterialsAlpha *ellipse(const Math::OrientF &_orientation,
+                                                const float _radius1,
+                                                const float _radius2,
+                                                const size_t _quality,
+                                                const Math::MaterialRGB &_material1,
+                                                const Math::MaterialRGB &_material2,
+                                                const uint8_t _alpha1,
+                                                const uint8_t _alpha2)
+    {
+        return ellipse(_orientation, _radius1, _radius2, _quality, {_material1, _alpha1}, {_material2, _alpha2});
+    }
+
+    /*!
+     * \brief Create a irregular ellipse 3D object
+     * \param _orientation Orientation of irregular ellipse in space
+     * \param _radius1P Ellipse radius (within the \b positive \c normal2 in \a _orientation)
+     * \param _radius1M Ellipse radius (within the \b negative \c normal2 in \a _orientation)
+     * \param _radius2P Ellipse radius (within the \b positive \c normal3 in \a _orientation)
+     * \param _radius2M Ellipse radius (within the \b negative \c normal3 in \a _orientation)
+     * \param _quality Circle quality
+     * \param _material1 Material with alpha at center
+     * \param _material2 Material with alpha at border
+     * \return 3D irregular ellipse object
+     */
+    inline static Data3DMaterialsAlpha *irregEllipse(const Math::OrientF &_orientation,
+                                                     const float _radius1P,
+                                                     const float _radius1M,
+                                                     const float _radius2P,
+                                                     const float _radius2M,
+                                                     const size_t _quality,
+                                                     const Math::MaterialRGBA &_material1,
+                                                     const Math::MaterialRGBA &_material2)
+    {
+        const size_t N = 2UL + Math::IrregEllipseF::ellipseVertexCount(_quality);
+        Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+        Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+        Math::Vec3F *t3 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+        Math::Vec3F *t4 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+        float *t5 = reinterpret_cast<float *>(std::malloc(N * sizeof(float)));
+        float *t6 = reinterpret_cast<float *>(std::malloc(N * sizeof(float)));
+
+        Math::IrregEllipseF::fillEllipse(t1,
+                                         t2,
+                                         t3,
+                                         t4,
+                                         t5,
+                                         t6,
+                                         _orientation,
+                                         _material1.ambient.toVec3F(),
+                                         _material2.ambient.toVec3F(),
+                                         _material1.diffuse.toVec3F(),
+                                         _material2.diffuse.toVec3F(),
+                                         _material1.specular.toVec3F(),
+                                         _material2.specular.toVec3F(),
+                                         _material1.shine,
+                                         _material2.shine,
+                                         float(_material1.alpha) / 255.0f,
+                                         float(_material2.alpha) / 255.0f,
+                                         _radius1P,
+                                         _radius1M,
+                                         _radius2P,
+                                         _radius2M,
+                                         _quality);
+
+        Data3DMaterialsAlpha *result =
+            new Data3DMaterialsAlpha(GL_TRIANGLE_FAN, N, t1, t2, t3, t4, t5, t6, _orientation.normal1);
+        result->setCentralPoint(_orientation.center);
+        result->setTransparent(_material1.alpha != 255U || _material2.alpha != 255U);
 
         std::free(t1);
         std::free(t2);
@@ -596,50 +683,14 @@ class Data3DMaterialsAlpha : public Data3D
                                                      const uint8_t _alpha1,
                                                      const uint8_t _alpha2)
     {
-        const size_t N = 2UL + Math::IrregEllipseF::ellipseVertexCount(_quality);
-        Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
-        Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
-        Math::Vec3F *t3 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
-        Math::Vec3F *t4 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
-        float *t5 = reinterpret_cast<float *>(std::malloc(N * sizeof(float)));
-        float *t6 = reinterpret_cast<float *>(std::malloc(N * sizeof(float)));
-
-        Math::IrregEllipseF::fillEllipse(t1,
-                                         t2,
-                                         t3,
-                                         t4,
-                                         t5,
-                                         t6,
-                                         _orientation,
-                                         _material1.ambient.toVec3F(),
-                                         _material2.ambient.toVec3F(),
-                                         _material1.diffuse.toVec3F(),
-                                         _material2.diffuse.toVec3F(),
-                                         _material1.specular.toVec3F(),
-                                         _material2.specular.toVec3F(),
-                                         _material1.shine,
-                                         _material2.shine,
-                                         float(_alpha1) / 255.0f,
-                                         float(_alpha2) / 255.0f,
-                                         _radius1P,
-                                         _radius1M,
-                                         _radius2P,
-                                         _radius2M,
-                                         _quality);
-
-        Data3DMaterialsAlpha *result =
-            new Data3DMaterialsAlpha(GL_TRIANGLE_FAN, N, t1, t2, t3, t4, t5, t6, _orientation.normal1);
-        result->setCentralPoint(_orientation.center);
-        result->setTransparent(_alpha1 != 255U || _alpha2 != 255U);
-
-        std::free(t1);
-        std::free(t2);
-        std::free(t3);
-        std::free(t4);
-        std::free(t5);
-        std::free(t6);
-
-        return result;
+        return irregEllipse(_orientation,
+                            _radius1P,
+                            _radius1M,
+                            _radius2P,
+                            _radius2M,
+                            _quality,
+                            {_material1, _alpha1},
+                            {_material2, _alpha2});
     }
 };
 
