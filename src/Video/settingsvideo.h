@@ -30,15 +30,6 @@ struct SettingsOpenGL
     uint useGlSamples = 4U;  //!< Open GL samples
 
     /*!
-     * \brief To hash value
-     * \return A hash value from current settings
-     */
-    inline size_t toHash() const
-    {
-        return Math::mixHash(std::hash<bool>{}(useGlBlend), std::hash<uint>{}(useGlSamples));
-    }
-
-    /*!
      * \brief Setup Open GL variables
      * \param _fun Open GL functions
      */
@@ -69,21 +60,11 @@ struct SettingsSubtitles
 {
     bool useSubtitles = true;           //!< Major on/off flag for subtitles
     bool upperCase = false;             //!< Flag for always overwrite subtitles with its upper-case version
+    bool removeLastDot = true;          //!< Remove dot after last sentence ("Hi." becomes "Hi")
     QColor fontColor = Qt::white;       //!< Subtitles color
     QString fontFamily = "Sans Serif";  //!< Subtitles font
     uint fontHeight = 24;               //!< Subtitles font height [6|7|8|9|10|11|12|14|16|18|20|22|24|26|28|36|48|72]
     uint bottomOffset = 24;             //!< Subtitles offset from the bottom of the screen
-
-    /*!
-     * \brief To hash value
-     * \return A hash value from current settings
-     */
-    inline size_t toHash() const
-    {
-        return Math::mixHash(std::hash<std::string>{}(fontFamily.toStdString()),
-                             std::hash<uint>{}(fontHeight),
-                             std::hash<uint>{}(bottomOffset));
-    }
 
     /*!
      * \brief Check setting validity
@@ -145,20 +126,6 @@ struct SettingsVideo
     {
         resolution = {7680, 4320};
         frameDuration = (1000.0f / 60.0f);
-    }
-
-    /*!
-     * \brief To hash value
-     * \return A hash value from current settings
-     */
-    inline size_t toHash() const
-    {
-        return Math::mixHash(std::hash<std::string>{}(imgSuffix.toStdString()),
-                             std::hash<std::string>{}(videoCodec.toStdString()),
-                             std::hash<std::string>{}(videoPixelFormat.toStdString()),
-                             std::hash<int>{}(resolution.width()),
-                             std::hash<int>{}(resolution.height()),
-                             std::hash<float>{}(frameDuration));
     }
 
     /*!

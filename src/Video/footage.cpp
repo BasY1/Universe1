@@ -346,10 +346,18 @@ bool Footage::createImageAt(const QString &_fileName,
     fbo.release();
     openGLContext.doneCurrent();
 
-    const QString curSubs = _settingsSubtitles.useSubtitles ? subs(_timeStep) : QString();
+    QString curSubs = _settingsSubtitles.useSubtitles ? subs(_timeStep) : QString();
 
     if (!curSubs.isEmpty() || !m_items2D.empty())
     {
+        if (_settingsSubtitles.removeLastDot && !curSubs.isEmpty())
+        {
+            if (curSubs.endsWith("."))
+                curSubs.chop(1);
+            else if (curSubs.endsWith(". "))
+                curSubs.chop(2);
+        }
+
         QPainter painter(&curImg);
         for (Items::Item2D *const &i : std::as_const(m_items2D))
             i->paintItem(painter, _settingsVideo.resolution, _timeStep);

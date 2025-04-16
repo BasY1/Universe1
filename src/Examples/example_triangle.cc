@@ -1,6 +1,7 @@
 #include "../Video/project.h"
 
 #include "../Items/Triangle/itemtriangle.h"
+#include "../Items/Items2D/item2dtext.h"
 
 namespace U1 {
 
@@ -17,6 +18,7 @@ namespace Examples {
  */
 bool exampleTriangle(const QString &_workDir)
 {
+    using namespace U1::Audio;
     using namespace U1::Video;
     using namespace U1::Items;
     using namespace U1::Math;
@@ -67,14 +69,21 @@ bool exampleTriangle(const QString &_workDir)
 
     Footage *footage1 = project.addFootage("Footage 1");
 
+    ScenarioAudioTTS *as = footage1->addAudio_espeak("TTS", _workDir + "espeak" + QDir::separator());
+
+    as->addSpeechSUBS(500, "A triangle example.");
+
     ItemTriangle *triang = footage1->add3D(new ItemTriangle());
     triang->show.initValue(Triangle::TriangleVertexFrontBack);
+    triang->showWire.initOn();
     triang->point1.addRotated(dur, {}, {1, 0, 0}, rot1);
     triang->point2.addRotated(dur, {}, {1, 0, 0}, rot1);
     triang->point3.addRotated(dur, {}, {1, 0, 0}, rot1);
 
     footage1->addCamera("Camera 1", {+2, 0, 0});
     footage1->addCamera("Camera 2", {-2, 0, 0});
+
+    footage1->add2D(new Item2DText("Info", "<font color=\"#FF0000\">Triangle</font> example", Math::_AlignTopCenter));
 
     footage1->cameraPosition.initValue({-5, -1, 1});
     footage1->cameraPosition.addFromRotatedAccelerated(dur / 8UL, (7UL * dur) / 8UL, {}, {0, 0, 1}, rot2, 0.1, 0.1);
