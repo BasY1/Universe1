@@ -67,6 +67,12 @@ void Item3D::createData(std::list<OpenGL::Data3D *> &_data,
     }
 }
 
+void Item3D::createDataImpl(std::list<OpenGL::Data3D *> &_data, const size_t _timeStep) const
+{
+    Q_UNUSED(_data)
+    Q_UNUSED(_timeStep)
+}
+
 void Item3D::createDataImpl(std::list<OpenGL::Data3D *> &_data, const Math::CamF &_camera, const size_t _timeStep) const
 {
     Q_UNUSED(_data)

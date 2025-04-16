@@ -36,6 +36,15 @@ enum ShowRectangleType : int
 };
 Q_ENUM_NS(ShowRectangleType)
 
+/*! \brief Show camera rectangle modes */
+enum ShowRectangleCameraType : int
+{
+    RectangleCameraSingle,   //!< Show single color rectangle
+    RectangleCameraVertex,   //!< Show per vertex color rectangle
+    RectangleCameraTexture,  //!< Show texture
+};
+Q_ENUM_NS(ShowRectangleCameraType)
+
 }  // namespace Rectangle
 
 /*! \brief Dynamic rectangle video item */
@@ -123,6 +132,80 @@ class ItemRectangle : public Item3DExt
      * \param _timeStep Time-step
      */
     void createDataImpl(std::list<OpenGL::Data3D *> &_data, const size_t _timeStep) const override;
+};
+
+/*! \brief Dynamic rectangle video item with the plane normal that is always oriented towards camera position */
+class ItemRectangleCamera : public Item3D
+{
+ public:
+    Props::ItemPropertyVec3F center;   //!< Rectangle center point
+    Props::ItemPropertyFloat radius1;  //!< Rectangle radius (within the direction of arm)
+    Props::ItemPropertyFloat radius2;  //!< Rectangle radius (within the perpendicular direction to the arm and normal)
+    Props::ItemPropertyFloat spin;     //!< Additional spin along the view normal (in radians)
+
+    Props::ItemPropertyEnum show;               //!< Show rectangle mode
+    Props::ItemPropertyMaterialRGB material;    //!< Single material
+    Props::ItemPropertyMaterialRGBA material1;  //!< Vertex 1 material
+    Props::ItemPropertyMaterialRGBA material2;  //!< Vertex 2 material
+    Props::ItemPropertyMaterialRGBA material3;  //!< Vertex 3 material
+    Props::ItemPropertyMaterialRGBA material4;  //!< Vertex 3 material
+    Props::ItemPropertyText textureImage;       //!< Path to the texture image file
+
+    Props::ItemPropertyBool showWire;              //!< Show rectangle wire-frame
+    Props::ItemPropertyFloat radiusWire;           //!< Wire radius
+    Props::ItemPropertyQuality qualityWire;        //!< Wire circle quality
+    Props::ItemPropertyMaterialRGBA materialWire;  //!< Wire-frame material
+
+    /*!
+     * \brief Constructor
+     * \param _name Item name
+     * \param _center Initial center point
+     * \param _radius1 Initial rectangle radius (within the direction of arm)
+     * \param _radius2 Initial secondary rectangle radius (within the perpendicular direction to the arm and normal)
+     * \param _spin Initial value for show additional spin along the view normal (in radians)
+     * \param _show Initial value for show rectangle mode
+     * \param _showWire Initial value for show rectangle wire-frame
+     * \param _textureImage Initial value for path to the texture image file
+     * \param _material Initial value for single material
+     * \param _material1 Initial value for vertex 1 material
+     * \param _material2 Initial value for vertex 2 material
+     * \param _material3 Initial value for vertex 3 material
+     * \param _material4 Initial value for vertex 4 material
+     * \param _materialWire Initial value for wire material
+     * \param _radiusWire Initial value for wire radius
+     * \param _qualityWire Initial value for wire circle quality
+     * \param _alpha Initial value for general alpha
+     * \param _visible Initial value for visible flag
+     */
+    ItemRectangleCamera(const std::string &_name = "Rectangle",
+                        const Math::Vec3F &_center = {},
+                        const float _radius1 = 1.0f,
+                        const float _radius2 = 0.5f,
+                        const float _spin = 0.5f,
+                        const Rectangle::ShowRectangleCameraType _show = Rectangle::RectangleCameraSingle,
+                        const bool _showWire = false,
+                        const QString &_textureImage = "",
+                        const Math::MaterialRGB &_material = {Qt::white},
+                        const Math::MaterialRGBA &_material1 = {Qt::red},
+                        const Math::MaterialRGBA &_material2 = {Qt::green},
+                        const Math::MaterialRGBA &_material3 = {Qt::blue},
+                        const Math::MaterialRGBA &_material4 = {Qt::white},
+                        const Math::MaterialRGBA &_materialWire = {ItemDefaultValues::lineColor},
+                        const float _radiusWire = ItemDefaultValues::lineRadius,
+                        const size_t _qualityWire = ItemDefaultValues::lineQuality,
+                        const uint8_t _alpha = 255U,
+                        const bool _visible = true);
+
+ protected:
+    /*!
+     * \brief Create 3D Open GL data objects
+     * \param _data Output data objects
+     * \param _camera Camera data
+     * \param _timeStep Time-step
+     */
+    void createDataImpl(std::list<OpenGL::Data3D *> &_data,
+                        const Math::CamF &_camera,
+                        const size_t _timeStep) const override;
 };
 
 }  // namespace Items

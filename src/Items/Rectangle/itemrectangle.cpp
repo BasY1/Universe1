@@ -79,7 +79,6 @@ ItemRectangle::ItemRectangle(const std::string &_name,
 
 void ItemRectangle::createDataImpl(std::list<OpenGL::Data3D *> &_data, const size_t _timeStep) const
 {
-    Math::OrientF o = valueOrientation(_timeStep);
     const float r1 = radius1.value(_timeStep);
     if (!Math::isPositive(r1))
         return;
@@ -87,6 +86,8 @@ void ItemRectangle::createDataImpl(std::list<OpenGL::Data3D *> &_data, const siz
     const float r2 = radius2.value(_timeStep);
     if (!Math::isPositive(r2))
         return;
+
+    Math::OrientF o = valueOrientation(_timeStep);
 
     Rectangle::ShowRectangleType st = show.valueEnum<Rectangle::ShowRectangleType>(_timeStep);
 
@@ -210,6 +211,135 @@ void ItemRectangle::createDataImpl(std::list<OpenGL::Data3D *> &_data, const siz
         const uint8_t a = alpha.value(_timeStep);
         if (a > 0U)
             _data.push_back(OpenGL::Data3DTexture::rectangleInverted(new QOpenGLTexture(img), o, r1, r2, a));
+    }
+    break;
+    }
+
+    if (showWire.value(_timeStep))
+    {
+        const float r = radiusWire.value(_timeStep);
+        if (Math::isPositive(r))
+        {
+            const Math::MaterialRGBA mw = materialWire.value(_timeStep);
+            if (mw.alpha > 0U)
+            {
+                const size_t q = qualityWire.value(_timeStep);
+                const Math::Vec3F p1 = o.center - o.normal2 * r1 + o.normal3 * r2;
+                const Math::Vec3F p2 = o.center - o.normal2 * r1 - o.normal3 * r2;
+                const Math::Vec3F p3 = o.center + o.normal2 * r1 - o.normal3 * r2;
+                const Math::Vec3F p4 = o.center + o.normal2 * r1 + o.normal3 * r2;
+                _data.push_back(OpenGL::Data3DMaterialNormal::line(p1, p2, r, r, q, mw));
+                _data.push_back(OpenGL::Data3DMaterialNormal::line(p2, p3, r, r, q, mw));
+                _data.push_back(OpenGL::Data3DMaterialNormal::line(p3, p4, r, r, q, mw));
+                _data.push_back(OpenGL::Data3DMaterialNormal::line(p4, p1, r, r, q, mw));
+            }
+        }
+    }
+}
+
+ItemRectangleCamera::ItemRectangleCamera(const std::string &_name,
+                                         const Math::Vec3F &_center,
+                                         const float _radius1,
+                                         const float _radius2,
+                                         const float _spin,
+                                         const Rectangle::ShowRectangleCameraType _show,
+                                         const bool _showWire,
+                                         const QString &_textureImage,
+                                         const Math::MaterialRGB &_material,
+                                         const Math::MaterialRGBA &_material1,
+                                         const Math::MaterialRGBA &_material2,
+                                         const Math::MaterialRGBA &_material3,
+                                         const Math::MaterialRGBA &_material4,
+                                         const Math::MaterialRGBA &_materialWire,
+                                         const float _radiusWire,
+                                         const size_t _qualityWire,
+                                         const uint8_t _alpha,
+                                         const bool _visible)
+    : Item3D(_name, _alpha, _visible)
+    , center("center", _center)
+    , radius1("radius1", _radius1, 0.0f, std::numeric_limits<float>::max())
+    , radius2("radius2", _radius2, 0.0f, std::numeric_limits<float>::max())
+    , spin("spin", _spin)
+    , show("show", QMetaEnum::fromType<Rectangle::ShowRectangleCameraType>(), _show)
+    , material("material", _material)
+    , material1("material1", _material1)
+    , material2("material2", _material2)
+    , material3("material3", _material3)
+    , material4("material4", _material4)
+    , textureImage("textureImage", _textureImage)
+    , showWire("showWire", _showWire)
+    , radiusWire("radiusWire", _radiusWire, 0.0f, std::numeric_limits<float>::max())
+    , qualityWire("qualityWire", _qualityWire)
+    , materialWire("materialWire", _materialWire)
+{
+    addProperty(&radius1);
+    addProperty(&radius2);
+    addProperty(&spin);
+    addProperty(&show);
+    addProperty(&material);
+    addProperty(&material1);
+    addProperty(&material2);
+    addProperty(&material3);
+    addProperty(&material4);
+    addProperty(&textureImage);
+    addProperty(&showWire);
+    addProperty(&radiusWire);
+    addProperty(&qualityWire);
+    addProperty(&materialWire);
+}
+
+void ItemRectangleCamera::createDataImpl(std::list<OpenGL::Data3D *> &_data,
+                                         const Math::CamF &_camera,
+                                         const size_t _timeStep) const
+{
+    const float r1 = radius1.value(_timeStep);
+    if (!Math::isPositive(r1))
+        return;
+
+    const float r2 = radius2.value(_timeStep);
+    if (!Math::isPositive(r2))
+        return;
+
+    const Math::OrientF o(_camera, center.value(_timeStep), spin.value(_timeStep));
+
+    Rectangle::ShowRectangleCameraType st = show.valueEnum<Rectangle::ShowRectangleCameraType>(_timeStep);
+
+    QImage img;
+    switch (st)
+    {
+    case Rectangle::RectangleCameraSingle: break;
+    case Rectangle::RectangleCameraVertex: break;
+    case Rectangle::RectangleCameraTexture:
+        img = QImage(textureImage.value(_timeStep));
+        if (img.isNull())
+            st = Rectangle::RectangleCameraSingle;
+        break;
+    }
+
+    switch (st)
+    {
+
+    case Rectangle::RectangleCameraSingle: {
+        const uint8_t a = alpha.value(_timeStep);
+        if (a > 0U)
+            _data.push_back(OpenGL::Data3DMaterialBase::rectangle(o, r1, r2, material.value(_timeStep), a));
+    }
+    break;
+
+    case Rectangle::RectangleCameraVertex:
+        _data.push_back(OpenGL::Data3DMaterialsAlpha::rectangle(o,
+                                                                r1,
+                                                                r2,
+                                                                material1.value(_timeStep),
+                                                                material2.value(_timeStep),
+                                                                material3.value(_timeStep),
+                                                                material4.value(_timeStep)));
+        break;
+
+    case Rectangle::RectangleCameraTexture: {
+        const uint8_t a = alpha.value(_timeStep);
+        if (a > 0U)
+            _data.push_back(OpenGL::Data3DTexture::rectangle(new QOpenGLTexture(img), o, r1, r2, a));
     }
     break;
     }

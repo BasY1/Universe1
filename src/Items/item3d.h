@@ -84,7 +84,7 @@ class Item3D : public Item
      * \param _timeStep Time-step
      * \return
      */
-    virtual void createDataImpl(std::list<OpenGL::Data3D *> &_data, const size_t _timeStep) const = 0;
+    virtual void createDataImpl(std::list<OpenGL::Data3D *> &_data, const size_t _timeStep) const;
 
     /*!
      * \brief Create 3D Open GL data objects that are dependent on camera position

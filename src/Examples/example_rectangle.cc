@@ -69,19 +69,27 @@ bool exampleRectangle(const QString &_workDir, const QString &_img = "")
 
     as->addSpeechSUBS(500, "A rectangle example. ", 1000);
 
-    ItemRectangle *rect = footage1->add3D(new ItemRectangle());
+    ItemRectangle *rect1 = footage1->add3D(new ItemRectangle());
+    ItemRectangleCamera *rect2 = footage1->add3D(new ItemRectangleCamera());
+
     if (QFile::exists(_img))
     {
-        rect->show.initValue(Rectangle::RectangleTextureFrontBack);
-        rect->textureImage.initValue(_img);
+        rect1->show.initValue(Rectangle::RectangleTextureFrontBack);
+        rect2->show.initValue(Rectangle::RectangleCameraTexture);
+        rect1->textureImage.initValue(_img);
+        rect2->textureImage.initValue(_img);
     }
     else
     {
-        rect->show.initValue(Rectangle::RectangleVertexFrontBack);
+        rect1->show.initValue(Rectangle::RectangleVertexFrontBack);
+        rect2->show.initValue(Rectangle::RectangleCameraVertex);
     }
 
-    rect->showWire.initOn();
-    rect->arm.addRotated(dur, {}, {1, 0, 0}, rot1);
+    rect1->showWire.initOn();
+    rect1->arm.addRotated(dur, {}, {1, 0, 0}, rot1);
+
+    rect2->showWire.initOn();
+    rect2->spin.addLinearValue(dur, rot1);
 
     footage1->addCamera("Camera 1", {+2, 0, 0});
     footage1->addCamera("Camera 2", {-2, 0, 0});
