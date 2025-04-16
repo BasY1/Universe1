@@ -87,7 +87,7 @@ class ItemTriangle : public Item3D
                  const Triangle::ShowTriangleType _show = Triangle::TriangleFrontBack,
                  const bool _showWire = false,
                  const Math::MaterialRGB &_materialFront = {Qt::white},
-                 const Math::MaterialRGB &_materialBack = {Qt::gray},
+                 const Math::MaterialRGB &_materialBack = {Qt::lightGray},
                  const Math::MaterialRGBA &_material1Front = {Qt::red},
                  const Math::MaterialRGBA &_material2Front = {Qt::green},
                  const Math::MaterialRGBA &_material3Front = {Qt::blue},

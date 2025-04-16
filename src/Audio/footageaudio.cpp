@@ -31,6 +31,20 @@ QString FootageAudio::subs(const size_t _timeStep) const
     return result.join("<BR/>");
 }
 
+bool FootageAudio::prepareWorkDir(const QString &_workDir)
+{
+    if (QDir(_workDir).exists())
+        return true;
+
+    if (!QDir().mkpath(_workDir))
+    {
+        std::cerr << "AudioError: Can't create workDir:" << qPrintable(_workDir) << "!\n";
+        return false;
+    }
+
+    return true;
+}
+
 bool FootageAudio::createAudio(const SettingsAudio &_settings,
                                const QString &_workDir,
                                const QString &_fileName,

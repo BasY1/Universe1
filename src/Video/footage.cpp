@@ -45,6 +45,18 @@ Footage::Footage(const std::string &_name)
                      &lightAmbient});
 }
 
+Footage::~Footage()
+{
+    for (Items::Item2D *i : m_items2D)
+        delete i;
+    for (Items::Item3D *i : m_items3D)
+        delete i;
+    for (Items::ItemCamera *i : m_cameras)
+        delete i;
+    for (Items::ClipPlane *i : m_clipPlanes)
+        delete i;
+}
+
 size_t Footage::latestTimeStep() const
 {
     return std::max(minimalFootageDuration,
@@ -345,7 +357,7 @@ bool Footage::createImageAt(const QString &_fileName,
         if (!curSubs.isEmpty())
             Items::Item2DText::paintItem2D(painter,
                                            _settingsVideo.resolution,
-                                           curSubs,
+                                           _settingsSubtitles.upperCase ? curSubs.toUpper() : curSubs,
                                            _settingsSubtitles.fontFamily,
                                            _settingsSubtitles.fontHeight,
                                            _settingsSubtitles.fontColor,

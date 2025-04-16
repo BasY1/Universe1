@@ -278,8 +278,8 @@ class Data3DMaterialAlpha : public Data3D
                                               const uint8_t _alphaBorder)
     {
         const size_t N = Math::Circle3F::circleCenterVertexCount(_quality);
-        Math::Vec3F *tmp1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-        float *tmp2 = reinterpret_cast<float *>(N * sizeof(float));
+        Math::Vec3F *tmp1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+        float *tmp2 = reinterpret_cast<float *>(std::malloc(N * sizeof(float)));
 
         Math::Circle3F::fillCircle(
             tmp1, tmp2, _orientation, float(_alphaCenter) / 255.0f, float(_alphaBorder) / 255.0f, _radius, _quality);
@@ -312,8 +312,8 @@ class Data3DMaterialAlpha : public Data3D
                                                const uint8_t _alphaBorder)
     {
         const size_t N = Math::EllipseF::ellipseCenterVertexCount(_quality);
-        Math::Vec3F *tmp1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-        float *tmp2 = reinterpret_cast<float *>(N * sizeof(float));
+        Math::Vec3F *tmp1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+        float *tmp2 = reinterpret_cast<float *>(std::malloc(N * sizeof(float)));
         Math::EllipseF::fillEllipse(tmp1,
                                     tmp2,
                                     _orientation,
@@ -355,8 +355,8 @@ class Data3DMaterialAlpha : public Data3D
                                                     const uint8_t _alphaBorder)
     {
         const size_t N = Math::IrregEllipseF::ellipseCenterVertexCount(_quality);
-        Math::Vec3F *tmp1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-        float *tmp2 = reinterpret_cast<float *>(N * sizeof(float));
+        Math::Vec3F *tmp1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+        float *tmp2 = reinterpret_cast<float *>(std::malloc(N * sizeof(float)));
         Math::IrregEllipseF::fillEllipse(tmp1,
                                          tmp2,
                                          _orientation,

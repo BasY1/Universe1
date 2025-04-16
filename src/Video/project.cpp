@@ -12,6 +12,12 @@
 namespace U1 {
 namespace Video {
 
+Project::~Project()
+{
+    for (Footage *f : m_footages)
+        delete f;
+}
+
 bool Project::createVideo(const QString &_workDir, const QString &_fileName) const
 {
     if (m_footages.empty())

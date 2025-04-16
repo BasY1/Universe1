@@ -111,6 +111,7 @@ void ItemCamera::createDataImpl(std::list<OpenGL::Data3D *> &_out, const size_t 
             const float w2 = r * 0.5f * float(c.screenWidth) / mwh;
             const float h2 = r * 0.5f * float(c.screenHeight) / mwh;
             const float zz = r * 0.2f;
+            const float z3 = zz * 0.5f;
             const float ro = std::min(r * 0.3f, std::min(w2, h2) * 0.9f);
             const float hl = std::min(r * 0.1f, std::min(w2, h2) * 0.2f);
             const float rl = (ro * ro + hl * hl) / (2.0f * hl);
@@ -125,10 +126,10 @@ void ItemCamera::createDataImpl(std::list<OpenGL::Data3D *> &_out, const size_t 
             const Math::OrientF os(c.position - cf * rl, cf, cu);
             _out.push_back(OpenGL::Data3DMaterialBase::rectangle(o1, w2, h2, m1, a));
             _out.push_back(OpenGL::Data3DMaterialBase::rectangle(o2, w2, h2, m1, a));
-            _out.push_back(OpenGL::Data3DMaterialBase::rectangle(o3, z2, h2, m1, a));
-            _out.push_back(OpenGL::Data3DMaterialBase::rectangle(o4, z2, h2, m1, a));
-            _out.push_back(OpenGL::Data3DMaterialBase::rectangle(o5, w2, z2, m1, a));
-            _out.push_back(OpenGL::Data3DMaterialBase::rectangle(o6, w2, z2, m1, a));
+            _out.push_back(OpenGL::Data3DMaterialBase::rectangle(o3, z3, h2, m1, a));
+            _out.push_back(OpenGL::Data3DMaterialBase::rectangle(o4, z3, h2, m1, a));
+            _out.push_back(OpenGL::Data3DMaterialBase::rectangle(o5, w2, z3, m1, a));
+            _out.push_back(OpenGL::Data3DMaterialBase::rectangle(o6, w2, z3, m1, a));
             _out.push_back(OpenGL::Data3DMaterialNormal::sphereArc(os, 0, _2PI, 0, al, rl, q, m2, a));
         }
     }
@@ -252,7 +253,7 @@ void ItemCamera::createTexture(std::list<OpenGL::Data3D *> &_out,
         }
         else
         {
-            const Math::Vec3F pp = c.position + cu * (rb * 0.55f);
+            const Math::Vec3F pp = c.position + cu * (rb * 0.55f + uh * 0.5f);
             const Math::Vec3F cf2 = (_mainViewCamera.position - pp).normalized();
             const Math::Vec3F cr2 = Math::Vec3F::cross(cf2, _mainViewCamera.up).normalized();
             const Math::Vec3F cu2 = Math::Vec3F::cross(cr2, cf2).normalized();
@@ -265,10 +266,10 @@ void ItemCamera::createTexture(std::list<OpenGL::Data3D *> &_out,
             {
                 const size_t q = qualityWire.value(_timeStep);
                 const Math::MaterialRGB ml = materialWire.value(_timeStep);
-                const Math::Vec3F p1 = pp + cr2 * (uw * 0.5f) + cu2 * uh;
-                const Math::Vec3F p2 = pp + cr2 * (uw * 0.5f);
-                const Math::Vec3F p3 = pp - cr2 * (uw * 0.5f);
-                const Math::Vec3F p4 = pp - cr2 * (uw * 0.5f) + cu2 * uh;
+                const Math::Vec3F p1 = pp + cr2 * (uw * 0.5f) + cu2 * (uh * 0.5f);
+                const Math::Vec3F p2 = pp + cr2 * (uw * 0.5f) - cu2 * (uh * 0.5f);
+                const Math::Vec3F p3 = pp - cr2 * (uw * 0.5f) - cu2 * (uh * 0.5f);
+                const Math::Vec3F p4 = pp - cr2 * (uw * 0.5f) + cu2 * (uh * 0.5f);
                 _out.push_back(OpenGL::Data3DMaterialNormal::line(p1, p2, lr, lr, q, ml, a));
                 _out.push_back(OpenGL::Data3DMaterialNormal::line(p2, p3, lr, lr, q, ml, a));
                 _out.push_back(OpenGL::Data3DMaterialNormal::line(p3, p4, lr, lr, q, ml, a));

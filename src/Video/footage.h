@@ -50,6 +50,8 @@ class Footage : public Props::ItemPropertyGroup, public Audio::FootageAudio
      */
     Footage(const std::string &_name);
 
+    ~Footage();  //!< Destructor
+
     /*!
      * \brief Returns latest stored time step
      * \return Latest stored (active) time step = footage total duration

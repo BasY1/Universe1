@@ -66,7 +66,7 @@ struct ColorRGB
      */
     inline ColorRGB darker() const
     {
-        ColorRGB result;
+        ColorRGB result = *this;
         result.red /= 2U;
         result.green /= 2U;
         result.blue /= 2U;

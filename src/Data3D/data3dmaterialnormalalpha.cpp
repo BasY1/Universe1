@@ -231,9 +231,9 @@ Data3DMaterialNormalAlpha *Data3DMaterialNormalAlpha::cylinder(const Math::Orien
 {
     const size_t N = Math::CylinderF::cylinderVertexCount(_quality);
 
-    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    float *t3 = reinterpret_cast<float *>(N * sizeof(float));
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    float *t3 = reinterpret_cast<float *>(std::malloc(N * sizeof(float)));
 
     Math::CylinderF::fillCylinderOuter(t1,
                                        t2,
@@ -268,9 +268,9 @@ Data3DMaterialNormalAlpha *Data3DMaterialNormalAlpha::cylinderInn(const Math::Or
 {
     const size_t N = Math::CylinderF::cylinderVertexCount(_quality);
 
-    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    float *t3 = reinterpret_cast<float *>(N * sizeof(float));
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    float *t3 = reinterpret_cast<float *>(std::malloc(N * sizeof(float)));
 
     Math::CylinderF::fillCylinderInner(t1,
                                        t2,
@@ -313,10 +313,10 @@ Data3DMaterialNormalAlpha *Data3DMaterialNormalAlpha::cylinderArc(const Math::Or
     const size_t N = a.size() * (C + 1UL);
     const size_t I = (a.size() - 1UL) * C * 4UL;
 
-    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    float *t3 = reinterpret_cast<float *>(N * sizeof(float));
-    uint *t4 = reinterpret_cast<uint *>(I * sizeof(uint));
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    float *t3 = reinterpret_cast<float *>(std::malloc(N * sizeof(float)));
+    uint *t4 = reinterpret_cast<uint *>(std::malloc(I * sizeof(uint)));
 
     Math::CylinderArcF::fillCylinderOuter(t1,
                                           t2,
@@ -361,10 +361,10 @@ Data3DMaterialNormalAlpha *Data3DMaterialNormalAlpha::cylinderArcInn(const Math:
     const size_t N = a.size() * (C + 1UL);
     const size_t I = (a.size() - 1UL) * C * 4UL;
 
-    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    float *t3 = reinterpret_cast<float *>(N * sizeof(float));
-    uint *t4 = reinterpret_cast<uint *>(I * sizeof(uint));
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    float *t3 = reinterpret_cast<float *>(std::malloc(N * sizeof(float)));
+    uint *t4 = reinterpret_cast<uint *>(std::malloc(I * sizeof(uint)));
 
     Math::CylinderArcF::fillCylinderInner(t1,
                                           t2,

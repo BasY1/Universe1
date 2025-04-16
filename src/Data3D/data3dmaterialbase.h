@@ -258,7 +258,7 @@ class Data3DMaterialBase : public Data3D
                                              const uint8_t _alpha)
     {
         const size_t N = Math::Circle3F::circleVertexCount(_quality);
-        Math::Vec3F *tmp = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
+        Math::Vec3F *tmp = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
         Math::Circle3F::fillCircle(tmp, _orientation, _radius, _quality);
         Data3DMaterialBase *result =
             new Data3DMaterialBase(GL_TRIANGLE_FAN, N, tmp, _orientation.normal1, _material, _alpha);
@@ -285,7 +285,7 @@ class Data3DMaterialBase : public Data3D
                                               const uint8_t _alpha)
     {
         const size_t N = Math::EllipseF::ellipseVertexCount(_quality);
-        Math::Vec3F *tmp = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
+        Math::Vec3F *tmp = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
         Math::EllipseF::fillEllipse(tmp, _orientation, _radius1, _radius2, _quality);
         Data3DMaterialBase *result =
             new Data3DMaterialBase(GL_TRIANGLE_FAN, N, tmp, _orientation.normal1, _material, _alpha);
@@ -316,7 +316,7 @@ class Data3DMaterialBase : public Data3D
                                                    const uint8_t _alpha)
     {
         const size_t N = Math::IrregEllipseF::ellipseVertexCount(_quality);
-        Math::Vec3F *tmp = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
+        Math::Vec3F *tmp = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
         Math::IrregEllipseF::fillEllipse(tmp, _orientation, _radius1P, _radius1M, _radius2P, _radius2M, _quality);
         Data3DMaterialBase *result =
             new Data3DMaterialBase(GL_TRIANGLE_FAN, N, tmp, _orientation.normal1, _material, _alpha);

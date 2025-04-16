@@ -168,6 +168,47 @@ bool ScenarioAudio::createAudio(const SettingsAudio &_settings,
 //
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+ScenarioAudioSox::ScenarioAudioSox(const std::string &_name, const QString &_workDir, const SettingsAudio &_settings)
+    : ScenarioAudio(_name)
+    , workDir(_workDir)
+    , settings(_settings)
+{
+    if (!QDir(_workDir).exists())
+        std::cerr << "ScenarioAudioSox: Invalid working directory:" << qPrintable(_workDir) << "!\n";
+}
+
+bool ScenarioAudioSox::insertSound(const size_t _timeStart, const QStringList &_soxArgs)
+{
+    size_t o = 1UL, h = 0UL;
+    for (const QString &sa : std::as_const(_soxArgs))
+        Math::updateHash(h, o, std::hash<std::string>{}(sa.toStdString()));
+
+    const QString fn = workDir + "sox_" + QString::number(h) + ".wav";
+    if (QFile::exists(fn))
+        return insertAudio(_timeStart, fn, "", 0);
+
+    QStringList args;
+    args << "-n";
+    args << settings.soxArgs();
+    args << fn;
+    args << _soxArgs;
+
+    SettingsAudio::runProcess(SettingsAudio::soxBin, args);
+
+    if (!QFile::exists(fn))
+    {
+        std::cerr << "ScenarioAudioSox[" << name << "]::insertSound(" << _timeStart << ","
+                  << qPrintable(_soxArgs.join("|")) << "): Audio file not exist!\n";
+        return false;
+    }
+
+    return insertAudio(_timeStart, fn, "", 0);
+}
+
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /*!
  * \brief Tool function calculate hash value for TTS setup
  * \param _ttsBin Text-to-speech external program
@@ -217,6 +258,11 @@ ScenarioAudioTTS::ScenarioAudioTTS(const std::string &_name,
     , doubleQuotes(_doubleQuotes)
     , ttsHash(mixHashTTS(_ttsBin, _ttsArgFile, _fileSuffix, _ttsArgs, _addSpace, _doubleQuotes))
 {
+    if (!QFile::exists(ttsBin))
+        std::cerr << "ScenarioAudioTTS: Invalid text-to-speech binary:" << qPrintable(ttsBin) << "!\n";
+
+    if (!QDir(workDir).exists())
+        std::cerr << "ScenarioAudioTTS: Invalid working directory:" << qPrintable(workDir) << "!\n";
 }
 
 bool ScenarioAudioTTS::insertSpeech(const size_t _timeStart,

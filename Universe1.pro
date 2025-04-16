@@ -1,8 +1,12 @@
-QT     += core gui widgets multimedia opengl openglwidgets
+QT     += core gui widgets opengl openglwidgets multimedia
 
 CONFIG += c++17
 
-LIBS += -lgtest
+#DEFINES += U1_UNIT_TESTS
+
+contains ( DEFINES, U1_UNIT_TESTS) {
+    LIBS += -lgtest
+}
 
 # RESOURCES = resources.qrc
 
@@ -184,5 +188,8 @@ SOURCES += src/Video/project.cpp
 
 SOURCES += src/main.cpp
 
+SOURCES += src/Examples/example_triangle.cc
 
-SOURCES += src/UnitTests/test_math.cc
+contains ( DEFINES, U1_UNIT_TESTS) {
+    SOURCES += src/UnitTests/test_math.cc
+}

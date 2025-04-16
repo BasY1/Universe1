@@ -178,9 +178,9 @@ Data3DMaterialNormal *Data3DMaterialNormal::sphere(const Math::OrientF &_orienta
     const size_t N = Math::SphereF::sphereVertexCount(_quality);
     const size_t I = Math::SphereF::sphereIndexCount(_quality);
 
-    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    uint *t3 = reinterpret_cast<uint *>(I * sizeof(uint));
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    uint *t3 = reinterpret_cast<uint *>(std::malloc(I * sizeof(uint)));
 
     Math::SphereF::fillSphereOuter(t1, t2, t3, _orientation, _radius, _quality);
 
@@ -202,9 +202,9 @@ Data3DMaterialNormal *Data3DMaterialNormal::sphereInn(const Math::OrientF &_orie
     const size_t N = Math::SphereF::sphereVertexCount(_quality);
     const size_t I = Math::SphereF::sphereIndexCount(_quality);
 
-    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    uint *t3 = reinterpret_cast<uint *>(I * sizeof(uint));
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    uint *t3 = reinterpret_cast<uint *>(std::malloc(I * sizeof(uint)));
 
     Math::SphereF::fillSphereInner(t1, t2, t3, _orientation, _radius, _quality);
 
@@ -233,9 +233,9 @@ Data3DMaterialNormal *Data3DMaterialNormal::sphereArc(const Math::OrientF &_orie
     const size_t N = alo.size() * ala.size();
     const size_t I = (alo.size() - 1UL) * (ala.size() - 1UL) * 4UL;
 
-    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    uint *t3 = reinterpret_cast<uint *>(I * sizeof(uint));
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    uint *t3 = reinterpret_cast<uint *>(std::malloc(I * sizeof(uint)));
 
     Math::SphereF::fillSphereArcOuter(t1, t2, t3, _orientation, _radius, alo, ala);
 
@@ -264,9 +264,9 @@ Data3DMaterialNormal *Data3DMaterialNormal::sphereArcInn(const Math::OrientF &_o
     const size_t N = alo.size() * ala.size();
     const size_t I = (alo.size() - 1UL) * (ala.size() - 1UL) * 4UL;
 
-    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    uint *t3 = reinterpret_cast<uint *>(I * sizeof(uint));
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    uint *t3 = reinterpret_cast<uint *>(std::malloc(I * sizeof(uint)));
 
     Math::SphereF::fillSphereArcInner(t1, t2, t3, _orientation, _radius, alo, ala);
 
@@ -290,9 +290,9 @@ Data3DMaterialNormal *Data3DMaterialNormal::ellipsoid(const Math::OrientF &_orie
     const size_t N = Math::EllipsoidF::ellipsoidVertexCount(_quality);
     const size_t I = Math::EllipsoidF::ellipsoidIndexCount(_quality);
 
-    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    uint *t3 = reinterpret_cast<uint *>(I * sizeof(uint));
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    uint *t3 = reinterpret_cast<uint *>(std::malloc(I * sizeof(uint)));
 
     Math::EllipsoidF::fillEllipsoidOuter(t1, t2, t3, _orientation, _radius1, _radius2, _radius3, _quality);
 
@@ -316,9 +316,9 @@ Data3DMaterialNormal *Data3DMaterialNormal::ellipsoidInn(const Math::OrientF &_o
     const size_t N = Math::EllipsoidF::ellipsoidVertexCount(_quality);
     const size_t I = Math::EllipsoidF::ellipsoidIndexCount(_quality);
 
-    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    uint *t3 = reinterpret_cast<uint *>(I * sizeof(uint));
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    uint *t3 = reinterpret_cast<uint *>(std::malloc(I * sizeof(uint)));
 
     Math::EllipsoidF::fillEllipsoidInner(t1, t2, t3, _orientation, _radius1, _radius2, _radius3, _quality);
 
@@ -349,9 +349,9 @@ Data3DMaterialNormal *Data3DMaterialNormal::ellipsoidArc(const Math::OrientF &_o
     const size_t N = alo.size() * ala.size();
     const size_t I = (alo.size() - 1UL) * (ala.size() - 1UL) * 4UL;
 
-    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    uint *t3 = reinterpret_cast<uint *>(I * sizeof(uint));
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    uint *t3 = reinterpret_cast<uint *>(std::malloc(I * sizeof(uint)));
 
     Math::EllipsoidF::fillEllipsoidArcOuter(t1, t2, t3, _orientation, _radius1, _radius2, _radius3, alo, ala);
 
@@ -382,9 +382,9 @@ Data3DMaterialNormal *Data3DMaterialNormal::ellipsoidArcInn(const Math::OrientF 
     const size_t N = alo.size() * ala.size();
     const size_t I = (alo.size() - 1UL) * (ala.size() - 1UL) * 4UL;
 
-    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    uint *t3 = reinterpret_cast<uint *>(I * sizeof(uint));
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    uint *t3 = reinterpret_cast<uint *>(std::malloc(I * sizeof(uint)));
 
     Math::EllipsoidF::fillEllipsoidArcInner(t1, t2, t3, _orientation, _radius1, _radius2, _radius3, alo, ala);
 
@@ -411,9 +411,9 @@ Data3DMaterialNormal *Data3DMaterialNormal::irregEllipsoid(const Math::OrientF &
     const size_t N = Math::IrregEllipsoidF::ellipsoidVertexCount(_quality);
     const size_t I = Math::IrregEllipsoidF::ellipsoidIndexCount(_quality);
 
-    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    uint *t3 = reinterpret_cast<uint *>(I * sizeof(uint));
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    uint *t3 = reinterpret_cast<uint *>(std::malloc(I * sizeof(uint)));
 
     Math::IrregEllipsoidF::fillEllipsoidOuter(
         t1, t2, t3, _orientation, _radius1P, _radius1M, _radius2P, _radius2M, _radius3P, _radius3M, _quality);
@@ -441,9 +441,9 @@ Data3DMaterialNormal *Data3DMaterialNormal::irregEllipsoidInn(const Math::Orient
     const size_t N = Math::IrregEllipsoidF::ellipsoidVertexCount(_quality);
     const size_t I = Math::IrregEllipsoidF::ellipsoidIndexCount(_quality);
 
-    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    uint *t3 = reinterpret_cast<uint *>(I * sizeof(uint));
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    uint *t3 = reinterpret_cast<uint *>(std::malloc(I * sizeof(uint)));
 
     Math::IrregEllipsoidF::fillEllipsoidInner(
         t1, t2, t3, _orientation, _radius1P, _radius1M, _radius2P, _radius2M, _radius3P, _radius3M, _quality);
@@ -478,9 +478,9 @@ Data3DMaterialNormal *Data3DMaterialNormal::irregEllipsoidArc(const Math::Orient
     const size_t N = alo.size() * ala.size();
     const size_t I = (alo.size() - 1UL) * (ala.size() - 1UL) * 4UL;
 
-    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    uint *t3 = reinterpret_cast<uint *>(I * sizeof(uint));
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    uint *t3 = reinterpret_cast<uint *>(std::malloc(I * sizeof(uint)));
 
     Math::IrregEllipsoidF::fillEllipsoidArcOuter(
         t1, t2, t3, _orientation, _radius1P, _radius1M, _radius2P, _radius2M, _radius3P, _radius3M, alo, ala);
@@ -515,9 +515,9 @@ Data3DMaterialNormal *Data3DMaterialNormal::irregEllipsoidArcInn(const Math::Ori
     const size_t N = alo.size() * ala.size();
     const size_t I = (alo.size() - 1UL) * (ala.size() - 1UL) * 4UL;
 
-    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    uint *t3 = reinterpret_cast<uint *>(I * sizeof(uint));
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    uint *t3 = reinterpret_cast<uint *>(std::malloc(I * sizeof(uint)));
 
     Math::IrregEllipsoidF::fillEllipsoidArcInner(
         t1, t2, t3, _orientation, _radius1P, _radius1M, _radius2P, _radius2M, _radius3P, _radius3M, alo, ala);
@@ -541,8 +541,8 @@ Data3DMaterialNormal *Data3DMaterialNormal::cylinder(const Math::OrientF &_orien
 {
     const size_t N = Math::CylinderF::cylinderVertexCount(_quality);
 
-    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
 
     Math::CylinderF::fillCylinderOuter(t1, t2, _orientation, _length, _radius1, _radius2, _quality);
 
@@ -565,8 +565,8 @@ Data3DMaterialNormal *Data3DMaterialNormal::cylinderInn(const Math::OrientF &_or
 {
     const size_t N = Math::CylinderF::cylinderVertexCount(_quality);
 
-    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
 
     Math::CylinderF::fillCylinderInner(t1, t2, _orientation, _length, _radius1, _radius2, _quality);
 
@@ -597,9 +597,9 @@ Data3DMaterialNormal *Data3DMaterialNormal::cylinderArc(const Math::OrientF &_or
     const size_t N = a.size() * (C + 1UL);
     const size_t I = (a.size() - 1UL) * C * 4UL;
 
-    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    uint *t3 = reinterpret_cast<uint *>(I * sizeof(uint));
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    uint *t3 = reinterpret_cast<uint *>(std::malloc(I * sizeof(uint)));
 
     Math::CylinderArcF::fillCylinderOuter(
         t1, t2, t3, _orientation, _radiusArc, _radius1, _radius2, _qualityCylinder, a);
@@ -631,9 +631,9 @@ Data3DMaterialNormal *Data3DMaterialNormal::cylinderArcInn(const Math::OrientF &
     const size_t N = a.size() * (C + 1UL);
     const size_t I = (a.size() - 1UL) * C * 4UL;
 
-    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    uint *t3 = reinterpret_cast<uint *>(I * sizeof(uint));
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    uint *t3 = reinterpret_cast<uint *>(std::malloc(I * sizeof(uint)));
 
     Math::CylinderArcF::fillCylinderInner(
         t1, t2, t3, _orientation, _radiusArc, _radius1, _radius2, _qualityCylinder, a);

@@ -71,8 +71,8 @@ struct SettingsSubtitles
     bool upperCase = false;             //!< Flag for always overwrite subtitles with its upper-case version
     QColor fontColor = Qt::white;       //!< Subtitles color
     QString fontFamily = "Sans Serif";  //!< Subtitles font
-    uint fontHeight = 48;               //!< Subtitles font height [6|7|8|9|10|11|12|14|16|18|20|22|24|26|28|36|48|72]
-    uint bottomOffset = 50;             //!< Subtitles offset from the bottom of the screen
+    uint fontHeight = 24;               //!< Subtitles font height [6|7|8|9|10|11|12|14|16|18|20|22|24|26|28|36|48|72]
+    uint bottomOffset = 24;             //!< Subtitles offset from the bottom of the screen
 
     /*!
      * \brief To hash value

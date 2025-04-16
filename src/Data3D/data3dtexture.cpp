@@ -159,9 +159,9 @@ Data3DTexture *Data3DTexture::sphere(QOpenGLTexture *_texture,
     const size_t N = Math::SphereF::sphereVertexCount(_quality);
     const size_t I = Math::SphereF::sphereIndexCount(_quality);
 
-    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    Math::Vec2F *t2 = reinterpret_cast<Math::Vec2F *>(N * sizeof(Math::Vec2F));
-    uint *t3 = reinterpret_cast<uint *>(I * sizeof(uint));
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec2F *t2 = reinterpret_cast<Math::Vec2F *>(std::malloc(N * sizeof(Math::Vec2F)));
+    uint *t3 = reinterpret_cast<uint *>(std::malloc(I * sizeof(uint)));
 
     Math::SphereF::fillSphereOuter(t1, t2, t3, _orientation, _radius, _quality);
 
@@ -183,9 +183,9 @@ Data3DTexture *Data3DTexture::sphereInn(QOpenGLTexture *_texture,
     const size_t N = Math::SphereF::sphereVertexCount(_quality);
     const size_t I = Math::SphereF::sphereIndexCount(_quality);
 
-    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-    Math::Vec2F *t2 = reinterpret_cast<Math::Vec2F *>(N * sizeof(Math::Vec2F));
-    uint *t3 = reinterpret_cast<uint *>(I * sizeof(uint));
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec2F *t2 = reinterpret_cast<Math::Vec2F *>(std::malloc(N * sizeof(Math::Vec2F)));
+    uint *t3 = reinterpret_cast<uint *>(std::malloc(I * sizeof(uint)));
 
     Math::SphereF::fillSphereInner(t1, t2, t3, _orientation, _radius, _quality);
 

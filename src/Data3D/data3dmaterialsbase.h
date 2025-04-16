@@ -366,11 +366,11 @@ class Data3DMaterialsBase : public Data3D
                                               const uint8_t _alpha)
     {
         const size_t N = Math::Circle3F::circleVertexCount(_quality);
-        Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-        Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-        Math::Vec3F *t3 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-        Math::Vec3F *t4 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-        float *t5 = reinterpret_cast<float *>(N * sizeof(float));
+        Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+        Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+        Math::Vec3F *t3 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+        Math::Vec3F *t4 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+        float *t5 = reinterpret_cast<float *>(std::malloc(N * sizeof(float)));
 
         Math::Circle3F::fillCircle(t1,
                                    t2,
@@ -422,11 +422,11 @@ class Data3DMaterialsBase : public Data3D
                                                const uint8_t _alpha)
     {
         const size_t N = Math::EllipseF::ellipseVertexCount(_quality);
-        Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-        Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-        Math::Vec3F *t3 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-        Math::Vec3F *t4 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-        float *t5 = reinterpret_cast<float *>(N * sizeof(float));
+        Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+        Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+        Math::Vec3F *t3 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+        Math::Vec3F *t4 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+        float *t5 = reinterpret_cast<float *>(std::malloc(N * sizeof(float)));
 
         Math::EllipseF::fillEllipse(t1,
                                     t2,
@@ -483,11 +483,11 @@ class Data3DMaterialsBase : public Data3D
                                                     const uint8_t _alpha)
     {
         const size_t N = Math::IrregEllipseF::ellipseVertexCount(_quality);
-        Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-        Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-        Math::Vec3F *t3 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-        Math::Vec3F *t4 = reinterpret_cast<Math::Vec3F *>(N * sizeof(Math::Vec3F));
-        float *t5 = reinterpret_cast<float *>(N * sizeof(float));
+        Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+        Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+        Math::Vec3F *t3 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+        Math::Vec3F *t4 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+        float *t5 = reinterpret_cast<float *>(std::malloc(N * sizeof(float)));
 
         Math::IrregEllipseF::fillEllipse(t1,
                                          t2,

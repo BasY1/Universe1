@@ -8,12 +8,6 @@
 namespace U1 {
 namespace Props {
 
-ItemPropertyGroup::~ItemPropertyGroup()
-{
-    for (ItemProperty *ip : m_itemProperties)
-        delete ip;
-}
-
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ItemProperty::PropertyType ItemPropertyGroup::type() const

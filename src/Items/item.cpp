@@ -15,6 +15,8 @@
 namespace U1 {
 namespace Items {
 
+QString ItemDefaultValues::latexWorkDir = QString(".") + QDir::separator();
+
 size_t ItemDefaultValues::sphereQuality = 15UL;
 size_t ItemDefaultValues::lineQuality = 3UL;
 
@@ -26,10 +28,8 @@ float ItemDefaultValues::arrowRadius = 0.025F;
 QColor ItemDefaultValues::lineColor = QColor(255, 255, 255);
 QColor ItemDefaultValues::textColor = QColor(255, 255, 255);
 
-QString ItemDefaultValues::latexWorkDir = QString(".") + QDir::separator();
-
 QString ItemDefaultValues::textFont = "Sans Serif";
-uint ItemDefaultValues::fontHeight = 20;
+uint ItemDefaultValues::fontHeight = 24;
 
 Item::Item(const std::string &_name, const uint8_t _alpha, const bool _visible)
     : Props::ItemPropertyGroup(_name)
