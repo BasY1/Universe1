@@ -143,16 +143,9 @@ void ItemTriangle::createDataImpl(std::list<OpenGL::Data3D *> &_data, const size
             if (mw.alpha > 0U)
             {
                 const size_t q = qualityWire.value(_timeStep);
-                const float d1 = p1.distanceToPoint(p2);
-                const float d2 = p2.distanceToPoint(p3);
-                const float d3 = p3.distanceToPoint(p1);
-                const Math::Vec3F N = Math::Vec3F::cross((p2 - p1), (p3 - p1)).normalized();
-                const Math::OrientF o1(p1, (p2 - p1) / d1, N);
-                const Math::OrientF o2(p2, (p3 - p2) / d2, N);
-                const Math::OrientF o3(p3, (p1 - p3) / d3, N);
-                _data.push_back(OpenGL::Data3DMaterialNormal::cylinder(o1, d1, r, r, q, mw));
-                _data.push_back(OpenGL::Data3DMaterialNormal::cylinder(o2, d2, r, r, q, mw));
-                _data.push_back(OpenGL::Data3DMaterialNormal::cylinder(o3, d3, r, r, q, mw));
+                _data.push_back(OpenGL::Data3DMaterialNormal::line(p1, p2, r, r, q, mw));
+                _data.push_back(OpenGL::Data3DMaterialNormal::line(p2, p3, r, r, q, mw));
+                _data.push_back(OpenGL::Data3DMaterialNormal::line(p3, p1, r, r, q, mw));
             }
         }
     }

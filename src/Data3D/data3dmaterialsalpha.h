@@ -344,6 +344,57 @@ class Data3DMaterialsAlpha : public Data3D
      * \param _orientation Orientation of rectangle in space
      * \param _radius1 Radius 1 (within the \c normal2 in \a _orientation)
      * \param _radius2 Radius 2 (within the \c normal3 in \a _orientation)
+     * \param _material1 Material with alpha for vertex 1
+     * \param _material2 Material with alpha for vertex 2
+     * \param _material3 Material with alpha for vertex 3
+     * \param _material4 Material with alpha for vertex 4
+     * \return 3D rectangle object
+     */
+    inline static Data3DMaterialsAlpha *rectangle(const Math::OrientF &_orientation,
+                                                  const float _radius1,
+                                                  const float _radius2,
+                                                  const Math::MaterialRGBA &_material1,
+                                                  const Math::MaterialRGBA &_material2,
+                                                  const Math::MaterialRGBA &_material3,
+                                                  const Math::MaterialRGBA &_material4)
+    {
+        const std::vector<Math::Vec3F> t1 = {
+            _orientation.center - _orientation.normal2 * _radius1 + _orientation.normal3 * _radius2,
+            _orientation.center - _orientation.normal2 * _radius1 - _orientation.normal3 * _radius2,
+            _orientation.center + _orientation.normal2 * _radius1 - _orientation.normal3 * _radius2,
+            _orientation.center + _orientation.normal2 * _radius1 + _orientation.normal3 * _radius2};
+        const std::vector<Math::Vec3F> t2 = {_material1.ambient.toVec3F(),
+                                             _material2.ambient.toVec3F(),
+                                             _material3.ambient.toVec3F(),
+                                             _material4.ambient.toVec3F()};
+        const std::vector<Math::Vec3F> t3 = {_material1.diffuse.toVec3F(),
+                                             _material2.diffuse.toVec3F(),
+                                             _material3.diffuse.toVec3F(),
+                                             _material4.diffuse.toVec3F()};
+        const std::vector<Math::Vec3F> t4 = {_material1.specular.toVec3F(),
+                                             _material2.specular.toVec3F(),
+                                             _material3.specular.toVec3F(),
+                                             _material4.specular.toVec3F()};
+        const std::vector<float> t5 = {_material1.shine, _material2.shine, _material3.shine, _material4.shine};
+
+        const std::vector<float> t6 = {float(_material1.alpha) / 255.0f,
+                                       float(_material2.alpha) / 255.0f,
+                                       float(_material3.alpha) / 255.0f,
+                                       float(_material4.alpha) / 255.0f};
+
+        Data3DMaterialsAlpha *result = new Data3DMaterialsAlpha(
+            GL_QUADS, 4UL, t1.data(), t2.data(), t3.data(), t4.data(), t5.data(), t6.data(), _orientation.normal1);
+        result->setCentralPoint(_orientation.center);
+        result->setTransparent(_material1.alpha != 255U || _material2.alpha != 255U || _material3.alpha != 255U ||
+                               _material4.alpha != 255U);
+        return result;
+    }
+
+    /*!
+     * \brief Create a rectangle 3D object
+     * \param _orientation Orientation of rectangle in space
+     * \param _radius1 Radius 1 (within the \c normal2 in \a _orientation)
+     * \param _radius2 Radius 2 (within the \c normal3 in \a _orientation)
      * \param _material1 Material for vertex 1
      * \param _material2 Material for vertex 2
      * \param _material3 Material for vertex 3
@@ -366,33 +417,13 @@ class Data3DMaterialsAlpha : public Data3D
                                                   const uint8_t _alpha3,
                                                   const uint8_t _alpha4)
     {
-        const std::vector<Math::Vec3F> t1 = {
-            _orientation.center - _orientation.normal2 * _radius1 + _orientation.normal3 * _radius2,
-            _orientation.center - _orientation.normal2 * _radius1 - _orientation.normal3 * _radius2,
-            _orientation.center + _orientation.normal2 * _radius1 - _orientation.normal3 * _radius2,
-            _orientation.center + _orientation.normal2 * _radius1 + _orientation.normal3 * _radius2};
-        const std::vector<Math::Vec3F> t2 = {_material1.ambient.toVec3F(),
-                                             _material2.ambient.toVec3F(),
-                                             _material3.ambient.toVec3F(),
-                                             _material4.ambient.toVec3F()};
-        const std::vector<Math::Vec3F> t3 = {_material1.diffuse.toVec3F(),
-                                             _material2.diffuse.toVec3F(),
-                                             _material3.diffuse.toVec3F(),
-                                             _material4.diffuse.toVec3F()};
-        const std::vector<Math::Vec3F> t4 = {_material1.specular.toVec3F(),
-                                             _material2.specular.toVec3F(),
-                                             _material3.specular.toVec3F(),
-                                             _material4.specular.toVec3F()};
-        const std::vector<float> t5 = {_material1.shine, _material2.shine, _material3.shine, _material4.shine};
-
-        const std::vector<float> t6 = {
-            float(_alpha1) / 255.0f, float(_alpha2) / 255.0f, float(_alpha3) / 255.0f, float(_alpha4) / 255.0f};
-
-        Data3DMaterialsAlpha *result = new Data3DMaterialsAlpha(
-            GL_QUADS, 4UL, t1.data(), t2.data(), t3.data(), t4.data(), t5.data(), t6.data(), _orientation.normal1);
-        result->setCentralPoint(_orientation.center);
-        result->setTransparent(_alpha1 != 255U || _alpha2 != 255U || _alpha3 != 255U || _alpha4 != 255U);
-        return result;
+        return rectangle(_orientation,
+                         _radius1,
+                         _radius2,
+                         {_material1, _alpha1},
+                         {_material2, _alpha2},
+                         {_material3, _alpha3},
+                         {_material4, _alpha4});
     }
 
     /*!

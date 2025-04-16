@@ -173,6 +173,9 @@ SOURCES += src/Items/itemcamera.cpp
 HEADERS += src/Items/Triangle/itemtriangle.h
 SOURCES += src/Items/Triangle/itemtriangle.cpp
 
+HEADERS += src/Items/Rectangle/itemrectangle.h
+SOURCES += src/Items/Rectangle/itemrectangle.cpp
+
 ######################################################
 
 HEADERS += src/Video/settingsvideo.h
@@ -189,6 +192,7 @@ SOURCES += src/Video/project.cpp
 SOURCES += src/main.cpp
 
 SOURCES += src/Examples/example_triangle.cc
+SOURCES += src/Examples/example_rectangle.cc
 
 contains ( DEFINES, U1_UNIT_TESTS) {
     SOURCES += src/UnitTests/test_math.cc

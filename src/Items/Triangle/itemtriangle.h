@@ -9,7 +9,6 @@
 #include "../item3d.h"
 
 #include "../../ItemProps/itempropertyenum.h"
-#include "../../ItemProps/itempropertyvec3.h"
 #include "../../ItemProps/itempropertymaterial.h"
 
 namespace U1 {
