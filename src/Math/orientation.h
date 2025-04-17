@@ -74,6 +74,29 @@ struct Orientation
     }
 
     /*!
+     * \brief Invert all normals
+     * \return This orientation object
+     */
+    inline Orientation<T> &invert()
+    {
+        normal1.invert();
+        normal2.invert();
+        normal3.invert();
+        return *this;
+    }
+
+    /*!
+     * \brief Invert major and secondary normal
+     * \return This orientation object
+     */
+    inline Orientation<T> &invert12()
+    {
+        normal1.invert();
+        normal2.invert();
+        return *this;
+    }
+
+    /*!
      * \brief Test if this is a right-handed orientation
      * \return \c true for right-handed orientation
      */

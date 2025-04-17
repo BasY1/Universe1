@@ -44,6 +44,15 @@ enum ShowCircleCameraType : int
 };
 Q_ENUM_NS(ShowCircleCameraType)
 
+/*! \brief Circle wire-frame modes */
+enum ShowCircleWireType : int
+{
+    CircleWireHidden,  //!< Circle wire-frame hidden
+    CircleWireBorder,  //!< Show border wire
+    CircleWireFull,    //!< Show full wire-frame plane
+};
+Q_ENUM_NS(ShowCircleWireType)
+
 }  // namespace Circle
 
 /*! \brief Dynamic circle video item */
@@ -63,8 +72,9 @@ class ItemCircle : public Item3DExt
     Props::ItemPropertyMaterialRGBA materialCenterBack;   //!< Center back side material
     Props::ItemPropertyMaterialRGBA materialBorderBack;   //!< Border back side material
 
-    Props::ItemPropertyBool showWire;              //!< Show circle wire-frame
+    Props::ItemPropertyEnum showWire;              //!< Show circle wire-frame
     Props::ItemPropertyFloat radiusWire;           //!< Wire radius
+    Props::ItemPropertyFloat stepWire;             //!< Wire-frame matrix step
     Props::ItemPropertyQuality qualityWire;        //!< Wire circle quality
     Props::ItemPropertyMaterialRGBA materialWire;  //!< Wire-frame material
 
@@ -86,6 +96,7 @@ class ItemCircle : public Item3DExt
      * \param _materialBorderBack  Initial value for border back side material
      * \param _materialWire Initial value for wire material
      * \param _radiusWire Initial value for wire radius
+     * \param _stepWire Initial value for wire-frame matrix step
      * \param _qualityWire Initial value for wire circle quality
      * \param _alpha Initial value for general alpha
      * \param _visible Initial value for visible flag
@@ -97,7 +108,7 @@ class ItemCircle : public Item3DExt
                const float _radius = 0.5f,
                const size_t _quality = ItemDefaultValues::sphereQuality,
                const Circle::ShowCircleType _show = Circle::CircleFrontBack,
-               const bool _showWire = false,
+               const Circle::ShowCircleWireType _showWire = Circle::CircleWireHidden,
                const Math::MaterialRGB &_materialFront = {Qt::white},
                const Math::MaterialRGB &_materialBack = {Qt::lightGray},
                const Math::MaterialRGBA &_materialCenterFront = {Qt::red},
@@ -106,6 +117,7 @@ class ItemCircle : public Item3DExt
                const Math::MaterialRGBA &_materialBorderBack = {Qt::white},
                const Math::MaterialRGBA &_materialWire = {ItemDefaultValues::lineColor},
                const float _radiusWire = ItemDefaultValues::lineRadius,
+               const float _stepWire = 0.5f,
                const size_t _qualityWire = ItemDefaultValues::lineQuality,
                const uint8_t _alpha = 255U,
                const bool _visible = true);
@@ -132,8 +144,9 @@ class ItemCircleCamera : public Item3D
     Props::ItemPropertyMaterialRGBA materialCenter;  //!< Vertex 1 material
     Props::ItemPropertyMaterialRGBA materialBorder;  //!< Vertex 2 material
 
-    Props::ItemPropertyBool showWire;              //!< Show circle wire-frame
+    Props::ItemPropertyEnum showWire;              //!< Show circle wire-frame
     Props::ItemPropertyFloat radiusWire;           //!< Wire radius
+    Props::ItemPropertyFloat stepWire;             //!< Wire-frame matrix step
     Props::ItemPropertyQuality qualityWire;        //!< Wire circle quality
     Props::ItemPropertyMaterialRGBA materialWire;  //!< Wire-frame material
 
@@ -150,6 +163,7 @@ class ItemCircleCamera : public Item3D
      * \param _materialBorder Initial value for border material
      * \param _materialWire Initial value for wire material
      * \param _radiusWire Initial value for wire radius
+     * \param _stepWire Initial value for wire-frame matrix step
      * \param _qualityWire Initial value for wire circle quality
      * \param _alpha Initial value for general alpha
      * \param _visible Initial value for visible flag
@@ -159,12 +173,13 @@ class ItemCircleCamera : public Item3D
                      const float _radius = 0.5f,
                      const size_t _quality = ItemDefaultValues::sphereQuality,
                      const Circle::ShowCircleCameraType _show = Circle::CircleCameraSingle,
-                     const bool _showWire = false,
+                     const Circle::ShowCircleWireType _showWire = Circle::CircleWireHidden,
                      const Math::MaterialRGB &_material = {Qt::white},
                      const Math::MaterialRGBA &_materialCenter = {Qt::red},
                      const Math::MaterialRGBA &_materialBorder = {Qt::green},
                      const Math::MaterialRGBA &_materialWire = {ItemDefaultValues::lineColor},
                      const float _radiusWire = ItemDefaultValues::lineRadius,
+                     const float _stepWire = 0.5f,
                      const size_t _qualityWire = ItemDefaultValues::lineQuality,
                      const uint8_t _alpha = 255U,
                      const bool _visible = true);

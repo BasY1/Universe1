@@ -24,6 +24,7 @@ Q_NAMESPACE
 /*! \brief Show rectangle modes */
 enum ShowRectangleType : int
 {
+    RectangleHidden,            //!< Rectangle plane hidden
     RectangleFrontBack,         //!< Show single color rectangle visible from both front and back
     RectangleFront,             //!< Show single color rectangle visible from front
     RectangleBack,              //!< Show single color rectangle visible from back
@@ -39,11 +40,21 @@ Q_ENUM_NS(ShowRectangleType)
 /*! \brief Show camera rectangle modes */
 enum ShowRectangleCameraType : int
 {
+    RectangleCameraHidden,   //!< Rectangle plane hidden
     RectangleCameraSingle,   //!< Show single color rectangle
     RectangleCameraVertex,   //!< Show per vertex color rectangle
     RectangleCameraTexture,  //!< Show texture
 };
 Q_ENUM_NS(ShowRectangleCameraType)
+
+/*! \brief Rectangle wire-frame modes */
+enum ShowRectangleWireType : int
+{
+    RectangleWireHidden,  //!< Rectangle wire-frame hidden
+    RectangleWireBorder,  //!< Show border wire
+    RectangleWireFull,    //!< Show full wire-frame plane
+};
+Q_ENUM_NS(ShowRectangleWireType)
 
 }  // namespace Rectangle
 
@@ -68,8 +79,9 @@ class ItemRectangle : public Item3DExt
 
     Props::ItemPropertyText textureImage;  //!< Path to the texture image file
 
-    Props::ItemPropertyBool showWire;              //!< Show rectangle wire-frame
+    Props::ItemPropertyEnum showWire;              //!< Show rectangle wire-frame
     Props::ItemPropertyFloat radiusWire;           //!< Wire radius
+    Props::ItemPropertyFloat stepWire;             //!< Wire-frame matrix step
     Props::ItemPropertyQuality qualityWire;        //!< Wire circle quality
     Props::ItemPropertyMaterialRGBA materialWire;  //!< Wire-frame material
 
@@ -96,6 +108,7 @@ class ItemRectangle : public Item3DExt
      * \param _material4Back Initial value for vertex 4 back side material
      * \param _materialWire Initial value for wire material
      * \param _radiusWire Initial value for wire radius
+     * \param _stepWire Initial value for wire-frame matrix step
      * \param _qualityWire Initial value for wire circle quality
      * \param _alpha Initial value for general alpha
      * \param _visible Initial value for visible flag
@@ -107,7 +120,7 @@ class ItemRectangle : public Item3DExt
                   const float _radius1 = 1.0f,
                   const float _radius2 = 0.5f,
                   const Rectangle::ShowRectangleType _show = Rectangle::RectangleFrontBack,
-                  const bool _showWire = false,
+                  const Rectangle::ShowRectangleWireType _showWire = Rectangle::RectangleWireHidden,
                   const QString &_textureImage = "",
                   const Math::MaterialRGB &_materialFront = {Qt::white},
                   const Math::MaterialRGB &_materialBack = {Qt::lightGray},
@@ -121,6 +134,7 @@ class ItemRectangle : public Item3DExt
                   const Math::MaterialRGBA &_material4Back = {Qt::gray},
                   const Math::MaterialRGBA &_materialWire = {ItemDefaultValues::lineColor},
                   const float _radiusWire = ItemDefaultValues::lineRadius,
+                  const float _stepWire = 0.5f,
                   const size_t _qualityWire = ItemDefaultValues::lineQuality,
                   const uint8_t _alpha = 255U,
                   const bool _visible = true);
@@ -151,8 +165,9 @@ class ItemRectangleCamera : public Item3D
     Props::ItemPropertyMaterialRGBA material4;  //!< Vertex 3 material
     Props::ItemPropertyText textureImage;       //!< Path to the texture image file
 
-    Props::ItemPropertyBool showWire;              //!< Show rectangle wire-frame
+    Props::ItemPropertyEnum showWire;              //!< Show rectangle wire-frame
     Props::ItemPropertyFloat radiusWire;           //!< Wire radius
+    Props::ItemPropertyFloat stepWire;             //!< Wire-frame matrix step
     Props::ItemPropertyQuality qualityWire;        //!< Wire circle quality
     Props::ItemPropertyMaterialRGBA materialWire;  //!< Wire-frame material
 
@@ -173,6 +188,7 @@ class ItemRectangleCamera : public Item3D
      * \param _material4 Initial value for vertex 4 material
      * \param _materialWire Initial value for wire material
      * \param _radiusWire Initial value for wire radius
+     * \param _stepWire Initial value for wire-frame matrix step
      * \param _qualityWire Initial value for wire circle quality
      * \param _alpha Initial value for general alpha
      * \param _visible Initial value for visible flag
@@ -183,7 +199,7 @@ class ItemRectangleCamera : public Item3D
                         const float _radius2 = 0.5f,
                         const float _spin = 0.5f,
                         const Rectangle::ShowRectangleCameraType _show = Rectangle::RectangleCameraSingle,
-                        const bool _showWire = false,
+                        const Rectangle::ShowRectangleWireType _showWire = Rectangle::RectangleWireHidden,
                         const QString &_textureImage = "",
                         const Math::MaterialRGB &_material = {Qt::white},
                         const Math::MaterialRGBA &_material1 = {Qt::red},
@@ -192,6 +208,7 @@ class ItemRectangleCamera : public Item3D
                         const Math::MaterialRGBA &_material4 = {Qt::white},
                         const Math::MaterialRGBA &_materialWire = {ItemDefaultValues::lineColor},
                         const float _radiusWire = ItemDefaultValues::lineRadius,
+                        const float _stepWire = 0.5f,
                         const size_t _qualityWire = ItemDefaultValues::lineQuality,
                         const uint8_t _alpha = 255U,
                         const bool _visible = true);

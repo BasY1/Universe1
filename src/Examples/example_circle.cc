@@ -77,8 +77,11 @@ bool exampleCircle(const QString &_workDir)
     rect1->show.initValue(Circle::CircleBorderFrontBack);
     rect2->show.initValue(Circle::CircleCameraBorder);
 
-    rect1->showWire.initOn();
-    rect2->showWire.initOn();
+    rect1->stepWire.initValue(0.2f);
+    rect2->stepWire.initValue(0.2f);
+
+    rect1->showWire.initValue(Circle::CircleWireFull);
+    rect2->showWire.initValue(Circle::CircleWireFull);
 
     footage1->addCamera("Camera 1", {+2, 0, 0});
     footage1->addCamera("Camera 2", {-2, 0, 0});

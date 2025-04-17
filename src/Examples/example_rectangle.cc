@@ -85,10 +85,14 @@ bool exampleRectangle(const QString &_workDir, const QString &_img = "")
         rect2->show.initValue(Rectangle::RectangleCameraVertex);
     }
 
-    rect1->showWire.initOn();
+    rect1->stepWire.initValue(0.2f);
+    rect2->stepWire.initValue(0.2f);
+
+    rect1->showWire.initValue(Rectangle::RectangleWireFull);
+    rect2->showWire.initValue(Rectangle::RectangleWireFull);
+
     rect1->arm.addRotated(dur, {}, {1, 0, 0}, rot1);
 
-    rect2->showWire.initOn();
     rect2->spin.addLinearValue(dur, rot1);
 
     footage1->addCamera("Camera 1", {+2, 0, 0});

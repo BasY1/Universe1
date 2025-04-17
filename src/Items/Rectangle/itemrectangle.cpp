@@ -20,7 +20,7 @@ ItemRectangle::ItemRectangle(const std::string &_name,
                              const float _radius1,
                              const float _radius2,
                              const Rectangle::ShowRectangleType _show,
-                             const bool _showWire,
+                             const Rectangle::ShowRectangleWireType _showWire,
                              const QString &_textureImage,
                              const Math::MaterialRGB &_materialFront,
                              const Math::MaterialRGB &_materialBack,
@@ -34,6 +34,7 @@ ItemRectangle::ItemRectangle(const std::string &_name,
                              const Math::MaterialRGBA &_material4Back,
                              const Math::MaterialRGBA &_materialWire,
                              const float _radiusWire,
+                             const float _stepWire,
                              const size_t _qualityWire,
                              const uint8_t _alpha,
                              const bool _visible)
@@ -52,8 +53,9 @@ ItemRectangle::ItemRectangle(const std::string &_name,
     , material3Back("material3Back", _material3Back)
     , material4Back("material4Back", _material4Back)
     , textureImage("textureImage", _textureImage)
-    , showWire("showWire", _showWire)
+    , showWire("showWire", QMetaEnum::fromType<Rectangle::ShowRectangleWireType>(), _showWire)
     , radiusWire("radiusWire", _radiusWire, 0.0f, std::numeric_limits<float>::max())
+    , stepWire("stepWire", _stepWire, 0.0f, std::numeric_limits<float>::max())
     , qualityWire("qualityWire", _qualityWire)
     , materialWire("materialWire", _materialWire)
 {
@@ -73,8 +75,155 @@ ItemRectangle::ItemRectangle(const std::string &_name,
     addProperty(&textureImage);
     addProperty(&showWire);
     addProperty(&radiusWire);
+    addProperty(&stepWire);
     addProperty(&qualityWire);
     addProperty(&materialWire);
+}
+
+/*!
+ * \brief Create rectangle wire-frame 3D data
+ * \param _data Output data objects
+ * \param _timeStep Time-step
+ * \param _showWire Show rectangle wire-frame mode
+ * \param _radiusWire Wire radius
+ * \param _stepWire Wire-frame matrix step
+ * \param _qualityWire Wire circle quality
+ * \param _materialWire Wire-frame material
+ * \param _orientation Orientation
+ * \param _radius1 Rectangle radius 1
+ * \param _radius2 Rectangle radius 2
+ * \return
+ */
+static void createRectangleWires(std::list<OpenGL::Data3D *> &_data,
+                                 const size_t _timeStep,
+                                 const Props::ItemPropertyEnum &_showWire,
+                                 const Props::ItemPropertyFloat &_radiusWire,
+                                 const Props::ItemPropertyFloat &_stepWire,
+                                 const Props::ItemPropertyQuality &_qualityWire,
+                                 const Props::ItemPropertyMaterialRGBA &_materialWire,
+                                 const Math::OrientF &_orientation,
+                                 const float _radius1,
+                                 const float _radius2)
+{
+    switch (_showWire.valueEnum<Rectangle::ShowRectangleWireType>(_timeStep))
+    {
+    case Rectangle::RectangleWireHidden: break;
+    case Rectangle::RectangleWireBorder: {
+        const float rw = _radiusWire.value(_timeStep);
+        if (Math::isPositive(rw))
+        {
+            const Math::MaterialRGBA mw = _materialWire.value(_timeStep);
+            if (mw.alpha > 0U)
+            {
+                const size_t q = _qualityWire.value(_timeStep);
+                const Math::Vec3F p1 =
+                    _orientation.center - _orientation.normal2 * _radius1 + _orientation.normal3 * _radius2;
+                const Math::Vec3F p2 =
+                    _orientation.center - _orientation.normal2 * _radius1 - _orientation.normal3 * _radius2;
+                const Math::Vec3F p3 =
+                    _orientation.center + _orientation.normal2 * _radius1 - _orientation.normal3 * _radius2;
+                const Math::Vec3F p4 =
+                    _orientation.center + _orientation.normal2 * _radius1 + _orientation.normal3 * _radius2;
+                _data.push_back(OpenGL::Data3DMaterialNormal::line(p1, p2, rw, rw, q, mw));
+                _data.push_back(OpenGL::Data3DMaterialNormal::line(p2, p3, rw, rw, q, mw));
+                _data.push_back(OpenGL::Data3DMaterialNormal::line(p3, p4, rw, rw, q, mw));
+                _data.push_back(OpenGL::Data3DMaterialNormal::line(p4, p1, rw, rw, q, mw));
+            }
+        }
+    }
+    break;
+
+    case Rectangle::RectangleWireFull: {
+        float rw = _radiusWire.value(_timeStep);
+        if (Math::isPositive(rw))
+        {
+            const Math::MaterialRGBA mw = _materialWire.value(_timeStep);
+            if (mw.alpha > 0U)
+            {
+                const size_t q = _qualityWire.value(_timeStep);
+                const Math::Vec3F p1 =
+                    _orientation.center - _orientation.normal2 * _radius1 + _orientation.normal3 * _radius2;
+                const Math::Vec3F p2 =
+                    _orientation.center - _orientation.normal2 * _radius1 - _orientation.normal3 * _radius2;
+                const Math::Vec3F p3 =
+                    _orientation.center + _orientation.normal2 * _radius1 - _orientation.normal3 * _radius2;
+                const Math::Vec3F p4 =
+                    _orientation.center + _orientation.normal2 * _radius1 + _orientation.normal3 * _radius2;
+                _data.push_back(OpenGL::Data3DMaterialNormal::line(p1, p2, rw, rw, q, mw));
+                _data.push_back(OpenGL::Data3DMaterialNormal::line(p2, p3, rw, rw, q, mw));
+                _data.push_back(OpenGL::Data3DMaterialNormal::line(p3, p4, rw, rw, q, mw));
+                _data.push_back(OpenGL::Data3DMaterialNormal::line(p4, p1, rw, rw, q, mw));
+
+                const float sw = _stepWire.value(_timeStep);
+                if (Math::isPositive(sw))
+                {
+                    rw *= 0.8f;
+                    _data.push_back(
+                        OpenGL::Data3DMaterialNormal::line(_orientation.center - _orientation.normal2 * _radius1,
+                                                           _orientation.center + _orientation.normal2 * _radius1,
+                                                           rw,
+                                                           rw,
+                                                           q,
+                                                           mw));
+
+                    _data.push_back(
+                        OpenGL::Data3DMaterialNormal::line(_orientation.center - _orientation.normal3 * _radius2,
+                                                           _orientation.center + _orientation.normal3 * _radius2,
+                                                           rw,
+                                                           rw,
+                                                           q,
+                                                           mw));
+
+                    float x = sw;
+                    while (Math::isLessNotEqual(x, _radius1))
+                    {
+                        _data.push_back(OpenGL::Data3DMaterialNormal::line(
+                            _orientation.center - _orientation.normal2 * x - _orientation.normal3 * _radius2,
+                            _orientation.center - _orientation.normal2 * x + _orientation.normal3 * _radius2,
+                            rw,
+                            rw,
+                            q,
+                            mw));
+
+                        _data.push_back(OpenGL::Data3DMaterialNormal::line(
+                            _orientation.center + _orientation.normal2 * x - _orientation.normal3 * _radius2,
+                            _orientation.center + _orientation.normal2 * x + _orientation.normal3 * _radius2,
+                            rw,
+                            rw,
+                            q,
+                            mw));
+
+                        x += sw;
+                    }
+
+                    x = sw;
+
+                    while (Math::isLessNotEqual(x, _radius2))
+                    {
+                        _data.push_back(OpenGL::Data3DMaterialNormal::line(
+                            _orientation.center - _orientation.normal2 * _radius1 - _orientation.normal3 * x,
+                            _orientation.center + _orientation.normal2 * _radius1 - _orientation.normal3 * x,
+                            rw,
+                            rw,
+                            q,
+                            mw));
+
+                        _data.push_back(OpenGL::Data3DMaterialNormal::line(
+                            _orientation.center - _orientation.normal2 * _radius1 + _orientation.normal3 * x,
+                            _orientation.center + _orientation.normal2 * _radius1 + _orientation.normal3 * x,
+                            rw,
+                            rw,
+                            q,
+                            mw));
+
+                        x += sw;
+                    }
+                }
+            }
+        }
+    }
+    break;
+    }
 }
 
 void ItemRectangle::createDataImpl(std::list<OpenGL::Data3D *> &_data, const size_t _timeStep) const
@@ -94,6 +243,7 @@ void ItemRectangle::createDataImpl(std::list<OpenGL::Data3D *> &_data, const siz
     QImage img;
     switch (st)
     {
+    case Rectangle::RectangleHidden:
     case Rectangle::RectangleFrontBack:
     case Rectangle::RectangleFront:
     case Rectangle::RectangleBack:
@@ -119,14 +269,14 @@ void ItemRectangle::createDataImpl(std::list<OpenGL::Data3D *> &_data, const siz
 
     switch (st)
     {
+    case Rectangle::RectangleHidden: break;
     case Rectangle::RectangleFrontBack: {
         const uint8_t a = alpha.value(_timeStep);
         if (a > 0U)
         {
             _data.push_back(OpenGL::Data3DMaterialBase::rectangle(o, r1, r2, materialFront.value(_timeStep), a));
-            o.normal1.invert();
-            o.normal2.invert();
-            _data.push_back(OpenGL::Data3DMaterialBase::rectangle(o, r1, r2, materialBack.value(_timeStep), a));
+            _data.push_back(
+                OpenGL::Data3DMaterialBase::rectangle(o.invert12(), r1, r2, materialBack.value(_timeStep), a));
         }
     }
     break;
@@ -141,11 +291,8 @@ void ItemRectangle::createDataImpl(std::list<OpenGL::Data3D *> &_data, const siz
     case Rectangle::RectangleBack: {
         const uint8_t a = alpha.value(_timeStep);
         if (a > 0U)
-        {
-            o.normal1.invert();
-            o.normal2.invert();
-            _data.push_back(OpenGL::Data3DMaterialBase::rectangle(o, r1, r2, materialBack.value(_timeStep), a));
-        }
+            _data.push_back(
+                OpenGL::Data3DMaterialBase::rectangle(o.invert12(), r1, r2, materialBack.value(_timeStep), a));
     }
     break;
 
@@ -157,9 +304,7 @@ void ItemRectangle::createDataImpl(std::list<OpenGL::Data3D *> &_data, const siz
                                                                 material2Front.value(_timeStep),
                                                                 material3Front.value(_timeStep),
                                                                 material4Front.value(_timeStep)));
-        o.normal1.invert();
-        o.normal2.invert();
-        _data.push_back(OpenGL::Data3DMaterialsAlpha::rectangle(o,
+        _data.push_back(OpenGL::Data3DMaterialsAlpha::rectangle(o.invert12(),
                                                                 r1,
                                                                 r2,
                                                                 material4Back.value(_timeStep),
@@ -180,9 +325,7 @@ void ItemRectangle::createDataImpl(std::list<OpenGL::Data3D *> &_data, const siz
         break;
 
     case Rectangle::RectangleVertexBack:
-        o.normal1.invert();
-        o.normal2.invert();
-        _data.push_back(OpenGL::Data3DMaterialsAlpha::rectangle(o,
+        _data.push_back(OpenGL::Data3DMaterialsAlpha::rectangle(o.invert12(),
                                                                 r1,
                                                                 r2,
                                                                 material4Back.value(_timeStep),
@@ -215,26 +358,7 @@ void ItemRectangle::createDataImpl(std::list<OpenGL::Data3D *> &_data, const siz
     break;
     }
 
-    if (showWire.value(_timeStep))
-    {
-        const float r = radiusWire.value(_timeStep);
-        if (Math::isPositive(r))
-        {
-            const Math::MaterialRGBA mw = materialWire.value(_timeStep);
-            if (mw.alpha > 0U)
-            {
-                const size_t q = qualityWire.value(_timeStep);
-                const Math::Vec3F p1 = o.center - o.normal2 * r1 + o.normal3 * r2;
-                const Math::Vec3F p2 = o.center - o.normal2 * r1 - o.normal3 * r2;
-                const Math::Vec3F p3 = o.center + o.normal2 * r1 - o.normal3 * r2;
-                const Math::Vec3F p4 = o.center + o.normal2 * r1 + o.normal3 * r2;
-                _data.push_back(OpenGL::Data3DMaterialNormal::line(p1, p2, r, r, q, mw));
-                _data.push_back(OpenGL::Data3DMaterialNormal::line(p2, p3, r, r, q, mw));
-                _data.push_back(OpenGL::Data3DMaterialNormal::line(p3, p4, r, r, q, mw));
-                _data.push_back(OpenGL::Data3DMaterialNormal::line(p4, p1, r, r, q, mw));
-            }
-        }
-    }
+    createRectangleWires(_data, _timeStep, showWire, radiusWire, stepWire, qualityWire, materialWire, o, r1, r2);
 }
 
 ItemRectangleCamera::ItemRectangleCamera(const std::string &_name,
@@ -243,7 +367,7 @@ ItemRectangleCamera::ItemRectangleCamera(const std::string &_name,
                                          const float _radius2,
                                          const float _spin,
                                          const Rectangle::ShowRectangleCameraType _show,
-                                         const bool _showWire,
+                                         const Rectangle::ShowRectangleWireType _showWire,
                                          const QString &_textureImage,
                                          const Math::MaterialRGB &_material,
                                          const Math::MaterialRGBA &_material1,
@@ -252,6 +376,7 @@ ItemRectangleCamera::ItemRectangleCamera(const std::string &_name,
                                          const Math::MaterialRGBA &_material4,
                                          const Math::MaterialRGBA &_materialWire,
                                          const float _radiusWire,
+                                         const float _stepWire,
                                          const size_t _qualityWire,
                                          const uint8_t _alpha,
                                          const bool _visible)
@@ -267,8 +392,9 @@ ItemRectangleCamera::ItemRectangleCamera(const std::string &_name,
     , material3("material3", _material3)
     , material4("material4", _material4)
     , textureImage("textureImage", _textureImage)
-    , showWire("showWire", _showWire)
+    , showWire("showWire", QMetaEnum::fromType<Rectangle::ShowRectangleWireType>(), _showWire)
     , radiusWire("radiusWire", _radiusWire, 0.0f, std::numeric_limits<float>::max())
+    , stepWire("stepWire", _stepWire, 0.0f, std::numeric_limits<float>::max())
     , qualityWire("qualityWire", _qualityWire)
     , materialWire("materialWire", _materialWire)
 {
@@ -285,6 +411,7 @@ ItemRectangleCamera::ItemRectangleCamera(const std::string &_name,
     addProperty(&textureImage);
     addProperty(&showWire);
     addProperty(&radiusWire);
+    addProperty(&stepWire);
     addProperty(&qualityWire);
     addProperty(&materialWire);
 }
@@ -308,6 +435,7 @@ void ItemRectangleCamera::createDataImpl(std::list<OpenGL::Data3D *> &_data,
     QImage img;
     switch (st)
     {
+    case Rectangle::RectangleCameraHidden: break;
     case Rectangle::RectangleCameraSingle: break;
     case Rectangle::RectangleCameraVertex: break;
     case Rectangle::RectangleCameraTexture:
@@ -319,6 +447,7 @@ void ItemRectangleCamera::createDataImpl(std::list<OpenGL::Data3D *> &_data,
 
     switch (st)
     {
+    case Rectangle::RectangleCameraHidden: break;
 
     case Rectangle::RectangleCameraSingle: {
         const uint8_t a = alpha.value(_timeStep);
@@ -345,26 +474,7 @@ void ItemRectangleCamera::createDataImpl(std::list<OpenGL::Data3D *> &_data,
     break;
     }
 
-    if (showWire.value(_timeStep))
-    {
-        const float r = radiusWire.value(_timeStep);
-        if (Math::isPositive(r))
-        {
-            const Math::MaterialRGBA mw = materialWire.value(_timeStep);
-            if (mw.alpha > 0U)
-            {
-                const size_t q = qualityWire.value(_timeStep);
-                const Math::Vec3F p1 = o.center - o.normal2 * r1 + o.normal3 * r2;
-                const Math::Vec3F p2 = o.center - o.normal2 * r1 - o.normal3 * r2;
-                const Math::Vec3F p3 = o.center + o.normal2 * r1 - o.normal3 * r2;
-                const Math::Vec3F p4 = o.center + o.normal2 * r1 + o.normal3 * r2;
-                _data.push_back(OpenGL::Data3DMaterialNormal::line(p1, p2, r, r, q, mw));
-                _data.push_back(OpenGL::Data3DMaterialNormal::line(p2, p3, r, r, q, mw));
-                _data.push_back(OpenGL::Data3DMaterialNormal::line(p3, p4, r, r, q, mw));
-                _data.push_back(OpenGL::Data3DMaterialNormal::line(p4, p1, r, r, q, mw));
-            }
-        }
-    }
+    createRectangleWires(_data, _timeStep, showWire, radiusWire, stepWire, qualityWire, materialWire, o, r1, r2);
 }
 
 }  // namespace Items

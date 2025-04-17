@@ -74,36 +74,32 @@ void ItemEllipse::createDataImpl(std::list<OpenGL::Data3D *> &_data, const size_
         if (a > 0U)
         {
             _data.push_back(OpenGL::Data3DMaterialBase::ellipse(o, r1, r2, q, materialFront.value(_timeStep), a));
-            o.normal1.invert();
-            o.normal2.invert();
-            _data.push_back(OpenGL::Data3DMaterialBase::ellipse(o, r1, r2, q, materialBack.value(_timeStep), a));
+            _data.push_back(
+                OpenGL::Data3DMaterialBase::ellipse(o.invert12(), r1, r2, q, materialBack.value(_timeStep), a));
         }
     }
     break;
+
     case Ellipse::EllipseFront: {
         const uint8_t a = alpha.value(_timeStep);
         if (a > 0U)
             _data.push_back(OpenGL::Data3DMaterialBase::ellipse(o, r1, r2, q, materialFront.value(_timeStep), a));
     }
     break;
+
     case Ellipse::EllipseBack: {
         const uint8_t a = alpha.value(_timeStep);
         if (a > 0U)
-        {
-            o.normal1.invert();
-            o.normal2.invert();
-            _data.push_back(OpenGL::Data3DMaterialBase::ellipse(o, r1, r2, q, materialBack.value(_timeStep), a));
-        }
+            _data.push_back(
+                OpenGL::Data3DMaterialBase::ellipse(o.invert12(), r1, r2, q, materialBack.value(_timeStep), a));
     }
     break;
 
     case Ellipse::EllipseBorderFrontBack:
         _data.push_back(OpenGL::Data3DMaterialsAlpha::ellipse(
             o, r1, r2, q, materialCenterFront.value(_timeStep), materialBorderFront.value(_timeStep)));
-        o.normal1.invert();
-        o.normal2.invert();
         _data.push_back(OpenGL::Data3DMaterialsAlpha::ellipse(
-            o, r1, r2, q, materialCenterBack.value(_timeStep), materialBorderBack.value(_timeStep)));
+            o.invert12(), r1, r2, q, materialCenterBack.value(_timeStep), materialBorderBack.value(_timeStep)));
         break;
 
     case Ellipse::EllipseBorderFront:
@@ -112,10 +108,8 @@ void ItemEllipse::createDataImpl(std::list<OpenGL::Data3D *> &_data, const size_
         break;
 
     case Ellipse::EllipseBorderBack:
-        o.normal1.invert();
-        o.normal2.invert();
         _data.push_back(OpenGL::Data3DMaterialsAlpha::ellipse(
-            o, r1, r2, q, materialCenterBack.value(_timeStep), materialBorderBack.value(_timeStep)));
+            o.invert12(), r1, r2, q, materialCenterBack.value(_timeStep), materialBorderBack.value(_timeStep)));
         break;
     }
 
