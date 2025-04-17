@@ -8,7 +8,7 @@ contains ( DEFINES, U1_UNIT_TESTS) {
     LIBS += -lgtest
 }
 
-# RESOURCES = resources.qrc
+RESOURCES = img/images.qrc
 
 HEADERS += src/Math/type.h
 HEADERS += src/Math/multithread.h
@@ -191,6 +191,9 @@ SOURCES += src/Items/Circle/itemcirclearc.cpp
 HEADERS += src/Items/Text/itemtext.h
 SOURCES += src/Items/Text/itemtext.cpp
 
+HEADERS += src/Items/Sphere/itemsphere.h
+SOURCES += src/Items/Sphere/itemsphere.cpp
+
 ######################################################
 
 HEADERS += src/Video/settingsvideo.h
@@ -212,6 +215,7 @@ SOURCES += src/Examples/example_circle.cc
 SOURCES += src/Examples/example_circlearc.cc
 SOURCES += src/Examples/example_ellipse.cc
 SOURCES += src/Examples/example_text.cc
+SOURCES += src/Examples/example_sphere.cc
 
 contains ( DEFINES, U1_UNIT_TESTS) {
     SOURCES += src/UnitTests/test_math.cc

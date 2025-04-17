@@ -1,0 +1,7 @@
+ <!DOCTYPE RCC><RCC version="1.0">
+ <qresource  prefix="/">
+     <file>socer_ball.png</file>
+     <file>socer_field.png</file>
+     <file>earth.png</file>
+ </qresource>
+ </RCC>

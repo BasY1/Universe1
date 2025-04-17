@@ -438,8 +438,8 @@ Sphere<T>::unitSphere(const size_t _quality)
         std::vector<Vec3<T>> &vertex = (*it).second.first;
         std::vector<std::pair<size_t, size_t>> &pool = (*it).second.second;
 
-        static const Vec3<T> N1 = Vec3<T>::unitZ();
-        static const Vec3<T> N2 = Vec3<T>::unitX();
+        static const Vec3<T> N1 = Vec3<T>::unitX();
+        static const Vec3<T> N2 = Vec3<T>::unitY();
 
         const size_t cntCircle = circlePointCount(_quality);
         const size_t cntLon = cntCircle;
@@ -448,6 +448,7 @@ Sphere<T>::unitSphere(const size_t _quality)
         const size_t offset = (cntLat + 1UL);
         const T stepRad = T(2.0l * M_PIl) / T(cntCircle);
         pool = createPool(cntVertex);
+        vertex.resize(cntVertex);
 
         if (pool.empty())
         {
