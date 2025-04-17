@@ -324,6 +324,38 @@ class Data3DMaterialBase : public Data3D
         std::free(tmp);
         return result;
     }
+
+    /*!
+     * \brief Create a circle arc 3D object
+     * \param _orientation Orientation of circle in space
+     * \param _angleStart Starting angle for circle arc (in radians)
+     * \param _angleEnd Ending angle for circle arc (in radians)
+     * \param _radius Circle radius
+     * \param _quality Circle quality
+     * \param _material Material
+     * \param _alpha Alpha
+     * \return 3D circle object
+     */
+    inline static Data3DMaterialBase *circleArc(const Math::OrientF &_orientation,
+                                                const float _angleStart,
+                                                const float _angleEnd,
+                                                const float _radius,
+                                                const size_t _quality,
+                                                const Math::MaterialRGB &_material,
+                                                const uint8_t _alpha)
+    {
+        std::vector<float> angles;
+        Math::Circle3F::arcAngles(angles, _angleStart, _angleEnd, _quality);
+        const size_t N = angles.size() + 1UL;
+        Math::Vec3F *tmp = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+
+        Math::Circle3F::fillCircleArc(tmp, _orientation, _radius, angles);
+        Data3DMaterialBase *result =
+            new Data3DMaterialBase(GL_TRIANGLE_FAN, N, tmp, _orientation.normal1, _material, _alpha);
+        result->setCentralPoint(_orientation.center);
+        std::free(tmp);
+        return result;
+    }
 };
 
 }  // namespace OpenGL

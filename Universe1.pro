@@ -185,6 +185,9 @@ SOURCES += src/Items/Circle/itemellipse.cpp
 HEADERS += src/Items/Circle/itemirregellipse.h
 SOURCES += src/Items/Circle/itemirregellipse.cpp
 
+HEADERS += src/Items/Circle/itemcirclearc.h
+SOURCES += src/Items/Circle/itemcirclearc.cpp
+
 ######################################################
 
 HEADERS += src/Video/settingsvideo.h
@@ -203,6 +206,7 @@ SOURCES += src/main.cpp
 SOURCES += src/Examples/example_triangle.cc
 SOURCES += src/Examples/example_rectangle.cc
 SOURCES += src/Examples/example_circle.cc
+SOURCES += src/Examples/example_circlearc.cc
 SOURCES += src/Examples/example_ellipse.cc
 
 contains ( DEFINES, U1_UNIT_TESTS) {

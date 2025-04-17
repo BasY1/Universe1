@@ -69,16 +69,16 @@ bool exampleEllipse(const QString &_workDir)
 
     as->addSpeechSUBS(500, "An ellipse example. ", 1000);
 
-    ItemIrregEllipse *rect1 = footage1->add3D(new ItemIrregEllipse());
-    ItemIrregEllipseCamera *rect2 = footage1->add3D(new ItemIrregEllipseCamera());
+    ItemIrregEllipse *obj1 = footage1->add3D(new ItemIrregEllipse());
+    ItemIrregEllipseCamera *obj2 = footage1->add3D(new ItemIrregEllipseCamera());
 
-    rect1->center.initValue({0, 0, -1});
-    rect2->center.initValue({0, 0, +1});
+    obj1->center.initValue({0, 0, -1});
+    obj2->center.initValue({0, 0, +1});
 
-    rect1->arm.addRotated(dur, {}, {1, 0, 0}, rot1);
+    obj1->arm.addRotated(dur, {}, {1, 0, 0}, rot1);
 
-    rect1->show.initValue(Ellipse::EllipseBorderFrontBack);
-    rect2->show.initValue(Ellipse::EllipseCameraBorder);
+    obj1->show.initValue(Ellipse::EllipseBorderFrontBack);
+    obj2->show.initValue(Ellipse::EllipseCameraBorder);
 
     footage1->addCamera("Camera 1", {+2, 0, 0});
     footage1->addCamera("Camera 2", {-2, 0, 0});

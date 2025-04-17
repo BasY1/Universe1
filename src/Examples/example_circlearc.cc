@@ -1,25 +1,24 @@
 #include "../Video/project.h"
 
-#include "../Items/Rectangle/itemrectangle.h"
+#include "../Items/Circle/itemcirclearc.h"
 #include "../Items/Items2D/item2dtext.h"
 
 namespace U1 {
 namespace Examples {
 
 /*!
- * \brief Rectangle item example
+ * \brief Circle arc item example
  * \param _workDir Working directory
- * \param _img Texture image file
  * \return Success flag
  */
-bool exampleRectangle(const QString &_workDir, const QString &_img = "")
+bool exampleCircleArc(const QString &_workDir)
 {
     using namespace U1::Audio;
     using namespace U1::Video;
     using namespace U1::Items;
     using namespace U1::Math;
 
-    Project project("Rectangle example");
+    Project project("Circle arc example");
 
     // ItemDefaultValues::sphereQuality = 15UL;
     // ItemDefaultValues::lineQuality = 3UL;
@@ -60,45 +59,33 @@ bool exampleRectangle(const QString &_workDir, const QString &_img = "")
     // project.setup8K();
 
     static const size_t dur = 8000UL;
-    static const float rot1 = 16.0 * M_PI;
+    // static const float rot1 = 16.0 * M_PI;
     static const float rot2 = 2.0 * M_PI;
 
     Footage *footage1 = project.addFootage("Footage 1");
 
     ScenarioAudioTTS *as = footage1->addAudio_espeak("TTS", _workDir + "espeak" + QDir::separator());
 
-    as->addSpeechSUBS(500, "A rectangle example. ", 1000);
+    as->addSpeechSUBS(500, "A circle example. ", 1000);
 
-    ItemRectangle *obj1 = footage1->add3D(new ItemRectangle());
-    ItemRectangleCamera *obj2 = footage1->add3D(new ItemRectangleCamera());
+    ItemCircleArc *obj1 = footage1->add3D(new ItemCircleArc());
+    ItemCircleArcCamera *obj2 = footage1->add3D(new ItemCircleArcCamera());
 
-    if (QFile::exists(_img))
-    {
-        obj1->show.initValue(Rectangle::RectangleTextureFrontBack);
-        obj2->show.initValue(Rectangle::RectangleCameraTexture);
-        obj1->textureImage.initValue(_img);
-        obj2->textureImage.initValue(_img);
-    }
-    else
-    {
-        obj1->show.initValue(Rectangle::RectangleVertexFrontBack);
-        obj2->show.initValue(Rectangle::RectangleCameraVertex);
-    }
+    obj1->angleStart.addLinearValue(dur, 1.5 * M_PI);
+    obj1->angleEnd.addLinearValue(dur, 2.0 * M_PI);
 
-    obj1->stepWire.initValue(0.2f);
-    obj2->stepWire.initValue(0.2f);
+    obj2->angleEnd.addLinearValue(dur, 2.0 * M_PI);
 
-    obj1->showWire.initValue(Rectangle::RectangleWireFull);
-    obj2->showWire.initValue(Rectangle::RectangleWireFull);
+    obj1->center.initValue({0, 0, -1});
+    obj2->center.initValue({0, 0, +1});
 
-    obj1->arm.addRotated(dur, {}, {1, 0, 0}, rot1);
-
-    obj2->spin.addLinearValue(dur, rot1);
+    obj1->show.initValue(CircleArc::CircleArcBorderFrontBack);
+    obj2->show.initValue(CircleArc::CircleArcCameraSingle);
 
     footage1->addCamera("Camera 1", {+2, 0, 0});
     footage1->addCamera("Camera 2", {-2, 0, 0});
 
-    footage1->add2D(new Item2DText("Info", "<font color=\"#FF0000\">Rectangle</font> example", Math::_AlignTopCenter));
+    footage1->add2D(new Item2DText("Info", "<font color=\"#FF0000\">Circle</font> example", Math::_AlignTopCenter));
 
     footage1->cameraPosition.initValue({-5, -1, 1});
     footage1->cameraPosition.addFromRotatedAccelerated(dur / 8UL, (7UL * dur) / 8UL, {}, {0, 0, 1}, rot2, 0.1, 0.1);

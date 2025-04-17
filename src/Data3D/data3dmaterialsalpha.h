@@ -692,6 +692,71 @@ class Data3DMaterialsAlpha : public Data3D
                             {_material1, _alpha1},
                             {_material2, _alpha2});
     }
+
+    /*!
+     * \brief Create a circle arc 3D object
+     * \param _orientation Orientation of circle in space
+     * \param _angleStart Starting angle for circle arc (in radians)
+     * \param _angleEnd Ending angle for circle arc (in radians)
+     * \param _radius Circle radius
+     * \param _quality Circle quality
+     * \param _material1 Material with alpha at center
+     * \param _material2 Material with alpha at border
+     * \return 3D circle object
+     */
+    inline static Data3DMaterialsAlpha *circleArc(const Math::OrientF &_orientation,
+                                                  const float _angleStart,
+                                                  const float _angleEnd,
+                                                  const float _radius,
+                                                  const size_t _quality,
+                                                  const Math::MaterialRGBA &_material1,
+                                                  const Math::MaterialRGBA &_material2)
+    {
+        std::vector<float> angles;
+        Math::Circle3F::arcAngles(angles, _angleStart, _angleEnd, _quality);
+        const size_t N = angles.size() + 1UL;
+
+        Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+        Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+        Math::Vec3F *t3 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+        Math::Vec3F *t4 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+        float *t5 = reinterpret_cast<float *>(std::malloc(N * sizeof(float)));
+        float *t6 = reinterpret_cast<float *>(std::malloc(N * sizeof(float)));
+
+        Math::Circle3F::fillCircleArc(t1,
+                                      t2,
+                                      t3,
+                                      t4,
+                                      t5,
+                                      t6,
+                                      _orientation,
+                                      _material1.ambient.toVec3F(),
+                                      _material2.ambient.toVec3F(),
+                                      _material1.diffuse.toVec3F(),
+                                      _material2.diffuse.toVec3F(),
+                                      _material1.specular.toVec3F(),
+                                      _material2.specular.toVec3F(),
+                                      _material1.shine,
+                                      _material2.shine,
+                                      float(_material1.alpha) / 255.0f,
+                                      float(_material2.alpha) / 255.0f,
+                                      _radius,
+                                      angles);
+
+        Data3DMaterialsAlpha *result =
+            new Data3DMaterialsAlpha(GL_TRIANGLE_FAN, N, t1, t2, t3, t4, t5, t6, _orientation.normal1);
+        result->setCentralPoint(_orientation.center);
+        result->setTransparent(_material1.alpha != 255U || _material2.alpha != 255U);
+
+        std::free(t1);
+        std::free(t2);
+        std::free(t3);
+        std::free(t4);
+        std::free(t5);
+        std::free(t6);
+
+        return result;
+    }
 };
 
 }  // namespace OpenGL

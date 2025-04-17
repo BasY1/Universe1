@@ -68,20 +68,20 @@ bool exampleCircle(const QString &_workDir)
 
     as->addSpeechSUBS(500, "A circle example. ", 1000);
 
-    ItemCircle *rect1 = footage1->add3D(new ItemCircle());
-    ItemCircleCamera *rect2 = footage1->add3D(new ItemCircleCamera());
+    ItemCircle *obj1 = footage1->add3D(new ItemCircle());
+    ItemCircleCamera *obj2 = footage1->add3D(new ItemCircleCamera());
 
-    rect1->center.initValue({0, 0, -1});
-    rect2->center.initValue({0, 0, +1});
+    obj1->center.initValue({0, 0, -1});
+    obj2->center.initValue({0, 0, +1});
 
-    rect1->show.initValue(Circle::CircleBorderFrontBack);
-    rect2->show.initValue(Circle::CircleCameraBorder);
+    obj1->show.initValue(Circle::CircleBorderFrontBack);
+    obj2->show.initValue(Circle::CircleCameraBorder);
 
-    rect1->stepWire.initValue(0.2f);
-    rect2->stepWire.initValue(0.2f);
+    obj1->stepWire.initValue(0.2f);
+    obj2->stepWire.initValue(0.2f);
 
-    rect1->showWire.initValue(Circle::CircleWireFull);
-    rect2->showWire.initValue(Circle::CircleWireFull);
+    obj1->showWire.initValue(Circle::CircleWireFull);
+    obj2->showWire.initValue(Circle::CircleWireFull);
 
     footage1->addCamera("Camera 1", {+2, 0, 0});
     footage1->addCamera("Camera 2", {-2, 0, 0});
