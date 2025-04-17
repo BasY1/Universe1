@@ -243,6 +243,58 @@ class Data3DMaterialBase : public Data3D
     }
 
     /*!
+     * \brief Create a rectangle 3D object
+     * \param _p1 Vertex 1
+     * \param _p2 Vertex 2
+     * \param _p3 Vertex 3
+     * \param _p4 Vertex 4
+     * \param _material Material
+     * \param _alpha Alpha
+     * \return 3D rectangle object
+     */
+    inline static Data3DMaterialBase *rectangle(const Math::Vec3F &_p1,
+                                                const Math::Vec3F &_p2,
+                                                const Math::Vec3F &_p3,
+                                                const Math::Vec3F &_p4,
+                                                const Math::MaterialRGB &_material,
+                                                const uint8_t _alpha)
+    {
+        const std::vector<Math::Vec3F> tmp = {_p1, _p2, _p3, _p4};
+        const Math::Vec3F N = Math::Vec3F::cross((_p2 - _p1), (_p3 - _p1)).normalized();
+        Data3DMaterialBase *result = new Data3DMaterialBase(GL_QUADS, 4UL, tmp.data(), N, _material, _alpha);
+        result->setCentralPoint((_p1 + _p2 + _p3 + _p4) * 0.25f);
+        return result;
+    }
+
+    /*!
+     * \brief Create a rectangle 3D object without initializing an Open GL buffer
+     * \param _p1 Vertex 1
+     * \param _p2 Vertex 2
+     * \param _p3 Vertex 3
+     * \param _p4 Vertex 4
+     * \param _material Material
+     * \param _alpha Alpha
+     * \return 3D rectangle object
+     */
+    inline static Data3DMaterialBase *rectangleData(const Math::Vec3F &_p1,
+                                                    const Math::Vec3F &_p2,
+                                                    const Math::Vec3F &_p3,
+                                                    const Math::Vec3F &_p4,
+                                                    const Math::MaterialRGB &_material,
+                                                    const uint8_t _alpha)
+    {
+
+        const Math::Vec3F N = Math::Vec3F::cross((_p2 - _p1), (_p3 - _p1)).normalized();
+        Data3DMaterialBase *result = new Data3DMaterialBase(GL_QUADS, 4UL, 0UL, N, _material, _alpha);
+        result->setCentralPoint((_p1 + _p2 + _p3 + _p4) * 0.25f);
+        result->vertexData()[0] = _p1;
+        result->vertexData()[1] = _p2;
+        result->vertexData()[2] = _p3;
+        result->vertexData()[3] = _p4;
+        return result;
+    }
+
+    /*!
      * \brief Create a circle 3D object
      * \param _orientation Orientation of circle in space
      * \param _radius Circle radius

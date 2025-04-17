@@ -1,25 +1,24 @@
 #include "../Video/project.h"
 
-#include "../Items/Circle/itemellipse.h"
-#include "../Items/Circle/itemirregellipse.h"
+#include "../Items/Text/itemtext.h"
 #include "../Items/Items2D/item2dtext.h"
 
 namespace U1 {
 namespace Examples {
 
 /*!
- * \brief Ellipse item example
+ * \brief Text item example
  * \param _workDir Working directory
  * \return Success flag
  */
-bool exampleEllipse(const QString &_workDir)
+bool exampleText(const QString &_workDir)
 {
     using namespace U1::Audio;
     using namespace U1::Video;
     using namespace U1::Items;
     using namespace U1::Math;
 
-    Project project("Ellipse example");
+    Project project("Text example");
 
     // ItemDefaultValues::sphereQuality = 15UL;
     // ItemDefaultValues::lineQuality = 3UL;
@@ -61,30 +60,37 @@ bool exampleEllipse(const QString &_workDir)
     // project.setup8K();
 
     static const size_t dur = 8000UL;
-    static const float rot1 = 16.0 * M_PI;
+    // static const float rot1 = 16.0 * M_PI;
     static const float rot2 = 2.0 * M_PI;
 
     Footage *footage1 = project.addFootage("Footage 1");
 
     ScenarioAudioTTS *as = footage1->addAudio_espeak("TTS", _workDir + "espeak" + QDir::separator());
 
-    as->addSpeechSUBS(500, "An ellipse example. ", 1000);
+    as->addSpeechSUBS(500, "A text example. ", 1000);
 
-    ItemIrregEllipse *obj1 = footage1->add3D(new ItemIrregEllipse());
-    ItemIrregEllipseCamera *obj2 = footage1->add3D(new ItemIrregEllipseCamera());
+    ItemText *obj1 = footage1->add3D(new ItemText());
+    ItemTextCamera *obj2 = footage1->add3D(new ItemTextCamera());
+
+    obj1->text.initValue("Hi<br/><font color=\"#FF0000\">RED</font>");
+    obj2->text.initValue("Hello");
 
     obj1->center.initValue({0, 0, -1});
     obj2->center.initValue({0, 0, +1});
 
-    obj1->arm.addRotated(dur, {}, {1, 0, 0}, rot1);
+    // obj1->show.initValue(Circle::CircleBorderFrontBack);
+    // obj2->show.initValue(Circle::CircleCameraBorder);
 
-    obj1->show.initValue(Ellipse::EllipseBorderFrontBack);
-    obj2->show.initValue(Ellipse::EllipseCameraBorder);
+    // obj1->stepWire.initValue(0.2f);
+    // obj2->stepWire.initValue(0.2f);
+
+    // obj1->showWire.initValue(Circle::CircleWireFull);
+    // obj2->showWire.initValue(Circle::CircleWireFull);
 
     footage1->addCamera("Camera 1", {+2, 0, 0});
     footage1->addCamera("Camera 2", {-2, 0, 0});
 
-    footage1->add2D(new Item2DText("Info", "<font color=\"#FF0000\">Ellipse</font> example", Math::_AlignTopCenter));
+    footage1->add2D(new Item2DText("Info", "<font color=\"#FF0000\">Text</font> example", Math::_AlignTopCenter));
 
     footage1->cameraPosition.initValue({-5, -1, 1});
     footage1->cameraPosition.addFromRotatedAccelerated(dur / 8UL, (7UL * dur) / 8UL, {}, {0, 0, 1}, rot2, 0.1, 0.1);

@@ -177,7 +177,7 @@ class ItemRectangleCamera : public Item3D
      * \param _center Initial center point
      * \param _radius1 Initial rectangle radius (within the direction of arm)
      * \param _radius2 Initial secondary rectangle radius (within the perpendicular direction to the arm and normal)
-     * \param _spin Initial value for show additional spin along the view normal (in radians)
+     * \param _spin Initial value for additional spin along the view normal (in radians)
      * \param _show Initial value for show rectangle mode
      * \param _showWire Initial value for show rectangle wire-frame
      * \param _textureImage Initial value for path to the texture image file

@@ -28,6 +28,7 @@ bool exampleTriangle(const QString &_workDir)
     // ItemDefaultValues::sphereQuality = 15UL;
     // ItemDefaultValues::lineQuality = 3UL;
     // ItemDefaultValues::pixelSize = 0.001F;
+    // ItemDefaultValues::textPixelSize = 0.01F;
     // ItemDefaultValues::lineRadius = 0.005F;
     // ItemDefaultValues::arrowLength = 0.075F;
     // ItemDefaultValues::arrowRadius = 0.025F;
