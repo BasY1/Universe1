@@ -20,10 +20,13 @@ namespace Math {
 template <typename T>
 struct Orientation
 {
-    Vec3<T> center;   //!< Central point
-    Vec3<T> normal1;  //!< Major axis
-    Vec3<T> normal2;  //!< Secondary axis
-    Vec3<T> normal3;  //!< Third axis
+    Vec3<T> center = {};                 //!< Central point
+    Vec3<T> normal1 = Vec3<T>::unitX();  //!< Major axis
+    Vec3<T> normal2 = Vec3<T>::unitY();  //!< Secondary axis
+    Vec3<T> normal3 = Vec3<T>::unitZ();  //!< Third axis
+
+    /*! \brief Default constructor */
+    Orientation() = default;
 
     /*!
      * \brief Constructor
@@ -50,6 +53,24 @@ struct Orientation
     {
         normal3 = Vec3<T>::cross(normal1, _arm).normalized();
         normal2 = Vec3<T>::cross(normal3, normal1).normalized();
+    }
+
+    /*!
+     * \brief Constructor
+     * \param _center Initial central point
+     * \param _normal1 Initial major axis
+     * \param _normal2 Initial secondary axis
+     * \param _normal3 Initial third axis
+     */
+    inline Orientation(const Vec3<T> &_center,
+                       const Vec3<T> &_normal1,
+                       const Vec3<T> &_normal2,
+                       const Vec3<T> &_normal3)
+        : center(_center)
+        , normal1(_normal1)
+        , normal2(_normal2)
+        , normal3(_normal3)
+    {
     }
 
     /*!

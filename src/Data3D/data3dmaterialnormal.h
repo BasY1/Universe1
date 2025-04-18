@@ -724,6 +724,115 @@ class Data3DMaterialNormal : public Data3D
                                                 const Math::MaterialRGB &_material,
                                                 const uint8_t _alpha,
                                                 const float _offsetAngle = 0.0f);
+
+    /*!
+     * \brief Create path 3D data
+     * \param _path Path points
+     * \param _radius Path radius
+     * \param _quality Path quality
+     * \param _material Material with alpha
+     * \return 3D path object
+     */
+    static Data3DMaterialNormal *path(const std::vector<Math::OrientF> &_path,
+                                      const float _radius,
+                                      const size_t _quality,
+                                      const Math::MaterialRGBA &_material);
+
+    /*!
+     * \brief Create path 3D data
+     * \param _path Path points
+     * \param _radius Path radius
+     * \param _quality Path quality
+     * \param _material Material
+     * \param _alpha Alpha
+     * \return 3D path object
+     */
+    inline static Data3DMaterialNormal *path(const std::vector<Math::OrientF> &_path,
+                                             const float _radius,
+                                             const size_t _quality,
+                                             const Math::MaterialRGB &_material,
+                                             const uint8_t _alpha)
+    {
+        return path(_path, _radius, _quality, {_material, _alpha});
+    }
+
+    /*!
+     * \brief Create path 3D data
+     * \param _path Path points
+     * \param _centerPoint Calculated central point
+     * \param _radius Path radius
+     * \param _quality Path quality
+     * \param _material Material with alpha
+     * \return 3D path object
+     */
+    static Data3DMaterialNormal *path(const std::vector<Math::OrientF> &_path,
+                                      const Math::Vec3F &_centerPoint,
+                                      const float _radius,
+                                      const size_t _quality,
+                                      const Math::MaterialRGBA &_material);
+
+    /*!
+     * \brief Create path 3D data
+     * \param _path Path points
+     * \param _centerPoint Calculated central point
+     * \param _radius Path radius
+     * \param _quality Path quality
+     * \param _material Material
+     * \param _alpha Alpha
+     * \return 3D path object
+     */
+    inline static Data3DMaterialNormal *path(const std::vector<Math::OrientF> &_path,
+                                             const Math::Vec3F &_centerPoint,
+                                             const float _radius,
+                                             const size_t _quality,
+                                             const Math::MaterialRGB &_material,
+                                             const uint8_t _alpha)
+    {
+        return path(_path, _centerPoint, _radius, _quality, {_material, _alpha});
+    }
+
+    /*!
+     * \brief Create 3D data for elliptical path
+     * \param _orientation Ellipse orientation
+     * \param _radius1 Ellipse radius 1
+     * \param _radius2 Ellipse radius 2
+     * \param _radiusPath Path cylinder radius
+     * \param _quality Ellipse quality
+     * \param _qualityPath Path circle quality
+     * \param _material Material with alpha
+     * \return 3D path object
+     */
+    static Data3DMaterialNormal *pathEllipse(const Math::OrientF &_orientation,
+                                             const float _radius1,
+                                             const float _radius2,
+                                             const float _radiusPath,
+                                             const size_t _quality,
+                                             const size_t _qualityPath,
+                                             const Math::MaterialRGBA &_material);
+
+    /*!
+     * \brief Create 3D data for elliptical path
+     * \param _orientation Ellipse orientation
+     * \param _radius1 Ellipse radius 1
+     * \param _radius2 Ellipse radius 2
+     * \param _radiusPath Path cylinder radius
+     * \param _quality Ellipse quality
+     * \param _qualityPath Path circle quality
+     * \param _material Material
+     * \param _alpha Alpha
+     * \return 3D path object
+     */
+    static Data3DMaterialNormal *pathEllipse(const Math::OrientF &_orientation,
+                                             const float _radius1,
+                                             const float _radius2,
+                                             const float _radiusPath,
+                                             const size_t _quality,
+                                             const size_t _qualityPath,
+                                             const Math::MaterialRGB &_material,
+                                             const uint8_t _alpha)
+    {
+        return pathEllipse(_orientation, _radius1, _radius2, _radiusPath, _quality, _qualityPath, {_material, _alpha});
+    }
 };
 
 }  // namespace OpenGL

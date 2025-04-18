@@ -88,6 +88,12 @@ struct Vec3
     static Vec3<T> minimum(const Vec3<T> &_v1, const Vec3<T> &_v2);
     static Vec3<T> maximum(const Vec3<T> &_v1, const Vec3<T> &_v2);
 
+    inline void updateRange(Vec3<T> &_minimum, Vec3<T> &_maximum) const;
+    static void updateRange(Vec3<T> &_minimum, Vec3<T> &_maximum, const std::pair<Vec3<T>, Vec3<T>> &_data);
+
+    inline static void
+    updateRange(Vec3<T> &_minimum, Vec3<T> &_maximum, const Vec3<T> &_dataMinimum, const Vec3<T> &_dataMaximum);
+
     static bool isAligned(const Vec3<T> &_v, const Vec3<T> &_min, const Vec3<T> &_max);
     inline bool isAligned(const Vec3<T> &_min, const Vec3<T> &_max) const;
 
@@ -447,6 +453,74 @@ template <typename T>
 Vec3<T> Vec3<T>::maximum(const Vec3<T> &_v1, const Vec3<T> &_v2)
 {
     return {std::max(_v1.x, _v2.x), std::max(_v1.y, _v2.y), std::max(_v1.z, _v2.z)};
+}
+
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Update range
+ * \tparam T Template floating point type
+ * \param _minimum Output range minimum
+ * \param _maximum Output range maximum
+ */
+template <typename T>
+void Vec3<T>::updateRange(Vec3<T> &_minimum, Vec3<T> &_maximum) const
+{
+    if (_minimum.x > x)
+        _minimum.x = x;
+    if (_minimum.y > y)
+        _minimum.y = y;
+    if (_minimum.z > z)
+        _minimum.z = z;
+    if (_maximum.x < x)
+        _maximum.x = x;
+    if (_maximum.y < y)
+        _maximum.y = y;
+    if (_maximum.z < z)
+        _maximum.z = z;
+}
+
+/*!
+ * \brief Update range
+ * \tparam T Template floating point type
+ * \param _minimum Output range minimum
+ * \param _maximum Output range maximum
+ * \param _data Pair with partial minimum and maximum values
+ * \return
+ */
+template <typename T>
+void Vec3<T>::updateRange(Vec3<T> &_minimum, Vec3<T> &_maximum, const std::pair<Vec3<T>, Vec3<T>> &_data)
+{
+    if (_minimum.x > _data.first.x)
+        _minimum.x = _data.first.x;
+    if (_minimum.y > _data.first.y)
+        _minimum.y = _data.first.y;
+    if (_minimum.z > _data.first.z)
+        _minimum.z = _data.first.z;
+    if (_maximum.x < _data.second.x)
+        _maximum.x = _data.second.x;
+    if (_maximum.y < _data.second.y)
+        _maximum.y = _data.second.y;
+    if (_maximum.z < _data.second.z)
+        _maximum.z = _data.second.z;
+}
+
+/*!
+ * \brief Update range
+ * \tparam T Template floating point type
+ * \param _minimum Output range minimum
+ * \param _maximum Output range maximum
+ * \param _dataMinimum Minimum partial value
+ * \param _dataMaximum Maximum partial value
+ * \return
+ */
+template <typename T>
+inline void
+Vec3<T>::updateRange(Vec3<T> &_minimum, Vec3<T> &_maximum, const Vec3<T> &_dataMinimum, const Vec3<T> &_dataMaximum)
+{
+    updateRange(_minimum, _maximum, {_dataMinimum, _dataMaximum});
 }
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

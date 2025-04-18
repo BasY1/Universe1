@@ -647,5 +647,287 @@ Data3DMaterialNormal *Data3DMaterialNormal::cylinderArcInn(const Math::OrientF &
     return result;
 }
 
+Data3DMaterialNormal *Data3DMaterialNormal::path(const std::vector<Math::OrientF> &_path,
+                                                 const float _radius,
+                                                 const size_t _quality,
+                                                 const Math::MaterialRGBA &_material)
+{
+    if (_path.size() < 2UL)
+    {
+        std::cerr << "Error Data3DMaterialNormal::path(" << _path.size() << ") short path, need 2 points!\n";
+        return nullptr;
+    }
+
+    const std::vector<Math::Vec2F> &cp = Math::Circle2F::unitCircle(_quality).first;
+    const size_t C = cp.size();
+    const size_t CO = C + 1UL;
+    const size_t PO = _path.size() - 1UL;
+    const size_t N = CO * _path.size();
+    const size_t I = C * PO * 4UL;
+    std::vector<std::pair<size_t, size_t>> pool = Math::createPool(N);
+
+    Math::Vec3F min = Math::Vec3F::maximumValue();
+    Math::Vec3F max = Math::Vec3F::lowestValue();
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    uint *t3 = reinterpret_cast<uint *>(std::malloc(I * sizeof(uint)));
+
+    if (pool.empty())
+    {
+        for (size_t p = 0UL; p < _path.size(); ++p)
+        {
+            const Math::OrientF &o = _path[p];
+            for (size_t c = 0UL; c < CO; ++c)
+            {
+                const Math::Vec2F &p2 = (c == C) ? cp[0] : cp[c];
+                const Math::Vec3F nn = (o.normal2 * p2.x + o.normal3 * p2.y).normalized();
+                const Math::Vec3F pp = o.center + nn * _radius;
+                const uint ji = p * CO + c;
+                t1[ji] = pp;
+                t2[ji] = nn;
+
+                pp.updateRange(min, max);
+
+                if (c != C && p != PO)
+                {
+                    size_t jj = p * C * 4UL + c * 4UL;
+                    t3[jj++] = ji;
+                    t3[jj++] = ji + 1U;
+                    t3[jj++] = ji + CO + 1U;
+                    t3[jj] = ji + CO;
+                }
+            }
+        }
+    }
+    else
+    {
+        uint tt = 0U;
+        std::vector<std::pair<Math::Vec3F, Math::Vec3F>> tData(pool.size(), {min, max});
+        std::vector<std::thread> threads;
+        threads.reserve(pool.size());
+
+        for (const std::pair<size_t, size_t> &t : std::as_const(pool))
+            threads.push_back(std::thread(
+                [t, C, CO, PO, _radius](std::pair<Math::Vec3F, Math::Vec3F> &_outRange,
+                                        Math::Vec3F *_t1,
+                                        Math::Vec3F *_t2,
+                                        uint *_t3,
+                                        const Math::OrientF *__path,
+                                        const Math::Vec2F *_cp) {
+                    const size_t end = t.first + t.second;
+                    for (size_t i = t.first; i < end; ++i)
+                    {
+                        const size_t p = i / CO;
+                        const size_t c = i % CO;
+                        const Math::OrientF &o = __path[p];
+                        const Math::Vec2F &p2 = (c == C) ? _cp[0] : _cp[c];
+                        const Math::Vec3F nn = (o.normal2 * p2.x + o.normal3 * p2.y).normalized();
+                        const Math::Vec3F pp = o.center + nn * _radius;
+                        const uint ji = p * CO + c;
+
+                        _t1[ji] = pp;
+                        _t2[ji] = nn;
+
+                        pp.updateRange(_outRange.first, _outRange.second);
+
+                        if (c != C && p != PO)
+                        {
+                            size_t jj = p * C * 4UL + c * 4UL;
+                            _t3[jj++] = ji;
+                            _t3[jj++] = ji + 1U;
+                            _t3[jj++] = ji + CO + 1U;
+                            _t3[jj] = ji + CO;
+                        }
+                    }
+                },
+                std::ref(tData[tt++]),
+                t1,
+                t2,
+                t3,
+                _path.data(),
+                cp.data()));
+
+        for (std::thread &t : threads)
+            t.join();
+
+        for (std::pair<Math::Vec3F, Math::Vec3F> &t : tData)
+            Math::Vec3F::updateRange(min, max, t);
+    }
+
+    Data3DMaterialNormal *result =
+        new Data3DMaterialNormal(GL_QUADS, N, I, t1, t2, t3, _material.toRGB(), _material.alpha);
+
+    result->setCentralPoint((min + max) * 0.5f);
+
+    std::free(t1);
+    std::free(t2);
+    std::free(t3);
+    return result;
+}
+
+Data3DMaterialNormal *Data3DMaterialNormal::path(const std::vector<Math::OrientF> &_path,
+                                                 const Math::Vec3F &_centerPoint,
+                                                 const float _radius,
+                                                 const size_t _quality,
+                                                 const Math::MaterialRGBA &_material)
+{
+    if (_path.size() < 2UL)
+    {
+        std::cerr << "Error Data3DMaterialNormal::path(" << _path.size() << ") short path, need 2 points!\n";
+        return nullptr;
+    }
+
+    const std::vector<Math::Vec2F> &cp = Math::Circle2F::unitCircle(_quality).first;
+    const size_t C = cp.size();
+    const size_t CO = C + 1UL;
+    const size_t PO = _path.size() - 1UL;
+    const size_t N = CO * _path.size();
+    const size_t I = C * PO * 4UL;
+    std::vector<std::pair<size_t, size_t>> pool = Math::createPool(N);
+
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    uint *t3 = reinterpret_cast<uint *>(std::malloc(I * sizeof(uint)));
+
+    if (pool.empty())
+    {
+        for (size_t p = 0UL; p < _path.size(); ++p)
+        {
+            const Math::OrientF &o = _path[p];
+            for (size_t c = 0UL; c < CO; ++c)
+            {
+                const Math::Vec2F &p2 = (c == C) ? cp[0] : cp[c];
+                const Math::Vec3F nn = (o.normal2 * p2.x + o.normal3 * p2.y).normalized();
+                const Math::Vec3F pp = o.center + nn * _radius;
+                const uint ji = p * CO + c;
+                t1[ji] = pp;
+                t2[ji] = nn;
+
+                if (c != C && p != PO)
+                {
+                    size_t jj = p * C * 4UL + c * 4UL;
+                    t3[jj++] = ji;
+                    t3[jj++] = ji + 1U;
+                    t3[jj++] = ji + CO + 1U;
+                    t3[jj] = ji + CO;
+                }
+            }
+        }
+    }
+    else
+    {
+        std::vector<std::thread> threads;
+        threads.reserve(pool.size());
+
+        for (const std::pair<size_t, size_t> &t : std::as_const(pool))
+            threads.push_back(std::thread(
+                [t, C, CO, PO, _radius](Math::Vec3F *_t1,
+                                        Math::Vec3F *_t2,
+                                        uint *_t3,
+                                        const Math::OrientF *__path,
+                                        const Math::Vec2F *_cp) {
+                    const size_t end = t.first + t.second;
+                    for (size_t i = t.first; i < end; ++i)
+                    {
+                        const size_t p = i / CO;
+                        const size_t c = i % CO;
+                        const Math::OrientF &o = __path[p];
+                        const Math::Vec2F &p2 = (c == C) ? _cp[0] : _cp[c];
+                        const Math::Vec3F nn = (o.normal2 * p2.x + o.normal3 * p2.y).normalized();
+                        const Math::Vec3F pp = o.center + nn * _radius;
+                        const uint ji = p * CO + c;
+
+                        _t1[ji] = pp;
+                        _t2[ji] = nn;
+
+                        if (c != C && p != PO)
+                        {
+                            size_t jj = p * C * 4UL + c * 4UL;
+                            _t3[jj++] = ji;
+                            _t3[jj++] = ji + 1U;
+                            _t3[jj++] = ji + CO + 1U;
+                            _t3[jj] = ji + CO;
+                        }
+                    }
+                },
+                t1,
+                t2,
+                t3,
+                _path.data(),
+                cp.data()));
+
+        for (std::thread &t : threads)
+            t.join();
+    }
+
+    Data3DMaterialNormal *result =
+        new Data3DMaterialNormal(GL_QUADS, N, I, t1, t2, t3, _material.toRGB(), _material.alpha);
+
+    result->setCentralPoint(_centerPoint);
+
+    std::free(t1);
+    std::free(t2);
+    std::free(t3);
+    return result;
+}
+
+Data3DMaterialNormal *Data3DMaterialNormal::pathEllipse(const Math::OrientF &_orientation,
+                                                        const float _radius1,
+                                                        const float _radius2,
+                                                        const float _radiusPath,
+                                                        const size_t _quality,
+                                                        const size_t _qualityPath,
+                                                        const Math::MaterialRGBA &_material)
+{
+    const std::pair<std::vector<Math::Vec2F>, std::vector<std::pair<size_t, size_t>>> &cq =
+        Math::Circle2F::unitCircle(_quality);
+    const std::vector<Math::Vec2F> &cp = cq.first;
+    const std::vector<std::pair<size_t, size_t>> &pool = cq.second;
+    std::vector<Math::OrientF> p(cp.size() + 1UL);
+
+    if (pool.empty())
+    {
+        for (size_t i = 0UL; i < cp.size(); i++)
+        {
+            const Math::Vec2F &p2d = cp[i];
+            const Math::Vec2F n2 = (2.0f * Math::Vec2F(p2d.x / _radius1, p2d.y / _radius2)).normalized();
+            p[i].center = _orientation.center + _orientation.normal2 * (p2d.x * _radius1) +
+                _orientation.normal3 * (p2d.y * _radius2);
+            p[i].normal3 = _orientation.normal1;
+            p[i].normal2 = (_orientation.normal2 * n2.x + _orientation.normal3 * n2.y).normalized();
+            p[i].normal1 = Math::Vec3F::cross(p[i].normal2, p[i].normal3).normalized();
+        }
+    }
+    else
+    {
+        std::vector<std::thread> threads;
+        threads.reserve(pool.size());
+
+        for (const std::pair<size_t, size_t> &t : std::as_const(pool))
+            threads.push_back(std::thread(
+                [t, _orientation, _radius1, _radius2](Math::OrientF *_out, const Math::Vec2F *_2d) {
+                    const size_t end = t.first + t.second;
+                    for (size_t i = t.first; i < end; ++i)
+                    {
+                        const Math::Vec2F &p2d = _2d[i];
+                        const Math::Vec2F n2 = (2.0f * Math::Vec2F(p2d.x / _radius1, p2d.y / _radius2)).normalized();
+                        _out[i].center = _orientation.center + _orientation.normal2 * (p2d.x * _radius1) +
+                            _orientation.normal3 * (p2d.y * _radius2);
+                        _out[i].normal3 = _orientation.normal1;
+                        _out[i].normal2 = (_orientation.normal2 * n2.x + _orientation.normal3 * n2.y).normalized();
+                        _out[i].normal1 = Math::Vec3F::cross(_out[i].normal2, _out[i].normal3).normalized();
+                    }
+                },
+                p.data(),
+                cp.data()));
+
+        for (std::thread &t : threads)
+            t.join();
+    }
+
+    p[cp.size()] = p[0];
+    return path(p, _orientation.center, _radiusPath, _qualityPath, _material);
+}
+
 }  // namespace OpenGL
 }  // namespace U1

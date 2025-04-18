@@ -90,6 +90,26 @@ struct Ellipsoid
                                           const size_t _quality);
 
     // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    static void fillEllipsoidOuter(Vec3<T> *_outVertex,
+                                   Vec2<T> *_outCoord,
+                                   uint *_outIndex,
+                                   const Orientation<T> &_orientation,
+                                   const T _radius1,
+                                   const T _radius2,
+                                   const T _radius3,
+                                   const size_t _quality);
+
+    static void fillEllipsoidInner(Vec3<T> *_outVertex,
+                                   Vec2<T> *_outCoord,
+                                   uint *_outIndex,
+                                   const Orientation<T> &_orientation,
+                                   const T _radius1,
+                                   const T _radius2,
+                                   const T _radius3,
+                                   const size_t _quality);
+
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //
     // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -390,6 +410,148 @@ inline void Ellipsoid<T>::fillEllipsoidInner(Vec3<T> *_outVertex,
                        _radius2,
                        _radius3,
                        _quality);
+}
+
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Fill ellipsoid vertices - ellipsoid visible from outside
+ * \tparam T Template floating point type
+ * \param _outVertex Output vertex array
+ * \param _outCoords Output texture coordinates array
+ * \param _outIndex Output index array
+ * \param _orientation Ellipsoid orientation in 3D space
+ * \param _radius1 Ellipsoid radius
+ * \param _radius2 Ellipsoid radius
+ * \param _radius3 Ellipsoid radius
+ * \param _quality Circle quality
+ * \return
+ */
+template <typename T>
+void Ellipsoid<T>::fillEllipsoidOuter(Vec3<T> *_outVertex,
+                                      Vec2<T> *_outCoords,
+                                      uint *_outIndex,
+                                      const Orientation<T> &_orientation,
+                                      const T _radius1,
+                                      const T _radius2,
+                                      const T _radius3,
+                                      const size_t _quality)
+{
+    const std::pair<std::vector<Vec3<T>>, std::vector<std::pair<size_t, size_t>>> &us = Sphere<T>::unitSphere(_quality);
+    const std::vector<Vec3<T>> &data = us.first;
+    const std::vector<std::pair<size_t, size_t>> &pool = us.second;
+
+    if (pool.empty())
+    {
+        for (size_t i = 0UL; i < data.size(); ++i)
+        {
+            const Vec3<T> &N0 = data[i];
+            _outVertex[i] = _orientation.center + _orientation.normal1 * (N0.x * _radius1) +
+                _orientation.normal2 * (N0.y * _radius2) + _orientation.normal3 * (N0.z * _radius3);
+        }
+    }
+    else
+    {
+        std::vector<std::thread> threads;
+        threads.reserve(pool.size());
+        for (const std::pair<size_t, size_t> &t : std::as_const(pool))
+            threads.push_back(std::thread(
+                [t, _orientation, _radius1, _radius2, _radius3](Vec3<T> *__outVertex, const Vec3<T> *_data) {
+                    const size_t end = t.first + t.second;
+                    for (size_t i = t.first; i < end; ++i)
+                    {
+                        const Vec3<T> &N0 = _data[i];
+                        __outVertex[i] = _orientation.center + _orientation.normal1 * (N0.x * _radius1) +
+                            _orientation.normal2 * (N0.y * _radius2) + _orientation.normal3 * (N0.z * _radius3);
+                    }
+                },
+                _outVertex,
+                data.data()));
+        for (std::thread &t : threads)
+            t.join();
+    }
+
+    const size_t cntCircle = circlePointCount(_quality);
+    const size_t cntLon = cntCircle;
+    const size_t cntLat = cntCircle / 2UL;
+
+    const std::pair<std::vector<Vec2<T>>, std::vector<std::pair<size_t, size_t>>> &uc =
+        PlaneCoords<T>::getCoords(cntLon + 1UL, cntLat + 1UL);
+    const std::pair<std::vector<uint>, std::vector<std::pair<size_t, size_t>>> &ui =
+        PlaneIndices::getQuadIndexes(cntLon + 1UL, cntLat + 1UL);
+
+    copyData<Vec2<T>, size_t>(_outCoords, uc.first.data(), uc.first.size(), uc.second);
+    copyData<uint, size_t>(_outIndex, ui.first.data(), ui.first.size(), ui.second);
+}
+
+/*!
+ * \brief Fill ellipsoid vertices - ellipsoid visible from inside
+ * \tparam T Template floating point type
+ * \param _outVertex Output vertex array
+ * \param _outCoords Output texture coordinates array
+ * \param _outIndex Output index array
+ * \param _orientation Ellipsoid orientation in 3D space
+ * \param _radius1 Ellipsoid radius
+ * \param _radius2 Ellipsoid radius
+ * \param _radius3 Ellipsoid radius
+ * \param _quality Circle quality
+ * \return
+ */
+template <typename T>
+void Ellipsoid<T>::fillEllipsoidInner(Vec3<T> *_outVertex,
+                                      Vec2<T> *_outCoords,
+                                      uint *_outIndex,
+                                      const Orientation<T> &_orientation,
+                                      const T _radius1,
+                                      const T _radius2,
+                                      const T _radius3,
+                                      const size_t _quality)
+{
+    const std::pair<std::vector<Vec3<T>>, std::vector<std::pair<size_t, size_t>>> &us = Sphere<T>::unitSphere(_quality);
+    const std::vector<Vec3<T>> &data = us.first;
+    const std::vector<std::pair<size_t, size_t>> &pool = us.second;
+
+    if (pool.empty())
+    {
+        for (size_t i = 0UL; i < data.size(); ++i)
+        {
+            const Vec3<T> &N0 = data[i];
+            _outVertex[i] = _orientation.center + _orientation.normal1 * (N0.x * _radius1) +
+                _orientation.normal2 * (N0.y * _radius2) + _orientation.normal3 * (N0.z * _radius3);
+        }
+    }
+    else
+    {
+        std::vector<std::thread> threads;
+        threads.reserve(pool.size());
+        for (const std::pair<size_t, size_t> &t : std::as_const(pool))
+            threads.push_back(std::thread(
+                [t, _orientation, _radius1, _radius2, _radius3](Vec3<T> *__outVertex, const Vec3<T> *_data) {
+                    const size_t end = t.first + t.second;
+                    for (size_t i = t.first; i < end; ++i)
+                    {
+                        const Vec3<T> &N0 = _data[i];
+                        __outVertex[i] = _orientation.center + _orientation.normal1 * (N0.x * _radius1) +
+                            _orientation.normal2 * (N0.y * _radius2) + _orientation.normal3 * (N0.z * _radius3);
+                    }
+                },
+                _outVertex,
+                data.data()));
+        for (std::thread &t : threads)
+            t.join();
+    }
+
+    const size_t cntCircle = circlePointCount(_quality);
+    const size_t cntLon = cntCircle;
+    const size_t cntLat = cntCircle / 2UL;
+
+    const std::pair<std::vector<Vec2<T>>, std::vector<std::pair<size_t, size_t>>> &uc =
+        PlaneCoords<T>::getCoords(cntLon + 1UL, cntLat + 1UL);
+    const std::pair<std::vector<uint>, std::vector<std::pair<size_t, size_t>>> &ui =
+        PlaneIndices::getQuadIndexesInverted(cntLon + 1UL, cntLat + 1UL);
+
+    copyData<Vec2<T>, size_t>(_outCoords, uc.first.data(), uc.first.size(), uc.second);
+    copyData<uint, size_t>(_outIndex, ui.first.data(), ui.first.size(), ui.second);
 }
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

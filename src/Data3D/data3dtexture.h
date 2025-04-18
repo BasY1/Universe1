@@ -253,6 +253,44 @@ class Data3DTexture : public Data3D
                                     const float _radius,
                                     const size_t _quality,
                                     const uint8_t _alpha);
+
+    /*!
+     * \brief Create a texture ellipsoid 3D object - visible from outside
+     * \param _texture Open GL texture
+     * \param _orientation Orientation of ellipsoid in space
+     * \param _radius1 Ellipsoid radius 1
+     * \param _radius2 Ellipsoid radius 2
+     * \param _radius3 Ellipsoid radius 3
+     * \param _quality Circle quality
+     * \param _alpha Alpha
+     * \return 3D texture ellipsoid object
+     */
+    static Data3DTexture *ellipsoid(QOpenGLTexture *_texture,
+                                    const Math::OrientF &_orientation,
+                                    const float _radius1,
+                                    const float _radius2,
+                                    const float _radius3,
+                                    const size_t _quality,
+                                    const uint8_t _alpha);
+
+    /*!
+     * \brief Create a texture ellipsoid 3D object - visible from inside
+     * \param _texture Open GL texture
+     * \param _orientation Orientation of ellipsoid in space
+     * \param _radius1 Ellipsoid radius
+     * \param _radius2 Ellipsoid radius
+     * \param _radius3 Ellipsoid radius
+     * \param _quality Circle quality
+     * \param _alpha Alpha
+     * \return 3D texture ellipsoid object
+     */
+    static Data3DTexture *ellipsoidInn(QOpenGLTexture *_texture,
+                                       const Math::OrientF &_orientation,
+                                       const float _radius1,
+                                       const float _radius2,
+                                       const float _radius3,
+                                       const size_t _quality,
+                                       const uint8_t _alpha);
 };
 
 }  // namespace OpenGL

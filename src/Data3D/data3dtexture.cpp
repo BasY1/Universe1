@@ -6,6 +6,8 @@
 #include "data3dtexture.h"
 
 #include "../Math/sphere.h"
+#include "../Math/ellipsoid.h"
+#include "../Math/irregellipsoid.h"
 
 namespace U1 {
 namespace OpenGL {
@@ -191,6 +193,58 @@ Data3DTexture *Data3DTexture::sphereInn(QOpenGLTexture *_texture,
     uint *t3 = reinterpret_cast<uint *>(std::malloc(I * sizeof(uint)));
 
     Math::SphereF::fillSphereInner(t1, t2, t3, _orientation, _radius, _quality);
+
+    Data3DTexture *result = new Data3DTexture(_texture, GL_QUADS, N, I, t1, t2, t3, _alpha);
+    result->setCentralPoint(_orientation.center);
+
+    std::free(t1);
+    std::free(t2);
+    std::free(t3);
+    return result;
+}
+
+Data3DTexture *Data3DTexture::ellipsoid(QOpenGLTexture *_texture,
+                                        const Math::OrientF &_orientation,
+                                        const float _radius1,
+                                        const float _radius2,
+                                        const float _radius3,
+                                        const size_t _quality,
+                                        const uint8_t _alpha)
+{
+    const size_t N = Math::EllipsoidF::ellipsoidVertexCount(_quality);
+    const size_t I = Math::EllipsoidF::ellipsoidIndexCount(_quality);
+
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec2F *t2 = reinterpret_cast<Math::Vec2F *>(std::malloc(N * sizeof(Math::Vec2F)));
+    uint *t3 = reinterpret_cast<uint *>(std::malloc(I * sizeof(uint)));
+
+    Math::EllipsoidF::fillEllipsoidOuter(t1, t2, t3, _orientation, _radius1, _radius2, _radius3, _quality);
+
+    Data3DTexture *result = new Data3DTexture(_texture, GL_QUADS, N, I, t1, t2, t3, _alpha);
+    result->setCentralPoint(_orientation.center);
+
+    std::free(t1);
+    std::free(t2);
+    std::free(t3);
+    return result;
+}
+
+Data3DTexture *Data3DTexture::ellipsoidInn(QOpenGLTexture *_texture,
+                                           const Math::OrientF &_orientation,
+                                           const float _radius1,
+                                           const float _radius2,
+                                           const float _radius3,
+                                           const size_t _quality,
+                                           const uint8_t _alpha)
+{
+    const size_t N = Math::EllipsoidF::ellipsoidVertexCount(_quality);
+    const size_t I = Math::EllipsoidF::ellipsoidIndexCount(_quality);
+
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec2F *t2 = reinterpret_cast<Math::Vec2F *>(std::malloc(N * sizeof(Math::Vec2F)));
+    uint *t3 = reinterpret_cast<uint *>(std::malloc(I * sizeof(uint)));
+
+    Math::EllipsoidF::fillEllipsoidInner(t1, t2, t3, _orientation, _radius1, _radius2, _radius3, _quality);
 
     Data3DTexture *result = new Data3DTexture(_texture, GL_QUADS, N, I, t1, t2, t3, _alpha);
     result->setCentralPoint(_orientation.center);

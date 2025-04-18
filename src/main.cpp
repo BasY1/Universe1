@@ -16,6 +16,7 @@
 #include "Examples/example_ellipse.cc"
 #include "Examples/example_text.cc"
 #include "Examples/example_sphere.cc"
+#include "Examples/example_ellipsoid.cc"
 #endif
 
 /*!
@@ -38,7 +39,7 @@ int main(int argc, char *argv[])
     static const QString workDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) +
         QDir::separator() + "U1" + QDir::separator();
 
-    if (U1::Examples::exampleSphere(workDir))
+    if (U1::Examples::exampleEllipsoid(workDir))
     {
         U1::Audio::SettingsAudio::runProcess("/usr/bin/vlc", {"--loop", workDir + "video.avi"});
         return EXIT_SUCCESS;
