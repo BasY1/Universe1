@@ -95,97 +95,117 @@ void ItemIrregEllipsoid::createDataImpl(std::list<OpenGL::Data3D *> &_data, cons
     if (!Math::isPositive(r3m))
         return;
 
-    const uint8_t a = alpha.value(_timeStep);
-    if (a == 0U)
-        return;
-
     const Math::OrientF o = valueOrientation(_timeStep);
     const size_t q = quality.value(_timeStep);
     const Ellipsoid::ShowEllipsoidType st = show.valueEnum<Ellipsoid::ShowEllipsoidType>(_timeStep);
+    uint8_t a;
 
     switch (st)
     {
     case Ellipsoid::EllipsoidHidden: break;
 
     case Ellipsoid::EllipsoidInnerOuter:
-        _data.push_back(OpenGL::Data3DMaterialNormal::irregEllipsoid(
-            o, r1p, r1m, r2p, r2m, r3p, r3m, q, materialOuter.value(_timeStep), a));
-        _data.push_back(OpenGL::Data3DMaterialNormal::irregEllipsoidInn(
-            o, r1p, r1m, r2p, r2m, r3p, r3m, q, materialInner.value(_timeStep), a));
+        a = alpha.value(_timeStep);
+        if (a > 0U)
+        {
+            _data.push_back(OpenGL::Data3DMaterialNormal::irregEllipsoid(
+                o, r1p, r1m, r2p, r2m, r3p, r3m, q, materialOuter.value(_timeStep), a));
+            _data.push_back(OpenGL::Data3DMaterialNormal::irregEllipsoidInn(
+                o, r1p, r1m, r2p, r2m, r3p, r3m, q, materialInner.value(_timeStep), a));
+        }
         break;
 
     case Ellipsoid::EllipsoidOuter:
-        _data.push_back(OpenGL::Data3DMaterialNormal::irregEllipsoid(
-            o, r1p, r1m, r2p, r2m, r3p, r3m, q, materialOuter.value(_timeStep), a));
+        a = alpha.value(_timeStep);
+        if (a > 0U)
+            _data.push_back(OpenGL::Data3DMaterialNormal::irregEllipsoid(
+                o, r1p, r1m, r2p, r2m, r3p, r3m, q, materialOuter.value(_timeStep), a));
         break;
 
     case Ellipsoid::EllipsoidInner:
-        _data.push_back(OpenGL::Data3DMaterialNormal::irregEllipsoidInn(
-            o, r1p, r1m, r2p, r2m, r3p, r3m, q, materialInner.value(_timeStep), a));
+        a = alpha.value(_timeStep);
+        if (a > 0U)
+            _data.push_back(OpenGL::Data3DMaterialNormal::irregEllipsoidInn(
+                o, r1p, r1m, r2p, r2m, r3p, r3m, q, materialInner.value(_timeStep), a));
         break;
 
-    case Ellipsoid::EllipsoidTextureInnerOuter: {
-        const QImage img = QImage(textureImage.value(_timeStep));
-        if (img.isNull())
+    case Ellipsoid::EllipsoidTextureInnerOuter:
+        a = alpha.value(_timeStep);
+        if (a > 0U)
         {
-            _data.push_back(OpenGL::Data3DMaterialNormal::irregEllipsoid(
-                o, r1p, r1m, r2p, r2m, r3p, r3m, q, materialOuter.value(_timeStep), a));
-            _data.push_back(OpenGL::Data3DMaterialNormal::irregEllipsoidInn(
-                o, r1p, r1m, r2p, r2m, r3p, r3m, q, materialInner.value(_timeStep), a));
+            const QImage img = QImage(textureImage.value(_timeStep));
+            if (img.isNull())
+            {
+                _data.push_back(OpenGL::Data3DMaterialNormal::irregEllipsoid(
+                    o, r1p, r1m, r2p, r2m, r3p, r3m, q, materialOuter.value(_timeStep), a));
+                _data.push_back(OpenGL::Data3DMaterialNormal::irregEllipsoidInn(
+                    o, r1p, r1m, r2p, r2m, r3p, r3m, q, materialInner.value(_timeStep), a));
+            }
+            else
+            {
+                _data.push_back(OpenGL::Data3DTexture::irregEllipsoid(
+                    new QOpenGLTexture(img), o, r1p, r1m, r2p, r2m, r3p, r3m, q, a));
+                _data.push_back(OpenGL::Data3DTexture::irregEllipsoidInn(
+                    new QOpenGLTexture(img), o, r1p, r1m, r2p, r2m, r3p, r3m, q, a));
+            }
         }
-        else
+        break;
+
+    case Ellipsoid::EllipsoidTextureOuter:
+        a = alpha.value(_timeStep);
+        if (a > 0U)
         {
-            _data.push_back(
-                OpenGL::Data3DTexture::irregEllipsoid(new QOpenGLTexture(img), o, r1p, r1m, r2p, r2m, r3p, r3m, q, a));
-            _data.push_back(OpenGL::Data3DTexture::irregEllipsoidInn(
-                new QOpenGLTexture(img), o, r1p, r1m, r2p, r2m, r3p, r3m, q, a));
+            const QImage img = QImage(textureImage.value(_timeStep));
+            if (img.isNull())
+                _data.push_back(OpenGL::Data3DMaterialNormal::irregEllipsoid(
+                    o, r1p, r1m, r2p, r2m, r3p, r3m, q, materialOuter.value(_timeStep), a));
+            else
+                _data.push_back(OpenGL::Data3DTexture::irregEllipsoid(
+                    new QOpenGLTexture(img), o, r1p, r1m, r2p, r2m, r3p, r3m, q, a));
         }
-    }
-    break;
+        break;
 
-    case Ellipsoid::EllipsoidTextureOuter: {
-        const QImage img = QImage(textureImage.value(_timeStep));
-        if (img.isNull())
-            _data.push_back(OpenGL::Data3DMaterialNormal::irregEllipsoid(
-                o, r1p, r1m, r2p, r2m, r3p, r3m, q, materialOuter.value(_timeStep), a));
-        else
-            _data.push_back(
-                OpenGL::Data3DTexture::irregEllipsoid(new QOpenGLTexture(img), o, r1p, r1m, r2p, r2m, r3p, r3m, q, a));
-    }
-    break;
+    case Ellipsoid::EllipsoidTextureInner:
+        a = alpha.value(_timeStep);
+        if (a > 0U)
+        {
+            const QImage img = QImage(textureImage.value(_timeStep));
+            if (img.isNull())
+                _data.push_back(OpenGL::Data3DMaterialNormal::irregEllipsoidInn(
+                    o, r1p, r1m, r2p, r2m, r3p, r3m, q, materialInner.value(_timeStep), a));
+            else
+                _data.push_back(OpenGL::Data3DTexture::irregEllipsoidInn(
+                    new QOpenGLTexture(img), o, r1p, r1m, r2p, r2m, r3p, r3m, q, a));
+        }
+        break;
 
-    case Ellipsoid::EllipsoidTextureInner: {
-        const QImage img = QImage(textureImage.value(_timeStep));
-        if (img.isNull())
-            _data.push_back(OpenGL::Data3DMaterialNormal::irregEllipsoidInn(
-                o, r1p, r1m, r2p, r2m, r3p, r3m, q, materialInner.value(_timeStep), a));
-        else
-            _data.push_back(OpenGL::Data3DTexture::irregEllipsoidInn(
-                new QOpenGLTexture(img), o, r1p, r1m, r2p, r2m, r3p, r3m, q, a));
-    }
-    break;
+    case Ellipsoid::EllipsoidTextureSoccerBall:
+        a = alpha.value(_timeStep);
+        if (a > 0U)
+        {
+            const QImage img = QImage(":/socer_ball.png");
+            if (img.isNull())
+                _data.push_back(OpenGL::Data3DMaterialNormal::irregEllipsoid(
+                    o, r1p, r1m, r2p, r2m, r3p, r3m, q, materialOuter.value(_timeStep), a));
+            else
+                _data.push_back(OpenGL::Data3DTexture::irregEllipsoid(
+                    new QOpenGLTexture(img), o, r1p, r1m, r2p, r2m, r3p, r3m, q, a));
+        }
+        break;
 
-    case Ellipsoid::EllipsoidTextureSoccerBall: {
-        const QImage img = QImage(":/socer_ball.png");
-        if (img.isNull())
-            _data.push_back(OpenGL::Data3DMaterialNormal::irregEllipsoid(
-                o, r1p, r1m, r2p, r2m, r3p, r3m, q, materialOuter.value(_timeStep), a));
-        else
-            _data.push_back(
-                OpenGL::Data3DTexture::irregEllipsoid(new QOpenGLTexture(img), o, r1p, r1m, r2p, r2m, r3p, r3m, q, a));
-    }
-    break;
-
-    case Ellipsoid::EllipsoidTextureSoccerEarth: {
-        const QImage img = QImage(":/earth.png");
-        if (img.isNull())
-            _data.push_back(OpenGL::Data3DMaterialNormal::irregEllipsoid(
-                o, r1p, r1m, r2p, r2m, r3p, r3m, q, materialOuter.value(_timeStep), a));
-        else
-            _data.push_back(
-                OpenGL::Data3DTexture::irregEllipsoid(new QOpenGLTexture(img), o, r1p, r1m, r2p, r2m, r3p, r3m, q, a));
-    }
-    break;
+    case Ellipsoid::EllipsoidTextureSoccerEarth:
+        a = alpha.value(_timeStep);
+        if (a > 0U)
+        {
+            const QImage img = QImage(":/earth.png");
+            if (img.isNull())
+                _data.push_back(OpenGL::Data3DMaterialNormal::irregEllipsoid(
+                    o, r1p, r1m, r2p, r2m, r3p, r3m, q, materialOuter.value(_timeStep), a));
+            else
+                _data.push_back(OpenGL::Data3DTexture::irregEllipsoid(
+                    new QOpenGLTexture(img), o, r1p, r1m, r2p, r2m, r3p, r3m, q, a));
+        }
+        break;
     }
 
     if (!showWire.value(_timeStep))
@@ -294,6 +314,131 @@ void ItemIrregEllipsoid::createDataImpl(std::list<OpenGL::Data3D *> &_data, cons
         _data.push_back(OpenGL::Data3DMaterialNormal::pathIrregEllipse(
             {o.center - o.normal3 * x, o.normal3, o.normal1, o.normal2}, R1P, R1M, R2P, R2M, rw, q, qw, mw));
         x += sw;
+    }
+}
+
+ItemIrregEllipsoidCut::ItemIrregEllipsoidCut(const std::string &_name,
+                                             const Math::Vec3F &_center,
+                                             const Math::Vec3F &_normal,
+                                             const Math::Vec3F &_arm,
+                                             const float _radius1P,
+                                             const float _radius1M,
+                                             const float _radius2P,
+                                             const float _radius2M,
+                                             const float _radius3P,
+                                             const float _radius3M,
+                                             const float _angleLonStart,
+                                             const float _angleLonEnd,
+                                             const float _angleLatStart,
+                                             const float _angleLatEnd,
+                                             const size_t _quality,
+                                             const Ellipsoid::ShowEllipsoidCutType _show,
+                                             const Math::MaterialRGB &_materialOuter,
+                                             const Math::MaterialRGB &_materialInner,
+                                             const uint8_t _alpha,
+                                             const bool _visible)
+    : Item3DExt(_name, _center, _normal, _arm, _alpha, _visible)
+    , radius1P("radius1P", _radius1P, 0.0f, std::numeric_limits<float>::max())
+    , radius1M("radius1M", _radius1M, 0.0f, std::numeric_limits<float>::max())
+    , radius2P("radius2P", _radius2P, 0.0f, std::numeric_limits<float>::max())
+    , radius2M("radius2M", _radius2M, 0.0f, std::numeric_limits<float>::max())
+    , radius3P("radius3P", _radius3P, 0.0f, std::numeric_limits<float>::max())
+    , radius3M("radius3M", _radius3M, 0.0f, std::numeric_limits<float>::max())
+    , angleLonStart("angleLonStart", _angleLonStart)
+    , angleLonEnd("angleLonEnd", _angleLonEnd)
+    , angleLatStart("angleLatStart", _angleLatStart, 0.0f, float(M_PI))
+    , angleLatEnd("angleLatEnd", _angleLatEnd, 0.0f, float(M_PI))
+    , quality("quality", _quality)
+    , show("show", QMetaEnum::fromType<Ellipsoid::ShowEllipsoidCutType>(), _show)
+    , materialOuter("materialOuter", _materialOuter)
+    , materialInner("materialInner", _materialInner)
+{
+    addProperty(&radius1P);
+    addProperty(&radius1M);
+    addProperty(&radius2P);
+    addProperty(&radius2M);
+    addProperty(&radius3P);
+    addProperty(&radius3M);
+    addProperty(&angleLonStart);
+    addProperty(&angleLonEnd);
+    addProperty(&angleLatStart);
+    addProperty(&angleLatEnd);
+    addProperty(&quality);
+    addProperty(&show);
+    addProperty(&materialOuter);
+    addProperty(&materialInner);
+}
+
+void ItemIrregEllipsoidCut::createDataImpl(std::list<OpenGL::Data3D *> &_data, const size_t _timeStep) const
+{
+    static const float _2PI = float(2.0 * M_PI);
+
+    const float r1p = radius1P.value(_timeStep);
+    if (!Math::isPositive(r1p))
+        return;
+
+    const float r1m = radius1M.value(_timeStep);
+    if (!Math::isPositive(r1m))
+        return;
+
+    const float r2p = radius2P.value(_timeStep);
+    if (!Math::isPositive(r2p))
+        return;
+
+    const float r2m = radius2M.value(_timeStep);
+    if (!Math::isPositive(r2m))
+        return;
+
+    const float r3p = radius3P.value(_timeStep);
+    if (!Math::isPositive(r3p))
+        return;
+
+    const float r3m = radius3M.value(_timeStep);
+    if (!Math::isPositive(r3m))
+        return;
+
+    const float aas = angleLatStart.value(_timeStep);
+    const float aae = angleLatEnd.value(_timeStep);
+    if (Math::equals(aas, aae))
+        return;
+
+    float als = angleLonStart.value(_timeStep);
+    float ale = angleLonEnd.value(_timeStep);
+    if (Math::equals(als, ale))
+        return;
+
+    if (Math::isMoreOrEqual(std::abs(ale - als), _2PI))
+    {
+        als = 0.0f;
+        ale = _2PI;
+    }
+
+    const uint8_t a = alpha.value(_timeStep);
+    if (a == 0U)
+        return;
+
+    const Math::OrientF o = valueOrientation(_timeStep);
+    const size_t q = quality.value(_timeStep);
+    const Ellipsoid::ShowEllipsoidCutType st = show.valueEnum<Ellipsoid::ShowEllipsoidCutType>(_timeStep);
+
+    switch (st)
+    {
+    case Ellipsoid::EllipsoidCutInnerOuter:
+        _data.push_back(OpenGL::Data3DMaterialNormal::irregEllipsoidArc(
+            o, als, ale, aas, aae, r1p, r1m, r2p, r2m, r3p, r3m, q, materialOuter.value(_timeStep), a));
+        _data.push_back(OpenGL::Data3DMaterialNormal::irregEllipsoidArcInn(
+            o, als, ale, aas, aae, r1p, r1m, r2p, r2m, r3p, r3m, q, materialInner.value(_timeStep), a));
+        break;
+
+    case Ellipsoid::EllipsoidCutOuter:
+        _data.push_back(OpenGL::Data3DMaterialNormal::irregEllipsoidArc(
+            o, als, ale, aas, aae, r1p, r1m, r2p, r2m, r3p, r3m, q, materialOuter.value(_timeStep), a));
+        break;
+
+    case Ellipsoid::EllipsoidCutInner:
+        _data.push_back(OpenGL::Data3DMaterialNormal::irregEllipsoidArcInn(
+            o, als, ale, aas, aae, r1p, r1m, r2p, r2m, r3p, r3m, q, materialInner.value(_timeStep), a));
+        break;
     }
 }
 

@@ -21,7 +21,7 @@ namespace Items {
 namespace Sphere {
 Q_NAMESPACE
 
-/*! \brief Show sphere modes */
+/*! \brief Show sphere visible modes */
 enum ShowSphereType : int
 {
     SphereHidden,  //!< Sphere plane hidden
@@ -39,6 +39,15 @@ enum ShowSphereType : int
 
 };
 Q_ENUM_NS(ShowSphereType)
+
+/*! \brief Show sphere cut visible modes */
+enum ShowSphereCutType : int
+{
+    SphereCutInnerOuter,  //!< Single color sphere visible from both inside and outside
+    SphereCutOuter,       //!< Single color sphere visible from outside
+    SphereCutInner,       //!< Single color sphere visible from inside
+};
+Q_ENUM_NS(ShowSphereCutType)
 
 /*! \brief Sphere wire-frame modes */
 enum ShowSphereWireType : int
@@ -112,6 +121,67 @@ class ItemSphere : public Item3DExt
                const size_t _qualityLatLong = 7UL,
                const uint8_t _alpha = 255U,
                const bool _visible = true);
+
+ protected:
+    /*!
+     * \brief Create 3D Open GL data objects
+     * \param _data Output data objects
+     * \param _timeStep Time-step
+     */
+    void createDataImpl(std::list<OpenGL::Data3D *> &_data, const size_t _timeStep) const override;
+};
+
+/*! \brief Dynamic sphere-cut video item */
+class ItemSphereCut : public Item3DExt
+{
+ public:
+    Props::ItemPropertyFloat radius;  //!< Sphere radius
+
+    Props::ItemPropertyFloat angleLonStart;  //!< Longitude angle start in radians (0 to 2π)
+    Props::ItemPropertyFloat angleLonEnd;    //!< Longitude angle end in radians (0 to 2π)
+    Props::ItemPropertyFloat angleLatStart;  //!< Latitude angle start in radians (0 to π)
+    Props::ItemPropertyFloat angleLatEnd;    //!< Latitude angle end in radians (0 to π)
+
+    Props::ItemPropertyQuality quality;  //!< Sphere quality
+
+    Props::ItemPropertyEnum show;  //!< Show sphere cut mode
+
+    Props::ItemPropertyMaterialRGB materialOuter;  //!< Outer sphere material
+    Props::ItemPropertyMaterialRGB materialInner;  //!< Inner sphere material
+
+    /*!
+     * \brief Constructor
+     * \param _name Item name
+     * \param _center Initial center point
+     * \param _normal Initial major normal
+     * \param _arm Initial secondary normal
+     * \param _radius Initial sphere radius
+     * \param _angleLonStart Initial longitude angle start in radians (0 to 2π)
+     * \param _angleLonEnd Initial longitude angle end in radians (0 to 2π)
+     * \param _angleLatStart Initial latitude angle start in radians (0 to π)
+     * \param _angleLatEnd Initial latitude angle end in radians (0 to π)
+     * \param _quality Initial sphere quality
+     * \param _show Initial value for show sphere mode
+     * \param _materialOuter Initial value for outer sphere material
+     * \param _materialInner Initial value for inner sphere material
+     * \param _alpha Initial value for general alpha
+     * \param _visible Initial value for visible flag
+     */
+    ItemSphereCut(const std::string &_name = "Sphere",
+                  const Math::Vec3F &_center = {},
+                  const Math::Vec3F &_normal = Math::Vec3F::unitZ(),
+                  const Math::Vec3F &_arm = Math::Vec3F::unitX(),
+                  const float _radius = 0.5f,
+                  const float _angleLonStart = 0.0f,
+                  const float _angleLonEnd = M_PI,
+                  const float _angleLatStart = 0.0f,
+                  const float _angleLatEnd = M_PI_2,
+                  const size_t _quality = ItemDefaultValues::sphereQuality,
+                  const Sphere::ShowSphereCutType _show = Sphere::SphereCutInnerOuter,
+                  const Math::MaterialRGB &_materialOuter = {Qt::white},
+                  const Math::MaterialRGB &_materialInner = {Qt::lightGray},
+                  const uint8_t _alpha = 255U,
+                  const bool _visible = true);
 
  protected:
     /*!

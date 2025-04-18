@@ -85,79 +85,108 @@ void ItemSphere::createDataImpl(std::list<OpenGL::Data3D *> &_data, const size_t
     if (!Math::isPositive(r))
         return;
 
-    const uint8_t a = alpha.value(_timeStep);
-    if (a == 0U)
-        return;
+    // const uint8_t a = alpha.value(_timeStep);
+    // if (a == 0U)
+    //     return;
 
     const Math::OrientF o = valueOrientation(_timeStep);
     const size_t q = quality.value(_timeStep);
     const Sphere::ShowSphereType st = show.valueEnum<Sphere::ShowSphereType>(_timeStep);
+    uint8_t a;
 
     switch (st)
     {
     case Sphere::SphereHidden: break;
 
     case Sphere::SphereInnerOuter:
-        _data.push_back(OpenGL::Data3DMaterialNormal::sphere(o, r, q, materialOuter.value(_timeStep), a));
-        _data.push_back(OpenGL::Data3DMaterialNormal::sphereInn(o, r, q, materialInner.value(_timeStep), a));
-        break;
-
-    case Sphere::SphereOuter:
-        _data.push_back(OpenGL::Data3DMaterialNormal::sphere(o, r, q, materialOuter.value(_timeStep), a));
-        break;
-
-    case Sphere::SphereInner:
-        _data.push_back(OpenGL::Data3DMaterialNormal::sphereInn(o, r, q, materialInner.value(_timeStep), a));
-        break;
-
-    case Sphere::SphereTextureInnerOuter: {
-        const QImage img = QImage(textureImage.value(_timeStep));
-        if (img.isNull())
+        a = alpha.value(_timeStep);
+        if (a > 0U)
         {
             _data.push_back(OpenGL::Data3DMaterialNormal::sphere(o, r, q, materialOuter.value(_timeStep), a));
             _data.push_back(OpenGL::Data3DMaterialNormal::sphereInn(o, r, q, materialInner.value(_timeStep), a));
         }
-        else
+        break;
+
+    case Sphere::SphereOuter:
+        a = alpha.value(_timeStep);
+        if (a > 0U)
+            _data.push_back(OpenGL::Data3DMaterialNormal::sphere(o, r, q, materialOuter.value(_timeStep), a));
+        break;
+
+    case Sphere::SphereInner:
+        a = alpha.value(_timeStep);
+        if (a > 0U)
+            _data.push_back(OpenGL::Data3DMaterialNormal::sphereInn(o, r, q, materialInner.value(_timeStep), a));
+        break;
+
+    case Sphere::SphereTextureInnerOuter: {
+        a = alpha.value(_timeStep);
+        if (a > 0U)
         {
-            _data.push_back(OpenGL::Data3DTexture::sphere(new QOpenGLTexture(img), o, r, q, a));
-            _data.push_back(OpenGL::Data3DTexture::sphereInn(new QOpenGLTexture(img), o, r, q, a));
+            const QImage img = QImage(textureImage.value(_timeStep));
+            if (img.isNull())
+            {
+                _data.push_back(OpenGL::Data3DMaterialNormal::sphere(o, r, q, materialOuter.value(_timeStep), a));
+                _data.push_back(OpenGL::Data3DMaterialNormal::sphereInn(o, r, q, materialInner.value(_timeStep), a));
+            }
+            else
+            {
+                _data.push_back(OpenGL::Data3DTexture::sphere(new QOpenGLTexture(img), o, r, q, a));
+                _data.push_back(OpenGL::Data3DTexture::sphereInn(new QOpenGLTexture(img), o, r, q, a));
+            }
         }
     }
     break;
 
     case Sphere::SphereTextureOuter: {
-        const QImage img = QImage(textureImage.value(_timeStep));
-        if (img.isNull())
-            _data.push_back(OpenGL::Data3DMaterialNormal::sphere(o, r, q, materialOuter.value(_timeStep), a));
-        else
-            _data.push_back(OpenGL::Data3DTexture::sphere(new QOpenGLTexture(img), o, r, q, a));
+        a = alpha.value(_timeStep);
+        if (a > 0U)
+        {
+            const QImage img = QImage(textureImage.value(_timeStep));
+            if (img.isNull())
+                _data.push_back(OpenGL::Data3DMaterialNormal::sphere(o, r, q, materialOuter.value(_timeStep), a));
+            else
+                _data.push_back(OpenGL::Data3DTexture::sphere(new QOpenGLTexture(img), o, r, q, a));
+        }
     }
     break;
 
     case Sphere::SphereTextureInner: {
-        const QImage img = QImage(textureImage.value(_timeStep));
-        if (img.isNull())
-            _data.push_back(OpenGL::Data3DMaterialNormal::sphereInn(o, r, q, materialInner.value(_timeStep), a));
-        else
-            _data.push_back(OpenGL::Data3DTexture::sphereInn(new QOpenGLTexture(img), o, r, q, a));
+        a = alpha.value(_timeStep);
+        if (a > 0U)
+        {
+            const QImage img = QImage(textureImage.value(_timeStep));
+            if (img.isNull())
+                _data.push_back(OpenGL::Data3DMaterialNormal::sphereInn(o, r, q, materialInner.value(_timeStep), a));
+            else
+                _data.push_back(OpenGL::Data3DTexture::sphereInn(new QOpenGLTexture(img), o, r, q, a));
+        }
     }
     break;
 
     case Sphere::SphereTextureSoccerBall: {
-        const QImage img = QImage(":/socer_ball.png");
-        if (img.isNull())
-            _data.push_back(OpenGL::Data3DMaterialNormal::sphere(o, r, q, materialOuter.value(_timeStep), a));
-        else
-            _data.push_back(OpenGL::Data3DTexture::sphere(new QOpenGLTexture(img), o, r, q, a));
+        a = alpha.value(_timeStep);
+        if (a > 0U)
+        {
+            const QImage img = QImage(":/socer_ball.png");
+            if (img.isNull())
+                _data.push_back(OpenGL::Data3DMaterialNormal::sphere(o, r, q, materialOuter.value(_timeStep), a));
+            else
+                _data.push_back(OpenGL::Data3DTexture::sphere(new QOpenGLTexture(img), o, r, q, a));
+        }
     }
     break;
 
     case Sphere::SphereTextureSoccerEarth: {
-        const QImage img = QImage(":/earth.png");
-        if (img.isNull())
-            _data.push_back(OpenGL::Data3DMaterialNormal::sphere(o, r, q, materialOuter.value(_timeStep), a));
-        else
-            _data.push_back(OpenGL::Data3DTexture::sphere(new QOpenGLTexture(img), o, r, q, a));
+        a = alpha.value(_timeStep);
+        if (a > 0U)
+        {
+            const QImage img = QImage(":/earth.png");
+            if (img.isNull())
+                _data.push_back(OpenGL::Data3DMaterialNormal::sphere(o, r, q, materialOuter.value(_timeStep), a));
+            else
+                _data.push_back(OpenGL::Data3DTexture::sphere(new QOpenGLTexture(img), o, r, q, a));
+        }
     }
     break;
     }
@@ -305,6 +334,96 @@ static void createSphereWires(std::list<OpenGL::Data3D *> &_data,
                 _material));
 
         angle += _angleStep;
+    }
+}
+
+ItemSphereCut::ItemSphereCut(const std::string &_name,
+                             const Math::Vec3F &_center,
+                             const Math::Vec3F &_normal,
+                             const Math::Vec3F &_arm,
+                             const float _radius,
+                             const float _angleLonStart,
+                             const float _angleLonEnd,
+                             const float _angleLatStart,
+                             const float _angleLatEnd,
+                             const size_t _quality,
+                             const Sphere::ShowSphereCutType _show,
+                             const Math::MaterialRGB &_materialOuter,
+                             const Math::MaterialRGB &_materialInner,
+                             const uint8_t _alpha,
+                             const bool _visible)
+    : Item3DExt(_name, _center, _normal, _arm, _alpha, _visible)
+    , radius("radius", _radius, 0.0f, std::numeric_limits<float>::max())
+    , angleLonStart("angleLonStart", _angleLonStart)
+    , angleLonEnd("angleLonEnd", _angleLonEnd)
+    , angleLatStart("angleLatStart", _angleLatStart, 0.0f, float(M_PI))
+    , angleLatEnd("angleLatEnd", _angleLatEnd, 0.0f, float(M_PI))
+    , quality("quality", _quality)
+    , show("show", QMetaEnum::fromType<Sphere::ShowSphereCutType>(), _show)
+    , materialOuter("materialOuter", _materialOuter)
+    , materialInner("materialInner", _materialInner)
+{
+    addProperty(&radius);
+    addProperty(&angleLonStart);
+    addProperty(&angleLonEnd);
+    addProperty(&angleLatStart);
+    addProperty(&angleLatEnd);
+    addProperty(&quality);
+    addProperty(&show);
+    addProperty(&materialOuter);
+    addProperty(&materialInner);
+}
+
+void ItemSphereCut::createDataImpl(std::list<OpenGL::Data3D *> &_data, const size_t _timeStep) const
+{
+    static const float _2PI = float(2.0 * M_PI);
+
+    const float r = radius.value(_timeStep);
+    if (!Math::isPositive(r))
+        return;
+
+    const float aas = angleLatStart.value(_timeStep);
+    const float aae = angleLatEnd.value(_timeStep);
+    if (Math::equals(aas, aae))
+        return;
+
+    float als = angleLonStart.value(_timeStep);
+    float ale = angleLonEnd.value(_timeStep);
+    if (Math::equals(als, ale))
+        return;
+
+    if (Math::isMoreOrEqual(std::abs(ale - als), _2PI))
+    {
+        als = 0.0f;
+        ale = _2PI;
+    }
+
+    const uint8_t a = alpha.value(_timeStep);
+    if (a == 0U)
+        return;
+
+    const Math::OrientF o = valueOrientation(_timeStep);
+    const size_t q = quality.value(_timeStep);
+    const Sphere::ShowSphereCutType st = show.valueEnum<Sphere::ShowSphereCutType>(_timeStep);
+
+    switch (st)
+    {
+    case Sphere::SphereCutInnerOuter:
+        _data.push_back(
+            OpenGL::Data3DMaterialNormal::sphereArc(o, als, ale, aas, aae, r, q, materialOuter.value(_timeStep), a));
+        _data.push_back(
+            OpenGL::Data3DMaterialNormal::sphereArcInn(o, als, ale, aas, aae, r, q, materialInner.value(_timeStep), a));
+        break;
+
+    case Sphere::SphereCutOuter:
+        _data.push_back(
+            OpenGL::Data3DMaterialNormal::sphereArc(o, als, ale, aas, aae, r, q, materialOuter.value(_timeStep), a));
+        break;
+
+    case Sphere::SphereCutInner:
+        _data.push_back(
+            OpenGL::Data3DMaterialNormal::sphereArcInn(o, als, ale, aas, aae, r, q, materialInner.value(_timeStep), a));
+        break;
     }
 }
 

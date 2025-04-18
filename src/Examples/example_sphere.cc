@@ -83,9 +83,16 @@ bool exampleSphere(const QString &_workDir, const QString &_img = "")
     else
     {
         obj1->show.initValue(Sphere::SphereOuter);
-        obj1->show.setValue(2000, Sphere::SphereInner);
-        obj1->show.setValue(4000, Sphere::SphereTextureSoccerBall);
-        obj1->show.setValue(6000, Sphere::SphereTextureSoccerEarth);
+        obj1->show.setValue(1000, Sphere::SphereInner);
+        obj1->show.setValue(2000, Sphere::SphereTextureSoccerBall);
+        obj1->show.setValue(3000, Sphere::SphereTextureSoccerEarth);
+        obj1->show.setValue(4000, Sphere::SphereHidden);
+
+        ItemSphereCut *obj2 = footage1->add3D(new ItemSphereCut());
+        obj2->arm.addRotated(dur, {}, {0, 0, 1}, rot1);
+        obj2->visible.initOff_On(4000);
+        obj2->angleLonEnd.addFromLinearValue(4000, dur, 2.0 * M_PI);
+        obj2->angleLatEnd.addFromLinearValue(4000, dur, M_PI);
     }
 
     obj1->stepWire.initValue(0.2f);
@@ -102,6 +109,8 @@ bool exampleSphere(const QString &_workDir, const QString &_img = "")
 
     footage1->cameraPosition.initValue({-5, -1, 1});
     footage1->cameraPosition.addFromRotatedAccelerated(dur / 8UL, (7UL * dur) / 8UL, {}, {0, 0, 1}, rot2, 0.1, 0.1);
+
+    footage1->minimalFootageDuration = dur;
 
     return project.createVideo(_workDir + "Video" + QDir::separator(), _workDir + "video.avi");
 }

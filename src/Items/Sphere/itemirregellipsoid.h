@@ -11,7 +11,7 @@
 namespace U1 {
 namespace Items {
 
-/*! \brief Dynamic ellipsoid video item */
+/*! \brief Dynamic irregular ellipsoid video item */
 class ItemIrregEllipsoid : public Item3DExt
 {
  public:
@@ -83,6 +83,82 @@ class ItemIrregEllipsoid : public Item3DExt
                        const size_t _qualityWire = ItemDefaultValues::lineQuality,
                        const uint8_t _alpha = 255U,
                        const bool _visible = true);
+
+ protected:
+    /*!
+     * \brief Create 3D Open GL data objects
+     * \param _data Output data objects
+     * \param _timeStep Time-step
+     */
+    void createDataImpl(std::list<OpenGL::Data3D *> &_data, const size_t _timeStep) const override;
+};
+
+/*! \brief Dynamic irregular ellipsoid cut video item */
+class ItemIrregEllipsoidCut : public Item3DExt
+{
+ public:
+    Props::ItemPropertyFloat radius1P;  //!< Ellipsoid radius along normal direction
+    Props::ItemPropertyFloat radius1M;  //!< Ellipsoid radius along opposite of a normal direction
+    Props::ItemPropertyFloat radius2P;  //!< Ellipsoid radius along arm direction
+    Props::ItemPropertyFloat radius2M;  //!< Ellipsoid radius along opposite of a arm direction
+    Props::ItemPropertyFloat radius3P;  //!< Ellipsoid radius along third perpendicular normal
+    Props::ItemPropertyFloat radius3M;  //!< Ellipsoid radius along opposite of a third perpendicular normal
+
+    Props::ItemPropertyFloat angleLonStart;  //!< Longitude angle start in radians (0 to 2π)
+    Props::ItemPropertyFloat angleLonEnd;    //!< Longitude angle end in radians (0 to 2π)
+    Props::ItemPropertyFloat angleLatStart;  //!< Latitude angle start in radians (0 to π)
+    Props::ItemPropertyFloat angleLatEnd;    //!< Latitude angle end in radians (0 to π)
+
+    Props::ItemPropertyQuality quality;  //!< Ellipsoid quality
+
+    Props::ItemPropertyEnum show;  //!< Show ellipsoid mode
+
+    Props::ItemPropertyMaterialRGB materialOuter;  //!< Outer ellipsoid material
+    Props::ItemPropertyMaterialRGB materialInner;  //!< Inner ellipsoid material
+
+    /*!
+     * \brief Constructor
+     * \param _name Item name
+     * \param _center Initial center point
+     * \param _normal Initial major normal
+     * \param _arm Initial secondary normal
+     * \param _radius1P Initial ellipsoid radius 1 along normal direction
+     * \param _radius1M Initial ellipsoid radius 1 along opposite of a normal direction
+     * \param _radius2P Initial ellipsoid radius 2 along arm direction
+     * \param _radius2M Initial ellipsoid radius 2 along opposite of a arm direction
+     * \param _radius3P Initial ellipsoid radius 3 along third perpendicular normal
+     * \param _radius3M Initial ellipsoid radius 3 along opposite of a third perpendicular normal
+     * \param _angleLonStart Initial longitude angle start in radians (0 to 2π)
+     * \param _angleLonEnd Initial longitude angle end in radians (0 to 2π)
+     * \param _angleLatStart Initial latitude angle start in radians (0 to π)
+     * \param _angleLatEnd Initial latitude angle end in radians (0 to π)
+     * \param _quality Initial ellipsoid quality
+     * \param _show Initial value for show ellipsoid mode
+     * \param _materialOuter Initial value for outer ellipsoid material
+     * \param _materialInner Initial value for inner ellipsoid material
+     * \param _alpha Initial value for general alpha
+     * \param _visible Initial value for visible flag
+     */
+    ItemIrregEllipsoidCut(const std::string &_name = "Ellipsoid",
+                          const Math::Vec3F &_center = {},
+                          const Math::Vec3F &_normal = Math::Vec3F::unitZ(),
+                          const Math::Vec3F &_arm = Math::Vec3F::unitX(),
+                          const float _radius1P = 0.3f,
+                          const float _radius1M = 0.7f,
+                          const float _radius2P = 0.4f,
+                          const float _radius2M = 0.6f,
+                          const float _radius3P = 0.2f,
+                          const float _radius3M = 0.8f,
+                          const float _angleLonStart = 0.0f,
+                          const float _angleLonEnd = M_PI,
+                          const float _angleLatStart = 0.0f,
+                          const float _angleLatEnd = M_PI_2,
+                          const size_t _quality = ItemDefaultValues::sphereQuality,
+                          const Ellipsoid::ShowEllipsoidCutType _show = Ellipsoid::EllipsoidCutInnerOuter,
+                          const Math::MaterialRGB &_materialOuter = {Qt::white},
+                          const Math::MaterialRGB &_materialInner = {Qt::lightGray},
+                          const uint8_t _alpha = 255U,
+                          const bool _visible = true);
 
  protected:
     /*!

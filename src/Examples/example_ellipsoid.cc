@@ -71,6 +71,7 @@ bool exampleEllipsoid(const QString &_workDir, const QString &_img = "")
 
     as->addSpeechSUBS(500, "An ellipsoid example. ", 1000);
 
+    // ItemEllipsoid *obj1 = footage1->add3D(new ItemEllipsoid());
     ItemIrregEllipsoid *obj1 = footage1->add3D(new ItemIrregEllipsoid());
 
     obj1->arm.addRotated(dur, {}, {0, 0, 1}, rot1);
@@ -84,9 +85,17 @@ bool exampleEllipsoid(const QString &_workDir, const QString &_img = "")
     else
     {
         obj1->show.initValue(Ellipsoid::EllipsoidOuter);
-        obj1->show.setValue(2000, Ellipsoid::EllipsoidInner);
-        obj1->show.setValue(4000, Ellipsoid::EllipsoidTextureSoccerBall);
-        obj1->show.setValue(6000, Ellipsoid::EllipsoidTextureSoccerEarth);
+        obj1->show.setValue(1000, Ellipsoid::EllipsoidInner);
+        obj1->show.setValue(2000, Ellipsoid::EllipsoidTextureSoccerBall);
+        obj1->show.setValue(3000, Ellipsoid::EllipsoidTextureSoccerEarth);
+        obj1->show.setValue(4000, Ellipsoid::EllipsoidHidden);
+
+        // ItemEllipsoidCut *obj2 = footage1->add3D(new ItemEllipsoidCut());
+        ItemIrregEllipsoidCut *obj2 = footage1->add3D(new ItemIrregEllipsoidCut());
+        obj2->arm.addRotated(dur, {}, {0, 0, 1}, rot1);
+        obj2->visible.initOff_On(4000);
+        obj2->angleLonEnd.addFromLinearValue(4000, dur, 2.0 * M_PI);
+        obj2->angleLatEnd.addFromLinearValue(4000, dur, M_PI);
     }
 
     obj1->stepWire.initValue(0.2f);
