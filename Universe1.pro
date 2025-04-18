@@ -200,6 +200,9 @@ SOURCES += src/Items/Sphere/itemellipsoid.cpp
 HEADERS += src/Items/Sphere/itemirregellipsoid.h
 SOURCES += src/Items/Sphere/itemirregellipsoid.cpp
 
+HEADERS += src/Items/Line/itemline.h
+SOURCES += src/Items/Line/itemline.cpp
+
 ######################################################
 
 HEADERS += src/Video/settingsvideo.h
@@ -223,6 +226,7 @@ SOURCES += src/Examples/example_ellipse.cc
 SOURCES += src/Examples/example_text.cc
 SOURCES += src/Examples/example_sphere.cc
 SOURCES += src/Examples/example_ellipsoid.cc
+SOURCES += src/Examples/example_line.cc
 
 contains ( DEFINES, U1_UNIT_TESTS) {
     SOURCES += src/UnitTests/test_math.cc

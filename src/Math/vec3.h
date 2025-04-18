@@ -8,6 +8,7 @@
 
 #include "vec2.h"
 #include "colorrgb.h"
+#include <sstream>
 
 namespace U1 {
 namespace Math {
@@ -217,6 +218,9 @@ struct Vec3
 
     static size_t mixHash(const std::pair<Vec3<T>, Vec3<T>> *_data, const size_t _count);
     inline static size_t mixHash(const std::vector<std::pair<Vec3<T>, Vec3<T>>> &_data);
+
+    inline std::string toString(const int _decimals = -1) const;
+    inline QString toQString(const int _decimals = -1) const;
 };
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1873,6 +1877,37 @@ size_t Vec3<T>::mixHash(const std::vector<std::pair<Vec3<T>, Vec3<T>>> &_data)
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief To \c std::string
+ * \tparam T Template floating point type
+ * \param _decimals Decimal count (-1 for default precision)
+ * \return Vector as \c std::string
+ */
+template <typename T>
+inline std::string Vec3<T>::toString(const int _decimals) const
+{
+    std::stringstream ss;
+    if (_decimals >= 0)
+    {
+        ss.precision(_decimals);
+        ss << std::fixed;
+    }
+    ss << *this;
+    return ss.str();
+}
+
+/*!
+ * \brief To \c QString
+ * \tparam T Template floating point type
+ * \param _decimals Decimal count (-1 for default precision)
+ * \return Vector as \c QString
+ */
+template <typename T>
+inline QString Vec3<T>::toQString(const int _decimals) const
+{
+    return QString::fromStdString(toString(_decimals));
+}
 
 /*!
  * \brief Fill output text stream
