@@ -670,7 +670,6 @@ Data3DMaterialNormal *Data3DMaterialNormal::path(const std::vector<Math::OrientF
     Math::Vec3F max = Math::Vec3F::lowestValue();
     Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
     Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
-    uint *t3 = reinterpret_cast<uint *>(std::malloc(I * sizeof(uint)));
 
     if (pool.empty())
     {
@@ -687,15 +686,6 @@ Data3DMaterialNormal *Data3DMaterialNormal::path(const std::vector<Math::OrientF
                 t2[ji] = nn;
 
                 pp.updateRange(min, max);
-
-                if (c != C && p != PO)
-                {
-                    size_t jj = p * C * 4UL + c * 4UL;
-                    t3[jj++] = ji;
-                    t3[jj++] = ji + 1U;
-                    t3[jj++] = ji + CO + 1U;
-                    t3[jj] = ji + CO;
-                }
             }
         }
     }
@@ -708,12 +698,11 @@ Data3DMaterialNormal *Data3DMaterialNormal::path(const std::vector<Math::OrientF
 
         for (const std::pair<size_t, size_t> &t : std::as_const(pool))
             threads.push_back(std::thread(
-                [t, C, CO, PO, _radius](std::pair<Math::Vec3F, Math::Vec3F> &_outRange,
-                                        Math::Vec3F *_t1,
-                                        Math::Vec3F *_t2,
-                                        uint *_t3,
-                                        const Math::OrientF *__path,
-                                        const Math::Vec2F *_cp) {
+                [t, C, CO, _radius](std::pair<Math::Vec3F, Math::Vec3F> &_outRange,
+                                    Math::Vec3F *_t1,
+                                    Math::Vec3F *_t2,
+                                    const Math::OrientF *__path,
+                                    const Math::Vec2F *_cp) {
                     const size_t end = t.first + t.second;
                     for (size_t i = t.first; i < end; ++i)
                     {
@@ -729,21 +718,11 @@ Data3DMaterialNormal *Data3DMaterialNormal::path(const std::vector<Math::OrientF
                         _t2[ji] = nn;
 
                         pp.updateRange(_outRange.first, _outRange.second);
-
-                        if (c != C && p != PO)
-                        {
-                            size_t jj = p * C * 4UL + c * 4UL;
-                            _t3[jj++] = ji;
-                            _t3[jj++] = ji + 1U;
-                            _t3[jj++] = ji + CO + 1U;
-                            _t3[jj] = ji + CO;
-                        }
                     }
                 },
                 std::ref(tData[tt++]),
                 t1,
                 t2,
-                t3,
                 _path.data(),
                 cp.data()));
 
@@ -754,14 +733,15 @@ Data3DMaterialNormal *Data3DMaterialNormal::path(const std::vector<Math::OrientF
             Math::Vec3F::updateRange(min, max, t);
     }
 
+    const std::vector<uint> &uc = Math::PlaneIndices::getQuadIndexes(_path.size(), CO).first;
+
     Data3DMaterialNormal *result =
-        new Data3DMaterialNormal(GL_QUADS, N, I, t1, t2, t3, _material.toRGB(), _material.alpha);
+        new Data3DMaterialNormal(GL_QUADS, N, I, t1, t2, uc.data(), _material.toRGB(), _material.alpha);
 
     result->setCentralPoint((min + max) * 0.5f);
-
     std::free(t1);
     std::free(t2);
-    std::free(t3);
+
     return result;
 }
 
@@ -787,7 +767,6 @@ Data3DMaterialNormal *Data3DMaterialNormal::path(const std::vector<Math::OrientF
 
     Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
     Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
-    uint *t3 = reinterpret_cast<uint *>(std::malloc(I * sizeof(uint)));
 
     if (pool.empty())
     {
@@ -802,15 +781,6 @@ Data3DMaterialNormal *Data3DMaterialNormal::path(const std::vector<Math::OrientF
                 const uint ji = p * CO + c;
                 t1[ji] = pp;
                 t2[ji] = nn;
-
-                if (c != C && p != PO)
-                {
-                    size_t jj = p * C * 4UL + c * 4UL;
-                    t3[jj++] = ji;
-                    t3[jj++] = ji + 1U;
-                    t3[jj++] = ji + CO + 1U;
-                    t3[jj] = ji + CO;
-                }
             }
         }
     }
@@ -821,11 +791,8 @@ Data3DMaterialNormal *Data3DMaterialNormal::path(const std::vector<Math::OrientF
 
         for (const std::pair<size_t, size_t> &t : std::as_const(pool))
             threads.push_back(std::thread(
-                [t, C, CO, PO, _radius](Math::Vec3F *_t1,
-                                        Math::Vec3F *_t2,
-                                        uint *_t3,
-                                        const Math::OrientF *__path,
-                                        const Math::Vec2F *_cp) {
+                [t, C, CO, _radius](
+                    Math::Vec3F *_t1, Math::Vec3F *_t2, const Math::OrientF *__path, const Math::Vec2F *_cp) {
                     const size_t end = t.first + t.second;
                     for (size_t i = t.first; i < end; ++i)
                     {
@@ -839,20 +806,10 @@ Data3DMaterialNormal *Data3DMaterialNormal::path(const std::vector<Math::OrientF
 
                         _t1[ji] = pp;
                         _t2[ji] = nn;
-
-                        if (c != C && p != PO)
-                        {
-                            size_t jj = p * C * 4UL + c * 4UL;
-                            _t3[jj++] = ji;
-                            _t3[jj++] = ji + 1U;
-                            _t3[jj++] = ji + CO + 1U;
-                            _t3[jj] = ji + CO;
-                        }
                     }
                 },
                 t1,
                 t2,
-                t3,
                 _path.data(),
                 cp.data()));
 
@@ -860,14 +817,15 @@ Data3DMaterialNormal *Data3DMaterialNormal::path(const std::vector<Math::OrientF
             t.join();
     }
 
+    const std::vector<uint> &uc = Math::PlaneIndices::getQuadIndexes(_path.size(), CO).first;
+
     Data3DMaterialNormal *result =
-        new Data3DMaterialNormal(GL_QUADS, N, I, t1, t2, t3, _material.toRGB(), _material.alpha);
+        new Data3DMaterialNormal(GL_QUADS, N, I, t1, t2, uc.data(), _material.toRGB(), _material.alpha);
 
     result->setCentralPoint(_centerPoint);
 
     std::free(t1);
     std::free(t2);
-    std::free(t3);
     return result;
 }
 
@@ -913,6 +871,73 @@ Data3DMaterialNormal *Data3DMaterialNormal::pathEllipse(const Math::OrientF &_or
                         const Math::Vec2F n2 = (2.0f * Math::Vec2F(p2d.x / _radius1, p2d.y / _radius2)).normalized();
                         _out[i].center = _orientation.center + _orientation.normal2 * (p2d.x * _radius1) +
                             _orientation.normal3 * (p2d.y * _radius2);
+                        _out[i].normal3 = _orientation.normal1;
+                        _out[i].normal2 = (_orientation.normal2 * n2.x + _orientation.normal3 * n2.y).normalized();
+                        _out[i].normal1 = Math::Vec3F::cross(_out[i].normal2, _out[i].normal3).normalized();
+                    }
+                },
+                p.data(),
+                cp.data()));
+
+        for (std::thread &t : threads)
+            t.join();
+    }
+
+    p[cp.size()] = p[0];
+    return path(p, _orientation.center, _radiusPath, _qualityPath, _material);
+}
+
+Data3DMaterialNormal *Data3DMaterialNormal::pathIrregEllipse(const Math::OrientF &_orientation,
+                                                             const float _radius1P,
+                                                             const float _radius1M,
+                                                             const float _radius2P,
+                                                             const float _radius2M,
+                                                             const float _radiusPath,
+                                                             const size_t _quality,
+                                                             const size_t _qualityPath,
+                                                             const Math::MaterialRGBA &_material)
+{
+    const std::pair<std::vector<Math::Vec2F>, std::vector<std::pair<size_t, size_t>>> &cq =
+        Math::Circle2F::unitCircle(_quality);
+    const std::vector<Math::Vec2F> &cp = cq.first;
+    const std::vector<std::pair<size_t, size_t>> &pool = cq.second;
+    std::vector<Math::OrientF> p(cp.size() + 1UL);
+
+    if (pool.empty())
+    {
+        for (size_t i = 0UL; i < cp.size(); i++)
+        {
+            const Math::Vec2F &p2d = cp[i];
+            const float R1 = Math::isNegative(p2d.x) ? _radius1M : _radius1P;
+            const float R2 = Math::isNegative(p2d.y) ? _radius2M : _radius2P;
+            const Math::Vec2F n2 = (2.0f * Math::Vec2F(p2d.x / R1, p2d.y / R2)).normalized();
+
+            p[i].center =
+                _orientation.center + _orientation.normal2 * (p2d.x * R1) + _orientation.normal3 * (p2d.y * R2);
+            p[i].normal3 = _orientation.normal1;
+            p[i].normal2 = (_orientation.normal2 * n2.x + _orientation.normal3 * n2.y).normalized();
+            p[i].normal1 = Math::Vec3F::cross(p[i].normal2, p[i].normal3).normalized();
+        }
+    }
+    else
+    {
+        std::vector<std::thread> threads;
+        threads.reserve(pool.size());
+
+        for (const std::pair<size_t, size_t> &t : std::as_const(pool))
+            threads.push_back(std::thread(
+                [t, _orientation, _radius1P, _radius1M, _radius2P, _radius2M](Math::OrientF *_out,
+                                                                              const Math::Vec2F *_2d) {
+                    const size_t end = t.first + t.second;
+                    for (size_t i = t.first; i < end; ++i)
+                    {
+                        const Math::Vec2F &p2d = _2d[i];
+                        const float R1 = Math::isNegative(p2d.x) ? _radius1M : _radius1P;
+                        const float R2 = Math::isNegative(p2d.y) ? _radius2M : _radius2P;
+
+                        const Math::Vec2F n2 = (2.0f * Math::Vec2F(p2d.x / R1, p2d.y / R2)).normalized();
+                        _out[i].center = _orientation.center + _orientation.normal2 * (p2d.x * R1) +
+                            _orientation.normal3 * (p2d.y * R2);
                         _out[i].normal3 = _orientation.normal1;
                         _out[i].normal2 = (_orientation.normal2 * n2.x + _orientation.normal3 * n2.y).normalized();
                         _out[i].normal1 = Math::Vec3F::cross(_out[i].normal2, _out[i].normal3).normalized();

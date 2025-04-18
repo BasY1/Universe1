@@ -1,6 +1,7 @@
 #include "../Video/project.h"
 
 #include "../Items/Sphere/itemellipsoid.h"
+#include "../Items/Sphere/itemirregellipsoid.h"
 #include "../Items/Items2D/item2dtext.h"
 
 namespace U1 {
@@ -70,7 +71,7 @@ bool exampleEllipsoid(const QString &_workDir, const QString &_img = "")
 
     as->addSpeechSUBS(500, "An ellipsoid example. ", 1000);
 
-    ItemEllipsoid *obj1 = footage1->add3D(new ItemEllipsoid());
+    ItemIrregEllipsoid *obj1 = footage1->add3D(new ItemIrregEllipsoid());
 
     obj1->arm.addRotated(dur, {}, {0, 0, 1}, rot1);
 

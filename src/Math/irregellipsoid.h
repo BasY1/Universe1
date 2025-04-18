@@ -102,6 +102,32 @@ struct IrregEllipsoid
                                           const size_t _quality);
 
     // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    static void fillEllipsoidOuter(Vec3<T> *_outVertex,
+                                   Vec2<T> *_outCoord,
+                                   uint *_outIndex,
+                                   const Orientation<T> &_orientation,
+                                   const T _radius1P,
+                                   const T _radius1M,
+                                   const T _radius2P,
+                                   const T _radius2M,
+                                   const T _radius3P,
+                                   const T _radius3M,
+                                   const size_t _quality);
+
+    static void fillEllipsoidInner(Vec3<T> *_outVertex,
+                                   Vec2<T> *_outCoord,
+                                   uint *_outIndex,
+                                   const Orientation<T> &_orientation,
+                                   const T _radius1P,
+                                   const T _radius1M,
+                                   const T _radius2P,
+                                   const T _radius2M,
+                                   const T _radius3P,
+                                   const T _radius3M,
+                                   const size_t _quality);
+
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //
     // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -456,6 +482,176 @@ inline void IrregEllipsoid<T>::fillEllipsoidInner(Vec3<T> *_outVertex,
                        _radius3P,
                        _radius3M,
                        _quality);
+}
+
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Fill irregular ellipsoid vertices - ellipsoid visible from outside
+ * \tparam T Template floating point type
+ * \param _outVertex Output vertex array
+ * \param _outCoords Output texture coordinates array
+ * \param _outIndex Output index array
+ * \param _orientation Ellipsoid orientation in 3D space
+ * \param _radius1P Ellipsoid radius in normal 1 direction
+ * \param _radius1M Ellipsoid radius in normal 1 inverted direction
+ * \param _radius2P Ellipsoid radius in normal 2 direction
+ * \param _radius2M Ellipsoid radius in normal 2 inverted direction
+ * \param _radius3P Ellipsoid radius in normal 3 direction
+ * \param _radius3M Ellipsoid radius in normal 3 inverted direction
+ * \param _quality Circle quality
+ * \return
+ */
+template <typename T>
+void IrregEllipsoid<T>::fillEllipsoidOuter(Vec3<T> *_outVertex,
+                                           Vec2<T> *_outCoords,
+                                           uint *_outIndex,
+                                           const Orientation<T> &_orientation,
+                                           const T _radius1P,
+                                           const T _radius1M,
+                                           const T _radius2P,
+                                           const T _radius2M,
+                                           const T _radius3P,
+                                           const T _radius3M,
+                                           const size_t _quality)
+{
+    const std::pair<std::vector<Vec3<T>>, std::vector<std::pair<size_t, size_t>>> &us = Sphere<T>::unitSphere(_quality);
+    const std::vector<Vec3<T>> &data = us.first;
+    const std::vector<std::pair<size_t, size_t>> &pool = us.second;
+
+    if (pool.empty())
+    {
+        for (size_t i = 0UL; i < data.size(); ++i)
+        {
+            const Vec3<T> &N0 = data[i];
+            const T R1 = isNegative(N0.x) ? _radius1M : _radius1P;
+            const T R2 = isNegative(N0.y) ? _radius2M : _radius2P;
+            const T R3 = isNegative(N0.z) ? _radius3M : _radius3P;
+            _outVertex[i] = _orientation.center + _orientation.normal1 * (N0.x * R1) +
+                _orientation.normal2 * (N0.y * R2) + _orientation.normal3 * (N0.z * R3);
+        }
+    }
+    else
+    {
+        std::vector<std::thread> threads;
+        threads.reserve(pool.size());
+        for (const std::pair<size_t, size_t> &t : std::as_const(pool))
+            threads.push_back(std::thread(
+                [t, _orientation, _radius1P, _radius1M, _radius2P, _radius2M, _radius3P, _radius3M](
+                    Vec3<T> *__outVertex, const Vec3<T> *_data) {
+                    const size_t end = t.first + t.second;
+                    for (size_t i = t.first; i < end; ++i)
+                    {
+                        const Vec3<T> &N0 = _data[i];
+                        const T R1 = isNegative(N0.x) ? _radius1M : _radius1P;
+                        const T R2 = isNegative(N0.y) ? _radius2M : _radius2P;
+                        const T R3 = isNegative(N0.z) ? _radius3M : _radius3P;
+                        __outVertex[i] = _orientation.center + _orientation.normal1 * (N0.x * R1) +
+                            _orientation.normal2 * (N0.y * R2) + _orientation.normal3 * (N0.z * R3);
+                    }
+                },
+                _outVertex,
+                data.data()));
+        for (std::thread &t : threads)
+            t.join();
+    }
+
+    const size_t cntCircle = circlePointCount(_quality);
+    const size_t cntLon = cntCircle;
+    const size_t cntLat = cntCircle / 2UL;
+
+    const std::pair<std::vector<Vec2<T>>, std::vector<std::pair<size_t, size_t>>> &uc =
+        PlaneCoords<T>::getCoords(cntLon + 1UL, cntLat + 1UL);
+
+    const std::pair<std::vector<uint>, std::vector<std::pair<size_t, size_t>>> &ui =
+        PlaneIndices::getQuadIndexes(cntLon + 1UL, cntLat + 1UL);
+
+    copyData<Vec2<T>, size_t>(_outCoords, uc.first.data(), uc.first.size(), uc.second);
+    copyData<uint, size_t>(_outIndex, ui.first.data(), ui.first.size(), ui.second);
+}
+
+/*!
+ * \brief Fill irregular ellipsoid vertices - ellipsoid visible from inside
+ * \tparam T Template floating point type
+ * \param _outVertex Output vertex array
+ * \param _outCoords Output texture coordinates array
+ * \param _outIndex Output index array
+ * \param _orientation Ellipsoid orientation in 3D space
+ * \param _radius1P Ellipsoid radius in normal 1 direction
+ * \param _radius1M Ellipsoid radius in normal 1 inverted direction
+ * \param _radius2P Ellipsoid radius in normal 2 direction
+ * \param _radius2M Ellipsoid radius in normal 2 inverted direction
+ * \param _radius3P Ellipsoid radius in normal 3 direction
+ * \param _radius3M Ellipsoid radius in normal 3 inverted direction
+ * \param _quality Circle quality
+ * \return
+ */
+template <typename T>
+void IrregEllipsoid<T>::fillEllipsoidInner(Vec3<T> *_outVertex,
+                                           Vec2<T> *_outCoords,
+                                           uint *_outIndex,
+                                           const Orientation<T> &_orientation,
+                                           const T _radius1P,
+                                           const T _radius1M,
+                                           const T _radius2P,
+                                           const T _radius2M,
+                                           const T _radius3P,
+                                           const T _radius3M,
+                                           const size_t _quality)
+{
+    const std::pair<std::vector<Vec3<T>>, std::vector<std::pair<size_t, size_t>>> &us = Sphere<T>::unitSphere(_quality);
+    const std::vector<Vec3<T>> &data = us.first;
+    const std::vector<std::pair<size_t, size_t>> &pool = us.second;
+
+    if (pool.empty())
+    {
+        for (size_t i = 0UL; i < data.size(); ++i)
+        {
+            const Vec3<T> &N0 = data[i];
+            const T R1 = isNegative(N0.x) ? _radius1M : _radius1P;
+            const T R2 = isNegative(N0.y) ? _radius2M : _radius2P;
+            const T R3 = isNegative(N0.z) ? _radius3M : _radius3P;
+            _outVertex[i] = _orientation.center + _orientation.normal1 * (N0.x * R1) +
+                _orientation.normal2 * (N0.y * R2) + _orientation.normal3 * (N0.z * R3);
+        }
+    }
+    else
+    {
+        std::vector<std::thread> threads;
+        threads.reserve(pool.size());
+        for (const std::pair<size_t, size_t> &t : std::as_const(pool))
+            threads.push_back(std::thread(
+                [t, _orientation, _radius1P, _radius1M, _radius2P, _radius2M, _radius3P, _radius3M](
+                    Vec3<T> *__outVertex, const Vec3<T> *_data) {
+                    const size_t end = t.first + t.second;
+                    for (size_t i = t.first; i < end; ++i)
+                    {
+                        const Vec3<T> &N0 = _data[i];
+                        const T R1 = isNegative(N0.x) ? _radius1M : _radius1P;
+                        const T R2 = isNegative(N0.y) ? _radius2M : _radius2P;
+                        const T R3 = isNegative(N0.z) ? _radius3M : _radius3P;
+                        __outVertex[i] = _orientation.center + _orientation.normal1 * (N0.x * R1) +
+                            _orientation.normal2 * (N0.y * R2) + _orientation.normal3 * (N0.z * R3);
+                    }
+                },
+                _outVertex,
+                data.data()));
+        for (std::thread &t : threads)
+            t.join();
+    }
+
+    const size_t cntCircle = circlePointCount(_quality);
+    const size_t cntLon = cntCircle;
+    const size_t cntLat = cntCircle / 2UL;
+
+    const std::pair<std::vector<Vec2<T>>, std::vector<std::pair<size_t, size_t>>> &uc =
+        PlaneCoords<T>::getCoords(cntLon + 1UL, cntLat + 1UL);
+
+    const std::pair<std::vector<uint>, std::vector<std::pair<size_t, size_t>>> &ui =
+        PlaneIndices::getQuadIndexesInverted(cntLon + 1UL, cntLat + 1UL);
+
+    copyData<Vec2<T>, size_t>(_outCoords, uc.first.data(), uc.first.size(), uc.second);
+    copyData<uint, size_t>(_outIndex, ui.first.data(), ui.first.size(), ui.second);
 }
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

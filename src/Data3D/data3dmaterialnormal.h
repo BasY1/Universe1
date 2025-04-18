@@ -833,6 +833,65 @@ class Data3DMaterialNormal : public Data3D
     {
         return pathEllipse(_orientation, _radius1, _radius2, _radiusPath, _quality, _qualityPath, {_material, _alpha});
     }
+
+    /*!
+     * \brief Create 3D data for irregular ellipse path
+     * \param _orientation Ellipse orientation
+     * \param _radius1P Ellipse radius 1 positive
+     * \param _radius1M Ellipse radius 1 negative
+     * \param _radius2P Ellipse radius 2 positive
+     * \param _radius2M Ellipse radius 2 negative
+     * \param _radiusPath Path cylinder radius
+     * \param _quality Ellipse quality
+     * \param _qualityPath Path circle quality
+     * \param _material Material with alpha
+     * \return 3D path object
+     */
+    static Data3DMaterialNormal *pathIrregEllipse(const Math::OrientF &_orientation,
+                                                  const float _radius1P,
+                                                  const float _radius1M,
+                                                  const float _radius2P,
+                                                  const float _radius2M,
+                                                  const float _radiusPath,
+                                                  const size_t _quality,
+                                                  const size_t _qualityPath,
+                                                  const Math::MaterialRGBA &_material);
+
+    /*!
+     * \brief Create 3D data for irregular ellipse path
+     * \param _orientation Ellipse orientation
+     * \param _radius1P Ellipse radius 1 positive
+     * \param _radius1M Ellipse radius 1 negative
+     * \param _radius2P Ellipse radius 2 positive
+     * \param _radius2M Ellipse radius 2 negative
+     * \param _radiusPath Path cylinder radius
+     * \param _quality Ellipse quality
+     * \param _qualityPath Path circle quality
+     * \param _material Material
+     * \param _alpha Alpha
+     * \return 3D path object
+     */
+    static Data3DMaterialNormal *pathIrregEllipse(const Math::OrientF &_orientation,
+                                                  const float _radius1P,
+                                                  const float _radius1M,
+                                                  const float _radius2P,
+                                                  const float _radius2M,
+                                                  const float _radiusPath,
+                                                  const size_t _quality,
+                                                  const size_t _qualityPath,
+                                                  const Math::MaterialRGB &_material,
+                                                  const uint8_t _alpha)
+    {
+        return pathIrregEllipse(_orientation,
+                                _radius1P,
+                                _radius1M,
+                                _radius2P,
+                                _radius2M,
+                                _radiusPath,
+                                _quality,
+                                _qualityPath,
+                                {_material, _alpha});
+    }
 };
 
 }  // namespace OpenGL

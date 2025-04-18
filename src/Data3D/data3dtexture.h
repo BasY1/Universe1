@@ -277,9 +277,9 @@ class Data3DTexture : public Data3D
      * \brief Create a texture ellipsoid 3D object - visible from inside
      * \param _texture Open GL texture
      * \param _orientation Orientation of ellipsoid in space
-     * \param _radius1 Ellipsoid radius
-     * \param _radius2 Ellipsoid radius
-     * \param _radius3 Ellipsoid radius
+     * \param _radius1 Ellipsoid radius 1
+     * \param _radius2 Ellipsoid radius 2
+     * \param _radius3 Ellipsoid radius 3
      * \param _quality Circle quality
      * \param _alpha Alpha
      * \return 3D texture ellipsoid object
@@ -291,6 +291,56 @@ class Data3DTexture : public Data3D
                                        const float _radius3,
                                        const size_t _quality,
                                        const uint8_t _alpha);
+
+    /*!
+     * \brief Create a texture irregular ellipsoid 3D object - visible from outside
+     * \param _texture Open GL texture
+     * \param _orientation Orientation of ellipsoid in space
+     * \param _radius1P Ellipsoid radius 1 positive
+     * \param _radius1M Ellipsoid radius 1 negative
+     * \param _radius2P Ellipsoid radius 2 positive
+     * \param _radius2M Ellipsoid radius 2 negative
+     * \param _radius3P Ellipsoid radius 3 positive
+     * \param _radius3M Ellipsoid radius 3 negative
+     * \param _quality Circle quality
+     * \param _alpha Alpha
+     * \return 3D texture ellipsoid object
+     */
+    static Data3DTexture *irregEllipsoid(QOpenGLTexture *_texture,
+                                         const Math::OrientF &_orientation,
+                                         const float _radius1P,
+                                         const float _radius1M,
+                                         const float _radius2P,
+                                         const float _radius2M,
+                                         const float _radius3P,
+                                         const float _radius3M,
+                                         const size_t _quality,
+                                         const uint8_t _alpha);
+
+    /*!
+     * \brief Create a texture irregular ellipsoid 3D object - visible from inside
+     * \param _texture Open GL texture
+     * \param _orientation Orientation of ellipsoid in space
+     * \param _radius1P Ellipsoid radius 1 positive
+     * \param _radius1M Ellipsoid radius 1 negative
+     * \param _radius2P Ellipsoid radius 2 positive
+     * \param _radius2M Ellipsoid radius 2 negative
+     * \param _radius3P Ellipsoid radius 3 positive
+     * \param _radius3M Ellipsoid radius 3 negative
+     * \param _quality Circle quality
+     * \param _alpha Alpha
+     * \return 3D texture ellipsoid object
+     */
+    static Data3DTexture *irregEllipsoidInn(QOpenGLTexture *_texture,
+                                            const Math::OrientF &_orientation,
+                                            const float _radius1P,
+                                            const float _radius1M,
+                                            const float _radius2P,
+                                            const float _radius2M,
+                                            const float _radius3P,
+                                            const float _radius3M,
+                                            const size_t _quality,
+                                            const uint8_t _alpha);
 };
 
 }  // namespace OpenGL
