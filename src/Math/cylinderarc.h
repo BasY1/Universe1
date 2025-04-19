@@ -37,7 +37,7 @@ struct CylinderArc
         static const T _2PI = T(2.0l * M_PIl);
         const T angleStep = _2PI / T(circlePointCount(_quality));
         const T angleCylinder = _cylinderLength / _radiusArc;
-        fillAlignedSteps<T>(_out, _offsetAngle, _offsetAngle + angleCylinder, angleStep);
+        fillSteps<T>(_out, _offsetAngle, _offsetAngle + angleCylinder, angleStep);
     }
 
     // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

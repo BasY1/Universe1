@@ -661,7 +661,9 @@ void fillDashPattern(
         }
     }
 
-    const uint64_t cntSegsIn = (oEnd - (isEnd ? 0UL : 1UL)) - (oBeg + (isBeg ? 0UL : 1UL));
+    const uint64_t cntSegsIn = (!isEnd && !isBeg && oEnd == 1UL && oBeg == 0UL)
+        ? 0UL
+        : ((oEnd - (isEnd ? 0UL : 1UL)) - (oBeg + (isBeg ? 0UL : 1UL)));
     const uint64_t cntItemsIn = cntSegsIn * cntSeg;
     const uint64_t cntItems = cntItemsIn + pBeg.size() + pEnd.size();
 

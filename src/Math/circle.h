@@ -1498,9 +1498,9 @@ void Circle2<T>::arcAngles(std::vector<T> &_out, const T _angleStart, const T _a
     static const T _2PI = T(2.0l * M_PIl);
     const T angle = _2PI / T(circlePointCount(_quality));
     if (isMoreOrEqual(std::fabs(_angleEnd - _angleStart), _2PI))
-        fillAlignedSteps<T>(_out, T(0), _2PI, angle);
+        fillSteps<T>(_out, T(0), _2PI, angle);
     else
-        fillAlignedSteps<T>(_out, _angleStart, _angleEnd, angle);
+        fillSteps<T>(_out, _angleStart, _angleEnd, angle);
 }
 
 /*!

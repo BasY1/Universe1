@@ -203,6 +203,9 @@ SOURCES += src/Items/Sphere/itemirregellipsoid.cpp
 HEADERS += src/Items/Line/itemline.h
 SOURCES += src/Items/Line/itemline.cpp
 
+HEADERS += src/Items/Line/itemarc.h
+SOURCES += src/Items/Line/itemarc.cpp
+
 ######################################################
 
 HEADERS += src/Video/settingsvideo.h

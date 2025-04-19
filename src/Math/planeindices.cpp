@@ -65,9 +65,9 @@ PlaneIndices::getQuadIndexes(const size_t _width, const size_t _height)
                 {
                     const uint v0 = i1 * _height + i2;
                     indices.push_back(v0);
-                    indices.push_back(v0 + 1U);
-                    indices.push_back(v0 + _height + 1U);
                     indices.push_back(v0 + _height);
+                    indices.push_back(v0 + _height + 1U);
+                    indices.push_back(v0 + 1U);
                 }
         }
         else
@@ -87,9 +87,9 @@ PlaneIndices::getQuadIndexes(const size_t _width, const size_t _height)
                             const uint v0 = i1 * _height + i2;
                             size_t ii = (i1 * offset + i2) * 4UL;
                             __out[ii++] = v0;
-                            __out[ii++] = v0 + 1U;
+                            __out[ii++] = v0 + _height;
                             __out[ii++] = v0 + _height + 1U;
-                            __out[ii] = v0 + _height;
+                            __out[ii] = v0 + 1U;
                         }
                     },
                     indices.data()));
@@ -139,9 +139,9 @@ PlaneIndices::getQuadIndexesInverted(const size_t _width, const size_t _height)
                 {
                     const uint v0 = i1 * _height + i2;
                     indices.push_back(v0);
-                    indices.push_back(v0 + _height);
-                    indices.push_back(v0 + _height + 1U);
                     indices.push_back(v0 + 1U);
+                    indices.push_back(v0 + _height + 1U);
+                    indices.push_back(v0 + _height);
                 }
         }
         else
@@ -161,9 +161,9 @@ PlaneIndices::getQuadIndexesInverted(const size_t _width, const size_t _height)
                             const uint v0 = i1 * _height + i2;
                             size_t ii = (i1 * offset + i2) * 4UL;
                             __out[ii++] = v0;
-                            __out[ii++] = v0 + _height;
+                            __out[ii++] = v0 + 1U;
                             __out[ii++] = v0 + _height + 1U;
-                            __out[ii] = v0 + 1U;
+                            __out[ii] = v0 + _height;
                         }
                     },
                     indices.data()));

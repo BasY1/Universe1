@@ -828,14 +828,14 @@ void Sphere<T>::arcAngles(std::vector<T> &_outLon,
     const T angle = _2PI / T(circlePointCount(_quality));
 
     if (isMoreOrEqual(std::fabs(_angleLonEnd - _angleLonStart), _2PI))
-        fillAlignedSteps<T>(_outLon, T(0), _2PI, angle);
+        fillSteps<T>(_outLon, T(0), _2PI, angle);
     else
-        fillAlignedSteps<T>(_outLon, _angleLonStart, _angleLonEnd, angle);
+        fillSteps<T>(_outLon, _angleLonStart, _angleLonEnd, angle);
 
     if (isMoreOrEqual(std::fabs(_angleLatEnd - _angleLatStart), _PI))
-        fillAlignedSteps<T>(_outLat, T(0), _PI, angle);
+        fillSteps<T>(_outLat, T(0), _PI, angle);
     else
-        fillAlignedSteps<T>(_outLat, _angleLatStart, _angleLatEnd, angle);
+        fillSteps<T>(_outLat, _angleLatStart, _angleLatEnd, angle);
 }
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
