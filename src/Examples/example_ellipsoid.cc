@@ -101,6 +101,7 @@ bool exampleEllipsoid(const QString &_workDir, const QString &_img = "")
     obj1->stepWire.initValue(0.2f);
 
     obj1->showWire.initValue(true);
+    obj1->radiusWire.initValue(0.05f);
     // obj1->showWire.setValue(2000, Ellipsoid::EllipsoidWireLatLongStep);
     // obj1->showWire.setValue(4000, Ellipsoid::EllipsoidWireLatLongFixed);
     // obj1->showWire.setValue(6000, Ellipsoid::EllipsoidWireXYZ);
@@ -110,7 +111,7 @@ bool exampleEllipsoid(const QString &_workDir, const QString &_img = "")
 
     footage1->add2D(new Item2DText("Info", "<font color=\"#FF0000\">Ellipsoid</font> example", Math::_AlignTopCenter));
 
-    footage1->cameraPosition.initValue({-5, -1, 1});
+    footage1->cameraPosition.initValue({-3, -1, 1});
     footage1->cameraPosition.addFromRotatedAccelerated(dur / 8UL, (7UL * dur) / 8UL, {}, {0, 0, 1}, rot2, 0.1, 0.1);
 
     return project.createVideo(_workDir + "Video" + QDir::separator(), _workDir + "video.avi");

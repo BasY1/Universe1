@@ -731,12 +731,14 @@ class Data3DMaterialNormal : public Data3D
      * \param _radius Path radius
      * \param _quality Path quality
      * \param _material Material with alpha
+     * \param _inverted Inverted indexes flag
      * \return 3D path object
      */
     static Data3DMaterialNormal *path(const std::vector<Math::OrientF> &_path,
                                       const float _radius,
                                       const size_t _quality,
-                                      const Math::MaterialRGBA &_material);
+                                      const Math::MaterialRGBA &_material,
+                                      const bool _inverted = false);
 
     /*!
      * \brief Create path 3D data
@@ -745,15 +747,17 @@ class Data3DMaterialNormal : public Data3D
      * \param _quality Path quality
      * \param _material Material
      * \param _alpha Alpha
+     * \param _inverted Inverted indexes flag
      * \return 3D path object
      */
     inline static Data3DMaterialNormal *path(const std::vector<Math::OrientF> &_path,
                                              const float _radius,
                                              const size_t _quality,
                                              const Math::MaterialRGB &_material,
-                                             const uint8_t _alpha)
+                                             const uint8_t _alpha,
+                                             const bool _inverted = false)
     {
-        return path(_path, _radius, _quality, {_material, _alpha});
+        return path(_path, _radius, _quality, {_material, _alpha}, _inverted);
     }
 
     /*!
@@ -763,13 +767,15 @@ class Data3DMaterialNormal : public Data3D
      * \param _radius Path radius
      * \param _quality Path quality
      * \param _material Material with alpha
+     * \param _inverted Inverted indexes flag
      * \return 3D path object
      */
     static Data3DMaterialNormal *path(const std::vector<Math::OrientF> &_path,
                                       const Math::Vec3F &_centerPoint,
                                       const float _radius,
                                       const size_t _quality,
-                                      const Math::MaterialRGBA &_material);
+                                      const Math::MaterialRGBA &_material,
+                                      const bool _inverted = false);
 
     /*!
      * \brief Create path 3D data
@@ -779,6 +785,7 @@ class Data3DMaterialNormal : public Data3D
      * \param _quality Path quality
      * \param _material Material
      * \param _alpha Alpha
+     * \param _inverted Inverted indexes flag
      * \return 3D path object
      */
     inline static Data3DMaterialNormal *path(const std::vector<Math::OrientF> &_path,
@@ -786,9 +793,10 @@ class Data3DMaterialNormal : public Data3D
                                              const float _radius,
                                              const size_t _quality,
                                              const Math::MaterialRGB &_material,
-                                             const uint8_t _alpha)
+                                             const uint8_t _alpha,
+                                             const bool _inverted = false)
     {
-        return path(_path, _centerPoint, _radius, _quality, {_material, _alpha});
+        return path(_path, _centerPoint, _radius, _quality, {_material, _alpha}, _inverted);
     }
 
     /*!

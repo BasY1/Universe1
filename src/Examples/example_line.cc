@@ -174,6 +174,7 @@ bool exampleArc(const QString &_workDir)
     obj1->textFollowCamera.initOn_Off(7000);
 
     ItemLine *obj2 = footage1->add3D(new ItemLine());
+    obj2->normal.initValue({0, 1, 0});
     obj2->arrowStart.initOff_On(1000);
     obj2->arrowEnd.initOff_On(2000);
     obj2->pattern.setValue(3000, PATTERN_DOTS_1);

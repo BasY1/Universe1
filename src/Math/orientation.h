@@ -118,6 +118,16 @@ struct Orientation
     }
 
     /*!
+     * \brief Create orientation with inverted major and secondary normal
+     * \return Orientation object with invert major and secondary normal
+     */
+    inline Orientation<T> toInvert12() const
+    {
+        Orientation<T> result = *this;
+        return result.invert12();
+    }
+
+    /*!
      * \brief Test if this is a right-handed orientation
      * \return \c true for right-handed orientation
      */
@@ -174,6 +184,19 @@ struct Orientation
                           const Vec3<T> *_orig,
                           const size_t _count,
                           const std::vector<std::pair<size_t, size_t>> &_pool) const;
+
+    static Vec3<T>
+    centerPoint(const Orientation<T> *_data, const size_t _count, const std::vector<std::pair<size_t, size_t>> &_pool);
+
+    static Vec3<T> centerPoint(const std::pair<Orientation<T>, ColorRGB> *_data,
+                               const size_t _count,
+                               const std::vector<std::pair<size_t, size_t>> &_pool);
+
+    static T
+    pathLength(const Orientation<T> *_data, const size_t _count, const std::vector<std::pair<size_t, size_t>> &_pool);
+    static T pathLength(const std::pair<Orientation<T>, ColorRGB> *_data,
+                        const size_t _count,
+                        const std::vector<std::pair<size_t, size_t>> &_pool);
 };
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -291,6 +314,192 @@ void Orientation<T>::transformNormals(Vec3<T> *_out,
         for (std::thread &t : threads)
             t.join();
     }
+}
+
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Calculate central point
+ * \tparam T Template floating point type
+ * \param _data Vertex data
+ * \param _count Number of vertices
+ * \param _pool Multi-thread indices
+ * \return Central point
+ */
+template <typename T>
+Vec3<T> Orientation<T>::centerPoint(const Orientation<T> *_data,
+                                    const size_t _count,
+                                    const std::vector<std::pair<size_t, size_t>> &_pool)
+{
+    Vec3<T> min = Vec3<T>::maximumValue(), max = Vec3<T>::lowestValue();
+    if (_pool.empty())
+    {
+        for (size_t i = 0UL; i < _count; ++i)
+            _data[i].center.updateRange(min, max);
+    }
+    else
+    {
+        uint tt = 0U;
+        std::vector<std::pair<Vec3<T>, Vec3<T>>> tData(_pool.size(), {min, max});
+        std::vector<std::thread> threads;
+        threads.reserve(_pool.size());
+
+        for (const std::pair<size_t, size_t> &t : std::as_const(_pool))
+            threads.push_back(std::thread(
+                [t](std::pair<Vec3<T>, Vec3<T>> &_minMax, const Orientation<T> *__data) {
+                    const size_t end = t.first + t.second;
+                    for (size_t i = t.first; i < end; ++i)
+                        __data[i].center.updateRange(_minMax.first, _minMax.second);
+                },
+                std::ref(tData[tt++]),
+                _data));
+
+        for (std::thread &t : threads)
+            t.join();
+
+        for (const std::pair<Vec3<T>, Vec3<T>> &t : tData)
+            Vec3<T>::updateRange(min, max, t);
+    }
+
+    return (min + max) * 0.5f;
+}
+
+/*!
+ * \brief Calculate central point
+ * \tparam T Template floating point type
+ * \param _data Vertex data
+ * \param _count Number of vertices
+ * \param _pool Multi-thread indices
+ * \return Central point
+ */
+template <typename T>
+Vec3<T> Orientation<T>::centerPoint(const std::pair<Orientation<T>, ColorRGB> *_data,
+                                    const size_t _count,
+                                    const std::vector<std::pair<size_t, size_t>> &_pool)
+{
+    Vec3<T> min = Vec3<T>::maximumValue(), max = Vec3<T>::lowestValue();
+    if (_pool.empty())
+    {
+        for (size_t i = 0UL; i < _count; ++i)
+            _data[i].first.center.updateRange(min, max);
+    }
+    else
+    {
+        uint tt = 0U;
+        std::vector<std::pair<Vec3<T>, Vec3<T>>> tData(_pool.size(), {min, max});
+        std::vector<std::thread> threads;
+        threads.reserve(_pool.size());
+
+        for (const std::pair<size_t, size_t> &t : std::as_const(_pool))
+            threads.push_back(std::thread(
+                [t](std::pair<Vec3<T>, Vec3<T>> &_minMax, const std::pair<Orientation<T>, ColorRGB> *__data) {
+                    const size_t end = t.first + t.second;
+                    for (size_t i = t.first; i < end; ++i)
+                        __data[i].first.center.updateRange(_minMax.first, _minMax.second);
+                },
+                std::ref(tData[tt++]),
+                _data));
+
+        for (std::thread &t : threads)
+            t.join();
+
+        for (const std::pair<Vec3<T>, Vec3<T>> &t : tData)
+            Vec3<T>::updateRange(min, max, t);
+    }
+
+    return (min + max) * 0.5f;
+}
+
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Calculate path length
+ * \tparam T Template floating point type
+ * \param _data Vertex data
+ * \param _count Number of vertices
+ * \param _pool Multi-thread indices
+ * \return Path length
+ */
+template <typename T>
+T Orientation<T>::pathLength(const Orientation<T> *_data,
+                             const size_t _count,
+                             const std::vector<std::pair<size_t, size_t>> &_pool)
+{
+    T result = T(0);
+    if (_pool.empty())
+    {
+        for (size_t i = 1UL; i < _count; ++i)
+            result += _data[i - 1].center.distanceToPoint(_data[i].center);
+    }
+    else
+    {
+        uint tt = 0U;
+        std::vector<T> tData(_pool.size(), T(0));
+        std::vector<std::thread> threads;
+        threads.reserve(_pool.size());
+
+        for (const std::pair<size_t, size_t> &t : std::as_const(_pool))
+            threads.push_back(std::thread(
+                [t](T &_out, const Orientation<T> *__data) {
+                    const size_t end = t.first + t.second;
+                    for (size_t i = std::max(t.first, 1UL); i < end; ++i)
+                        _out += __data[i - 1].center.distanceToPoint(__data[i].center);
+                },
+                std::ref(tData[tt++]),
+                _data));
+
+        for (std::thread &t : threads)
+            t.join();
+
+        result = std::accumulate(tData.cbegin(), tData.cend(), T(0));
+    }
+
+    return result;
+}
+
+/*!
+ * \brief Calculate central point
+ * \tparam T Template floating point type
+ * \param _data Vertex data
+ * \param _count Number of vertices
+ * \param _pool Multi-thread indices
+ * \return Central point
+ */
+template <typename T>
+T Orientation<T>::pathLength(const std::pair<Orientation<T>, ColorRGB> *_data,
+                             const size_t _count,
+                             const std::vector<std::pair<size_t, size_t>> &_pool)
+{
+    T result = T(0);
+    if (_pool.empty())
+    {
+        for (size_t i = 1UL; i < _count; ++i)
+            result += _data[i - 1].first.center.distanceToPoint(_data[i].first.center);
+    }
+    else
+    {
+        uint tt = 0U;
+        std::vector<T> tData(_pool.size(), T(0));
+        std::vector<std::thread> threads;
+        threads.reserve(_pool.size());
+
+        for (const std::pair<size_t, size_t> &t : std::as_const(_pool))
+            threads.push_back(std::thread(
+                [t](T &_out, const std::pair<Orientation<T>, ColorRGB> *__data) {
+                    const size_t end = t.first + t.second;
+                    for (size_t i = std::max(t.first, 1UL); i < end; ++i)
+                        _out += __data[i - 1].first.center.distanceToPoint(__data[i].first.center);
+                },
+                std::ref(tData[tt++]),
+                _data));
+
+        for (std::thread &t : threads)
+            t.join();
+
+        result = std::accumulate(tData.cbegin(), tData.cend(), T(0));
+    }
+
+    return result;
 }
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

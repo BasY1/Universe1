@@ -171,6 +171,9 @@ struct ColorRGB
         const uint8_t tmp = uint8_t(aligned((_ratio - 0.8f) * 5.0f * 255.0f, 0.0f, 255.0f));
         return ColorRGB(tmp, 0U, 255U);
     }
+
+    template <typename T>
+    static ColorRGB ratio(const T _ratio, const ColorRGB &_colorMin, const ColorRGB &_colorMax);
 };
 
 /*!

@@ -650,7 +650,8 @@ Data3DMaterialNormal *Data3DMaterialNormal::cylinderArcInn(const Math::OrientF &
 Data3DMaterialNormal *Data3DMaterialNormal::path(const std::vector<Math::OrientF> &_path,
                                                  const float _radius,
                                                  const size_t _quality,
-                                                 const Math::MaterialRGBA &_material)
+                                                 const Math::MaterialRGBA &_material,
+                                                 const bool _inverted)
 {
     if (_path.size() < 2UL)
     {
@@ -733,7 +734,8 @@ Data3DMaterialNormal *Data3DMaterialNormal::path(const std::vector<Math::OrientF
             Math::Vec3F::updateRange(min, max, t);
     }
 
-    const std::vector<uint> &uc = Math::PlaneIndices::getQuadIndexes(_path.size(), CO).first;
+    const std::vector<uint> &uc = _inverted ? Math::PlaneIndices::getQuadIndexesInverted(_path.size(), CO).first
+                                            : Math::PlaneIndices::getQuadIndexes(_path.size(), CO).first;
 
     Data3DMaterialNormal *result =
         new Data3DMaterialNormal(GL_QUADS, N, I, t1, t2, uc.data(), _material.toRGB(), _material.alpha);
@@ -749,7 +751,8 @@ Data3DMaterialNormal *Data3DMaterialNormal::path(const std::vector<Math::OrientF
                                                  const Math::Vec3F &_centerPoint,
                                                  const float _radius,
                                                  const size_t _quality,
-                                                 const Math::MaterialRGBA &_material)
+                                                 const Math::MaterialRGBA &_material,
+                                                 const bool _inverted)
 {
     if (_path.size() < 2UL)
     {
@@ -817,7 +820,8 @@ Data3DMaterialNormal *Data3DMaterialNormal::path(const std::vector<Math::OrientF
             t.join();
     }
 
-    const std::vector<uint> &uc = Math::PlaneIndices::getQuadIndexes(_path.size(), CO).first;
+    const std::vector<uint> &uc = _inverted ? Math::PlaneIndices::getQuadIndexesInverted(_path.size(), CO).first
+                                            : Math::PlaneIndices::getQuadIndexes(_path.size(), CO).first;
 
     Data3DMaterialNormal *result =
         new Data3DMaterialNormal(GL_QUADS, N, I, t1, t2, uc.data(), _material.toRGB(), _material.alpha);

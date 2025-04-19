@@ -1797,6 +1797,22 @@ inline ColorRGB Vec3<T>::toColor() const
     return ColorRGB::fromVec3(*this);
 }
 
+/*!
+ * \brief Create a ratio color in between given colors
+ * \tparam T Template floating point type
+ * \param _ratio Ratio factor
+ * \param _colorMin Color 1
+ * \param _colorMax Color 2
+ * \return Ratio color
+ */
+template <typename T>
+ColorRGB ColorRGB::ratio(const T _ratio, const ColorRGB &_colorMin, const ColorRGB &_colorMax)
+{
+    const Vec3<T> min = _colorMin.toVec3<T>();
+    const Vec3<T> max = _colorMax.toVec3<T>();
+    return fromVec3<T>(min + _ratio * (max - min));
+}
+
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

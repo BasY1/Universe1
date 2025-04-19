@@ -1,25 +1,24 @@
 #include "../Video/project.h"
 
-#include "../Items/Sphere/itemsphere.h"
+#include "../Items/Path/itempath.h"
 #include "../Items/Items2D/item2dtext.h"
 
 namespace U1 {
 namespace Examples {
 
 /*!
- * \brief Sphere item example
+ * \brief Path item example
  * \param _workDir Working directory
- * \param _img Texture image file
  * \return Success flag
  */
-bool exampleSphere(const QString &_workDir, const QString &_img = "")
+bool examplePath(const QString &_workDir)
 {
     using namespace U1::Audio;
     using namespace U1::Video;
     using namespace U1::Items;
     using namespace U1::Math;
 
-    Project project("Sphere example");
+    Project project("Path example");
 
     // ItemDefaultValues::sphereQuality = 15UL;
     // ItemDefaultValues::lineQuality = 3UL;
@@ -60,58 +59,45 @@ bool exampleSphere(const QString &_workDir, const QString &_img = "")
     // project.setup4K();
     // project.setup8K();
 
-    static const size_t dur = 8000UL;
-    static const float rot1 = 16.0 * M_PI;
+    static const size_t dur = 4000UL;
+    // static const float rot1 = 16.0 * M_PI;
     static const float rot2 = 2.0 * M_PI;
 
     Footage *footage1 = project.addFootage("Footage 1");
+    footage1->minimalFootageDuration = dur;
 
     ScenarioAudioTTS *as = footage1->addAudio_espeak("TTS", _workDir + "espeak" + QDir::separator());
+    as->addSpeechSUBS(500, "A path example. ", 1000);
 
-    as->addSpeechSUBS(500, "A sphere example. ", 1000);
+    const std::vector<OrientF> p1 = {
+        OrientF({0, 0.5, 0.0}, {0, 0, 1}, {1, 0, 0}, {0, 1, 0}),
+        OrientF({0, 0.5, 0.2}, {0, 0, 1}, {1, 0, 0}, {0, 1, 0}),
+        OrientF({0, 0.5, 0.4}, {0, 0, 1}, {1, 0, 0}, {0, 1, 0}),
+        OrientF({0, 0.5, 0.6}, {0, 0, 1}, {1, 0, 0}, {0, 1, 0}),
+    };
 
-    ItemSphere *obj1 = footage1->add3D(new ItemSphere());
+    const std::vector<std::pair<OrientF, ColorRGB>> p2 = {
+        {OrientF({0, -0.5, 0.0}, {0, 0, 1}, {1, 0, 0}), {Qt::red}},
+        {OrientF({0, -0.5, 0.2}, {0, 0, 1}, {1, 0, 0}), {Qt::magenta}},
+        {OrientF({0, -0.5, 0.4}, {0, 0, 1}, {1, 0, 0}), {Qt::blue}},
+        {OrientF({0, -0.5, 0.6}, {0, 0, 1}, {1, 0, 0}), {Qt::cyan}},
+    };
 
-    obj1->arm.addRotated(dur, {}, {0, 0, 1}, rot1);
+    ItemPath *obj1 = footage1->add3D(new ItemPath(p1));
+    ItemPathColor *obj2 = footage1->add3D(new ItemPathColor(p2));
 
-    if (QFile::exists(_img))
-    {
-        obj1->textureImage.initValue(_img);
-        obj1->show.initValue(Sphere::SphereTextureOuter);
-        obj1->show.setValue(dur / 2UL, Sphere::SphereTextureInner);
-    }
-    else
-    {
-        obj1->show.initValue(Sphere::SphereOuter);
-        obj1->show.setValue(1000, Sphere::SphereInner);
-        obj1->show.setValue(2000, Sphere::SphereTextureSoccerBall);
-        obj1->show.setValue(3000, Sphere::SphereTextureSoccerEarth);
-        obj1->show.setValue(4000, Sphere::SphereHidden);
-
-        ItemSphereCut *obj2 = footage1->add3D(new ItemSphereCut());
-        obj2->arm.addRotated(dur, {}, {0, 0, 1}, rot1);
-        obj2->visible.initOff_On(4000);
-        obj2->angleLonEnd.addFromLinearValue(4000, dur, 2.0 * M_PI);
-        obj2->angleLatEnd.addFromLinearValue(4000, dur, M_PI);
-    }
-
-    obj1->stepWire.initValue(0.2f);
-    obj1->radiusWire.initValue(0.02f);
-
-    obj1->showWire.initValue(Sphere::SphereWireHidden);
-    obj1->showWire.setValue(2000, Sphere::SphereWireLatLongStep);
-    obj1->showWire.setValue(4000, Sphere::SphereWireLatLongFixed);
-    obj1->showWire.setValue(6000, Sphere::SphereWireXYZ);
+    obj1->pattern.setValue(dur / 2UL, PATTERN_DOTS_1);
+    obj2->pattern.setValue(dur / 2UL, PATTERN_DOTS_1);
+    obj1->radius.initValue(0.05);
+    obj2->radius.initValue(0.05);
 
     footage1->addCamera("Camera 1", {+2, 0, 0});
     footage1->addCamera("Camera 2", {-2, 0, 0});
 
-    footage1->add2D(new Item2DText("Info", "<font color=\"#FF0000\">Sphere</font> example", Math::_AlignTopCenter));
+    footage1->add2D(new Item2DText("Info", "<font color=\"#FF0000\">Path</font> example", Math::_AlignTopCenter));
 
-    footage1->cameraPosition.initValue({-5, -1, 1});
+    footage1->cameraPosition.initValue({-2, -1, 1});
     footage1->cameraPosition.addFromRotatedAccelerated(dur / 8UL, (7UL * dur) / 8UL, {}, {0, 0, 1}, rot2, 0.1, 0.1);
-
-    footage1->minimalFootageDuration = dur;
 
     return project.createVideo(_workDir + "Video" + QDir::separator(), _workDir + "video.avi");
 }

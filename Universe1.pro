@@ -209,6 +209,9 @@ SOURCES += src/Items/Line/itemarc.cpp
 HEADERS += src/Items/Line/itemspin.h
 SOURCES += src/Items/Line/itemspin.cpp
 
+HEADERS += src/Items/Path/itempath.h
+SOURCES += src/Items/Path/itempath.cpp
+
 ######################################################
 
 HEADERS += src/Video/settingsvideo.h
@@ -233,6 +236,7 @@ SOURCES += src/Examples/example_text.cc
 SOURCES += src/Examples/example_sphere.cc
 SOURCES += src/Examples/example_ellipsoid.cc
 SOURCES += src/Examples/example_line.cc
+SOURCES += src/Examples/example_path.cc
 
 contains ( DEFINES, U1_UNIT_TESTS) {
     SOURCES += src/UnitTests/test_math.cc
