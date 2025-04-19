@@ -206,6 +206,9 @@ SOURCES += src/Items/Line/itemline.cpp
 HEADERS += src/Items/Line/itemarc.h
 SOURCES += src/Items/Line/itemarc.cpp
 
+HEADERS += src/Items/Line/itemspin.h
+SOURCES += src/Items/Line/itemspin.cpp
+
 ######################################################
 
 HEADERS += src/Video/settingsvideo.h

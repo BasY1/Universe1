@@ -74,7 +74,7 @@ class ItemArc : public Item3DExt
      * \param _alpha Initial alpha
      * \param _visible Initial visible flag
      */
-    ItemArc(const std::string &_name = "Line",
+    ItemArc(const std::string &_name = "Line-arc",
             const Math::Vec3F &_center = {},
             const Math::Vec3F &_normal = Math::Vec3F::unitZ(),
             const Math::Vec3F &_arm = Math::Vec3F::unitX(),
