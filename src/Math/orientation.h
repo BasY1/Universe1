@@ -8,7 +8,7 @@
 
 #include "camera.h"
 
-#include <thread>
+#include "multithread.h"
 
 namespace U1 {
 namespace Math {
@@ -142,7 +142,7 @@ struct Orientation
      */
     inline size_t toHash() const
     {
-        return Math::mixHash(center.toHash(), normal1.toHash(), normal2.toHash(), normal3.toHash());
+        return mixHash(center.toHash(), normal1.toHash(), normal2.toHash(), normal3.toHash());
     }
 
     /*!
@@ -197,6 +197,26 @@ struct Orientation
     static T pathLength(const std::pair<Orientation<T>, ColorRGB> *_data,
                         const size_t _count,
                         const std::vector<std::pair<size_t, size_t>> &_pool);
+
+    void createSpiralPath(std::vector<Orientation<T>> &_path,
+                          Vec3F &_pathCenter,
+                          float &_pathLength,
+                          const bool _helicity,
+                          const float _periodLength,
+                          const float _spiralRadius,
+                          const float _angleStart,
+                          const float _angleEnd,
+                          const size_t _quality) const;
+
+    void createSpiralPath(std::vector<std::pair<Orientation<T>, ColorRGB>> &_path,
+                          Vec3F &_pathCenter,
+                          float &_pathLength,
+                          const bool _helicity,
+                          const float _periodLength,
+                          const float _spiralRadius,
+                          const float _angleStart,
+                          const float _angleEnd,
+                          const size_t _quality) const;
 };
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -500,6 +520,225 @@ T Orientation<T>::pathLength(const std::pair<Orientation<T>, ColorRGB> *_data,
     }
 
     return result;
+}
+
+/*!
+ * \brief Create spiral path
+ * \param _path Output path
+ * \param _pathCenter Output center point
+ * \param _pathLength Output path length
+ * \param _helicity Helicity (\c true = right-positive helicity)
+ * \param _periodLength Spiral period offset along major normal
+ * \param _spiralRadius Spiral arc radius
+ * \param _angleStart Spiral angle start in radians
+ * \param _angleEnd Spiral angle end in radians
+ * \param _quality Spiral arc quality
+ */
+template <typename T>
+void Orientation<T>::createSpiralPath(std::vector<Orientation<T>> &_path,
+                                      Vec3F &_pathCenter,
+                                      float &_pathLength,
+                                      const bool _helicity,
+                                      const float _periodLength,
+                                      const float _spiralRadius,
+                                      const float _angleStart,
+                                      const float _angleEnd,
+                                      const size_t _quality) const
+{
+    static const T _2PI = T(2.0l * M_PIl);
+    const T angle = _2PI / T(circlePointCount(_quality));
+    const T s = _helicity ? T(1) : T(-1);
+
+    std::vector<T> angles;
+    fillSteps<T>(angles, _angleStart, _angleEnd, angle);
+    if (angles.size() < 2UL)
+    {
+        _path.clear();
+        _pathCenter = center;
+        _pathLength = T(0);
+        return;
+    }
+
+    const T a0 = angles.front();
+    const T aa = angles.back() - a0;
+    const T lr = aa * _spiralRadius;
+    const T ll = _periodLength * aa / _2PI;
+    const T l0 = _periodLength * angles.front() / _2PI;
+    const Vec3<T> N0 = (normal3 * (lr * s) + normal1 * ll).normalized();
+    const std::vector<std::pair<size_t, size_t>> pool = createPool(angles.size());
+
+    _path.resize(angles.size());
+
+    Vec3<T> min = Vec3<T>::maximumValue(), max = Vec3<T>::lowestValue();
+    if (pool.empty())
+    {
+        for (size_t i = 0UL; i < angles.size(); ++i)
+        {
+            const T a = s * angles[i];
+            const T sa = std::sin(a);
+            const T ca = std::cos(a);
+            const T lo = l0 + ll * (a - a0) / aa;
+            const Vec3<T> N1 = N0.rotated(normal1, sa, ca).normalized();
+            const Vec3<T> N2 = normal2.rotated(normal1, sa, ca).normalized();
+            _path[i].center = center + normal1 * lo + N2 * _spiralRadius;
+            _path[i].normal1 = N1;
+            _path[i].normal2 = N2;
+            _path[i].normal3 = Vec3<T>::cross(N1, N2).normalized();
+            _path[i].center.updateRange(min, max);
+        }
+    }
+    else
+    {
+        uint tt = 0U;
+        std::vector<std::pair<Vec3<T>, Vec3<T>>> tData(pool.size(), {min, max});
+        std::vector<std::thread> threads;
+        threads.reserve(pool.size());
+
+        for (const std::pair<size_t, size_t> &t : std::as_const(pool))
+            threads.push_back(std::thread(
+                [t, s, a0, aa, l0, ll, N0, _spiralRadius, this](
+                    std::pair<Vec3<T>, Vec3<T>> &_minMax, Orientation<T> *__path, const T *_angles) {
+                    const size_t end = t.first + t.second;
+                    for (size_t i = t.first; i < end; ++i)
+                    {
+                        const T a = s * _angles[i];
+                        const T sa = std::sin(a);
+                        const T ca = std::cos(a);
+                        const T lo = l0 + ll * (a - a0) / aa;
+                        const Vec3<T> N1 = N0.rotated(normal1, sa, ca).normalized();
+                        const Vec3<T> N2 = normal2.rotated(normal1, sa, ca).normalized();
+                        __path[i].center = center + normal1 * lo + N2 * _spiralRadius;
+                        __path[i].normal1 = N1;
+                        __path[i].normal2 = N2;
+                        __path[i].normal3 = Vec3<T>::cross(N1, N2).normalized();
+                        __path[i].center.updateRange(_minMax.first, _minMax.second);
+                    }
+                },
+                std::ref(tData[tt++]),
+                _path.data(),
+                angles.data()));
+
+        for (std::thread &t : threads)
+            t.join();
+
+        for (const std::pair<Vec3<T>, Vec3<T>> &t : tData)
+            Vec3<T>::updateRange(min, max, t);
+    }
+
+    _pathCenter = (min + max) * 0.5f;
+    _pathLength = std::sqrt(ll * ll + lr * lr);
+}
+
+/*!
+ * \brief Create spiral path
+ * \param _path Output path
+ * \param _pathCenter Output center point
+ * \param _pathLength Output path length
+ * \param _helicity Helicity (\c true = right-positive helicity)
+ * \param _periodLength Spiral period offset along major normal
+ * \param _spiralRadius Spiral arc radius
+ * \param _angleStart Spiral angle start in radians
+ * \param _angleEnd Spiral angle end in radians
+ * \param _quality Spiral arc quality
+ */
+template <typename T>
+void Orientation<T>::createSpiralPath(std::vector<std::pair<Orientation<T>, ColorRGB>> &_path,
+                                      Vec3F &_pathCenter,
+                                      float &_pathLength,
+                                      const bool _helicity,
+                                      const float _periodLength,
+                                      const float _spiralRadius,
+                                      const float _angleStart,
+                                      const float _angleEnd,
+                                      const size_t _quality) const
+{
+    static const T _2PI = T(2.0l * M_PIl);
+    const T angle = _2PI / T(circlePointCount(_quality));
+    const T s = _helicity ? T(1) : T(-1);
+
+    std::vector<T> angles;
+    fillSteps<T>(angles, _angleStart, _angleEnd, angle);
+    if (angles.size() < 2UL)
+    {
+        _path.clear();
+        _pathCenter = center;
+        _pathLength = T(0);
+        return;
+    }
+
+    const T a0 = angles.front();
+    const T aa = angles.back() - a0;
+    const T lr = aa * _spiralRadius;
+    const T ll = _periodLength * aa / _2PI;
+    const T l0 = _periodLength * angles.front() / _2PI;
+    const Vec3<T> N0 = (normal3 * (lr * s) + normal1 * ll).normalized();
+    const std::vector<std::pair<size_t, size_t>> pool = createPool(angles.size());
+
+    _path.resize(angles.size());
+
+    Vec3<T> min = Vec3<T>::maximumValue(), max = Vec3<T>::lowestValue();
+    if (pool.empty())
+    {
+        for (size_t i = 0UL; i < angles.size(); ++i)
+        {
+            const T a = s * angles[i];
+            const T sa = std::sin(a);
+            const T ca = std::cos(a);
+            const T r = (a - a0) / aa;
+            const T lo = l0 + ll * r;
+            const Vec3<T> N1 = N0.rotated(normal1, sa, ca).normalized();
+            const Vec3<T> N2 = normal2.rotated(normal1, sa, ca).normalized();
+            _path[i].second = ColorRGB::rainbow(r);
+            _path[i].first.center = center + normal1 * lo + N2 * _spiralRadius;
+            _path[i].first.normal1 = N1;
+            _path[i].first.normal2 = N2;
+            _path[i].first.normal3 = Vec3<T>::cross(N1, N2).normalized();
+            _path[i].first.center.updateRange(min, max);
+        }
+    }
+    else
+    {
+        uint tt = 0U;
+        std::vector<std::pair<Vec3<T>, Vec3<T>>> tData(pool.size(), {min, max});
+        std::vector<std::thread> threads;
+        threads.reserve(pool.size());
+
+        for (const std::pair<size_t, size_t> &t : std::as_const(pool))
+            threads.push_back(std::thread(
+                [t, s, a0, aa, l0, ll, N0, _spiralRadius, this](std::pair<Vec3<T>, Vec3<T>> &_minMax,
+                                                                std::pair<Orientation<T>, ColorRGB> *__path,
+                                                                const T *_angles) {
+                    const size_t end = t.first + t.second;
+                    for (size_t i = t.first; i < end; ++i)
+                    {
+                        const T a = s * _angles[i];
+                        const T sa = std::sin(a);
+                        const T ca = std::cos(a);
+                        const T r = (a - a0) / aa;
+                        const T lo = l0 + ll * r;
+                        const Vec3<T> N1 = N0.rotated(normal1, sa, ca).normalized();
+                        const Vec3<T> N2 = normal2.rotated(normal1, sa, ca).normalized();
+                        __path[i].second = ColorRGB::rainbow(r);
+                        __path[i].first.center = center + normal1 * lo + N2 * _spiralRadius;
+                        __path[i].first.normal1 = N1;
+                        __path[i].first.normal2 = N2;
+                        __path[i].first.normal3 = Vec3<T>::cross(N1, N2).normalized();
+                        __path[i].first.center.updateRange(_minMax.first, _minMax.second);
+                    }
+                },
+                std::ref(tData[tt++]),
+                _path.data(),
+                angles.data()));
+
+        for (std::thread &t : threads)
+            t.join();
+
+        for (const std::pair<Vec3<T>, Vec3<T>> &t : tData)
+            Vec3<T>::updateRange(min, max, t);
+    }
+
+    _pathCenter = (min + max) * 0.5f;
+    _pathLength = std::sqrt(ll * ll + lr * lr);
 }
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

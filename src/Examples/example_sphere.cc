@@ -108,7 +108,7 @@ bool exampleSphere(const QString &_workDir, const QString &_img = "")
 
     footage1->add2D(new Item2DText("Info", "<font color=\"#FF0000\">Sphere</font> example", Math::_AlignTopCenter));
 
-    footage1->cameraPosition.initValue({-5, -1, 1});
+    footage1->cameraPosition.initValue({-3, -1, 1});
     footage1->cameraPosition.addFromRotatedAccelerated(dur / 8UL, (7UL * dur) / 8UL, {}, {0, 0, 1}, rot2, 0.1, 0.1);
 
     footage1->minimalFootageDuration = dur;

@@ -393,7 +393,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
                 const size_t icc = (ic == cntCircle ? 0UL : ic);
                 const Vec2<T> &p2d = data2D[icc];
                 const Vec3<T> N0 = _orientation.normal2.rotated(_orientation.normal1, _angles[ia]).normalized();
-                const Vec3<T> N = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                const Vec3<T> N = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                 _outVertex[i] = _orientation.center + N0 * _radiusArc + N * _radius1;
                 _outNormal[i] = N;
             }
@@ -415,7 +415,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
                             const Vec2<T> &p2d = _data2D[icc];
                             const Vec3<T> N0 =
                                 _orientation.normal2.rotated(_orientation.normal1, __angles[ia]).normalized();
-                            const Vec3<T> N = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                            const Vec3<T> N = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                             __outVertex[i] = _orientation.center + N0 * _radiusArc + N * _radius1;
                             __outNormal[i] = N;
                         }
@@ -446,7 +446,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
                 const T RR = _radius1 + RD * ((_angles[ia] - _angles[0]) / AD);
                 const Vec2<T> &p2d = data2D[icc];
                 const Vec3<T> N0 = _orientation.normal2.rotated(_orientation.normal1, _angles[ia]).normalized();
-                const Vec3<T> N1 = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                const Vec3<T> N1 = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                 const Vec3<T> N2 = _orientation.normal2.rotated(_orientation.normal1, _angles[ia] + AP).normalized();
                 const Vec3<T> N3 = Vec3<T>::cross(_orientation.normal1, N0).normalized();
                 const Vec3<T> N = N2.rotated(N3, T(icc) * angleStep).normalized();
@@ -472,7 +472,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
                             const Vec2<T> &p2d = _data2D[icc];
                             const Vec3<T> N0 =
                                 _orientation.normal2.rotated(_orientation.normal1, __angles[ia]).normalized();
-                            const Vec3<T> N1 = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                            const Vec3<T> N1 = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                             const Vec3<T> N2 =
                                 _orientation.normal2.rotated(_orientation.normal1, __angles[ia] + AP).normalized();
                             const Vec3<T> N3 = Vec3<T>::cross(_orientation.normal1, N0).normalized();
@@ -537,7 +537,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
                 const size_t icc = (ic == cntCircle ? 0UL : ic);
                 const Vec2<T> &p2d = data2D[icc];
                 const Vec3<T> N0 = _orientation.normal2.rotated(_orientation.normal1, _angles[ia]).normalized();
-                const Vec3<T> N = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                const Vec3<T> N = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                 _outVertex[i] = _orientation.center + N0 * _radiusArc + N * _radius1;
                 _outNormal[i] = -N;
             }
@@ -559,7 +559,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
                             const Vec2<T> &p2d = _data2D[icc];
                             const Vec3<T> N0 =
                                 _orientation.normal2.rotated(_orientation.normal1, __angles[ia]).normalized();
-                            const Vec3<T> N = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                            const Vec3<T> N = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                             __outVertex[i] = _orientation.center + N0 * _radiusArc + N * _radius1;
                             __outNormal[i] = -N;
                         }
@@ -590,7 +590,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
                 const T RR = _radius1 + RD * ((_angles[ia] - _angles[0]) / AD);
                 const Vec2<T> &p2d = data2D[icc];
                 const Vec3<T> N0 = _orientation.normal2.rotated(_orientation.normal1, _angles[ia]).normalized();
-                const Vec3<T> N1 = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                const Vec3<T> N1 = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                 const Vec3<T> N2 = _orientation.normal2.rotated(_orientation.normal1, _angles[ia] + AP).normalized();
                 const Vec3<T> N3 = Vec3<T>::cross(_orientation.normal1, N0).normalized();
                 const Vec3<T> N = N2.rotated(N3, T(icc) * angleStep).normalized();
@@ -616,7 +616,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
                             const Vec2<T> &p2d = _data2D[icc];
                             const Vec3<T> N0 =
                                 _orientation.normal2.rotated(_orientation.normal1, __angles[ia]).normalized();
-                            const Vec3<T> N1 = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                            const Vec3<T> N1 = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                             const Vec3<T> N2 =
                                 _orientation.normal2.rotated(_orientation.normal1, __angles[ia] + AP).normalized();
                             const Vec3<T> N3 = Vec3<T>::cross(_orientation.normal1, N0).normalized();
@@ -778,7 +778,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
                 const size_t icc = (ic == cntCircle ? 0UL : ic);
                 const Vec2<T> &p2d = data2D[icc];
                 const Vec3<T> N0 = _orientation.normal2.rotated(_orientation.normal1, _angles[ia]).normalized();
-                const Vec3<T> N = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                const Vec3<T> N = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                 const T ratio = ((_angles[ia] - _angles[0]) / AD);
 
                 _outVertex[i] = _orientation.center + N0 * _radiusArc + N * _radius1;
@@ -807,7 +807,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
                             const Vec2<T> &p2d = _data2D[icc];
                             const Vec3<T> N0 =
                                 _orientation.normal2.rotated(_orientation.normal1, __angles[ia]).normalized();
-                            const Vec3<T> N = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                            const Vec3<T> N = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                             __outVertex[i] = _orientation.center + N0 * _radiusArc + N * _radius1;
                             __outNormal[i] = N;
                             __outAlpha[i] = _alpha1 + AFD * ratio;
@@ -836,7 +836,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
                 const T RR = _radius1 + RD * ratio;
                 const Vec2<T> &p2d = data2D[icc];
                 const Vec3<T> N0 = _orientation.normal2.rotated(_orientation.normal1, _angles[ia]).normalized();
-                const Vec3<T> N1 = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                const Vec3<T> N1 = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                 const Vec3<T> N2 = _orientation.normal2.rotated(_orientation.normal1, _angles[ia] + AP).normalized();
                 const Vec3<T> N3 = Vec3<T>::cross(_orientation.normal1, N0).normalized();
                 const Vec3<T> N = N2.rotated(N3, T(icc) * angleStep).normalized();
@@ -879,7 +879,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
                             const Vec2<T> &p2d = _data2D[icc];
                             const Vec3<T> N0 =
                                 _orientation.normal2.rotated(_orientation.normal1, __angles[ia]).normalized();
-                            const Vec3<T> N1 = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                            const Vec3<T> N1 = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                             const Vec3<T> N2 =
                                 _orientation.normal2.rotated(_orientation.normal1, __angles[ia] + AP).normalized();
                             const Vec3<T> N3 = Vec3<T>::cross(_orientation.normal1, N0).normalized();
@@ -959,7 +959,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
                 const size_t icc = (ic == cntCircle ? 0UL : ic);
                 const Vec2<T> &p2d = data2D[icc];
                 const Vec3<T> N0 = _orientation.normal2.rotated(_orientation.normal1, _angles[ia]).normalized();
-                const Vec3<T> N = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                const Vec3<T> N = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                 const T ratio = ((_angles[ia] - _angles[0]) / AD);
 
                 _outVertex[i] = _orientation.center + N0 * _radiusArc + N * _radius1;
@@ -988,7 +988,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
                             const Vec2<T> &p2d = _data2D[icc];
                             const Vec3<T> N0 =
                                 _orientation.normal2.rotated(_orientation.normal1, __angles[ia]).normalized();
-                            const Vec3<T> N = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                            const Vec3<T> N = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                             __outVertex[i] = _orientation.center + N0 * _radiusArc + N * _radius1;
                             __outNormal[i] = -N;
                             __outAlpha[i] = _alpha1 + AFD * ratio;
@@ -1017,7 +1017,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
                 const T RR = _radius1 + RD * ratio;
                 const Vec2<T> &p2d = data2D[icc];
                 const Vec3<T> N0 = _orientation.normal2.rotated(_orientation.normal1, _angles[ia]).normalized();
-                const Vec3<T> N1 = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                const Vec3<T> N1 = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                 const Vec3<T> N2 = _orientation.normal2.rotated(_orientation.normal1, _angles[ia] + AP).normalized();
                 const Vec3<T> N3 = Vec3<T>::cross(_orientation.normal1, N0).normalized();
                 const Vec3<T> N = N2.rotated(N3, T(icc) * angleStep).normalized();
@@ -1060,7 +1060,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
                             const Vec2<T> &p2d = _data2D[icc];
                             const Vec3<T> N0 =
                                 _orientation.normal2.rotated(_orientation.normal1, __angles[ia]).normalized();
-                            const Vec3<T> N1 = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                            const Vec3<T> N1 = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                             const Vec3<T> N2 =
                                 _orientation.normal2.rotated(_orientation.normal1, __angles[ia] + AP).normalized();
                             const Vec3<T> N3 = Vec3<T>::cross(_orientation.normal1, N0).normalized();
@@ -1263,7 +1263,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
                 const size_t icc = (ic == cntCircle ? 0UL : ic);
                 const Vec2<T> &p2d = data2D[icc];
                 const Vec3<T> N0 = _orientation.normal2.rotated(_orientation.normal1, _angles[ia]).normalized();
-                const Vec3<T> N = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                const Vec3<T> N = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                 const T ratio = ((_angles[ia] - _angles[0]) / AD);
 
                 _outVertex[i] = _orientation.center + N0 * _radiusArc + N * _radius1;
@@ -1312,7 +1312,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
                             const Vec2<T> &p2d = _data2D[icc];
                             const Vec3<T> N0 =
                                 _orientation.normal2.rotated(_orientation.normal1, __angles[ia]).normalized();
-                            const Vec3<T> N = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                            const Vec3<T> N = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                             __outVertex[i] = _orientation.center + N0 * _radiusArc + N * _radius1;
                             __outNormal[i] = N;
                             __outAmbient[i] = _ambient1 + ACD * ratio;
@@ -1347,7 +1347,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
                 const T RR = _radius1 + RD * ratio;
                 const Vec2<T> &p2d = data2D[icc];
                 const Vec3<T> N0 = _orientation.normal2.rotated(_orientation.normal1, _angles[ia]).normalized();
-                const Vec3<T> N1 = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                const Vec3<T> N1 = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                 const Vec3<T> N2 = _orientation.normal2.rotated(_orientation.normal1, _angles[ia] + AP).normalized();
                 const Vec3<T> N3 = Vec3<T>::cross(_orientation.normal1, N0).normalized();
                 const Vec3<T> N = N2.rotated(N3, T(icc) * angleStep).normalized();
@@ -1402,7 +1402,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
                             const Vec2<T> &p2d = _data2D[icc];
                             const Vec3<T> N0 =
                                 _orientation.normal2.rotated(_orientation.normal1, __angles[ia]).normalized();
-                            const Vec3<T> N1 = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                            const Vec3<T> N1 = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                             const Vec3<T> N2 =
                                 _orientation.normal2.rotated(_orientation.normal1, __angles[ia] + AP).normalized();
                             const Vec3<T> N3 = Vec3<T>::cross(_orientation.normal1, N0).normalized();
@@ -1509,7 +1509,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
                 const size_t icc = (ic == cntCircle ? 0UL : ic);
                 const Vec2<T> &p2d = data2D[icc];
                 const Vec3<T> N0 = _orientation.normal2.rotated(_orientation.normal1, _angles[ia]).normalized();
-                const Vec3<T> N = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                const Vec3<T> N = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                 const T ratio = ((_angles[ia] - _angles[0]) / AD);
 
                 _outVertex[i] = _orientation.center + N0 * _radiusArc + N * _radius1;
@@ -1558,7 +1558,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
                             const Vec2<T> &p2d = _data2D[icc];
                             const Vec3<T> N0 =
                                 _orientation.normal2.rotated(_orientation.normal1, __angles[ia]).normalized();
-                            const Vec3<T> N = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                            const Vec3<T> N = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                             __outVertex[i] = _orientation.center + N0 * _radiusArc + N * _radius1;
                             __outNormal[i] = -N;
                             __outAmbient[i] = _ambient1 + ACD * ratio;
@@ -1593,7 +1593,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
                 const T RR = _radius1 + RD * ratio;
                 const Vec2<T> &p2d = data2D[icc];
                 const Vec3<T> N0 = _orientation.normal2.rotated(_orientation.normal1, _angles[ia]).normalized();
-                const Vec3<T> N1 = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                const Vec3<T> N1 = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                 const Vec3<T> N2 = _orientation.normal2.rotated(_orientation.normal1, _angles[ia] + AP).normalized();
                 const Vec3<T> N3 = Vec3<T>::cross(_orientation.normal1, N0).normalized();
                 const Vec3<T> N = N2.rotated(N3, T(icc) * angleStep).normalized();
@@ -1648,7 +1648,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
                             const Vec2<T> &p2d = _data2D[icc];
                             const Vec3<T> N0 =
                                 _orientation.normal2.rotated(_orientation.normal1, __angles[ia]).normalized();
-                            const Vec3<T> N1 = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                            const Vec3<T> N1 = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                             const Vec3<T> N2 =
                                 _orientation.normal2.rotated(_orientation.normal1, __angles[ia] + AP).normalized();
                             const Vec3<T> N3 = Vec3<T>::cross(_orientation.normal1, N0).normalized();
@@ -1918,7 +1918,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
                 const size_t icc = (ic == cntCircle ? 0UL : ic);
                 const Vec2<T> &p2d = data2D[icc];
                 const Vec3<T> N0 = _orientation.normal2.rotated(_orientation.normal1, _angles[ia]).normalized();
-                const Vec3<T> N = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                const Vec3<T> N = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                 const T ratio = ((_angles[ia] - _angles[0]) / AD);
 
                 _outVertex[i] = _orientation.center + N0 * _radiusArc + N * _radius1;
@@ -1971,7 +1971,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
                             const Vec2<T> &p2d = _data2D[icc];
                             const Vec3<T> N0 =
                                 _orientation.normal2.rotated(_orientation.normal1, __angles[ia]).normalized();
-                            const Vec3<T> N = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                            const Vec3<T> N = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                             __outVertex[i] = _orientation.center + N0 * _radiusArc + N * _radius1;
                             __outNormal[i] = N;
                             __outAmbient[i] = _ambient1 + ACD * ratio;
@@ -2008,7 +2008,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
                 const T RR = _radius1 + RD * ratio;
                 const Vec2<T> &p2d = data2D[icc];
                 const Vec3<T> N0 = _orientation.normal2.rotated(_orientation.normal1, _angles[ia]).normalized();
-                const Vec3<T> N1 = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                const Vec3<T> N1 = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                 const Vec3<T> N2 = _orientation.normal2.rotated(_orientation.normal1, _angles[ia] + AP).normalized();
                 const Vec3<T> N3 = Vec3<T>::cross(_orientation.normal1, N0).normalized();
                 const Vec3<T> N = N2.rotated(N3, T(icc) * angleStep).normalized();
@@ -2067,7 +2067,7 @@ void CylinderArc<T>::fillCylinderOuter(Vec3<T> *_outVertex,
                             const Vec2<T> &p2d = _data2D[icc];
                             const Vec3<T> N0 =
                                 _orientation.normal2.rotated(_orientation.normal1, __angles[ia]).normalized();
-                            const Vec3<T> N1 = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                            const Vec3<T> N1 = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                             const Vec3<T> N2 =
                                 _orientation.normal2.rotated(_orientation.normal1, __angles[ia] + AP).normalized();
                             const Vec3<T> N3 = Vec3<T>::cross(_orientation.normal1, N0).normalized();
@@ -2183,7 +2183,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
                 const size_t icc = (ic == cntCircle ? 0UL : ic);
                 const Vec2<T> &p2d = data2D[icc];
                 const Vec3<T> N0 = _orientation.normal2.rotated(_orientation.normal1, _angles[ia]).normalized();
-                const Vec3<T> N = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                const Vec3<T> N = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                 const T ratio = ((_angles[ia] - _angles[0]) / AD);
 
                 _outVertex[i] = _orientation.center + N0 * _radiusArc + N * _radius1;
@@ -2236,7 +2236,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
                             const Vec2<T> &p2d = _data2D[icc];
                             const Vec3<T> N0 =
                                 _orientation.normal2.rotated(_orientation.normal1, __angles[ia]).normalized();
-                            const Vec3<T> N = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                            const Vec3<T> N = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                             __outVertex[i] = _orientation.center + N0 * _radiusArc + N * _radius1;
                             __outNormal[i] = -N;
                             __outAmbient[i] = _ambient1 + ACD * ratio;
@@ -2273,7 +2273,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
                 const T RR = _radius1 + RD * ratio;
                 const Vec2<T> &p2d = data2D[icc];
                 const Vec3<T> N0 = _orientation.normal2.rotated(_orientation.normal1, _angles[ia]).normalized();
-                const Vec3<T> N1 = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                const Vec3<T> N1 = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                 const Vec3<T> N2 = _orientation.normal2.rotated(_orientation.normal1, _angles[ia] + AP).normalized();
                 const Vec3<T> N3 = Vec3<T>::cross(_orientation.normal1, N0).normalized();
                 const Vec3<T> N = N2.rotated(N3, T(icc) * angleStep).normalized();
@@ -2332,7 +2332,7 @@ void CylinderArc<T>::fillCylinderInner(Vec3<T> *_outVertex,
                             const Vec2<T> &p2d = _data2D[icc];
                             const Vec3<T> N0 =
                                 _orientation.normal2.rotated(_orientation.normal1, __angles[ia]).normalized();
-                            const Vec3<T> N1 = (N0 * p2d.x + _orientation.normal1 * p2d.y).normalized();
+                            const Vec3<T> N1 = (_orientation.normal1 * p2d.x + N0 * p2d.y).normalized();
                             const Vec3<T> N2 =
                                 _orientation.normal2.rotated(_orientation.normal1, __angles[ia] + AP).normalized();
                             const Vec3<T> N3 = Vec3<T>::cross(_orientation.normal1, N0).normalized();

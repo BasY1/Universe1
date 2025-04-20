@@ -855,8 +855,8 @@ Data3DMaterialNormal *Data3DMaterialNormal::pathEllipse(const Math::OrientF &_or
             const Math::Vec2F n2 = (2.0f * Math::Vec2F(p2d.x / _radius1, p2d.y / _radius2)).normalized();
             p[i].center = _orientation.center + _orientation.normal2 * (p2d.x * _radius1) +
                 _orientation.normal3 * (p2d.y * _radius2);
-            p[i].normal3 = _orientation.normal1;
-            p[i].normal2 = (_orientation.normal2 * n2.x + _orientation.normal3 * n2.y).normalized();
+            p[i].normal2 = _orientation.normal1;
+            p[i].normal3 = (_orientation.normal2 * n2.x + _orientation.normal3 * n2.y).normalized();
             p[i].normal1 = Math::Vec3F::cross(p[i].normal2, p[i].normal3).normalized();
         }
     }
@@ -875,8 +875,8 @@ Data3DMaterialNormal *Data3DMaterialNormal::pathEllipse(const Math::OrientF &_or
                         const Math::Vec2F n2 = (2.0f * Math::Vec2F(p2d.x / _radius1, p2d.y / _radius2)).normalized();
                         _out[i].center = _orientation.center + _orientation.normal2 * (p2d.x * _radius1) +
                             _orientation.normal3 * (p2d.y * _radius2);
-                        _out[i].normal3 = _orientation.normal1;
-                        _out[i].normal2 = (_orientation.normal2 * n2.x + _orientation.normal3 * n2.y).normalized();
+                        _out[i].normal2 = _orientation.normal1;
+                        _out[i].normal3 = (_orientation.normal2 * n2.x + _orientation.normal3 * n2.y).normalized();
                         _out[i].normal1 = Math::Vec3F::cross(_out[i].normal2, _out[i].normal3).normalized();
                     }
                 },
@@ -918,8 +918,8 @@ Data3DMaterialNormal *Data3DMaterialNormal::pathIrregEllipse(const Math::OrientF
 
             p[i].center =
                 _orientation.center + _orientation.normal2 * (p2d.x * R1) + _orientation.normal3 * (p2d.y * R2);
-            p[i].normal3 = _orientation.normal1;
-            p[i].normal2 = (_orientation.normal2 * n2.x + _orientation.normal3 * n2.y).normalized();
+            p[i].normal2 = _orientation.normal1;
+            p[i].normal3 = (_orientation.normal2 * n2.x + _orientation.normal3 * n2.y).normalized();
             p[i].normal1 = Math::Vec3F::cross(p[i].normal2, p[i].normal3).normalized();
         }
     }
@@ -942,8 +942,8 @@ Data3DMaterialNormal *Data3DMaterialNormal::pathIrregEllipse(const Math::OrientF
                         const Math::Vec2F n2 = (2.0f * Math::Vec2F(p2d.x / R1, p2d.y / R2)).normalized();
                         _out[i].center = _orientation.center + _orientation.normal2 * (p2d.x * R1) +
                             _orientation.normal3 * (p2d.y * R2);
-                        _out[i].normal3 = _orientation.normal1;
-                        _out[i].normal2 = (_orientation.normal2 * n2.x + _orientation.normal3 * n2.y).normalized();
+                        _out[i].normal2 = _orientation.normal1;
+                        _out[i].normal3 = (_orientation.normal2 * n2.x + _orientation.normal3 * n2.y).normalized();
                         _out[i].normal1 = Math::Vec3F::cross(_out[i].normal2, _out[i].normal3).normalized();
                     }
                 },

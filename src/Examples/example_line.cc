@@ -61,7 +61,7 @@ bool exampleLine(const QString &_workDir)
     // project.setup4K();
     // project.setup8K();
 
-    static const size_t dur = 8000UL;
+    static const size_t dur = 4000UL;
     static const float rot2 = 2.0 * M_PI;
 
     Footage *footage1 = project.addFootage("Footage 1");
@@ -72,23 +72,24 @@ bool exampleLine(const QString &_workDir)
     as->addSpeechSUBS(500, "A line example.");
 
     ItemLine *obj1 = footage1->add3D(new ItemLine());
+    obj1->normal.addRotated(dur, {}, Math::Vec3F::unitX(), M_PI_2);
     obj1->arrowStart.initOff_On(1000);
     obj1->arrowEnd.initOff_On(2000);
-    obj1->pattern.setValue(3000, PATTERN_DOTS_1);
+    obj1->pattern.setValue(dur / 2UL, PATTERN_DOTS_1);
     obj1->radius.initValue(0.03);
     obj1->arrowLength.initValue(0.2);
-    obj1->arrowRadius.initValue(0.1);
-    obj1->length.addFromLinearValue(4000, 5000, 2.0f);
-    obj1->text.setValue(4000, "$$$LENGTH$$$");
+    obj1->arrowRadius.initValue(0.05);
+    obj1->length.addFromLinearValue(1000, 2000, 1.5f);
+    obj1->text.setValue(dur / 4UL, "$$$LENGTH$$$");
     obj1->textPosition.initValue(Line::LineTextEnd);
-    obj1->textFollowCamera.initOn_Off(6000);
+    obj1->textFollowCamera.initOn_Off(dur / 2UL);
 
     footage1->addCamera("Camera 1", {+2, 0, 0});
     footage1->addCamera("Camera 2", {-2, 0, 0});
 
     footage1->add2D(new Item2DText("Info", "<font color=\"#FF0000\">Line</font> example", Math::_AlignTopCenter));
 
-    footage1->cameraPosition.initValue({-5, -1, 1});
+    footage1->cameraPosition.initValue({-3, -1, 1});
     footage1->cameraPosition.addFromRotatedAccelerated(dur / 8UL, (7UL * dur) / 8UL, {}, {0, 0, 1}, rot2, 0.1, 0.1);
 
     return project.createVideo(_workDir + "Video" + QDir::separator(), _workDir + "video.avi");

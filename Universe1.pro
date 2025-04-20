@@ -212,6 +212,9 @@ SOURCES += src/Items/Line/itemspin.cpp
 HEADERS += src/Items/Path/itempath.h
 SOURCES += src/Items/Path/itempath.cpp
 
+HEADERS += src/Items/Path/itempathspiral.h
+SOURCES += src/Items/Path/itempathspiral.cpp
+
 ######################################################
 
 HEADERS += src/Video/settingsvideo.h

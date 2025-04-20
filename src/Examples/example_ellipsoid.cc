@@ -101,7 +101,7 @@ bool exampleEllipsoid(const QString &_workDir, const QString &_img = "")
     obj1->stepWire.initValue(0.2f);
 
     obj1->showWire.initValue(true);
-    obj1->radiusWire.initValue(0.05f);
+    obj1->radiusWire.initValue(0.02f);
     // obj1->showWire.setValue(2000, Ellipsoid::EllipsoidWireLatLongStep);
     // obj1->showWire.setValue(4000, Ellipsoid::EllipsoidWireLatLongFixed);
     // obj1->showWire.setValue(6000, Ellipsoid::EllipsoidWireXYZ);

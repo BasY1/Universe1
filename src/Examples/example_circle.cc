@@ -59,11 +59,12 @@ bool exampleCircle(const QString &_workDir)
     // project.setup4K();
     // project.setup8K();
 
-    static const size_t dur = 8000UL;
+    static const size_t dur = 4000UL;
     // static const float rot1 = 16.0 * M_PI;
     static const float rot2 = 2.0 * M_PI;
 
     Footage *footage1 = project.addFootage("Footage 1");
+    footage1->minimalFootageDuration = dur;
 
     ScenarioAudioTTS *as = footage1->addAudio_espeak("TTS", _workDir + "espeak" + QDir::separator());
 
