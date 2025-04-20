@@ -8,7 +8,6 @@
 
 #include "../item3d.h"
 
-#include "../../ItemProps/itempropertyenum.h"
 #include "../../ItemProps/itempropertytext.h"
 #include "../../ItemProps/itempropertymaterial.h"
 

@@ -745,6 +745,22 @@ void Orientation<T>::createSpiralPath(std::vector<std::pair<Orientation<T>, Colo
 //
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/*!
+ * \brief Fill output text stream
+ * \tparam T Template floating point type
+ * \param _os Output text stream
+ * \param _v Orientation
+ * \return Output text stream
+ */
+template <typename T>
+inline std::ostream &operator<<(std::ostream &_os, const Orientation<T> &_v)
+{
+    return _os << '[' << _v.center << _v.normal1 << _v.normal2 << _v.normal3 << ']';
+}
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 typedef Orientation<float> OrientF;        //!< 32 bit floating point precision 3D orientation
 typedef Orientation<double> OrientD;       //!< 64 bit floating point precision 3D orientation
 typedef Orientation<long double> OrientL;  //!< 128 bit floating point precision 3D orientation
