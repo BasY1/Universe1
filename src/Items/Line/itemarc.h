@@ -129,9 +129,9 @@ class ItemArc : public Item3DExt
      * \param _a Arc angle
      * \return
      * \details Uses tags:
-     * \b Radians \b 1: $$$ANGLE_RAD$$$, $$$ANGLE_RADANGLE_RAD_0$$$, $$$ANGLE_RAD_1$$$, $$$ANGLE_RAD_2$$$,
+     * \b Radians \b 1: $$$ANGLE_RAD$$$, $$$ANGLE_RAD_0$$$, $$$ANGLE_RAD_1$$$, $$$ANGLE_RAD_2$$$,
      *                  $$$ANGLE_RAD_3$$$, $$$ANGLE_RAD_4$$$, $$$ANGLE_RAD_5$$$
-     * \b Degrees \b 1: $$$ANGLE_DEG$$$, $$$ANGLE_DEGANGLE_DEG_0$$$, $$$ANGLE_DEG_1$$$, $$$ANGLE_DEG_2$$$,
+     * \b Degrees \b 1: $$$ANGLE_DEG$$$, $$$ANGLE_DEG_0$$$, $$$ANGLE_DEG_1$$$, $$$ANGLE_DEG_2$$$,
      *                  $$$ANGLE_DEG_3$$$, $$$ANGLE_DEG_4$$$, $$$ANGLE_DEG_5$$$
      */
     static void replaceText(QString &_txt, const float _a);

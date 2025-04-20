@@ -215,6 +215,9 @@ SOURCES += src/Items/Path/itempath.cpp
 HEADERS += src/Items/Path/itempathspiral.h
 SOURCES += src/Items/Path/itempathspiral.cpp
 
+HEADERS += src/Items/Clock/itemclock.h
+SOURCES += src/Items/Clock/itemclock.cpp
+
 ######################################################
 
 HEADERS += src/Video/settingsvideo.h
@@ -240,6 +243,7 @@ SOURCES += src/Examples/example_sphere.cc
 SOURCES += src/Examples/example_ellipsoid.cc
 SOURCES += src/Examples/example_line.cc
 SOURCES += src/Examples/example_path.cc
+SOURCES += src/Examples/example_clock.cc
 
 contains ( DEFINES, U1_UNIT_TESTS) {
     SOURCES += src/UnitTests/test_math.cc
