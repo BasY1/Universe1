@@ -39,6 +39,8 @@ HEADERS += src/Math/cylinderarc.h
 
 HEADERS += src/Math/spherecrosssection.h
 
+HEADERS += src/Math/physicsnewton.h
+
 ######################################################
 
 HEADERS += src/Data3D/data3d.h
@@ -221,6 +223,9 @@ SOURCES += src/Items/Clock/itemclock.cpp
 HEADERS += src/Items/Hand/itemhand.h
 SOURCES += src/Items/Hand/itemhand.cpp
 
+HEADERS += src/Items/Simulation/itemnewtonsimulation.h
+SOURCES += src/Items/Simulation/itemnewtonsimulation.cpp
+
 ######################################################
 
 HEADERS += src/Video/settingsvideo.h
@@ -248,6 +253,8 @@ SOURCES += src/Examples/example_line.cc
 SOURCES += src/Examples/example_path.cc
 SOURCES += src/Examples/example_clock.cc
 SOURCES += src/Examples/example_hand.cc
+
+SOURCES += src/Examples/example_simulation_newton.cc
 
 contains ( DEFINES, U1_UNIT_TESTS) {
     SOURCES += src/UnitTests/test_math.cc

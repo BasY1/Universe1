@@ -899,6 +899,40 @@ inline size_t mixHash(const size_t _1,
     return mixHash(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11) ^ ((_12 >> 11UL) | (_12 << 53UL));
 }
 
+/*!
+ * \brief Mix 13 hash values
+ * \param _1 Value 1
+ * \param _2 Value 2
+ * \param _3 Value 3
+ * \param _4 Value 4
+ * \param _5 Value 5
+ * \param _6 Value 6
+ * \param _7 Value 7
+ * \param _8 Value 8
+ * \param _9 Value 9
+ * \param _10 Value 10
+ * \param _11 Value 11
+ * \param _12 Value 12
+ * \param _13 Value 13
+ * \return Calculated hash value
+ */
+inline size_t mixHash(const size_t _1,
+                      const size_t _2,
+                      const size_t _3,
+                      const size_t _4,
+                      const size_t _5,
+                      const size_t _6,
+                      const size_t _7,
+                      const size_t _8,
+                      const size_t _9,
+                      const size_t _10,
+                      const size_t _11,
+                      const size_t _12,
+                      const size_t _13)
+{
+    return mixHash(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12) ^ ((_13 >> 12UL) | (_13 << 52UL));
+}
+
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

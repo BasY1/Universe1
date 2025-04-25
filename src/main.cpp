@@ -21,6 +21,7 @@
 #include "Examples/example_path.cc"
 #include "Examples/example_clock.cc"
 #include "Examples/example_hand.cc"
+#include "Examples/example_simulation_newton.cc"
 #endif
 
 /*!
@@ -43,7 +44,7 @@ int main(int argc, char *argv[])
     static const QString workDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) +
         QDir::separator() + "U1" + QDir::separator();
 
-    if (U1::Examples::exampleHand(workDir))
+    if (U1::Examples::exampleSimulationNewton(workDir))
     {
         U1::Audio::SettingsAudio::runProcess("/usr/bin/vlc", {"--loop", workDir + "video.avi"});
         return EXIT_SUCCESS;

@@ -42,9 +42,9 @@ class ItemPropertyNum
     };
 
  protected:
-    std::map<size_t, Job> m_jobs;  //!< Property jobs
-    const T m_minimumValue = 0;    //!< Minimum possible value
-    const T m_maximumValue = 0;    //!< Maximum possible value
+    std::map<size_t, Job> m_jobs;   //!< Property jobs
+    const T m_minimumValue = T(0);  //!< Minimum possible value
+    const T m_maximumValue = T(0);  //!< Maximum possible value
 
     /*!
      * \brief Constructor
@@ -92,6 +92,24 @@ class ItemPropertyNum
     }
 
  public:
+    /*!
+     * \brief Minimum value getter
+     * \return Minimum value
+     */
+    inline T minimumValue() const
+    {
+        return m_minimumValue;
+    }
+
+    /*!
+     * \brief Maximum value getter
+     * \return Maximum value
+     */
+    inline T maximumValue() const
+    {
+        return m_maximumValue;
+    }
+
     /*!
      * \brief Calculates linearly distributed value in interval
      * \param _timeStep Time-step for required value

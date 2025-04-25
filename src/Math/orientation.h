@@ -128,6 +128,16 @@ struct Orientation
     }
 
     /*!
+     * \brief Test unit orientation; center=(0,0,0), N1=(1,0,0), N2=(0,1,0), N3=(0,0,1)
+     * \return \c true if this is an unit orientation
+     */
+    inline bool isUnit() const
+    {
+        return center.isNull() && normal1 == Vec3<T>::unitX() && normal2 == Vec3<T>::unitY() &&
+            normal3 == Vec3<T>::unitZ();
+    }
+
+    /*!
      * \brief Test if this is a right-handed orientation
      * \return \c true for right-handed orientation
      */
@@ -153,6 +163,18 @@ struct Orientation
     inline Vec3<T> getPoint(const Vec3<T> &_origPos) const
     {
         return center + normal1 * _origPos.x + normal2 * _origPos.y + normal3 * _origPos.z;
+    }
+
+    /*!
+     * \brief Transform point
+     * \param _origPos Origin point position
+     * \param _scale Scale factor
+     * \return Transformed point
+     */
+    inline Vec3<T> getPoint(const Vec3<T> &_origPos, const T _scale) const
+    {
+        return center + normal1 * (_origPos.x * _scale) + normal2 * (_origPos.y * _scale) +
+            normal3 * (_origPos.z * _scale);
     }
 
     /*!

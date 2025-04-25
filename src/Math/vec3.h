@@ -9,6 +9,7 @@
 #include "vec2.h"
 #include "colorrgb.h"
 #include <sstream>
+#include <thread>
 
 namespace U1 {
 namespace Math {
@@ -151,6 +152,11 @@ struct Vec3
 
     inline T lengthSquared() const;
     inline T length() const;
+    static void minMaxLength(T &_outMinimum,
+                             T &_outMaximum,
+                             const Vec3<T> *_data,
+                             const size_t _count,
+                             const std::vector<std::pair<size_t, size_t>> &_pool);
 
     inline T sum() const;
 
@@ -210,6 +216,12 @@ struct Vec3
     {
         return Vec3<T2>(x, y, z);
     }
+
+    template <typename T2>
+    static void convertedData(Vec3<T2> *_out,
+                              const Vec3<T> *_in,
+                              const size_t _count,
+                              const std::vector<std::pair<size_t, size_t>> &_pool);
 
     inline size_t toHash() const;
 
@@ -1268,6 +1280,83 @@ inline T Vec3<T>::length() const
 }
 
 /*!
+ * \brief Calculate minimum and maximum vector length from vector collection
+ * \tparam T Template floating point type
+ * \param _outMinimum Output minimum vector length
+ * \param _outMaximum Output maximum vector length
+ * \param _data Pointer to 3D vector data array
+ * \param _count Number of vectors
+ * \param _pool Multi-thread indices
+ * \return
+ */
+template <typename T>
+void Vec3<T>::minMaxLength(T &_outMinimum,
+                           T &_outMaximum,
+                           const Vec3<T> *_data,
+                           const size_t _count,
+                           const std::vector<std::pair<size_t, size_t>> &_pool)
+{
+    if (_count == 0UL)
+    {
+        _outMinimum = T(0);
+        _outMaximum = T(0);
+        return;
+    }
+
+    if (_pool.empty())
+    {
+        T l = _data[0UL].length();
+        _outMinimum = l;
+        _outMaximum = l;
+        for (size_t i = 1UL; i < _count; ++i)
+        {
+            l = _data[i].length();
+            if (_outMinimum > l)
+                _outMinimum = l;
+            if (_outMaximum < l)
+                _outMaximum = l;
+        }
+    }
+    else
+    {
+        uint tt = 0U;
+        std::vector<T> tDataMin(_pool.size(), std::numeric_limits<T>::max());
+        std::vector<T> tDataMax(_pool.size(), std::numeric_limits<T>::lowest());
+        std::vector<std::thread> threads;
+        threads.reserve(_pool.size());
+        for (const std::pair<size_t, size_t> &t : std::as_const(_pool))
+        {
+            threads.push_back(std::thread(
+                [t](T &__outMin, T &__outMax, const Vec3<T> *__data) {
+                    const size_t end = t.first + t.second;
+                    for (size_t i = t.first; i < end; ++i)
+                    {
+                        const T l = __data[i].length();
+                        if (__outMin > l)
+                            __outMin = l;
+                        if (__outMax < l)
+                            __outMax = l;
+                    }
+                },
+                std::ref(tDataMin[tt]),
+                std::ref(tDataMax[tt]),
+                _data));
+            tt++;
+        }
+        for (std::thread &t : threads)
+            t.join();
+        _outMinimum = std::numeric_limits<T>::max();
+        _outMaximum = std::numeric_limits<T>::lowest();
+        for (const T &i : std::as_const(tDataMin))
+            if (_outMinimum > i)
+                _outMinimum = i;
+        for (const T &i : std::as_const(tDataMax))
+            if (_outMaximum < i)
+                _outMaximum = i;
+    }
+}
+
+/*!
  * \brief Returns sum of vector components
  * \tparam T Template floating point type
  * \return Sum of vector components
@@ -1811,6 +1900,50 @@ ColorRGB ColorRGB::ratio(const T _ratio, const ColorRGB &_colorMin, const ColorR
     const Vec3<T> min = _colorMin.toVec3<T>();
     const Vec3<T> max = _colorMax.toVec3<T>();
     return fromVec3<T>(min + _ratio * (max - min));
+}
+
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Converted data to different precision
+ * \tparam T Template floating point type
+ * \tparam T2 Template floating point type for output
+ * \param _out Output 3D vector array pointer
+ * \param _in Input 3D vector array pointer
+ * \param _count Vector count
+ * \param _pool Multi-thread indices
+ * \return
+ */
+template <typename T>
+template <typename T2>
+void Vec3<T>::convertedData(Vec3<T2> *_out,
+                            const Vec3<T> *_in,
+                            const size_t _count,
+                            const std::vector<std::pair<size_t, size_t>> &_pool)
+{
+    if (_pool.empty())
+    {
+        for (size_t i = 0UL; i < _count; ++i)
+            _out[i] = _in[i].template converted<T2>();
+    }
+    else
+    {
+        std::vector<std::thread> threads;
+        threads.reserve(_pool.size());
+        for (const std::pair<size_t, size_t> &t : std::as_const(_pool))
+            threads.push_back(std::thread(
+                [t](Vec3<T2> *__out, const Vec3<T> *__in) {
+                    const size_t end = t.first + t.second;
+                    for (size_t i = t.first; i < end; ++i)
+                        __out[i] = __in[i].template converted<T2>();
+                },
+                _out,
+                _in));
+        for (std::thread &t : threads)
+            t.join();
+    }
 }
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

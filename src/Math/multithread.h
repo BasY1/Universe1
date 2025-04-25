@@ -96,6 +96,41 @@ void copyData(T *_to, const T *_from, const IT _count, const std::vector<std::pa
 }
 
 /*!
+ * \brief Copy data between two arrays
+ * \tparam T Any type with defined \c operator==
+ * \tparam IT Unsigned integer type
+ * \param _to Output data array pointer
+ * \param _from Input data array pointer
+ * \param _count Number of items
+ * \param _pool Multi-thread indices
+ */
+template <typename T, typename IT, typename = std::enable_if<std::is_unsigned<IT>::value>>
+void copyInvertData(T *_to, const T *_from, const IT _count, const std::vector<std::pair<IT, IT>> &_pool)
+{
+    if (_pool.empty())
+    {
+        for (IT i = 0UL; i < _count; ++i)
+            _to[i] = -_from[i];
+    }
+    else
+    {
+        std::vector<std::thread> threads;
+        threads.reserve(_pool.size());
+        for (const std::pair<IT, IT> &t : std::as_const(_pool))
+            threads.push_back(std::thread(
+                [t](T *__to, const T *__from) {
+                    const IT end = t.first + t.second;
+                    for (IT i = t.first; i < end; ++i)
+                        __to[i] = -__from[i];
+                },
+                _to,
+                _from));
+        for (std::thread &t : threads)
+            t.join();
+    }
+}
+
+/*!
  * \brief Search for the minimum and maximum value
  * \tparam T Any numeric type
  * \tparam IT Unsigned integer type
@@ -169,9 +204,7 @@ void minMaxData(T &_outMin, T &_outMax, const T *_data, const IT _count, const s
  * \param _count Number of items
  * \param _pool Multi-thread indices
  */
-template <typename T,
-          typename IT,
-          typename = std::enable_if<std::is_arithmetic<T>::value && std::is_unsigned<IT>::value>>
+template <typename T, typename IT, typename = std::enable_if<std::is_unsigned<IT>::value>>
 void setConstantData(T *_data, const T _value, const IT _count, const std::vector<std::pair<IT, IT>> &_pool)
 {
     if (_pool.empty())
@@ -205,9 +238,7 @@ void setConstantData(T *_data, const T _value, const IT _count, const std::vecto
  * \param _count Number of items
  * \param _pool Multi-thread indices
  */
-template <typename T,
-          typename IT,
-          typename = std::enable_if<std::is_arithmetic<T>::value && std::is_unsigned<IT>::value>>
+template <typename T, typename IT, typename = std::enable_if<std::is_unsigned<IT>::value>>
 void addConstantData(T *_data, const T _value, const IT _count, const std::vector<std::pair<IT, IT>> &_pool)
 {
     if (_pool.empty())
