@@ -72,24 +72,28 @@ bool exampleSimulationNewton(const QString &_workDir)
     ItemNewtonSimulation *obj1 = footage1->add3D(new ItemNewtonSimulation(
         {NewtonSimD::simulationGalaxyNewton(_workDir.toStdString() + "simulation.data",
                                             1,
-                                            1001,
+                                            50,
+                                            2000,
                                             2UL + size_t(float(dur) / project.settingsVideo.frameDuration),
                                             true,
-                                            0.001,
-                                            0.01,
-                                            1.0,
+                                            0.0001,
+                                            0.005,
                                             0.1,
-                                            100.0,
+                                            1.0,
+                                            0.01,
+                                            10.0,
                                             0.9,
                                             1.1),
          true}));
     obj1->time.addLinearValue(dur, obj1->latestSimulationTimestep());
-    obj1->colorMode.initValue(NewtonSimulation::SimulationColorConstant);
+    obj1->radiusMode.initValue(NewtonSimulation::SimulationRadiusConstant);
+    obj1->constantSize.initValue(2U);
+    obj1->colorMode.initValue(NewtonSimulation::SimulationColorVelocityRainbow);
     // obj1->colorMode.setValue(1000, NewtonSimulation::SimulationColorVelocityRainbow);
     // obj1->colorMode.setValue(2000, NewtonSimulation::SimulationColorAccelRainbow);
-    obj1->colorMode.setValue(1000, NewtonSimulation::SimulationColorMassGrayscale);
-    obj1->colorMode.setValue(3000, NewtonSimulation::SimulationColorMassRainbow);
-    obj1->maxPointSize.initValue(6U);
+    // obj1->colorMode.setValue(1000, NewtonSimulation::SimulationColorMassGrayscale);
+    // obj1->colorMode.setValue(3000, NewtonSimulation::SimulationColorMassRainbow);
+    obj1->maxPointSize.initValue(4U);
 
     footage1->addCamera("Camera 1", {+2, 0, 0});
     footage1->addCamera("Camera 2", {-2, 0, 0});

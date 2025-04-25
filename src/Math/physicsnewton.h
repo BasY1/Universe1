@@ -462,13 +462,15 @@ class PhysicsNewton
      * \brief Create simulation with Newtons forces
      * \param _fileName Simulation database file
      * \param _randomSeed Seed for random number generator
-     * \param _countObjects Number of objects
+     * \param _countObjectsBulge Number of objects in galactic bulge
+     * \param _countObjectsDisc Number of objects in galactic disk
      * \param _countSteps Number of steps
      * \param _rungeKutta Use Runge-Kutta method
      * \param _timeStep Time step duration
      * \param _gravitationalConstant Gravitational constant
-     * \param _areaRadiusXY Area radius within the XY plane
-     * \param _areaRadiusZ Area radius within the Z axis
+     * \param _bulkRadius Galactic bulge radius
+     * \param _discRadius Disc radius within the XY plane
+     * \param _discHeight Disc radius within the Z axis
      * \param _massCenter Central galaxy object mass
      * \param _massMinimum Minimal object mass
      * \param _massMaximum Maximal object mass
@@ -476,13 +478,15 @@ class PhysicsNewton
      */
     static PhysicsNewton<T> *simulationGalaxyNewton(const std::string &_fileName,
                                                     const size_t _randomSeed,
-                                                    const size_t _countObjects,
+                                                    const size_t _countObjectsBulge,
+                                                    const size_t _countObjectsDisc,
                                                     const size_t _countSteps,
                                                     const bool _rungeKutta,
                                                     const T _timeStep,
                                                     const T _gravitationalConstant,
-                                                    const T _areaRadiusXY,
-                                                    const T _areaRadiusZ,
+                                                    const T _bulkRadius,
+                                                    const T _discRadius,
+                                                    const T _discHeight,
                                                     const T _massCenter,
                                                     const T _massMinimum,
                                                     const T _massMaximum);
@@ -2650,43 +2654,51 @@ PhysicsNewton<T> *PhysicsNewton<T>::simulationNewton(const std::string &_fileNam
 template <typename T>
 PhysicsNewton<T> *PhysicsNewton<T>::simulationGalaxyNewton(const std::string &_fileName,
                                                            const size_t _randomSeed,
-                                                           const size_t _countObjects,
+                                                           const size_t _countObjectsBulge,
+                                                           const size_t _countObjectsDisc,
                                                            const size_t _countSteps,
                                                            const bool _rungeKutta,
                                                            const T _timeStep,
                                                            const T _gravitationalConstant,
-                                                           const T _areaRadiusXY,
-                                                           const T _areaRadiusZ,
+                                                           const T _bulkRadius,
+                                                           const T _discRadius,
+                                                           const T _discHeight,
                                                            const T _massCenter,
                                                            const T _massMinimum,
                                                            const T _massMaximum)
 {
-    if (_countObjects == 0UL || _countSteps == 0UL || !isPositive(_timeStep) || !isPositive(_gravitationalConstant) ||
-        !isPositive(_areaRadiusXY) || !isPositive(_areaRadiusZ) || !isPositive(_massCenter) ||
-        !isPositive(_massMinimum) || !isPositive(_massMaximum))
+    if (_countObjectsBulge == 0UL || _countObjectsDisc == 0UL || _countSteps == 0UL || !isPositive(_timeStep) ||
+        !isPositive(_gravitationalConstant) || !isPositive(_discRadius) || !isPositive(_discHeight) ||
+        !isPositive(_bulkRadius) || !isPositive(_massCenter) || !isPositive(_massMinimum) || !isPositive(_massMaximum))
     {
         std::cerr << "PhysicsNewton::simulationGalaxyNewton(): Invalid input data !\n";
         return nullptr;
     }
 
-    const size_t N = ((_countObjects % 2UL) == 1UL) ? _countObjects : (_countObjects + 1UL);
+    const size_t N1 = ((_countObjectsBulge % 2UL) == 0UL) ? _countObjectsBulge : (_countObjectsBulge + 1UL);
+    const size_t N2 = ((_countObjectsDisc % 2UL) == 0UL) ? _countObjectsDisc : (_countObjectsDisc + 1UL);
 
-    if ((_countObjects % 2UL) == 0UL)
-        std::cerr << "PhysicsNewton::simulationGalaxyNewton(): Even object count, using odd" << N << "!\n";
+    if ((_countObjectsBulge % 2UL) == 1UL)
+        std::cerr << "PhysicsNewton::simulationGalaxyNewton(): Need even count for bulge, using: " << N1 << "!\n";
 
-    const size_t hash = mixHash(std::hash<int>{}(int(getFloatingPointType<T>())),
-                                std::hash<uint>{}(std::thread::hardware_concurrency()),
-                                std::hash<size_t>{}(_randomSeed),
-                                std::hash<size_t>{}(N),
-                                std::hash<size_t>{}(_countSteps),
-                                std::hash<bool>{}(_rungeKutta),
-                                std::hash<T>{}(_timeStep),
-                                std::hash<T>{}(_gravitationalConstant),
-                                std::hash<T>{}(_areaRadiusXY),
-                                std::hash<T>{}(_areaRadiusZ),
-                                std::hash<T>{}(_massCenter),
-                                std::hash<T>{}(_massMinimum),
-                                std::hash<T>{}(_massMaximum));
+    if ((_countObjectsDisc % 2UL) == 1UL)
+        std::cerr << "PhysicsNewton::simulationGalaxyNewton(): Need even count for disc, using: " << N2 << "!\n";
+
+    size_t hash = std::hash<int>{}(int(getFloatingPointType<T>())), o = 1UL;
+    updateHash(hash, o, std::hash<uint>{}(std::thread::hardware_concurrency()));
+    updateHash(hash, o, std::hash<size_t>{}(_randomSeed));
+    updateHash(hash, o, std::hash<size_t>{}(N1));
+    updateHash(hash, o, std::hash<size_t>{}(N2));
+    updateHash(hash, o, std::hash<size_t>{}(_countSteps));
+    updateHash(hash, o, std::hash<bool>{}(_rungeKutta));
+    updateHash(hash, o, std::hash<T>{}(_timeStep));
+    updateHash(hash, o, std::hash<T>{}(_gravitationalConstant));
+    updateHash(hash, o, std::hash<T>{}(_discRadius));
+    updateHash(hash, o, std::hash<T>{}(_discHeight));
+    updateHash(hash, o, std::hash<T>{}(_bulkRadius));
+    updateHash(hash, o, std::hash<T>{}(_massCenter));
+    updateHash(hash, o, std::hash<T>{}(_massMinimum));
+    updateHash(hash, o, std::hash<T>{}(_massMaximum));
 
     std::ifstream ifs(_fileName, std::ios::binary);
     if (ifs.is_open())
@@ -2700,25 +2712,31 @@ PhysicsNewton<T> *PhysicsNewton<T>::simulationGalaxyNewton(const std::string &_f
         }
     }
 
-    const size_t N2 = N / 2UL;
-    const std::vector<std::pair<size_t, size_t>> pool = createPool(N);
-    const std::vector<std::pair<size_t, size_t>> pool2 = createPool(N2);
+    const size_t N = N1 + N2 + 1UL;
+    const size_t N1_2 = N1 / 2UL;
+    const size_t N2_2 = N2 / 2UL;
+    static const T randomDistStdDev = T(0.25);
 
     PhysicsNewton<T> *result = new PhysicsNewton<T>();
     T *tmpMass = reinterpret_cast<T *>(std::malloc(N * sizeof(T)));
     Vec3<T> *tmpPosition = reinterpret_cast<Vec3<T> *>(std::malloc(N * sizeof(Vec3<T>)));
     Vec3<T> *tmpVelocity = reinterpret_cast<Vec3<T> *>(std::malloc(N * sizeof(Vec3<T>)));
 
-    T sumMass = T(0);
-    if (pool2.empty())
+    tmpMass[0UL] = _massCenter;
+    tmpPosition[0UL] = {};
+    tmpVelocity[0UL] = {};
+    T sumMass = _massCenter;
+
+    std::vector<std::pair<size_t, size_t>> pool = createPool(N1_2);
+    if (pool.empty())
     {
         std::mt19937_64 gen;
-        std::normal_distribution<T> d1(T(0), _randomSeed);
+        std::normal_distribution<T> d1(T(0), randomDistStdDev);
         std::uniform_real_distribution<T> d2(_massMinimum, _massMaximum);
         gen.seed(_randomSeed);
-        for (size_t i = 1UL; i <= N2; ++i)
+        for (size_t i = 1UL; i <= N1_2; ++i)
         {
-            tmpPosition[i] = {d1(gen) * _areaRadiusXY, d1(gen) * _areaRadiusXY, d1(gen) * _areaRadiusZ};
+            tmpPosition[i] = {d1(gen) * _bulkRadius, d1(gen) * _bulkRadius, d1(gen) * _bulkRadius};
             tmpMass[i] = d2(gen);
             sumMass += tmpMass[i];
         }
@@ -2726,23 +2744,23 @@ PhysicsNewton<T> *PhysicsNewton<T>::simulationGalaxyNewton(const std::string &_f
     else
     {
         size_t tt = 0UL;
-        std::vector<T> tData(pool2.size(), T(0));
+        std::vector<T> tData(pool.size(), T(0));
         std::vector<std::thread> threads;
-        threads.reserve(pool2.size());
-        for (const std::pair<size_t, size_t> &t : std::as_const(pool2))
+        threads.reserve(pool.size());
+        for (const std::pair<size_t, size_t> &t : std::as_const(pool))
         {
             threads.push_back(std::thread(
-                [t, tt, _randomSeed, _areaRadiusXY, _areaRadiusZ, _massMinimum, _massMaximum](
+                [t, tt, _randomSeed, _bulkRadius, _massMinimum, _massMaximum](
                     Vec3<T> *__outPosition, T *__outMass, T &_outSum) {
                     std::mt19937_64 gen;
-                    std::normal_distribution<T> d1(T(0), _randomSeed);
+                    std::normal_distribution<T> d1(T(0), randomDistStdDev);
                     std::uniform_real_distribution<T> d2(_massMinimum, _massMaximum);
                     gen.seed(_randomSeed + tt + 1UL);
 
                     const size_t end = t.first + t.second;
                     for (size_t i = t.first; i < end; ++i)
                     {
-                        __outPosition[i] = {d1(gen) * _areaRadiusXY, d1(gen) * _areaRadiusXY, d1(gen) * _areaRadiusZ};
+                        __outPosition[i] = {d1(gen) * _bulkRadius, d1(gen) * _bulkRadius, d1(gen) * _bulkRadius};
                         __outMass[i] = d2(gen);
                         _outSum += __outMass[i];
                     }
@@ -2756,16 +2774,69 @@ PhysicsNewton<T> *PhysicsNewton<T>::simulationGalaxyNewton(const std::string &_f
         for (std::thread &t : threads)
             t.join();
 
-        sumMass = std::accumulate(tData.cbegin(), tData.cend(), T(0));
+        sumMass = std::accumulate(tData.cbegin(), tData.cend(), sumMass);
     }
-    tmpPosition[0UL] = {};
-    tmpMass[0UL] = _massCenter;
-    copyData(&tmpMass[N2 + 1UL], &tmpMass[1UL], N2, pool2);
-    copyInvertData(&tmpPosition[N2 + 1UL], &tmpPosition[1UL], N2, pool2);
 
+    copyData(&tmpMass[N1_2 + 1UL], &tmpMass[1UL], N1_2, pool);
+    copyInvertData(&tmpPosition[N1_2 + 1UL], &tmpPosition[1UL], N1_2, pool);
+
+    pool = createPool(N2_2);
     if (pool.empty())
     {
-        for (size_t i = 0UL; i < _countObjects; ++i)
+        std::mt19937_64 gen;
+        std::normal_distribution<T> d1(T(0), randomDistStdDev);
+        std::uniform_real_distribution<T> d2(_massMinimum, _massMaximum);
+        gen.seed(_randomSeed + N1 + 100UL);
+        for (size_t i = 1UL; i <= N2_2; ++i)
+        {
+            tmpPosition[N1 + i] = {d1(gen) * _discRadius, d1(gen) * _discRadius, d1(gen) * _discHeight};
+            tmpMass[N1 + i] = d2(gen);
+            sumMass += tmpMass[N1 + i];
+        }
+    }
+    else
+    {
+        size_t tt = 0UL;
+        std::vector<T> tData(pool.size(), T(0));
+        std::vector<std::thread> threads;
+        threads.reserve(pool.size());
+        for (const std::pair<size_t, size_t> &t : std::as_const(pool))
+        {
+            threads.push_back(std::thread(
+                [t, tt, N1, _randomSeed, _discRadius, _discHeight, _massMinimum, _massMaximum](
+                    Vec3<T> *__outPosition, T *__outMass, T &_outSum) {
+                    std::mt19937_64 gen;
+                    std::normal_distribution<T> d1(T(0), randomDistStdDev);
+                    std::uniform_real_distribution<T> d2(_massMinimum, _massMaximum);
+                    gen.seed(_randomSeed + tt + N1 + 200UL);
+
+                    const size_t end = t.first + t.second;
+                    for (size_t i = t.first; i < end; ++i)
+                    {
+                        __outPosition[i] = {d1(gen) * _discRadius, d1(gen) * _discRadius, d1(gen) * _discHeight};
+                        __outMass[i] = d2(gen);
+                        _outSum += __outMass[i];
+                    }
+                },
+                &tmpPosition[N1 + 1UL],
+                &tmpMass[N1 + 1UL],
+                std::ref(tData[tt])));
+            tt++;
+        }
+
+        for (std::thread &t : threads)
+            t.join();
+
+        sumMass = std::accumulate(tData.cbegin(), tData.cend(), sumMass);
+    }
+
+    copyData(&tmpMass[N1 + N2_2 + 1UL], &tmpMass[N1 + 1UL], N2_2, pool);
+    copyInvertData(&tmpPosition[N1 + N2_2 + 1UL], &tmpPosition[N1 + 1UL], N2_2, pool);
+
+    pool = createPool(N);
+    if (pool.empty())
+    {
+        for (size_t i = 0UL; i < N; ++i)
         {
             const T R1 = tmpPosition[i].length();
             if (!isPositive(R1))
@@ -2773,7 +2844,7 @@ PhysicsNewton<T> *PhysicsNewton<T>::simulationGalaxyNewton(const std::string &_f
                 tmpVelocity[i] = {T(0), T(0), T(0)};
                 continue;
             }
-            const Vec3<T> A = calcAccel(i, _countObjects, _gravitationalConstant, tmpMass, tmpPosition);
+            const Vec3<T> A = calcAccel(i, N, _gravitationalConstant, tmpMass, tmpPosition);
             const Vec3<T> N0 = -(tmpPosition[i]).normalized();
             const Vec3<T> A1 = A.projected(N0);
             const Vec3<T> A2 = A - A1;
@@ -2793,8 +2864,7 @@ PhysicsNewton<T> *PhysicsNewton<T>::simulationGalaxyNewton(const std::string &_f
 
         for (const std::pair<size_t, size_t> &t : std::as_const(pool))
             threads.push_back(std::thread(
-                [t, _countObjects, _gravitationalConstant](
-                    Vec3<T> *_outVel, const Vec3<T> *_objPos, const T *_objMass) {
+                [t, N, _gravitationalConstant](Vec3<T> *_outVel, const Vec3<T> *_objPos, const T *_objMass) {
                     const size_t end = t.first + t.second;
                     for (size_t i = t.first; i < end; ++i)
                     {
@@ -2804,7 +2874,7 @@ PhysicsNewton<T> *PhysicsNewton<T>::simulationGalaxyNewton(const std::string &_f
                             _outVel[i] = {T(0), T(0), T(0)};
                             continue;
                         }
-                        const Vec3<T> A = calcAccel(i, _countObjects, _gravitationalConstant, _objMass, _objPos);
+                        const Vec3<T> A = calcAccel(i, N, _gravitationalConstant, _objMass, _objPos);
                         const Vec3<T> N0 = -(_objPos[i]).normalized();
                         const Vec3<T> A1 = A.projected(N0);
                         const Vec3<T> A2 = A - A1;
@@ -2827,28 +2897,14 @@ PhysicsNewton<T> *PhysicsNewton<T>::simulationGalaxyNewton(const std::string &_f
 
     if (_rungeKutta)
     {
-        if (result->buildRK(hash,
-                            _countObjects,
-                            _countSteps,
-                            tmpMass,
-                            tmpPosition,
-                            tmpVelocity,
-                            T(2) * sumMass + _massCenter,
-                            _timeStep,
-                            _gravitationalConstant))
+        if (result->buildRK(
+                hash, N, _countSteps, tmpMass, tmpPosition, tmpVelocity, sumMass, _timeStep, _gravitationalConstant))
             result->save(_fileName);
     }
     else
     {
-        if (result->build(hash,
-                          _countObjects,
-                          _countSteps,
-                          tmpMass,
-                          tmpPosition,
-                          tmpVelocity,
-                          T(2) * sumMass + _massCenter,
-                          _timeStep,
-                          _gravitationalConstant))
+        if (result->build(
+                hash, N, _countSteps, tmpMass, tmpPosition, tmpVelocity, sumMass, _timeStep, _gravitationalConstant))
             result->save(_fileName);
     }
 
