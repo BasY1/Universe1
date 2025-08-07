@@ -9,6 +9,7 @@
 #include "vec2.h"
 #include "colorrgb.h"
 #include <sstream>
+#include <fstream>
 #include <thread>
 
 namespace U1 {
@@ -41,6 +42,14 @@ struct Vec3
             T x;  //!< Union \b X axis (first) component representation
             T y;  //!< Union \b Y axis (second) component representation
             T z;  //!< Union \b Z axis (third) component representation
+        };
+
+        /*! \brief The anonymous structure, access vector component by color name */
+        struct
+        {
+            T r;  //!< Union \b red component representation
+            T g;  //!< Union \b green component representation
+            T b;  //!< Union \b blue component representation
         };
     };
 
@@ -2069,6 +2078,35 @@ template <typename T>
 inline std::ostream &operator<<(std::ostream &_os, const Vec3<T> &_v)
 {
     return _os << '[' << _v.x << ',' << _v.y << ',' << _v.z << ']';
+}
+
+/*!
+ * \brief Fill output file stream
+ * \tparam T Template floating point type
+ * \param _ofs Output file stream
+ * \param _v Vector
+ * \return Output file stream
+ */
+template <typename T>
+inline std::ofstream &operator<<(std::ofstream &_ofs, const Vec3<T> &_v)
+{
+    return _ofs << _v.x << _v.y << _v.z;
+}
+
+/*!
+ * \brief Fill input file stream
+ * \tparam T Template floating point type
+ * \param _ifs Input file stream
+ * \param _v Vector
+ * \return Input file stream
+ */
+template <typename T>
+inline std::ifstream &operator>>(std::ifstream &_ifs, Vec3<T> &_v)
+{
+    _ifs >> _v.x;
+    _ifs >> _v.y;
+    _ifs >> _v.z;
+    return _ifs;
 }
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

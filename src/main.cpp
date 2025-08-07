@@ -24,6 +24,8 @@
 #include "Examples/example_simulation_newton.cc"
 #endif
 
+#include "Math/physicsuniverse1.h"
+
 /*!
  * \brief The \b main procedure
  * \param argc Argument count
@@ -40,6 +42,9 @@ int main(int argc, char *argv[])
     testing::InitGoogleTest();
     return RUN_ALL_TESTS();
 #else
+
+    U1::Math::U1SimD sd;
+    sd.build(0, {}, 1, 1);
 
     static const QString workDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) +
         QDir::separator() + "U1" + QDir::separator();

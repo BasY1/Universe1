@@ -16,9 +16,9 @@ namespace Math {
  * \brief Cross-section type
  * \details Information about wave's sphere against particle's sphere
  */
-enum SphereCrossSectionType : uint8_t
+enum SphereCrossSectionType : int
 {
-    CROSS_INVALID = 0x00U,    //!< Invalid cross-section
+    CROSS_INVALID = 0,        //!< Invalid cross-section
     CROSS_WAVE_MISS_BEFORE,   //!< Wave is before particle (Wave needs to grow to hit particle)
     CROSS_WAVE_TOUCH_BEFORE,  //!< Wave sphere touch particle's border (Growing wave will cross particle)
     CROSS_WAVE_CROSSES,       //!< Wave sphere cross particle's sphere
@@ -44,6 +44,21 @@ struct SphereCrossSection
     T cosAngle;          //!< Co-sine of cross-section angle
 
     SphereCrossSection(const Sphere<T> &_particle, const Sphere<T> &_wave);
+
+    /*!
+     * \brief Constructor
+     * \param _particlePosition Particle center position
+     * \param _wavePosition Wave center position
+     * \param _waveRadius Wave radius
+     * \param _particleRadius Particle radius
+     */
+    inline SphereCrossSection(const Vec3<T> &_particlePosition,
+                              const Vec3<T> &_wavePosition,
+                              const T _waveRadius,
+                              const T _particleRadius = T(1))
+        : SphereCrossSection(Sphere<T>(_particlePosition, _particleRadius), Sphere<T>(_wavePosition, _waveRadius))
+    {
+    }
 
     inline Vec3<T> directionToWave() const;
 

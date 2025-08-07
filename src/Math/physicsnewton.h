@@ -2919,9 +2919,9 @@ PhysicsNewton<T> *PhysicsNewton<T>::simulationGalaxyNewton(const std::string &_f
 //
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef PhysicsNewton<float> NewtonSimF;        //!< 32 bit floating point precision 3D vector
-typedef PhysicsNewton<double> NewtonSimD;       //!< 64 bit floating point precision 3D vector
-typedef PhysicsNewton<long double> NewtonSimL;  //!< 128 bit floating point precision 3D vector
+typedef PhysicsNewton<float> NewtonSimF;        //!< 32 bit floating point precision version
+typedef PhysicsNewton<double> NewtonSimD;       //!< 64 bit floating point precision version
+typedef PhysicsNewton<long double> NewtonSimL;  //!< 128 bit floating point precision version
 
 }  // namespace Math
 }  // namespace U1

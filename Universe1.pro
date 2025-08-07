@@ -40,6 +40,7 @@ HEADERS += src/Math/cylinderarc.h
 HEADERS += src/Math/spherecrosssection.h
 
 HEADERS += src/Math/physicsnewton.h
+HEADERS += src/Math/physicsuniverse1.h
 
 ######################################################
 
