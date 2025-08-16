@@ -221,8 +221,14 @@ SOURCES += src/Items/Path/itempathspiral.cpp
 HEADERS += src/Items/Clock/itemclock.h
 SOURCES += src/Items/Clock/itemclock.cpp
 
-HEADERS += src/Items/Hand/itemhand.h
-SOURCES += src/Items/Hand/itemhand.cpp
+HEADERS += src/Items/BodyParts/Hand/itemhand.h
+SOURCES += src/Items/BodyParts/Hand/itemhand.cpp
+
+HEADERS += src/Items/BodyParts/Eye/itemeye.h
+SOURCES += src/Items/BodyParts/Eye/itemeye.cpp
+
+HEADERS += src/Items/BodyParts/Head/itemhead.h
+SOURCES += src/Items/BodyParts/Head/itemhead.cpp
 
 HEADERS += src/Items/Simulation/itemnewtonsimulation.h
 SOURCES += src/Items/Simulation/itemnewtonsimulation.cpp

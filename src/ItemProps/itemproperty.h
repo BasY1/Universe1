@@ -7,6 +7,7 @@
 #define PROPS_ITEMPROPERTY_H
 
 #include <string>
+#include <QString>
 
 namespace U1 {
 
@@ -74,6 +75,13 @@ class ItemProperty
      * \return Latest stored time step
      */
     virtual size_t latestTimeStep() const = 0;
+
+    /*!
+     * \brief Returns value at given time-step as text
+     * \param _timeStep Time-step
+     * \return Value at given time-step as text
+     */
+    virtual QString textValue(const size_t _timeStep) const = 0;
 };
 
 }  // namespace Props

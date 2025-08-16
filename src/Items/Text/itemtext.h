@@ -46,6 +46,35 @@ class ItemText : public Item3DExt
     Props::ItemPropertyEnum textAlign;       //!< Dynamic text alignment
     Props::ItemPropertyEnum visibleFrom;     //!< Dynamic visibility type
 
+ protected:
+    std::vector<std::pair<QString, const Props::ItemProperty *>> m_textProps;  //!< Dynamic properties to print values
+
+ public:
+    /*!
+     * \brief Add external item property to print its value within the text
+     * \param _key Property key
+     * \param _property External item property object
+     */
+    void addTextProp(const QString &_key, const Props::ItemProperty *_property);
+
+    /*!
+     * \brief Setter for dynamic properties to print values
+     * \param _textProps New dynamic properties to print values
+     */
+    inline void setTextProps(const std::vector<std::pair<QString, const Props::ItemProperty *>> &_textProps)
+    {
+        m_textProps = _textProps;
+    }
+
+    /*!
+     * \brief Getter for a collection of known external external item properties
+     * \return Collection of known external external item properties
+     */
+    inline const std::vector<std::pair<QString, const Props::ItemProperty *>> textProps() const
+    {
+        return m_textProps;
+    }
+
     /*!
      * \brief Constructor
      * \param _name Item name
@@ -105,6 +134,17 @@ class ItemText : public Item3DExt
                            const Math::AlignType _textAlign,
                            const bool _visibleFromFront = true);
 
+    /*!
+     * \brief Tool function replace text with current property values
+     * \param txt Output text
+     * \param _textProps Text properties
+     * \param _timeStep Time-step
+     * \return
+     */
+    static void replaceTextValues(QString &txt,
+                                  const std::vector<std::pair<QString, const Props::ItemProperty *>> &_textProps,
+                                  const size_t _timeStep);
+
  protected:
     /*!
      * \brief Create 3D Open GL data objects
@@ -127,6 +167,35 @@ class ItemTextCamera : public Item3D
     Props::ItemPropertyUInt32 borderOffset;  //!< Dynamic offset distance from border based on alignment
     Props::ItemPropertyFloat pixelSize;      //!< Dynamic pixel size
     Props::ItemPropertyEnum textAlign;       //!< Dynamic text alignment
+
+ protected:
+    std::vector<std::pair<QString, const Props::ItemProperty *>> m_textProps;  //!< Dynamic properties to print values
+
+ public:
+    /*!
+     * \brief Add external item property to print its value within the text
+     * \param _key Property key
+     * \param _property External item property object
+     */
+    void addTextProp(const QString &_key, const Props::ItemProperty *_property);
+
+    /*!
+     * \brief Setter for dynamic properties to print values
+     * \param _textProps New dynamic properties to print values
+     */
+    inline void setTextProps(const std::vector<std::pair<QString, const Props::ItemProperty *>> &_textProps)
+    {
+        m_textProps = _textProps;
+    }
+
+    /*!
+     * \brief Getter for a collection of known external external item properties
+     * \return Collection of known external external item properties
+     */
+    inline const std::vector<std::pair<QString, const Props::ItemProperty *>> textProps() const
+    {
+        return m_textProps;
+    }
 
     /*!
      * \brief Constructor

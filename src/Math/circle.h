@@ -113,6 +113,26 @@ struct Circle3
     {
     }
 
+    /*! \brief Constructor from 3 points */
+    template <typename = std::enable_if_t<std::is_floating_point<T>::value>>
+    inline Circle3(const Vec3<T> &_point1,  //!< Circle point 1
+                   const Vec3<T> &_point2,  //!< Circle point 2
+                   const Vec3<T> &_point3)  //!< Circle point 3
+        : Circle3()
+    {
+        const Vec3<T> v1 = _point2 - _point1;
+        const Vec3<T> v2 = _point3 - _point1;
+        const T d11 = Vec3<T>::dot(v1, v1);
+        const T d22 = Vec3<T>::dot(v2, v2);
+        const T d12 = Vec3<T>::dot(v1, v2);
+        const T B = T(1) / (T(2) * (d11 * d22 - d12 * d12));
+        const T k1 = B * d22 * (d11 - d12);
+        const T k2 = B * d11 * (d22 - d12);
+        center = _point1 + v1 * k1 + v2 * k2;
+        normal = Vec3<T>::cross(v1.normalized(), v2.normalized()).normalized();
+        radius = center.distanceToPoint(_point1);
+    }
+
     /*!
      * \brief Calculate hash value
      * \return Hash value from data

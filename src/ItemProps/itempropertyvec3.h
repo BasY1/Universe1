@@ -26,13 +26,15 @@ class ItemPropertyVec3
     /*! \brief Job name */
     enum JobType : int
     {
-        _JobConstantValue,      //!< Keep constant value
-        _JobLinearValue,        //!< Linear interpolate to value
-        _JobAcceleratedValue,   //!< Accelerated - linear - decelerated interpolation to value
-        _JobBezier,             //!< Linear interpolation over Bezier curve
-        _JobBezierAccelerated,  //!< Accelerated interpolation over Bezier curve
-        _JobRotated,            //!< Rotated value
-        _JobRotatedAccelerated  //!< Accelerated - Rotated value
+        _JobConstantValue,           //!< Keep constant value
+        _JobLinearValue,             //!< Linear interpolate to value
+        _JobAcceleratedValue,        //!< Accelerated - linear - decelerated interpolation to value
+        _JobBezier,                  //!< Linear interpolation over Bezier curve
+        _JobBezierAccelerated,       //!< Accelerated interpolation over Bezier curve
+        _JobRotated,                 //!< Rotated value
+        _JobRotatedAccelerated,      //!< Accelerated - Rotated value
+        _JobRotatedMoved,            //!< Rotated and moved value
+        _JobRotatedMovedAccelerated  //!< Accelerated - Rotated and moved value
     };
 
     /*! \brief 3D vector property job */
@@ -45,6 +47,7 @@ class ItemPropertyVec3
         Math::Vec3<T> bezierDirection1;  //!< Bezier normal at start
         Math::Vec3<T> bezierDirection2;  //!< Bezier normal at end
         T rotationAngleRad = T(0);       //!< Rotation job angle
+        T rotationMotion = T(0);         //!< Rotation-moved job: motion distance within the rotation normal
         double acceleration = 0.0;       //!< Acceleration duration as ratio to total job duration
         double deceleration = 0.0;       //!< Deceleration duration as ratio to total job duration
     };
@@ -150,32 +153,31 @@ class ItemPropertyVec3
         typename std::map<size_t, Job>::const_iterator itPrev = it;
         --itPrev;
 
+        T tmp = T(0);
         Math::Vec3<T> result;
         switch ((*it).second.type)
         {
         case _JobConstantValue: result = (*itPrev).second.value; break;
 
         case _JobLinearValue:
-            result = (*itPrev).second.value +
-                ((*it).second.value - (*itPrev).second.value) *
-                    (static_cast<T>(_timeStep - (*itPrev).first) / static_cast<T>((*it).first - (*itPrev).first));
+            tmp = (static_cast<T>(_timeStep - (*itPrev).first) / static_cast<T>((*it).first - (*itPrev).first));
+            result = (*itPrev).second.value + ((*it).second.value - (*itPrev).second.value) * tmp;
             break;
 
         case _JobAcceleratedValue:
-            result = (*itPrev).second.value +
-                ((*it).second.value - (*itPrev).second.value) *
-                    ItemPropertyNum<T>::getAcceleratedValue(_timeStep,
-                                                            (*itPrev).first,
-                                                            (*it).first,
-                                                            (*it).second.acceleration,
-                                                            (*it).second.deceleration,
-                                                            T(0),
-                                                            T(1));
+            tmp = ItemPropertyNum<T>::getAcceleratedValue(_timeStep,
+                                                          (*itPrev).first,
+                                                          (*it).first,
+                                                          (*it).second.acceleration,
+                                                          (*it).second.deceleration,
+                                                          T(0),
+                                                          T(1));
+            result = (*itPrev).second.value + ((*it).second.value - (*itPrev).second.value) * tmp;
             break;
 
         case _JobBezier:
-            result = Math::Vec3<T>::bezier(static_cast<T>(_timeStep - (*itPrev).first) /
-                                               static_cast<T>((*it).first - (*itPrev).first),
+            tmp = (static_cast<T>(_timeStep - (*itPrev).first) / static_cast<T>((*it).first - (*itPrev).first));
+            result = Math::Vec3<T>::bezier(tmp,
                                            (*itPrev).second.value,
                                            (*it).second.bezierDirection1,
                                            (*it).second.value,
@@ -183,13 +185,14 @@ class ItemPropertyVec3
             break;
 
         case _JobBezierAccelerated:
-            result = Math::Vec3<T>::bezier(ItemPropertyNum<T>::getAcceleratedValue(_timeStep,
-                                                                                   (*itPrev).first,
-                                                                                   (*it).first,
-                                                                                   (*it).second.acceleration,
-                                                                                   (*it).second.deceleration,
-                                                                                   T(0),
-                                                                                   T(1)),
+            tmp = ItemPropertyNum<T>::getAcceleratedValue(_timeStep,
+                                                          (*itPrev).first,
+                                                          (*it).first,
+                                                          (*it).second.acceleration,
+                                                          (*it).second.deceleration,
+                                                          T(0),
+                                                          T(1));
+            result = Math::Vec3<T>::bezier(tmp,
                                            (*itPrev).second.value,
                                            (*it).second.bezierDirection1,
                                            (*it).second.value,
@@ -197,26 +200,49 @@ class ItemPropertyVec3
             break;
 
         case _JobRotated:
+            tmp = (static_cast<T>(_timeStep - (*itPrev).first) / static_cast<T>((*it).first - (*itPrev).first));
             result = (*it).second.rotationCenter +
                 Math::Vec3<T>::rotate((*itPrev).second.value - (*it).second.rotationCenter,
                                       (*it).second.rotationNormal,
-                                      (*it).second.rotationAngleRad *
-                                          (static_cast<T>(_timeStep - (*itPrev).first) /
-                                           static_cast<T>((*it).first - (*itPrev).first)));
+                                      (*it).second.rotationAngleRad * tmp);
             break;
 
         case _JobRotatedAccelerated:
+            tmp = ItemPropertyNum<T>::getAcceleratedValue(_timeStep,
+                                                          (*itPrev).first,
+                                                          (*it).first,
+                                                          (*it).second.acceleration,
+                                                          (*it).second.deceleration,
+                                                          T(0),
+                                                          T(1));
             result = (*it).second.rotationCenter +
                 Math::Vec3<T>::rotate((*itPrev).second.value - (*it).second.rotationCenter,
                                       (*it).second.rotationNormal,
-                                      (*it).second.rotationAngleRad *
-                                          ItemPropertyNum<T>::getAcceleratedValue(_timeStep,
-                                                                                  (*itPrev).first,
-                                                                                  (*it).first,
-                                                                                  (*it).second.acceleration,
-                                                                                  (*it).second.deceleration,
-                                                                                  T(0),
-                                                                                  T(1)));
+                                      (*it).second.rotationAngleRad * tmp);
+            break;
+
+        case _JobRotatedMoved:
+            tmp = (static_cast<T>(_timeStep - (*itPrev).first) / static_cast<T>((*it).first - (*itPrev).first));
+            result = (*it).second.rotationCenter +
+                Math::Vec3<T>::rotate((*itPrev).second.value - (*it).second.rotationCenter,
+                                      (*it).second.rotationNormal,
+                                      (*it).second.rotationAngleRad * tmp) +
+                (*it).second.rotationNormal * ((*it).second.rotationMotion * tmp);
+            break;
+
+        case _JobRotatedMovedAccelerated:
+            tmp = ItemPropertyNum<T>::getAcceleratedValue(_timeStep,
+                                                          (*itPrev).first,
+                                                          (*it).first,
+                                                          (*it).second.acceleration,
+                                                          (*it).second.deceleration,
+                                                          T(0),
+                                                          T(1));
+            result = (*it).second.rotationCenter +
+                Math::Vec3<T>::rotate((*itPrev).second.value - (*it).second.rotationCenter,
+                                      (*it).second.rotationNormal,
+                                      (*it).second.rotationAngleRad * tmp) +
+                (*it).second.rotationNormal * ((*it).second.rotationMotion * tmp);
             break;
         }
 
@@ -248,7 +274,7 @@ class ItemPropertyVec3
             m_jobs.clear();
         }
 
-        m_jobs[0UL] = {_JobConstantValue, _initialValue, {}, {}, {}, {}, T(0), 0.0, 0.0};
+        m_jobs[0UL] = {_JobConstantValue, _initialValue, {}, {}, {}, {}, T(0), T(0), 0.0, 0.0};
     }
 
     /*!
@@ -280,8 +306,8 @@ class ItemPropertyVec3
             m_jobs.clear();
         }
 
-        m_jobs[0UL] = {_JobConstantValue, _value, {}, {}, {}, {}, T(0), 0.0, 0.0};
-        m_jobs[_timeStep] = {_JobConstantValue, _value, {}, {}, {}, {}, T(0), 0.0, 0.0};
+        m_jobs[0UL] = {_JobConstantValue, _value, {}, {}, {}, {}, T(0), T(0), 0.0, 0.0};
+        m_jobs[_timeStep] = {_JobConstantValue, _value, {}, {}, {}, {}, T(0), T(0), 0.0, 0.0};
     }
 
     // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -302,9 +328,9 @@ class ItemPropertyVec3
 
         if (m_jobs.empty())
         {
-            m_jobs[0UL] = {_JobConstantValue, _value, {}, {}, {}, {}, T(0), 0.0, 0.0};
+            m_jobs[0UL] = {_JobConstantValue, _value, {}, {}, {}, {}, T(0), T(0), 0.0, 0.0};
             if (_timeStep != 0UL)
-                m_jobs[_timeStep] = {_JobConstantValue, _value, {}, {}, {}, {}, T(0), 0.0, 0.0};
+                m_jobs[_timeStep] = {_JobConstantValue, _value, {}, {}, {}, {}, T(0), T(0), 0.0, 0.0};
             return;
         }
 
@@ -313,7 +339,7 @@ class ItemPropertyVec3
             if ((*m_jobs.cbegin()).first == _timeStep)
                 std::cerr << "Warning: ItemPropertyVec3::addConstantValue(" << _timeStep << ", " << _value
                           << ") time-step[" << _timeStep << "] already in use, overwriting with new job!\n";
-            m_jobs[_timeStep] = {_JobConstantValue, _value, {}, {}, {}, {}, T(0), 0.0, 0.0};
+            m_jobs[_timeStep] = {_JobConstantValue, _value, {}, {}, {}, {}, T(0), T(0), 0.0, 0.0};
             return;
         }
 
@@ -325,7 +351,7 @@ class ItemPropertyVec3
 
             std::cerr << "Warning: ItemPropertyVec3::addConstantValue(" << _timeStep << ", " << _value << ") time-step["
                       << _timeStep << "] already in use, overwriting with new job!\n";
-            (*it).second = {_JobConstantValue, _value, {}, {}, {}, {}, T(0), 0.0, 0.0};
+            (*it).second = {_JobConstantValue, _value, {}, {}, {}, {}, T(0), T(0), 0.0, 0.0};
             return;
         }
 
@@ -333,7 +359,7 @@ class ItemPropertyVec3
             std::cerr << "Warning: ItemPropertyVec3::addConstantValue(" << _timeStep << ", " << _value
                       << ") Adding job inside the job stack!\n";
 
-        m_jobs[_timeStep] = {_JobConstantValue, _value, {}, {}, {}, {}, T(0), 0.0, 0.0};
+        m_jobs[_timeStep] = {_JobConstantValue, _value, {}, {}, {}, {}, T(0), T(0), 0.0, 0.0};
     }
 
     // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -374,7 +400,7 @@ class ItemPropertyVec3
 
             std::cerr << "Warning: ItemPropertyVec3::addLinearValue(" << _timeStep << ", " << _value << ") time-step["
                       << _timeStep << "] already in use, overwriting with new job!\n";
-            (*it).second = {_JobLinearValue, _value, {}, {}, {}, {}, T(0), 0.0, 0.0};
+            (*it).second = {_JobLinearValue, _value, {}, {}, {}, {}, T(0), T(0), 0.0, 0.0};
 
             return;
         }
@@ -383,7 +409,7 @@ class ItemPropertyVec3
             std::cerr << "Warning: ItemPropertyVec3::addLinearValue(" << _timeStep << ", " << _value
                       << ") Adding job inside the job stack!\n";
 
-        m_jobs[_timeStep] = {_JobLinearValue, _value, {}, {}, {}, {}, T(0), 0.0, 0.0};
+        m_jobs[_timeStep] = {_JobLinearValue, _value, {}, {}, {}, {}, T(0), T(0), 0.0, 0.0};
     }
 
     // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -441,7 +467,7 @@ class ItemPropertyVec3
             std::cerr << "Warning: ItemPropertyVec3::addAcceleratedValue(" << _timeStep << ", " << _value << ", "
                       << _acceleration << ", " << _deceleration << ") time-step[" << _timeStep
                       << "] already in use, overwriting with new job!\n";
-            (*it).second = {_JobAcceleratedValue, _value, {}, {}, {}, {}, T(0), _acceleration, _deceleration};
+            (*it).second = {_JobAcceleratedValue, _value, {}, {}, {}, {}, T(0), T(0), _acceleration, _deceleration};
 
             return;
         }
@@ -450,7 +476,7 @@ class ItemPropertyVec3
             std::cerr << "Warning: ItemPropertyVec3::addAcceleratedValue(" << _timeStep << ", " << _value << ", "
                       << _acceleration << ", " << _deceleration << ") Adding job inside the job stack!\n";
 
-        m_jobs[_timeStep] = {_JobAcceleratedValue, _value, {}, {}, {}, {}, T(0), _acceleration, _deceleration};
+        m_jobs[_timeStep] = {_JobAcceleratedValue, _value, {}, {}, {}, {}, T(0), T(0), _acceleration, _deceleration};
     }
 
     // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -499,7 +525,7 @@ class ItemPropertyVec3
             std::cerr << "Warning: ItemPropertyVec3::addBezier(" << _timeStep << ", " << _value << ", " << _bezier1
                       << ", " << _bezier2 << ") time-step[" << _timeStep
                       << "] already in use, overwriting with new job!\n";
-            (*it).second = {_JobBezier, _value, {}, {}, _bezier1, _bezier2, T(0), 0.0, 0.0};
+            (*it).second = {_JobBezier, _value, {}, {}, _bezier1, _bezier2, T(0), T(0), 0.0, 0.0};
 
             return;
         }
@@ -508,7 +534,7 @@ class ItemPropertyVec3
             std::cerr << "Warning: ItemPropertyVec3::addBezier(" << _timeStep << ", " << _value << ", " << _bezier1
                       << ", " << _bezier2 << ") Adding job inside the job stack!\n";
 
-        m_jobs[_timeStep] = {_JobBezier, _value, {}, {}, _bezier1, _bezier2, T(0), 0.0, 0.0};
+        m_jobs[_timeStep] = {_JobBezier, _value, {}, {}, _bezier1, _bezier2, T(0), T(0), 0.0, 0.0};
     }
 
     // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -575,7 +601,7 @@ class ItemPropertyVec3
                       << _bezier1 << ", " << _bezier2 << ", " << _acceleration << ", " << _deceleration
                       << ") time-step[" << _timeStep << "] already in use, overwriting with new job!\n";
             (*it).second = {
-                _JobBezierAccelerated, _value, {}, {}, _bezier1, _bezier2, T(0), _acceleration, _deceleration};
+                _JobBezierAccelerated, _value, {}, {}, _bezier1, _bezier2, T(0), T(0), _acceleration, _deceleration};
 
             return;
         }
@@ -586,7 +612,7 @@ class ItemPropertyVec3
                       << ") Adding job inside the job stack!\n";
 
         m_jobs[_timeStep] = {
-            _JobBezierAccelerated, _value, {}, {}, _bezier1, _bezier2, T(0), _acceleration, _deceleration};
+            _JobBezierAccelerated, _value, {}, {}, _bezier1, _bezier2, T(0), T(0), _acceleration, _deceleration};
     }
 
     // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -676,6 +702,7 @@ class ItemPropertyVec3
                             {},
                             {},
                             _rotationAngleRad,
+                            T(0),
                             0.0,
                             0.0};
 
@@ -686,8 +713,16 @@ class ItemPropertyVec3
             std::cerr << "Warning: ItemPropertyVec3::addRotated(" << _timeStep << ", " << _rotationCenter << ", "
                       << _rotationNormal << ", " << _rotationAngleRad << ") Adding job inside the job stack!\n";
 
-        m_jobs[_timeStep] = {
-            _JobRotated, jobEnd, _rotationCenter, _rotationNormal.normalized(), {}, {}, _rotationAngleRad, 0.0, 0.0};
+        m_jobs[_timeStep] = {_JobRotated,
+                             jobEnd,
+                             _rotationCenter,
+                             _rotationNormal.normalized(),
+                             {},
+                             {},
+                             _rotationAngleRad,
+                             T(0),
+                             0.0,
+                             0.0};
     }
 
     /*!
@@ -795,6 +830,7 @@ class ItemPropertyVec3
                             {},
                             {},
                             _rotationAngleRad,
+                            T(0),
                             _acceleration,
                             _deceleration};
 
@@ -813,6 +849,260 @@ class ItemPropertyVec3
                              {},
                              {},
                              _rotationAngleRad,
+                             T(0),
+                             _acceleration,
+                             _deceleration};
+    }
+
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /*!
+     * \brief Append rotated and moved value to property jobs
+     * \param _timeStep Time-step for value
+     * \param _rotationCenter Rotation center
+     * \param _rotationNormal Rotation normal
+     * \param _rotationAngleRad Rotation angle in radians
+     * \param _moveInNormal Rotation motion along a rotation normal
+     */
+    void addRotatedMoved(const size_t _timeStep,
+                         const Math::Vec3<T> &_rotationCenter,
+                         const Math::Vec3<T> &_rotationNormal,
+                         const T _rotationAngleRad,
+                         const T _moveInNormal)
+    {
+        if (m_jobs.empty())
+        {
+            std::cerr << "Error: ItemPropertyVec3::addRotatedMoved(" << _timeStep << ", " << _rotationCenter << ", "
+                      << _rotationNormal << ", " << _rotationAngleRad << ", " << _moveInNormal
+                      << ") Can't add, jobs are not initialized!\n";
+            return;
+        }
+
+        if (_timeStep == 0UL)
+        {
+            std::cerr << "Error: ItemPropertyVec3::addRotatedMoved(" << _timeStep << ", " << _rotationCenter << ", "
+                      << _rotationNormal << ", " << _rotationAngleRad << ", " << _moveInNormal
+                      << ") Job at time-step[0] cannot be rotated, it must be constant!\n";
+            return;
+        }
+
+        Math::Vec3<T> lastValue;
+        {
+            typename std::map<size_t, Job>::const_iterator it = m_jobs.lower_bound(_timeStep);
+            if (it == m_jobs.cbegin())
+            {
+                std::cerr << "Error: ItemPropertyVec3::addRotatedMoved(" << _timeStep << ", " << _rotationCenter << ", "
+                          << _rotationNormal << ", " << _rotationAngleRad << ", " << _moveInNormal
+                          << ") Can't add as first job!\n";
+                return;
+            }
+
+            if (it == m_jobs.cend())
+            {
+                lastValue = (*m_jobs.crbegin()).second.value;
+            }
+            else
+            {
+                --it;
+                lastValue = (*it).second.value;
+            }
+        }
+
+        if (lastValue == _rotationCenter)
+        {
+            std::cerr << "Error: ItemPropertyVec3::addRotatedMoved(" << _timeStep << ", " << _rotationCenter << ", "
+                      << _rotationNormal << ", " << _rotationAngleRad << ", " << _moveInNormal
+                      << ") Cannot add job rotated job (rotationCenter == startingPointPosition)!\n";
+            return;
+        }
+
+        const Math::Vec3<T> jobEnd = _rotationCenter +
+            Math::Vec3<T>::rotate(lastValue - _rotationCenter, _rotationNormal, _rotationAngleRad) +
+            _rotationNormal * _moveInNormal;
+
+        if (!Math::Vec3<T>::isAligned(jobEnd, m_minimumValue, m_maximumValue))
+        {
+            std::cerr << "Error: ItemPropertyVec3::addRotatedMoved(" << _timeStep << ", " << _rotationCenter << ", "
+                      << _rotationNormal << ", " << _rotationAngleRad << ", " << _moveInNormal
+                      << ") After rotation the final value(" << jobEnd << ") is out off range (" << m_minimumValue
+                      << ", " << m_maximumValue << ")!\n";
+            return;
+        }
+
+        typename std::map<size_t, Job>::iterator it = m_jobs.find(_timeStep);
+        if (it != m_jobs.end())
+        {
+            if ((*it).second.type == _JobRotatedMoved && (*it).second.value == jobEnd &&
+                (*it).second.rotationCenter == _rotationCenter && (*it).second.rotationNormal == _rotationNormal &&
+                Math::equals<T>((*it).second.rotationAngleRad, _rotationAngleRad))
+                return;
+
+            std::cerr << "Warning: ItemPropertyVec3::addRotatedMoved(" << _timeStep << ", " << _rotationCenter << ", "
+                      << _rotationNormal << ", " << _rotationAngleRad << ", " << _moveInNormal << ") time-step["
+                      << _timeStep << "] already in use, overwriting with new job!\n";
+            (*it).second = {_JobRotatedMoved,
+                            jobEnd,
+                            _rotationCenter,
+                            _rotationNormal.normalized(),
+                            {},
+                            {},
+                            _rotationAngleRad,
+                            _moveInNormal,
+                            0.0,
+                            0.0};
+
+            return;
+        }
+
+        if ((*m_jobs.crbegin()).first >= _timeStep)
+            std::cerr << "Warning: ItemPropertyVec3::addRotatedMoved(" << _timeStep << ", " << _rotationCenter << ", "
+                      << _rotationNormal << ", " << _rotationAngleRad << ", " << _moveInNormal
+                      << ") Adding job inside the job stack!\n";
+
+        m_jobs[_timeStep] = {_JobRotatedMoved,
+                             jobEnd,
+                             _rotationCenter,
+                             _rotationNormal.normalized(),
+                             {},
+                             {},
+                             _rotationAngleRad,
+                             _moveInNormal,
+                             0.0,
+                             0.0};
+    }
+
+    /*!
+     * \brief Append rotated value to property jobs
+     * \param _timeStep Time-step for value
+     * \param _rotationCenter Rotation center
+     * \param _rotationNormal Rotation normal
+     * \param _rotationAngleRad Rotation angle in radians
+     * \param _moveInNormal Rotation motion along a rotation normal
+     * \param _acceleration Acceleration interval (0 to 1)
+     * \param _deceleration Deceleration interval (0 to 1)
+     */
+    void addRotatedMovedAccelerated(const size_t _timeStep,
+                                    const Math::Vec3<T> &_rotationCenter,
+                                    const Math::Vec3<T> &_rotationNormal,
+                                    const T _rotationAngleRad,
+                                    const T _moveInNormal,
+                                    const double _acceleration,
+                                    const double _deceleration)
+    {
+        if (!Math::isAlignedTo0_1(_acceleration) ||  //
+            !Math::isAlignedTo0_1(_deceleration) ||  //
+            !Math::isAlignedTo0_1(_acceleration + _deceleration))
+        {
+            std::cerr << "Error: ItemPropertyVec3::addRotatedMovedAccelerated(" << _timeStep << ", " << _rotationCenter
+                      << ", " << _rotationNormal << ", " << _rotationAngleRad << ", " << _moveInNormal << ", "
+                      << _acceleration << ", " << _deceleration << ") Invalid acceleration/deceleration values!\n";
+            return;
+        }
+
+        if (m_jobs.empty())
+        {
+            std::cerr << "Error: ItemPropertyVec3::addRotatedMovedAccelerated(" << _timeStep << ", " << _rotationCenter
+                      << ", " << _rotationNormal << ", " << _rotationAngleRad << ", " << _moveInNormal << ", "
+                      << _acceleration << ", " << _deceleration << ") Can't add, jobs are not initialized!\n";
+            return;
+        }
+
+        if (_timeStep == 0UL)
+        {
+            std::cerr << "Error: ItemPropertyVec3::addRotatedMovedAccelerated(" << _timeStep << ", " << _rotationCenter
+                      << ", " << _rotationNormal << ", " << _rotationAngleRad << ", " << _moveInNormal << ", "
+                      << _acceleration << ", " << _deceleration
+                      << ") Job at time-step[0] cannot be rotated, it must be constant!\n";
+            return;
+        }
+
+        Math::Vec3<T> lastValue;
+        {
+            typename std::map<size_t, Job>::const_iterator it = m_jobs.lower_bound(_timeStep);
+            if (it == m_jobs.cbegin())
+            {
+                std::cerr << "Error: ItemPropertyVec3::addRotatedMovedAccelerated(" << _timeStep << ", "
+                          << _rotationCenter << ", " << _rotationNormal << ", " << _rotationAngleRad << ", "
+                          << _moveInNormal << ", " << _acceleration << ", " << _deceleration
+                          << ") Can't add as first job!\n";
+                return;
+            }
+
+            if (it == m_jobs.cend())
+            {
+                lastValue = (*m_jobs.crbegin()).second.value;
+            }
+            else
+            {
+                --it;
+                lastValue = (*it).second.value;
+            }
+        }
+
+        if (lastValue == _rotationCenter)
+        {
+            std::cerr << "Error: ItemPropertyVec3::addRotatedMovedAccelerated(" << _timeStep << ", " << _rotationCenter
+                      << ", " << _rotationNormal << ", " << _rotationAngleRad << ", " << _moveInNormal << ", "
+                      << _acceleration << ", " << _deceleration
+                      << ") Cannot add job rotated job (rotationCenter == startingPointPosition)!\n";
+            return;
+        }
+
+        const Math::Vec3<T> jobEnd = _rotationCenter +
+            Math::Vec3<T>::rotate(lastValue - _rotationCenter, _rotationNormal, _rotationAngleRad) +
+            _rotationNormal * _moveInNormal;
+
+        if (!Math::Vec3<T>::isAligned(jobEnd, m_minimumValue, m_maximumValue))
+        {
+            std::cerr << "Error: ItemPropertyVec3::addRotatedMovedAccelerated(" << _timeStep << ", " << _rotationCenter
+                      << ", " << _rotationNormal << ", " << _rotationAngleRad << ", " << _moveInNormal << ", "
+                      << _acceleration << ", " << _deceleration << ") After rotation the final value(" << jobEnd
+                      << ") is out off range (" << m_minimumValue << ", " << m_maximumValue << ")!\n";
+            return;
+        }
+
+        typename std::map<size_t, Job>::iterator it = m_jobs.find(_timeStep);
+        if (it != m_jobs.end())
+        {
+            if ((*it).second.type == _JobRotatedMovedAccelerated && (*it).second.value == jobEnd &&
+                (*it).second.rotationCenter == _rotationCenter && (*it).second.rotationNormal == _rotationNormal &&
+                Math::equals<T>((*it).second.rotationAngleRad, _rotationAngleRad) &&
+                Math::equals<double>((*it).second.acceleration, _acceleration) &&
+                Math::equals<double>((*it).second.deceleration, _deceleration))
+                return;
+
+            std::cerr << "Warning: ItemPropertyVec3::addRotatedMovedAccelerated(" << _timeStep << ", "
+                      << _rotationCenter << ", " << _rotationNormal << ", " << _rotationAngleRad << ", "
+                      << _moveInNormal << ", " << _acceleration << ", " << _deceleration << ") time-step[" << _timeStep
+                      << "] already in use, overwriting with new job!\n";
+            (*it).second = {_JobRotatedMovedAccelerated,
+                            jobEnd,
+                            _rotationCenter,
+                            _rotationNormal.normalized(),
+                            {},
+                            {},
+                            _rotationAngleRad,
+                            _moveInNormal,
+                            _acceleration,
+                            _deceleration};
+
+            return;
+        }
+
+        if ((*m_jobs.crbegin()).first >= _timeStep)
+            std::cerr << "Warning: ItemPropertyVec3::addRotatedMovedAccelerated(" << _timeStep << ", "
+                      << _rotationCenter << ", " << _rotationNormal << ", " << _rotationAngleRad << ", "
+                      << _moveInNormal << ", " << _acceleration << ", " << _deceleration
+                      << ") Adding job inside the job stack!\n";
+
+        m_jobs[_timeStep] = {_JobRotatedMovedAccelerated,
+                             jobEnd,
+                             _rotationCenter,
+                             _rotationNormal.normalized(),
+                             {},
+                             {},
+                             _rotationAngleRad,
+                             _moveInNormal,
                              _acceleration,
                              _deceleration};
     }
@@ -859,13 +1149,13 @@ class ItemPropertyVec3
 
         if ((*m_jobs.crbegin()).first == _timeStart)
         {
-            m_jobs[_timeStop] = {_JobLinearValue, _value, {}, {}, {}, {}, T(0), 0.0, 0.0};
+            m_jobs[_timeStop] = {_JobLinearValue, _value, {}, {}, {}, {}, T(0), T(0), 0.0, 0.0};
             return;
         }
 
         const Math::Vec3<T> lastValue = (*m_jobs.crbegin()).second.value;
-        m_jobs[_timeStart] = {_JobConstantValue, lastValue, {}, {}, {}, {}, T(0), 0.0, 0.0};
-        m_jobs[_timeStop] = {_JobLinearValue, _value, {}, {}, {}, {}, T(0), 0.0, 0.0};
+        m_jobs[_timeStart] = {_JobConstantValue, lastValue, {}, {}, {}, {}, T(0), T(0), 0.0, 0.0};
+        m_jobs[_timeStop] = {_JobLinearValue, _value, {}, {}, {}, {}, T(0), T(0), 0.0, 0.0};
     }
 
     // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -927,13 +1217,14 @@ class ItemPropertyVec3
 
         if ((*m_jobs.crbegin()).first == _timeStart)
         {
-            m_jobs[_timeStop] = {_JobAcceleratedValue, _value, {}, {}, {}, {}, T(0), _acceleration, _deceleration};
+            m_jobs[_timeStop] = {
+                _JobAcceleratedValue, _value, {}, {}, {}, {}, T(0), T(0), _acceleration, _deceleration};
             return;
         }
 
         const Math::Vec3<T> lastValue = (*m_jobs.crbegin()).second.value;
-        m_jobs[_timeStart] = {_JobConstantValue, lastValue, {}, {}, {}, {}, T(0), 0.0, 0.0};
-        m_jobs[_timeStop] = {_JobAcceleratedValue, _value, {}, {}, {}, {}, T(0), _acceleration, _deceleration};
+        m_jobs[_timeStart] = {_JobConstantValue, lastValue, {}, {}, {}, {}, T(0), T(0), 0.0, 0.0};
+        m_jobs[_timeStop] = {_JobAcceleratedValue, _value, {}, {}, {}, {}, T(0), T(0), _acceleration, _deceleration};
     }
 
     // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -984,13 +1275,13 @@ class ItemPropertyVec3
 
         if ((*m_jobs.crbegin()).first == _timeStart)
         {
-            m_jobs[_timeStop] = {_JobBezier, _value, {}, {}, _bezier1, _bezier2, T(0), 0.0, 0.0};
+            m_jobs[_timeStop] = {_JobBezier, _value, {}, {}, _bezier1, _bezier2, T(0), T(0), 0.0, 0.0};
             return;
         }
 
         const Math::Vec3<T> lastValue = (*m_jobs.crbegin()).second.value;
-        m_jobs[_timeStart] = {_JobConstantValue, lastValue, {}, {}, {}, {}, T(0), 0.0, 0.0};
-        m_jobs[_timeStop] = {_JobBezier, _value, {}, {}, _bezier1, _bezier2, T(0), 0.0, 0.0};
+        m_jobs[_timeStart] = {_JobConstantValue, lastValue, {}, {}, {}, {}, T(0), T(0), 0.0, 0.0};
+        m_jobs[_timeStop] = {_JobBezier, _value, {}, {}, _bezier1, _bezier2, T(0), T(0), 0.0, 0.0};
     }
 
     // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1059,14 +1350,15 @@ class ItemPropertyVec3
 
         if ((*m_jobs.crbegin()).first == _timeStart)
         {
-            m_jobs[_timeStop] = {_JobBezierAccelerated, _value, {}, {}, {}, {}, T(0), _acceleration, _deceleration};
+            m_jobs[_timeStop] = {
+                _JobBezierAccelerated, _value, {}, {}, {}, {}, T(0), T(0), _acceleration, _deceleration};
             return;
         }
 
         const Math::Vec3<T> lastValue = (*m_jobs.crbegin()).second.value;
-        m_jobs[_timeStart] = {_JobConstantValue, lastValue, {}, {}, _bezier1, _bezier2, T(0), 0.0, 0.0};
+        m_jobs[_timeStart] = {_JobConstantValue, lastValue, {}, {}, _bezier1, _bezier2, T(0), T(0), 0.0, 0.0};
         m_jobs[_timeStop] = {
-            _JobBezierAccelerated, _value, {}, {}, _bezier1, _bezier2, T(0), _acceleration, _deceleration};
+            _JobBezierAccelerated, _value, {}, {}, _bezier1, _bezier2, T(0), T(0), _acceleration, _deceleration};
     }
 
     // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1139,14 +1431,23 @@ class ItemPropertyVec3
                                  {},
                                  {},
                                  _rotationAngleRad,
+                                 T(0),
                                  0.0,
                                  0.0};
             return;
         }
 
-        m_jobs[_timeStart] = {_JobConstantValue, lastValue, {}, {}, {}, {}, T(0), 0.0, 0.0};
-        m_jobs[_timeStop] = {
-            _JobRotated, jobEnd, _rotationCenter, _rotationNormal.normalized(), {}, {}, _rotationAngleRad, 0.0, 0.0};
+        m_jobs[_timeStart] = {_JobConstantValue, lastValue, {}, {}, {}, {}, T(0), T(0), 0.0, 0.0};
+        m_jobs[_timeStop] = {_JobRotated,
+                             jobEnd,
+                             _rotationCenter,
+                             _rotationNormal.normalized(),
+                             {},
+                             {},
+                             _rotationAngleRad,
+                             T(0),
+                             0.0,
+                             0.0};
     }
 
     // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1235,6 +1536,7 @@ class ItemPropertyVec3
                                  {},
                                  {},
                                  _rotationAngleRad,
+                                 T(0),
                                  _acceleration,
                                  _deceleration};
             return;
@@ -1248,6 +1550,7 @@ class ItemPropertyVec3
                              {},
                              {},
                              _rotationAngleRad,
+                             T(0),
                              _acceleration,
                              _deceleration};
     }
@@ -1255,15 +1558,226 @@ class ItemPropertyVec3
     // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /*!
+     * \brief Append rotated value to property jobs
+     * \param _timeStart Starting time-step for linear distribution
+     * \param _timeStop Finish time-step for linear distribution (time when \c _value is reached)
+     * \param _rotationCenter Rotation center
+     * \param _rotationNormal Rotation normal
+     * \param _rotationAngleRad Rotation angle in radians
+     * \param _moveInNormal Rotation motion along a rotation normal
+     */
+    void addFromRotatedMoved(const size_t _timeStart,
+                             const size_t _timeStop,
+                             const Math::Vec3<T> &_rotationCenter,
+                             const Math::Vec3<T> &_rotationNormal,
+                             const T _rotationAngleRad,
+                             const T _moveInNormal)
+    {
+        if (m_jobs.empty())
+        {
+            std::cerr << "Error: ItemPropertyVec3::addFromRotatedMoved(" << _timeStart << ", " << _timeStop << ", "
+                      << _rotationCenter << ", " << _rotationNormal << ", " << _rotationAngleRad << ", "
+                      << _moveInNormal << ") Can't add, jobs are not initialized!\n";
+            return;
+        }
+
+        if (_timeStart >= _timeStop)
+        {
+            std::cerr << "Error: ItemPropertyVec3::addFromRotatedMoved(" << _timeStart << ", " << _timeStop << ", "
+                      << _rotationCenter << ", " << _rotationNormal << ", " << _rotationAngleRad << ", "
+                      << _moveInNormal << ") Invalid time-step order!\n";
+            return;
+        }
+
+        if ((*m_jobs.crbegin()).first > _timeStart)
+        {
+            std::cerr << "Error: ItemPropertyVec3::addFromRotatedMoved(" << _timeStart << ", " << _timeStop << ", "
+                      << _rotationCenter << ", " << _rotationNormal << ", " << _rotationAngleRad << ", "
+                      << _moveInNormal << ") Can't add inner job, latest time-step[" << (*m_jobs.crbegin()).first
+                      << "]!\n";
+            return;
+        }
+
+        const Math::Vec3<T> lastValue = (*m_jobs.crbegin()).second.value;
+        if (lastValue == _rotationCenter)
+        {
+            std::cerr << "Error: ItemPropertyVec3::addFromRotatedMoved(" << _timeStart << ", " << _timeStop << ", "
+                      << _rotationCenter << ", " << _rotationNormal << ", " << _rotationAngleRad << ", "
+                      << _moveInNormal << ") Cannot add job rotated job (rotationCenter == startingPointPosition)!\n";
+            return;
+        }
+
+        const Math::Vec3<T> jobEnd = _rotationCenter +
+            Math::Vec3<T>::rotate(lastValue - _rotationCenter, _rotationNormal, _rotationAngleRad) +
+            _rotationNormal * _moveInNormal;
+
+        if (!Math::Vec3<T>::isAligned(jobEnd, m_minimumValue, m_maximumValue))
+        {
+            std::cerr << "Error: ItemPropertyVec3::addFromRotatedMoved(" << _timeStart << ", " << _timeStop << ", "
+                      << _rotationCenter << ", " << _rotationNormal << ", " << _rotationAngleRad << ", "
+                      << _moveInNormal << ") After rotation the final value(" << jobEnd << ") is out off range ("
+                      << m_minimumValue << ", " << m_maximumValue << ")!\n";
+            return;
+        }
+
+        if ((*m_jobs.crbegin()).first == _timeStart)
+        {
+            m_jobs[_timeStop] = {_JobRotatedMoved,
+                                 jobEnd,
+                                 _rotationCenter,
+                                 _rotationNormal.normalized(),
+                                 {},
+                                 {},
+                                 _rotationAngleRad,
+                                 _moveInNormal,
+                                 0.0,
+                                 0.0};
+            return;
+        }
+
+        m_jobs[_timeStart] = {_JobConstantValue, lastValue, {}, {}, {}, {}, T(0), T(0), 0.0, 0.0};
+        m_jobs[_timeStop] = {_JobRotatedMoved,
+                             jobEnd,
+                             _rotationCenter,
+                             _rotationNormal.normalized(),
+                             {},
+                             {},
+                             _rotationAngleRad,
+                             _moveInNormal,
+                             0.0,
+                             0.0};
+    }
+
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /*!
+     * \brief Append rotated value to property jobs
+     * \param _timeStart Starting time-step for linear distribution
+     * \param _timeStop Finish time-step for linear distribution (time when \c _value is reached)
+     * \param _rotationCenter Rotation center
+     * \param _rotationNormal Rotation normal
+     * \param _rotationAngleRad Rotation angle in radians
+     * \param _moveInNormal Rotation motion along a rotation normal
+     * \param _acceleration Acceleration interval (0 to 1)
+     * \param _deceleration Deceleration interval (0 to 1)
+     */
+    void addFromRotatedMovedAccelerated(const size_t _timeStart,
+                                        const size_t _timeStop,
+                                        const Math::Vec3<T> &_rotationCenter,
+                                        const Math::Vec3<T> &_rotationNormal,
+                                        const T _rotationAngleRad,
+                                        const T _moveInNormal,
+                                        const double _acceleration,
+                                        const double _deceleration)
+    {
+        if (!Math::isAlignedTo0_1(_acceleration) ||  //
+            !Math::isAlignedTo0_1(_deceleration) ||  //
+            !Math::isAlignedTo0_1(_acceleration + _deceleration))
+        {
+            std::cerr << "Error: ItemPropertyVec3::addFromRotatedMovedAccelerated(" << _timeStart << ", " << _timeStop
+                      << ", " << _rotationCenter << ", " << _rotationNormal << ", " << _rotationAngleRad << ", "
+                      << _moveInNormal << ", " << _acceleration << ", " << _deceleration
+                      << ") Invalid acceleration/deceleration values!\n";
+            return;
+        }
+
+        if (m_jobs.empty())
+        {
+            std::cerr << "Error: ItemPropertyVec3::addFromRotatedMovedAccelerated(" << _timeStart << ", " << _timeStop
+                      << ", " << _rotationCenter << ", " << _rotationNormal << ", " << _rotationAngleRad << ", "
+                      << _moveInNormal << ", " << _acceleration << ", " << _deceleration
+                      << ") Can't add, jobs are not initialized!\n";
+            return;
+        }
+
+        if (_timeStart >= _timeStop)
+        {
+            std::cerr << "Error: ItemPropertyVec3::addFromRotatedMovedAccelerated(" << _timeStart << ", " << _timeStop
+                      << ", " << _rotationCenter << ", " << _rotationNormal << ", " << _rotationAngleRad << ", "
+                      << _moveInNormal << ", " << _acceleration << ", " << _deceleration
+                      << ") Invalid time-step order!\n";
+            return;
+        }
+
+        if ((*m_jobs.crbegin()).first > _timeStart)
+        {
+            std::cerr << "Error: ItemPropertyVec3::addFromRotatedMovedAccelerated(" << _timeStart << ", " << _timeStop
+                      << ", " << _rotationCenter << ", " << _rotationNormal << ", " << _rotationAngleRad << ", "
+                      << _moveInNormal << ", " << _acceleration << ", " << _deceleration
+                      << ") Can't add inner job, latest time-step[" << (*m_jobs.crbegin()).first << "]!\n";
+            return;
+        }
+
+        const Math::Vec3<T> lastValue = (*m_jobs.crbegin()).second.value;
+        if (lastValue == _rotationCenter)
+        {
+            std::cerr << "Error: ItemPropertyVec3::addFromRotatedMovedAccelerated(" << _timeStart << ", " << _timeStop
+                      << ", " << _rotationCenter << ", " << _rotationNormal << ", " << _rotationAngleRad << ", "
+                      << _moveInNormal << ", " << _acceleration << ", " << _deceleration
+                      << ") Cannot add job rotated job (rotationCenter == startingPointPosition)!\n";
+            return;
+        }
+
+        const Math::Vec3<T> jobEnd = _rotationCenter +
+            Math::Vec3<T>::rotate(lastValue - _rotationCenter, _rotationNormal, _rotationAngleRad) +
+            _rotationNormal * _moveInNormal;
+
+        if (!Math::Vec3<T>::isAligned(jobEnd, m_minimumValue, m_maximumValue))
+        {
+            std::cerr << "Error: ItemPropertyVec3::addFromRotatedMovedAccelerated(" << _timeStart << ", " << _timeStop
+                      << ", " << _rotationCenter << ", " << _rotationNormal << ", " << _rotationAngleRad << ", "
+                      << _moveInNormal << ", " << _acceleration << ", " << _deceleration
+                      << ") After rotation the final value(" << jobEnd << ") is out off range (" << m_minimumValue
+                      << ", " << m_maximumValue << ")!\n";
+            return;
+        }
+
+        if ((*m_jobs.crbegin()).first == _timeStart)
+        {
+            m_jobs[_timeStop] = {_JobRotatedMovedAccelerated,
+                                 jobEnd,
+                                 _rotationCenter,
+                                 _rotationNormal.normalized(),
+                                 {},
+                                 {},
+                                 _rotationAngleRad,
+                                 _moveInNormal,
+                                 _acceleration,
+                                 _deceleration};
+            return;
+        }
+
+        m_jobs[_timeStart] = {_JobConstantValue, lastValue, {}, {}, {}, {}, T(0), 0.0, 0.0};
+        m_jobs[_timeStop] = {_JobRotatedMovedAccelerated,
+                             jobEnd,
+                             _rotationCenter,
+                             _rotationNormal.normalized(),
+                             {},
+                             {},
+                             _rotationAngleRad,
+                             _moveInNormal,
+                             _acceleration,
+                             _deceleration};
+    }
+
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /*!
+     * \brief Getter for the initial value
+     * \return Initial value
+     */
+    inline Math::Vec3<T> getInitValue() const
+    {
+        return m_jobs.empty() ? Math::Vec3<T>() : (*m_jobs.cbegin()).second.value;
+    }
+
+    /*!
      * \brief Last value at last time-step
      * \return Value stored at latest time-step
      */
     inline Math::Vec3<T> latestValue() const
     {
-        if (m_jobs.empty())
-            return {};
-
-        return (*m_jobs.crbegin()).second.value;
+        return m_jobs.empty() ? Math::Vec3<T>() : (*m_jobs.crbegin()).second.value;
     }
 
     /*!
@@ -1352,6 +1866,13 @@ class ItemPropertyVec3F : public ItemProperty, public ItemPropertyVec3<float>
      * \return Latest stored time step
      */
     size_t latestTimeStep() const override;
+
+    /*!
+     * \brief Returns value at given time-step as text
+     * \param _timeStep Time-step
+     * \return Value at given time-step as text
+     */
+    QString textValue(const size_t _timeStep) const override;
 };
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1428,6 +1949,13 @@ class ItemPropertyVec3D : public ItemProperty, public ItemPropertyVec3<double>
      * \return Latest stored time step
      */
     size_t latestTimeStep() const override;
+
+    /*!
+     * \brief Returns value at given time-step as text
+     * \param _timeStep Time-step
+     * \return Value at given time-step as text
+     */
+    QString textValue(const size_t _timeStep) const override;
 };
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1506,6 +2034,13 @@ class ItemPropertyVec3L : public ItemProperty, public ItemPropertyVec3<long doub
      * \return Latest stored time step
      */
     size_t latestTimeStep() const override;
+
+    /*!
+     * \brief Returns value at given time-step as text
+     * \param _timeStep Time-step
+     * \return Value at given time-step as text
+     */
+    QString textValue(const size_t _timeStep) const override;
 };
 
 }  // namespace Props

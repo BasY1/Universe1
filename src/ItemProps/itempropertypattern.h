@@ -47,6 +47,13 @@ class ItemPropertyPattern : public ItemProperty
     uint64_t value(const size_t _timeStep) const;
 
     /*!
+     * \brief Returns value at given time-step as text
+     * \param _timeStep Time-step
+     * \return Value at given time-step as text
+     */
+    QString textValue(const size_t _timeStep) const override;
+
+    /*!
      * \brief Pattern at specific time step converted to \b QT format
      * \param _timeStep Time step
      * \return Pattern in \b QT format
@@ -87,15 +94,21 @@ class ItemPropertyPattern : public ItemProperty
     }
 
     /*!
+     * \brief Getter for the initial value
+     * \return Initial value
+     */
+    inline uint64_t getInitValue() const
+    {
+        return m_jobs.empty() ? uint64_t(0) : (*m_jobs.cbegin()).second;
+    }
+
+    /*!
      * \brief Last value at last time-step
      * \return Value stored at latest time-step
      */
-    inline bool latestValue() const
+    inline uint64_t latestValue() const
     {
-        if (m_jobs.empty())
-            return false;
-
-        return (*m_jobs.crbegin()).second;
+        return m_jobs.empty() ? uint64_t(0) : (*m_jobs.crbegin()).second;
     }
 
     /*!

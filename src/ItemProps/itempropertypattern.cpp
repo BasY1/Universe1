@@ -6,6 +6,7 @@
 #include "itempropertypattern.h"
 
 #include <iostream>
+#include <bitset>
 
 namespace U1 {
 namespace Props {
@@ -50,6 +51,11 @@ uint64_t ItemPropertyPattern::value(const size_t _timeStep) const
 
     --it;
     return (*it).second;
+}
+
+QString ItemPropertyPattern::textValue(const size_t _timeStep) const
+{
+    return QString::fromStdString(std::bitset<64>(value(_timeStep)).to_string());
 }
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

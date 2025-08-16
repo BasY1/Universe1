@@ -51,6 +51,13 @@ class ItemPropertyGroup : public ItemProperty
      */
     size_t latestTimeStep() const override;
 
+    /*!
+     * \brief Returns value at given time-step as text
+     * \param _timeStep Time-step
+     * \return Value at given time-step as text
+     */
+    QString textValue(const size_t _timeStep) const override;
+
  protected:
     /*!
      * \brief Setup properties database
@@ -68,6 +75,15 @@ class ItemPropertyGroup : public ItemProperty
     inline void addProperty(ItemProperty *_itemProperty)
     {
         m_itemProperties.push_back(_itemProperty);
+    }
+
+    /*!
+     * \brief Add properties to database
+     * \param _itemProperties Collection of item properties to add
+     */
+    inline void addProperties(const std::vector<ItemProperty *> &_itemProperties)
+    {
+        m_itemProperties.insert(m_itemProperties.end(), _itemProperties.cbegin(), _itemProperties.cend());
     }
 };
 

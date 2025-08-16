@@ -61,58 +61,73 @@ bool exampleEllipsoid(const QString &_workDir, const QString &_img = "")
     // project.setup4K();
     // project.setup8K();
 
-    static const size_t dur = 8000UL;
-    static const float rot1 = 16.0 * M_PI;
-    static const float rot2 = 2.0 * M_PI;
+    static const size_t dur = 1000UL;
+    // static const float rot1 = 16.0 * M_PI;
+    // static const float rot2 = 2.0 * M_PI;
 
     Footage *footage1 = project.addFootage("Footage 1");
+    footage1->minimalFootageDuration = dur;
 
-    ScenarioAudioTTS *as = footage1->addAudio_espeak("TTS", _workDir + "espeak" + QDir::separator());
-
-    as->addSpeechSUBS(500, "An ellipsoid example. ", 1000);
+    // ScenarioAudioTTS *as = footage1->addAudio_espeak("TTS", _workDir + "espeak" + QDir::separator());
+    // as->addSpeechSUBS(500, "An ellipsoid example. ", 1000);
 
     // ItemEllipsoid *obj1 = footage1->add3D(new ItemEllipsoid());
-    ItemIrregEllipsoid *obj1 = footage1->add3D(new ItemIrregEllipsoid());
+    // ItemIrregEllipsoid *obj1 = footage1->add3D(new ItemIrregEllipsoid());
+    ItemIrregEllipsoidCut *obj1 = footage1->add3D(new ItemIrregEllipsoidCut());
+    obj1->radius1M.initValue(1);
+    obj1->radius2M.initValue(1);
+    obj1->radius3M.initValue(1);
+    obj1->radius1P.initValue(1);
+    obj1->radius2P.initValue(1);
+    obj1->radius3P.initValue(1);
 
-    obj1->arm.addRotated(dur, {}, {0, 0, 1}, rot1);
+    obj1->radius1P.addLinearValue(dur / 2, 2);
+    obj1->radius1M.addFromLinearValue(dur / 2, dur, 2);
+
+    obj1->radius2P.addFromLinearValue(dur / 2, dur, 2);
+
+    obj1->show.initValue(Ellipsoid::EllipsoidInnerOuter);
+
+    obj1->angleLatEnd.addLinearValue(dur, M_PI);
+    obj1->angleLonEnd.addLinearValue(dur, M_PI * 2.0);
+
+    // obj1->arm.addRotated(dur, {}, {0, 0, 1}, rot1);
 
     if (QFile::exists(_img))
     {
-        obj1->textureImage.initValue(_img);
-        obj1->show.initValue(Ellipsoid::EllipsoidTextureOuter);
-        obj1->show.setValue(dur / 2UL, Ellipsoid::EllipsoidTextureInner);
+        // obj1->textureImage.initValue(_img);
+        // obj1->show.initValue(Ellipsoid::EllipsoidTextureOuter);
+        // obj1->show.setValue(dur / 2UL, Ellipsoid::EllipsoidTextureInner);
     }
     else
     {
-        obj1->show.initValue(Ellipsoid::EllipsoidOuter);
-        obj1->show.setValue(1000, Ellipsoid::EllipsoidInner);
-        obj1->show.setValue(2000, Ellipsoid::EllipsoidTextureSoccerBall);
-        obj1->show.setValue(3000, Ellipsoid::EllipsoidTextureSoccerEarth);
-        obj1->show.setValue(4000, Ellipsoid::EllipsoidHidden);
+        // obj1->show.setValue(1000, Ellipsoid::EllipsoidInner);
+        // obj1->show.setValue(2000, Ellipsoid::EllipsoidTextureSoccerBall);
+        // obj1->show.setValue(3000, Ellipsoid::EllipsoidTextureSoccerEarth);
+        // obj1->show.setValue(4000, Ellipsoid::EllipsoidHidden);
 
         // ItemEllipsoidCut *obj2 = footage1->add3D(new ItemEllipsoidCut());
-        ItemIrregEllipsoidCut *obj2 = footage1->add3D(new ItemIrregEllipsoidCut());
-        obj2->arm.addRotated(dur, {}, {0, 0, 1}, rot1);
-        obj2->visible.initOff_On(4000);
-        obj2->angleLonEnd.addFromLinearValue(4000, dur, 2.0 * M_PI);
-        obj2->angleLatEnd.addFromLinearValue(4000, dur, M_PI);
+        // ItemIrregEllipsoidCut *obj2 = footage1->add3D(new ItemIrregEllipsoidCut());
+        // obj2->arm.addRotated(dur, {}, {0, 0, 1}, rot1);
+        // obj2->visible.initOff_On(4000);
+        // obj2->angleLonEnd.addFromLinearValue(4000, dur, 2.0 * M_PI);
+        // obj2->angleLatEnd.addFromLinearValue(4000, dur, M_PI);
     }
 
-    obj1->stepWire.initValue(0.2f);
-
-    obj1->showWire.initValue(true);
-    obj1->radiusWire.initValue(0.02f);
+    // obj1->stepWire.initValue(0.2f);
+    // obj1->showWire.initValue(true);
+    // obj1->radiusWire.initValue(0.01f);
     // obj1->showWire.setValue(2000, Ellipsoid::EllipsoidWireLatLongStep);
     // obj1->showWire.setValue(4000, Ellipsoid::EllipsoidWireLatLongFixed);
     // obj1->showWire.setValue(6000, Ellipsoid::EllipsoidWireXYZ);
 
-    footage1->addCamera("Camera 1", {+2, 0, 0});
-    footage1->addCamera("Camera 2", {-2, 0, 0});
+    // footage1->addCamera("Camera 1", {+2, 0, 0});
+    // footage1->addCamera("Camera 2", {-2, 0, 0});
 
     footage1->add2D(new Item2DText("Info", "<font color=\"#FF0000\">Ellipsoid</font> example", Math::_AlignTopCenter));
 
-    footage1->cameraPosition.initValue({-3, -1, 1});
-    footage1->cameraPosition.addFromRotatedAccelerated(dur / 8UL, (7UL * dur) / 8UL, {}, {0, 0, 1}, rot2, 0.1, 0.1);
+    footage1->cameraPosition.initValue({3, -1, 1});
+    // footage1->cameraPosition.addFromRotatedAccelerated(dur / 8UL, (7UL * dur) / 8UL, {}, {0, 0, 1}, rot2, 0.1, 0.1);
 
     return project.createVideo(_workDir + "Video" + QDir::separator(), _workDir + "video.avi");
 }

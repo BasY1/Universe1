@@ -9,6 +9,9 @@
 
 #include "../../Data3D/data3dmaterialbase.h"
 
+#include "../../ItemProps/itempropertyvec2.h"
+#include "../../ItemProps/itempropertyvec3.h"
+
 #include <QImage>
 #include <QPainter>
 
@@ -83,9 +86,164 @@ ItemTextCamera::ItemTextCamera(const std::string &_name,
     addProperty(&textAlign);
 }
 
+void ItemText::addTextProp(const QString &_key, const Props::ItemProperty *_property)
+{
+    for (const std::pair<QString, const Props::ItemProperty *> &tp : m_textProps)
+    {
+        if (_key == tp.first)
+            std::cerr << "Error: ItemText::addTextProp(" << _key.toStdString() << ", ...) Key already registered!\n";
+        return;
+    }
+    m_textProps.push_back({_key, _property});
+}
+
+void ItemTextCamera::addTextProp(const QString &_key, const Props::ItemProperty *_property)
+{
+    for (const std::pair<QString, const Props::ItemProperty *> &tp : m_textProps)
+    {
+        if (_key == tp.first)
+            std::cerr << "Error: ItemTextCamera::addTextProp(" << _key.toStdString()
+                      << ", ...) Key already registered!\n";
+        return;
+    }
+    m_textProps.push_back({_key, _property});
+}
+
+/*!
+ * \brief Tool function - replace text with value
+ * \param txt Text
+ * \param _prop Property
+ * \param _timeStep Time-step of property value
+ * \param _textPos Text position to replace
+ * \param _textLen Text length to replace
+ * \param _decimals Number of decimals for a property value
+ * \return
+ */
+static void replaceTextDecimals(QString &txt,
+                                const Props::ItemProperty *_prop,
+                                const size_t _timeStep,
+                                const qsizetype _textPos,
+                                const qsizetype _textLen,
+                                const int _decimals)
+{
+    if (_prop->type() == Props::ItemProperty::_PropertyFloat)
+        txt.replace(_textPos,
+                    _textLen,
+                    QString::number(
+                        reinterpret_cast<const Props::ItemPropertyFloat *>(_prop)->value(_timeStep), 'f', _decimals));
+    else if (_prop->type() == Props::ItemProperty::_PropertyDouble)
+        txt.replace(_textPos,
+                    _textLen,
+                    QString::number(
+                        reinterpret_cast<const Props::ItemPropertyDouble *>(_prop)->value(_timeStep), 'f', _decimals));
+    else if (_prop->type() == Props::ItemProperty::_PropertyLongDouble)
+        txt.replace(
+            _textPos,
+            _textLen,
+            QString::number((double)reinterpret_cast<const Props::ItemPropertyLongDouble *>(_prop)->value(_timeStep),
+                            'f',
+                            _decimals));
+    else if (_prop->type() == Props::ItemProperty::_PropertyVec2F)
+        txt.replace(_textPos,
+                    _textLen,
+                    reinterpret_cast<const Props::ItemPropertyVec2F *>(_prop)->value(_timeStep).toQString(_decimals));
+    else if (_prop->type() == Props::ItemProperty::_PropertyVec2D)
+        txt.replace(_textPos,
+                    _textLen,
+                    reinterpret_cast<const Props::ItemPropertyVec2D *>(_prop)->value(_timeStep).toQString(_decimals));
+    else if (_prop->type() == Props::ItemProperty::_PropertyVec2L)
+        txt.replace(_textPos,
+                    _textLen,
+                    reinterpret_cast<const Props::ItemPropertyVec2L *>(_prop)->value(_timeStep).toQString(_decimals));
+    else if (_prop->type() == Props::ItemProperty::_PropertyVec3F)
+        txt.replace(_textPos,
+                    _textLen,
+                    reinterpret_cast<const Props::ItemPropertyVec3F *>(_prop)->value(_timeStep).toQString(_decimals));
+    else if (_prop->type() == Props::ItemProperty::_PropertyVec3D)
+        txt.replace(_textPos,
+                    _textLen,
+                    reinterpret_cast<const Props::ItemPropertyVec3D *>(_prop)->value(_timeStep).toQString(_decimals));
+    else if (_prop->type() == Props::ItemProperty::_PropertyVec3L)
+        txt.replace(_textPos,
+                    _textLen,
+                    reinterpret_cast<const Props::ItemPropertyVec3L *>(_prop)->value(_timeStep).toQString(_decimals));
+    else
+        txt.replace(_textPos, _textLen, _prop->textValue(_timeStep));
+}
+
+void ItemText::replaceTextValues(QString &txt,
+                                 const std::vector<std::pair<QString, const Props::ItemProperty *>> &_textProps,
+                                 const size_t _timeStep)
+{
+    if (_textProps.empty() || txt.isEmpty())
+        return;
+
+    qsizetype idxStart = 0;
+    while (true)
+    {
+        const qsizetype idxBeg = txt.indexOf("$$$", idxStart);
+        if (idxBeg < 0)
+            return;
+
+        const qsizetype idxEnd = txt.indexOf("$", idxBeg + 3);
+        if (idxEnd < 0)
+        {
+            std::cerr << "Error: ItemText::replaceTextValues(): Missing key end [$$$]!\n";
+            return;
+        }
+
+        const QString key = txt.mid(idxBeg + 3, idxEnd - idxBeg - 3);
+
+        bool ok = false;
+
+        for (const std::pair<QString, const Props::ItemProperty *> &tp : _textProps)
+            if (key == tp.first)
+            {
+                const QString keyEnd = txt.mid(idxEnd, 3);
+                const qsizetype keyLen = idxEnd + 3 - idxBeg;
+
+                if (keyEnd == "$$$")
+                    txt.replace(idxBeg, keyLen, tp.second->textValue(_timeStep));
+                else if (keyEnd == "$0$")
+                    replaceTextDecimals(txt, tp.second, _timeStep, idxBeg, keyLen, 0);
+                else if (keyEnd == "$1$")
+                    replaceTextDecimals(txt, tp.second, _timeStep, idxBeg, keyLen, 1);
+                else if (keyEnd == "$2$")
+                    replaceTextDecimals(txt, tp.second, _timeStep, idxBeg, keyLen, 2);
+                else if (keyEnd == "$3$")
+                    replaceTextDecimals(txt, tp.second, _timeStep, idxBeg, keyLen, 3);
+                else if (keyEnd == "$4$")
+                    replaceTextDecimals(txt, tp.second, _timeStep, idxBeg, keyLen, 4);
+                else if (keyEnd == "$5$")
+                    replaceTextDecimals(txt, tp.second, _timeStep, idxBeg, keyLen, 5);
+                else if (keyEnd == "$6$")
+                    replaceTextDecimals(txt, tp.second, _timeStep, idxBeg, keyLen, 6);
+                else
+                {
+                    std::cerr << "Error: ItemText::replaceTextValues(): Unknown key end $$$" << key.toStdString()
+                              << keyEnd.toStdString() << "!\n";
+                    return;
+                }
+
+                ok = true;
+                break;
+            }
+
+        if (!ok)
+        {
+            std::cerr << "Error: ItemText::replaceTextValues(): Unknown key $$$" << key.toStdString() << "$!\n";
+            idxStart = idxEnd + 3;
+        }
+        else
+        {
+            idxStart = idxBeg;
+        }
+    }
+}
+
 void ItemText::createDataImpl(std::list<OpenGL::Data3D *> &_data, const size_t _timeStep) const
 {
-    const QString txt = text.value(_timeStep);
+    QString txt = text.value(_timeStep);
     if (txt.isEmpty())
         return;
 
@@ -100,6 +258,8 @@ void ItemText::createDataImpl(std::list<OpenGL::Data3D *> &_data, const size_t _
     const uint8_t a = alpha.value(_timeStep);
     if (a == 0U)
         return;
+
+    replaceTextValues(txt, m_textProps, _timeStep);
 
     const Math::OrientF o = valueOrientation(_timeStep);
     const QString ff = fontFamily.value(_timeStep);
@@ -122,7 +282,7 @@ void ItemTextCamera::createDataImpl(std::list<OpenGL::Data3D *> &_data,
                                     const Math::CamF &_camera,
                                     const size_t _timeStep) const
 {
-    const QString txt = text.value(_timeStep);
+    QString txt = text.value(_timeStep);
     if (txt.isEmpty())
         return;
 
@@ -137,6 +297,8 @@ void ItemTextCamera::createDataImpl(std::list<OpenGL::Data3D *> &_data,
     const uint8_t a = alpha.value(_timeStep);
     if (a == 0U)
         return;
+
+    ItemText::replaceTextValues(txt, m_textProps, _timeStep);
 
     const Math::OrientF o = Math::OrientF(_camera, center.value(_timeStep), spin.value(_timeStep));
     const QString ff = fontFamily.value(_timeStep);

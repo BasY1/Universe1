@@ -1227,15 +1227,21 @@ class ItemPropertyVec2
     // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /*!
+     * \brief Getter for the initial value
+     * \return Initial value
+     */
+    inline Math::Vec2<T> getInitValue() const
+    {
+        return m_jobs.empty() ? Math::Vec2<T>() : (*m_jobs.cbegin()).second.value;
+    }
+
+    /*!
      * \brief Last value at last time-step
      * \return Value stored at latest time-step
      */
     inline Math::Vec2<T> latestValue() const
     {
-        if (m_jobs.empty())
-            return {};
-
-        return (*m_jobs.crbegin()).second.value;
+        return m_jobs.empty() ? Math::Vec2<T>() : (*m_jobs.crbegin()).second.value;
     }
 
     /*!
@@ -1324,6 +1330,13 @@ class ItemPropertyVec2F : public ItemProperty, public ItemPropertyVec2<float>
      * \return Latest stored time step
      */
     size_t latestTimeStep() const override;
+
+    /*!
+     * \brief Returns value at given time-step as text
+     * \param _timeStep Time-step
+     * \return Value at given time-step as text
+     */
+    QString textValue(const size_t _timeStep) const override;
 };
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1400,6 +1413,13 @@ class ItemPropertyVec2D : public ItemProperty, public ItemPropertyVec2<double>
      * \return Latest stored time step
      */
     size_t latestTimeStep() const override;
+
+    /*!
+     * \brief Returns value at given time-step as text
+     * \param _timeStep Time-step
+     * \return Value at given time-step as text
+     */
+    QString textValue(const size_t _timeStep) const override;
 };
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1478,6 +1498,13 @@ class ItemPropertyVec2L : public ItemProperty, public ItemPropertyVec2<long doub
      * \return Latest stored time step
      */
     size_t latestTimeStep() const override;
+
+    /*!
+     * \brief Returns value at given time-step as text
+     * \param _timeStep Time-step
+     * \return Value at given time-step as text
+     */
+    QString textValue(const size_t _timeStep) const override;
 };
 
 }  // namespace Props

@@ -5,6 +5,8 @@
 
 #include "item2dtext.h"
 
+#include "../Text/itemtext.h"
+
 #include <QTextDocument>
 
 namespace U1 {
@@ -30,12 +32,25 @@ Item2DText::Item2DText(const std::string &_name,
     setupProperties({&text, &fontFamily, &fontHeight, &screenPosition, &screenOffset, &fontColor, &alpha, &visible});
 }
 
+void Item2DText::addTextProp(const QString &_key, const Props::ItemProperty *_property)
+{
+    for (const std::pair<QString, const Props::ItemProperty *> &tp : m_textProps)
+    {
+        if (_key == tp.first)
+            std::cerr << "Error: Item2DText::addTextProp(" << _key.toStdString() << ", ...) Key already registered!\n";
+        return;
+    }
+    m_textProps.push_back({_key, _property});
+}
+
 void Item2DText::paintItem(QPainter &_painter, const QSize &_screenSize, const size_t _timeStep) const
 {
     const Math::ColorRGB colRGB = fontColor.value(_timeStep);
+    QString txt = text.value(_timeStep);
+    ItemText::replaceTextValues(txt, m_textProps, _timeStep);
     paintItem2D(_painter,
                 _screenSize,
-                text.value(_timeStep),
+                txt,
                 fontFamily.value(_timeStep),
                 fontHeight.value(_timeStep),
                 QColor(colRGB.red, colRGB.green, colRGB.blue, alpha.value(_timeStep)),

@@ -43,13 +43,13 @@ int main(int argc, char *argv[])
     return RUN_ALL_TESTS();
 #else
 
-    U1::Math::U1SimD sd;
-    sd.build(0, {}, 1, 1);
+    // U1::Math::U1SimD sd;
+    // sd.build(0, {}, 1, 1);
 
     static const QString workDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) +
         QDir::separator() + "U1" + QDir::separator();
 
-    if (U1::Examples::exampleSimulationNewton(workDir))
+    if (U1::Examples::exampleBodyHead(workDir))
     {
         U1::Audio::SettingsAudio::runProcess("/usr/bin/vlc", {"--loop", workDir + "video.avi"});
         return EXIT_SUCCESS;

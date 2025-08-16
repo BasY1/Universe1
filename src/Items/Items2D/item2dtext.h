@@ -28,6 +28,35 @@ class Item2DText : public Item2D
     Props::ItemPropertyEnum screenPosition;  //!< Screen position
     Props::ItemPropertyUInt32 screenOffset;  //!< Offset distance from the edge of a screen
 
+ protected:
+    std::vector<std::pair<QString, const Props::ItemProperty *>> m_textProps;  //!< Dynamic properties to print values
+
+ public:
+    /*!
+     * \brief Add external item property to print its value within the text
+     * \param _key Property key
+     * \param _property External item property object
+     */
+    void addTextProp(const QString &_key, const Props::ItemProperty *_property);
+
+    /*!
+     * \brief Setter for dynamic properties to print values
+     * \param _textProps New dynamic properties to print values
+     */
+    inline void setTextProps(const std::vector<std::pair<QString, const Props::ItemProperty *>> &_textProps)
+    {
+        m_textProps = _textProps;
+    }
+
+    /*!
+     * \brief Getter for a collection of known external external item properties
+     * \return Collection of known external external item properties
+     */
+    inline const std::vector<std::pair<QString, const Props::ItemProperty *>> textProps() const
+    {
+        return m_textProps;
+    }
+
     /*!
      * \brief Constructor
      * \param _name Item name

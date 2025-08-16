@@ -4,11 +4,14 @@
  */
 
 #include "itemclock.h"
+#include "../Line/itemline.h"
 
 #include "../../Data3D/data3dmaterialbase.h"
 #include "../../Data3D/data3dmaterialnormal.h"
 
 #include "../Text/itemtext.h"
+
+#include <QTime>
 
 namespace U1 {
 namespace Items {
@@ -205,18 +208,60 @@ void ItemClock::createDataImpl(std::list<OpenGL::Data3D *> &_data,
 
 void ItemClock::replaceText(QString &txt, const float _time)
 {
-    if (!txt.contains("$$$"))
+    if (txt.isEmpty())
         return;
 
-    if (!txt.contains("$$$"))
-        return;
-    txt.replace("$$$TIME$$$", QString::number(_time));
-    txt.replace("$$$TIME_0$$$", QString::number(_time, 'f', 0));
-    txt.replace("$$$TIME_1$$$", QString::number(_time, 'f', 1));
-    txt.replace("$$$TIME_2$$$", QString::number(_time, 'f', 2));
-    txt.replace("$$$TIME_3$$$", QString::number(_time, 'f', 3));
-    txt.replace("$$$TIME_4$$$", QString::number(_time, 'f', 4));
-    txt.replace("$$$TIME_5$$$", QString::number(_time, 'f', 5));
+    qsizetype idxStart = 0;
+    while (true)
+    {
+        const qsizetype idxBeg = txt.indexOf("$$$", idxStart);
+        if (idxBeg < 0)
+            return;
+
+        const qsizetype idxEnd = txt.indexOf("$", idxBeg + 3);
+        if (idxEnd < 0)
+        {
+            std::cerr << "Error: ItemClock::replaceText(): Missing key end [$$$]!\n";
+            return;
+        }
+
+        const QString key = txt.mid(idxBeg + 3, idxEnd - idxBeg - 3);
+        const QString keyEnd = txt.mid(idxEnd, 3);
+        const qsizetype keyLen = idxEnd + 3 - idxBeg;
+
+        if (key == "TIME")
+        {
+            if (!ItemLine::replaceTextValue(txt, idxBeg, keyLen, keyEnd, _time))
+            {
+                std::cerr << "Error: ItemClock::replaceText(): Unknown key end $$$" << key.toStdString()
+                          << keyEnd.toStdString() << "!\n";
+                return;
+            }
+        }
+        else if (key == "CLOCK")
+        {
+            if (keyEnd == "$$$")
+                txt.replace(
+                    idxBeg,
+                    keyLen,
+                    (Math::isNegative(_time) ? "-" : "") +
+                        QTime::fromMSecsSinceStartOfDay((int)(std::abs(_time) * 1000.0f)).toString("hh:mm:ss.zzz"));
+            else
+            {
+                std::cerr << "Error: ItemClock::replaceText(): Unknown key end $$$" << key.toStdString()
+                          << keyEnd.toStdString() << "!\n";
+                return;
+            }
+        }
+        else
+        {
+            std::cerr << "Error: ItemClock::replaceText(): Unknown key $$$" << key.toStdString() << keyEnd.toStdString()
+                      << "!\n";
+            return;
+        }
+
+        idxStart = idxBeg;
+    }
 }
 
 void ItemClock::createClockBody(std::list<OpenGL::Data3D *> &_data,

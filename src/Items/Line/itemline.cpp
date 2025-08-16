@@ -12,34 +12,121 @@
 namespace U1 {
 namespace Items {
 
+bool ItemLine::replaceTextValue(
+    QString &_txt, const qsizetype _from, const qsizetype _count, const QString &_keyEnd, const float _value)
+{
+    if (_keyEnd == "$$$")
+        _txt.replace(_from, _count, QString::number(_value));
+    else if (_keyEnd == "$0$")
+        _txt.replace(_from, _count, QString::number(_value, 'f', 0));
+    else if (_keyEnd == "$1$")
+        _txt.replace(_from, _count, QString::number(_value, 'f', 1));
+    else if (_keyEnd == "$2$")
+        _txt.replace(_from, _count, QString::number(_value, 'f', 2));
+    else if (_keyEnd == "$3$")
+        _txt.replace(_from, _count, QString::number(_value, 'f', 3));
+    else if (_keyEnd == "$4$")
+        _txt.replace(_from, _count, QString::number(_value, 'f', 4));
+    else if (_keyEnd == "$5$")
+        _txt.replace(_from, _count, QString::number(_value, 'f', 5));
+    else if (_keyEnd == "$6$")
+        _txt.replace(_from, _count, QString::number(_value, 'f', 6));
+    else
+        return false;
+
+    return true;
+}
+
+bool ItemLine::replaceTextValue(
+    QString &_txt, const qsizetype _from, const qsizetype _count, const QString &_keyEnd, const Math::Vec3F &_value)
+{
+    if (_keyEnd == "$$$")
+        _txt.replace(_from, _count, _value.toQString());
+    else if (_keyEnd == "$0$")
+        _txt.replace(_from, _count, _value.toQString(0));
+    else if (_keyEnd == "$1$")
+        _txt.replace(_from, _count, _value.toQString(1));
+    else if (_keyEnd == "$2$")
+        _txt.replace(_from, _count, _value.toQString(2));
+    else if (_keyEnd == "$3$")
+        _txt.replace(_from, _count, _value.toQString(3));
+    else if (_keyEnd == "$4$")
+        _txt.replace(_from, _count, _value.toQString(4));
+    else if (_keyEnd == "$5$")
+        _txt.replace(_from, _count, _value.toQString(5));
+    else if (_keyEnd == "$6$")
+        _txt.replace(_from, _count, _value.toQString(6));
+    else
+        return false;
+
+    return true;
+}
+
 void ItemLine::replaceText(QString &txt, const Math::OrientF &o, const float l)
 {
-    if (!txt.contains("$$$"))
-        return;
+    qsizetype idxStart = 0;
+    while (true)
+    {
+        const qsizetype idxBeg = txt.indexOf("$$$", idxStart);
+        if (idxBeg < 0)
+            return;
 
-    txt.replace("$$$P1$$$", o.center.toQString());
-    txt.replace("$$$P1_0$$$", o.center.toQString(0));
-    txt.replace("$$$P1_1$$$", o.center.toQString(1));
-    txt.replace("$$$P1_2$$$", o.center.toQString(2));
-    txt.replace("$$$P1_3$$$", o.center.toQString(3));
-    txt.replace("$$$P1_4$$$", o.center.toQString(4));
-    txt.replace("$$$P1_5$$$", o.center.toQString(5));
+        const qsizetype idxEnd = txt.indexOf("$", idxBeg + 3);
+        if (idxEnd < 0)
+        {
+            std::cerr << "Error: ItemLine::replaceText(): Missing key end [$$$]!\n";
+            return;
+        }
 
-    txt.replace("$$$P2$$$", (o.center + o.normal1 * l).toQString());
-    txt.replace("$$$P2_0$$$", (o.center + o.normal1 * l).toQString(0));
-    txt.replace("$$$P2_1$$$", (o.center + o.normal1 * l).toQString(1));
-    txt.replace("$$$P2_2$$$", (o.center + o.normal1 * l).toQString(2));
-    txt.replace("$$$P2_3$$$", (o.center + o.normal1 * l).toQString(3));
-    txt.replace("$$$P2_4$$$", (o.center + o.normal1 * l).toQString(4));
-    txt.replace("$$$P2_5$$$", (o.center + o.normal1 * l).toQString(5));
+        const QString key = txt.mid(idxBeg + 3, idxEnd - idxBeg - 3);
+        const QString keyEnd = txt.mid(idxEnd, 3);
+        const qsizetype keyLen = idxEnd + 3 - idxBeg;
 
-    txt.replace("$$$LENGTH$$$", QString::number(l));
-    txt.replace("$$$LENGTH_0$$$", QString::number(l, 'f', 0));
-    txt.replace("$$$LENGTH_1$$$", QString::number(l, 'f', 1));
-    txt.replace("$$$LENGTH_2$$$", QString::number(l, 'f', 2));
-    txt.replace("$$$LENGTH_3$$$", QString::number(l, 'f', 3));
-    txt.replace("$$$LENGTH_4$$$", QString::number(l, 'f', 4));
-    txt.replace("$$$LENGTH_5$$$", QString::number(l, 'f', 5));
+        if (key == "P1")
+        {
+            if (!replaceTextValue(txt, idxBeg, keyLen, keyEnd, o.center))
+            {
+                std::cerr << "Error: ItemLine::replaceText(): Unknown key end $$$" << key.toStdString()
+                          << keyEnd.toStdString() << "!\n";
+                return;
+            }
+        }
+        else if (key == "P2")
+        {
+            if (!replaceTextValue(txt, idxBeg, keyLen, keyEnd, o.center + o.normal1 * l))
+            {
+                std::cerr << "Error: ItemLine::replaceText(): Unknown key end $$$" << key.toStdString()
+                          << keyEnd.toStdString() << "!\n";
+                return;
+            }
+        }
+        else if (key == "NORMAL")
+        {
+            if (!replaceTextValue(txt, idxBeg, keyLen, keyEnd, o.normal1))
+            {
+                std::cerr << "Error: ItemLine::replaceText(): Unknown key end $$$" << key.toStdString()
+                          << keyEnd.toStdString() << "!\n";
+                return;
+            }
+        }
+        else if (key == "LENGTH")
+        {
+            if (!replaceTextValue(txt, idxBeg, keyLen, keyEnd, l))
+            {
+                std::cerr << "Error: ItemLine::replaceText(): Unknown key end $$$" << key.toStdString()
+                          << keyEnd.toStdString() << "!\n";
+                return;
+            }
+        }
+        else
+        {
+            std::cerr << "Error: ItemLine::replaceText(): Unknown key $$$" << key.toStdString() << keyEnd.toStdString()
+                      << "!\n";
+            return;
+        }
+
+        idxStart = idxBeg;
+    }
 }
 
 ItemLine::ItemLine(const std::string &_name,
@@ -408,6 +495,257 @@ void ItemLine::createDataImpl(std::list<OpenGL::Data3D *> &_data,
     }
 
     ItemText::createText(_data, o2, txt, c, a, ff, fh, bo, ps, at, true);
+}
+
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ItemCoordAxis::ItemCoordAxis(const std::string &_name,
+                             const Math::Vec3F &_center,
+                             const Math::Vec3F &_normal,
+                             const Math::Vec3F &_arm,
+                             const float _length,
+                             const float _radius,
+                             const float _arrowLength,
+                             const float _arrowRadius,
+                             const uint64_t _pattern,
+                             const uint64_t _quality,
+                             const bool _arrowShow,
+                             const bool _textShow,
+                             const Math::MaterialRGB &_materialX,
+                             const Math::MaterialRGB &_materialY,
+                             const Math::MaterialRGB &_materialZ,
+                             const Math::ColorRGB &_textColorX,
+                             const Math::ColorRGB &_textColorY,
+                             const Math::ColorRGB &_textColorZ,
+                             const QString &_fontFamily,
+                             const uint32_t _fontHeight,
+                             const uint32_t _borderOffset,
+                             const float _pixelSize,
+                             const uint8_t _alpha,
+                             const bool _visible)
+    : Item3DExt(_name, _center, _normal, _arm, _alpha, _visible)
+    , length("length", _length, 0.0f, std::numeric_limits<float>::max())
+    , radius("radius", _radius, 0.0f, std::numeric_limits<float>::max())
+    , arrowLength("arrowLength", _arrowLength, 0.0f, std::numeric_limits<float>::max())
+    , arrowRadius("arrowRadius", _arrowRadius, 0.0f, std::numeric_limits<float>::max())
+    , pattern("pattern", _pattern)
+    , quality("quality", _quality)
+    , arrowShow("arrowShow", _arrowShow)
+    , textShow("textShow", _textShow)
+    , materialX("materialX", _materialX)
+    , materialY("materialY", _materialY)
+    , materialZ("materialZ", _materialZ)
+    , textColorX("textColorX", _textColorX)
+    , textColorY("textColorY", _textColorY)
+    , textColorZ("textColorZ", _textColorZ)
+    , fontFamily("fontFamily", _fontFamily)
+    , fontHeight("fontHeight", _fontHeight)
+    , borderOffset("borderOffset", _borderOffset)
+    , pixelSize("pixelSize", _pixelSize, 0.0f, std::numeric_limits<float>::max())
+{
+    addProperty(&length);
+    addProperty(&radius);
+    addProperty(&arrowLength);
+    addProperty(&arrowRadius);
+    addProperty(&pattern);
+    addProperty(&quality);
+    addProperty(&arrowShow);
+    addProperty(&textShow);
+    addProperty(&materialX);
+    addProperty(&materialY);
+    addProperty(&materialZ);
+    addProperty(&textColorX);
+    addProperty(&textColorY);
+    addProperty(&textColorZ);
+    addProperty(&fontFamily);
+    addProperty(&fontHeight);
+    addProperty(&borderOffset);
+    addProperty(&pixelSize);
+}
+
+void ItemCoordAxis::createDataImpl(std::list<OpenGL::Data3D *> &_data, const size_t _timeStep) const
+{
+    const float l = length.value(_timeStep);
+    if (!Math::isPositive(l))
+        return;
+
+    const float r = radius.value(_timeStep);
+    if (!Math::isPositive(r))
+        return;
+
+    const uint8_t a = alpha.value(_timeStep);
+    if (a == 0U)
+        return;
+
+    struct TmpArrowData
+    {
+        const Math::MaterialRGB material1;
+        const Math::MaterialRGB material2;
+        const Math::Vec3F normal1;
+        const Math::Vec3F normal2;
+        const Math::Vec3F normal3;
+        inline TmpArrowData(const Math::MaterialRGB &_material,
+                            const Math::Vec3F &_normal1,
+                            const Math::Vec3F &_normal2)
+            : material1(_material)
+            , material2(_material.darker())
+            , normal1(_normal1)
+            , normal2(_normal2)
+            , normal3(Math::Vec3F::cross(_normal1, _normal2).normalized())
+        {
+        }
+    };
+
+    const Math::OrientF o = valueOrientation(_timeStep);
+    const std::vector<TmpArrowData> tmpArrows = {
+        {materialX.value(_timeStep), o.normal1, o.normal2},
+        {materialY.value(_timeStep), o.normal2, o.normal3},
+        {materialZ.value(_timeStep), o.normal3, o.normal1},
+    };
+
+    const size_t q = quality.value(_timeStep);
+    const float al = arrowLength.value(_timeStep);
+    const float ar = arrowRadius.value(_timeStep);
+
+    const bool useArrows = arrowShow.value(_timeStep) && Math::isPositive(al) && Math::isPositive(ar);
+
+    const float ll = useArrows ? (std::max(0.0f, l - al)) : l;
+    if (Math::isNull(ll))
+    {
+        for (const TmpArrowData &td : std::as_const(tmpArrows))
+        {
+            _data.push_back(OpenGL::Data3DMaterialNormal::cylinder(
+                {o.center, td.normal1, td.normal2, td.normal3}, l, ar, 0.0f, q, td.material1, a));
+
+            _data.push_back(OpenGL::Data3DMaterialBase::circle(
+                {o.center, -td.normal1, -td.normal2, td.normal3}, ar, q, td.material2, a));
+        }
+        // Arrows only
+        return;
+    }
+
+    const size_t p = pattern.value(_timeStep);
+    if (p == 0UL)
+        return;
+
+    std::vector<std::pair<float, float>> dp;
+    Math::fillDashPattern(dp, p, 0.0f, ll, r);
+
+    for (const TmpArrowData &td : std::as_const(tmpArrows))
+    {
+        for (size_t i = 0UL; i < dp.size(); ++i)
+        {
+            _data.push_back(OpenGL::Data3DMaterialNormal::cylinder(
+                {o.center + td.normal1 * dp[i].first, td.normal1, td.normal2, td.normal3},
+                dp[i].second - dp[i].first,
+                r,
+                r,
+                q,
+                td.material1,
+                a));
+
+            _data.push_back(OpenGL::Data3DMaterialBase::circle(
+                {o.center + td.normal1 * dp[i].first, -td.normal1, -td.normal2, td.normal3}, r, q, td.material2, a));
+
+            _data.push_back(OpenGL::Data3DMaterialBase::circle(
+                {o.center + td.normal1 * dp[i].second, td.normal1, td.normal2, td.normal3}, r, q, td.material2, a));
+        }
+
+        if (useArrows)
+        {
+            const Math::Vec3F pp = o.center + td.normal1 * ll;
+            _data.push_back(OpenGL::Data3DMaterialNormal::cylinder(
+                {pp, td.normal1, td.normal2, td.normal3}, al, ar, 0.0f, q, td.material1, a));
+            _data.push_back(
+                OpenGL::Data3DMaterialBase::circle({pp, -td.normal1, -td.normal2, td.normal3}, ar, q, td.material2, a));
+        }
+    }
+}
+
+void ItemCoordAxis::createDataImpl(std::list<OpenGL::Data3D *> &_data,
+                                   const Math::CamF &_camera,
+                                   const size_t _timeStep) const
+{
+    if (!textShow.value(_timeStep))
+        return;
+
+    const float l = length.value(_timeStep);
+    if (!Math::isPositive(l))
+        return;
+
+    const float r = radius.value(_timeStep);
+    if (!Math::isPositive(r))
+        return;
+
+    const size_t p = pattern.value(_timeStep);
+    if (p == 0UL)
+        return;
+
+    const uint8_t a = alpha.value(_timeStep);
+    if (a == 0U)
+        return;
+
+    const float ps = pixelSize.value(_timeStep);
+    if (!Math::isPositive(ps))
+        return;
+
+    const uint32_t fh = fontHeight.value(_timeStep);
+    if (fh == 0U)
+        return;
+
+    const Math::OrientF o = valueOrientation(_timeStep);
+    const QString ff = fontFamily.value(_timeStep);
+    const uint32_t bo = borderOffset.value(_timeStep);
+
+    struct TmpArrowData
+    {
+        const QString text;
+        const Math::ColorRGB color;
+        const Math::Vec3F center;
+    };
+
+    const std::vector<TmpArrowData> tmpArrows = {
+        {"X", textColorX.value(_timeStep), o.center + o.normal1 * l},
+        {"Y", textColorY.value(_timeStep), o.center + o.normal2 * l},
+        {"Z", textColorZ.value(_timeStep), o.center + o.normal3 * l},
+    };
+
+    Math::AlignType at = Math::_AlignBottomCenter;
+
+    for (const TmpArrowData &td : std::as_const(tmpArrows))
+    {
+        const Math::Vec3F cf = (_camera.lookAt - _camera.position).normalized();
+        const Math::Vec3F cr = Math::Vec3F::cross(cf, _camera.up).normalized();
+        const Math::Vec3F cu = Math::Vec3F::cross(cr, cf).normalized();
+        const Math::Vec2F p1 = {o.center.distanceToPlane(_camera.position, cr),
+                                o.center.distanceToPlane(_camera.position, cu)};
+        const Math::Vec2F p2 = {td.center.distanceToPlane(_camera.position, cr),
+                                td.center.distanceToPlane(_camera.position, cu)};
+        const Math::Vec2F pn = (p2 - p1).normalized();
+        const bool sx = !Math::isNegative(pn.x), sy = !Math::isNegative(pn.y);
+        if (Math::isMoreOrEqual(std::abs(pn.x), 0.5f) && Math::isMoreOrEqual(std::abs(pn.y), 0.5f))
+        {
+            if (sx && sy)
+                at = Math::_AlignBottomLeft;
+            else if (sx && !sy)
+                at = Math::_AlignTopLeft;
+            else if (!sx && sy)
+                at = Math::_AlignBottomRight;
+            else
+                at = Math::_AlignTopRight;
+        }
+        else if (std::abs(pn.x) > std::abs(pn.y))
+        {
+            at = sx ? Math::_AlignCenterLeft : Math::_AlignCenterRight;
+        }
+        else
+        {
+            at = sy ? Math::_AlignBottomCenter : Math::_AlignTopCenter;
+        }
+
+        const Math::OrientF o2 = Math::OrientF(_camera, td.center);
+        ItemText::createText(_data, o2, td.text, td.color, a, ff, fh, bo, ps, at, true);
+    }
 }
 
 }  // namespace Items

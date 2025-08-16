@@ -8,8 +8,6 @@
 
 #include "vec2.h"
 #include "colorrgb.h"
-#include <sstream>
-#include <fstream>
 #include <thread>
 
 namespace U1 {

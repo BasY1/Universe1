@@ -140,6 +140,13 @@ class ItemPropertyEnum : public ItemProperty
     }
 
     /*!
+     * \brief Returns value at given time-step as text
+     * \param _timeStep Time-step
+     * \return Value at given time-step as text
+     */
+    QString textValue(const size_t _timeStep) const override;
+
+    /*!
      * \brief Setup new value at time-step
      * \param _timeStep Time-step
      * \param _value Value at time-step
@@ -176,15 +183,21 @@ class ItemPropertyEnum : public ItemProperty
     }
 
     /*!
+     * \brief Getter for the initial value
+     * \return Initial value
+     */
+    inline int getInitValue() const
+    {
+        return m_jobs.empty() ? 0 : (*m_jobs.cbegin()).second;
+    }
+
+    /*!
      * \brief Latest time-step value
      * \return Value stored at latest time-step
      */
     inline int latestValue() const
     {
-        if (m_jobs.empty())
-            return 0;
-
-        return (*m_jobs.crbegin()).second;
+        return m_jobs.empty() ? 0 : (*m_jobs.crbegin()).second;
     }
 
     /*!

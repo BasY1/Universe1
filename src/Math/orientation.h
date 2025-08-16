@@ -95,6 +95,18 @@ struct Orientation
     }
 
     /*!
+     * \brief Returns a copy of this orientation, but moved to new center position
+     * \param _newCenter New center position
+     * \return Copy of this orientation, but moved to new center position
+     */
+    inline Orientation<T> moved(const Vec3<T> &_newCenter) const
+    {
+        Orientation<T> result = *this;
+        result.center = _newCenter;
+        return result;
+    }
+
+    /*!
      * \brief Invert all normals
      * \return This orientation object
      */

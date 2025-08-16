@@ -129,16 +129,20 @@ class ItemSpin : public Item3DExt
     /*!
      * \brief Replace text values
      * \param _txt Text
-     * \param _a Arc angle
+     * \param _o Orientation
+     * \param _l length
+     * \param _a Phase angle
      * \return
      * \details Uses tags:
-     * \b Radians \b 1: $$$ANGLE_RAD$$$, $$$ANGLE_RADANGLE_RAD_0$$$, $$$ANGLE_RAD_1$$$, $$$ANGLE_RAD_2$$$,
-     *                  $$$ANGLE_RAD_3$$$, $$$ANGLE_RAD_4$$$, $$$ANGLE_RAD_5$$$
-     * \b Degrees \b 1: $$$ANGLE_DEG$$$, $$$ANGLE_DEGANGLE_DEG_0$$$, $$$ANGLE_DEG_1$$$, $$$ANGLE_DEG_2$$$,
-     *                  $$$ANGLE_DEG_3$$$, $$$ANGLE_DEG_4$$$, $$$ANGLE_DEG_5$$$
+     * \b Point \b 1: $$$P1$$$, $$$P1$0$, $$$P1$1$, $$$P1$2$, ..., $$$P1$6$
+     * \b Point \b 2: $$$P2$$$, $$$P2$0$, $$$P2$1$, $$$P2$2$, ..., $$$P2$6$
+     * \b Length: $$$LENGTH$$$, $$$LENGTH$0$, $$$LENGTH$1$, ..., $$$LENGTH$6$
+     * \b Phase [rad]: $$$ANGLE_RAD$$$, $$$ANGLE_RAD$0$, $$$ANGLE_RAD$1$, ..., $$$ANGLE_RAD$6$
+     * \b Phase [deg]: $$$ANGLE_DEG$$$, $$$ANGLE_DEG$0$, $$$ANGLE_DEG$1$, ..., $$$ANGLE_DEG$6$
      */
-    inline static void replaceText(QString &_txt, const float _a)
+    inline static void replaceText(QString &_txt, const Math::OrientF &_o, const float _l, const float _a)
     {
+        ItemLine::replaceText(_txt, _o, _l);
         ItemArc::replaceText(_txt, _a);
     }
 };

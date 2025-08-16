@@ -48,6 +48,13 @@ class ItemPropertyText : public ItemProperty
     QString value(const size_t _timeStep) const;
 
     /*!
+     * \brief Returns value at given time-step as text
+     * \param _timeStep Time-step
+     * \return Value at given time-step as text
+     */
+    QString textValue(const size_t _timeStep) const override;
+
+    /*!
      * \brief Setup new value at time-step
      * \param _timeStep Time-step
      * \param _value Value at time-step
@@ -64,15 +71,21 @@ class ItemPropertyText : public ItemProperty
     }
 
     /*!
+     * \brief Getter for the initial value
+     * \return Initial value
+     */
+    inline QString getInitValue() const
+    {
+        return m_jobs.empty() ? QString() : (*m_jobs.cbegin()).second;
+    }
+
+    /*!
      * \brief Latest time-step value
      * \return Value stored at latest time-step
      */
     inline QString latestValue() const
     {
-        if (m_jobs.empty())
-            return "";
-
-        return (*m_jobs.crbegin()).second;
+        return m_jobs.empty() ? QString() : (*m_jobs.crbegin()).second;
     }
 
     /*!

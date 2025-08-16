@@ -1,6 +1,6 @@
 #include "../Video/project.h"
 
-#include "../Items/Hand/itemhand.h"
+#include "../Items/BodyParts/Hand/itemhand.h"
 #include "../Items/Items2D/item2dtext.h"
 
 namespace U1 {
@@ -72,13 +72,13 @@ bool exampleHand(const QString &_workDir)
     ItemHand *obj1 = footage1->add3D(new ItemHand());
     ItemHand *obj2 = footage1->add3D(new ItemHand());
 
-    obj1->quality.initValue(3);
-    obj2->quality.initValue(3);
+    obj1->hand.quality.initValue(3);
+    obj2->hand.quality.initValue(3);
 
-    obj2->rightHand.initOff();
+    obj2->hand.rightHand.initOff();
 
-    obj1->materialBody.initValue(Qt::cyan);
-    obj2->materialBody.initValue(Qt::yellow);
+    obj1->hand.materialBody.initValue(Qt::cyan);
+    obj2->hand.materialBody.initValue(Qt::yellow);
 
     obj1->center.initValue({0, 1, 0});
     obj2->center.initValue({0, -1, 0});
@@ -89,13 +89,17 @@ bool exampleHand(const QString &_workDir)
     obj1->arm.initValue({0, 1, 0});
     obj2->arm.initValue({0, -1, 0});
 
-    obj1->openThumb.addLinearValue(dur, 0);
-    obj1->openIndex.addLinearValue(dur, 0);
-    obj1->open345.addLinearValue(dur, 0);
+    obj1->hand.openFingerThumb.addLinearValue(dur, 0);
+    obj1->hand.openFingerIndex.addLinearValue(dur, 0);
+    obj1->hand.openFingerMiddle.addLinearValue(dur, 0);
+    obj1->hand.openFingerRing.addLinearValue(dur, 0);
+    obj1->hand.openFingerLittle.addLinearValue(dur, 0);
 
-    obj2->openThumb.addLinearValue(dur, 0);
-    obj2->openIndex.addLinearValue(dur, 0);
-    obj2->open345.addLinearValue(dur, 0);
+    obj2->hand.openFingerThumb.addLinearValue(dur, 0);
+    obj2->hand.openFingerIndex.addLinearValue(dur, 0);
+    obj2->hand.openFingerMiddle.addLinearValue(dur, 0);
+    obj2->hand.openFingerRing.addLinearValue(dur, 0);
+    obj2->hand.openFingerLittle.addLinearValue(dur, 0);
 
     footage1->addCamera("Camera 1", {+2, 0, 0});
     footage1->addCamera("Camera 2", {-2, 0, 0});

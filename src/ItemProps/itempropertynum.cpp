@@ -110,5 +110,56 @@ size_t ItemPropertyLongDouble::latestTimeStep() const
     return m_jobs.empty() ? 0UL : (*m_jobs.crbegin()).first;
 }
 
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+QString ItemPropertyUInt8::textValue(const size_t _timeStep) const
+{
+    return QString::number((int)value(_timeStep));
+}
+QString ItemPropertyInt8::textValue(const size_t _timeStep) const
+{
+    return QString::number((int)value(_timeStep));
+}
+QString ItemPropertyUInt16::textValue(const size_t _timeStep) const
+{
+    return QString::number((int)value(_timeStep));
+}
+QString ItemPropertyInt16::textValue(const size_t _timeStep) const
+{
+    return QString::number((int)value(_timeStep));
+}
+QString ItemPropertyUInt32::textValue(const size_t _timeStep) const
+{
+    return QString::number(value(_timeStep));
+}
+QString ItemPropertyInt32::textValue(const size_t _timeStep) const
+{
+    return QString::number(value(_timeStep));
+}
+QString ItemPropertyUInt64::textValue(const size_t _timeStep) const
+{
+    return QString::number(value(_timeStep));
+}
+QString ItemPropertyInt64::textValue(const size_t _timeStep) const
+{
+    return QString::number(value(_timeStep));
+}
+QString ItemPropertyQuality::textValue(const size_t _timeStep) const
+{
+    return QString::number(value(_timeStep));
+}
+QString ItemPropertyFloat::textValue(const size_t _timeStep) const
+{
+    return QString::number(value(_timeStep));
+}
+QString ItemPropertyDouble::textValue(const size_t _timeStep) const
+{
+    return QString::number(value(_timeStep));
+}
+QString ItemPropertyLongDouble::textValue(const size_t _timeStep) const
+{
+    return QString::number((double)value(_timeStep));
+}
+
 }  // namespace Props
 }  // namespace U1

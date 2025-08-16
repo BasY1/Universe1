@@ -58,6 +58,11 @@ int ItemPropertyEnum::value(const size_t _timeStep) const
     return (*it).second;
 }
 
+QString ItemPropertyEnum::textValue(const size_t _timeStep) const
+{
+    return m_enumLiterals.at(value(_timeStep));
+}
+
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void ItemPropertyEnum::setValue(const size_t _timeStep, const int _value)

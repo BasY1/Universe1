@@ -18,7 +18,6 @@ namespace Math {
 template <typename T>
 struct IrregEllipsoid
 {
-
     /*!
      * \brief Ellipsoid vertex count by circle quality
      * \param _quality Circle quality

@@ -1063,15 +1063,21 @@ class ItemPropertyNum
     // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /*!
+     * \brief Getter for the initial value
+     * \return Initial value
+     */
+    inline T getInitValue() const
+    {
+        return m_jobs.empty() ? T(0) : (*m_jobs.cbegin()).second.value;
+    }
+
+    /*!
      * \brief Last value at last time-step
      * \return Value stored at latest time-step
      */
     inline T latestValue() const
     {
-        if (m_jobs.empty())
-            return T(0);
-
-        return (*m_jobs.crbegin()).second.value;
+        return m_jobs.empty() ? T(0) : (*m_jobs.crbegin()).second.value;
     }
 
     /*!
@@ -1130,6 +1136,13 @@ class ItemPropertyUInt8 : public ItemProperty, public ItemPropertyNum<uint8_t>
      * \return Latest stored time step
      */
     size_t latestTimeStep() const override;
+
+    /*!
+     * \brief Returns value at given time-step as text
+     * \param _timeStep Time-step
+     * \return Value at given time-step as text
+     */
+    QString textValue(const size_t _timeStep) const override;
 };
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1178,6 +1191,13 @@ class ItemPropertyInt8 : public ItemProperty, public ItemPropertyNum<int8_t>
      * \return Latest stored time step
      */
     size_t latestTimeStep() const override;
+
+    /*!
+     * \brief Returns value at given time-step as text
+     * \param _timeStep Time-step
+     * \return Value at given time-step as text
+     */
+    QString textValue(const size_t _timeStep) const override;
 };
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1226,6 +1246,13 @@ class ItemPropertyUInt16 : public ItemProperty, public ItemPropertyNum<uint16_t>
      * \return Latest stored time step
      */
     size_t latestTimeStep() const override;
+
+    /*!
+     * \brief Returns value at given time-step as text
+     * \param _timeStep Time-step
+     * \return Value at given time-step as text
+     */
+    QString textValue(const size_t _timeStep) const override;
 };
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1274,6 +1301,13 @@ class ItemPropertyInt16 : public ItemProperty, public ItemPropertyNum<int16_t>
      * \return Latest stored time step
      */
     size_t latestTimeStep() const override;
+
+    /*!
+     * \brief Returns value at given time-step as text
+     * \param _timeStep Time-step
+     * \return Value at given time-step as text
+     */
+    QString textValue(const size_t _timeStep) const override;
 };
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1322,6 +1356,13 @@ class ItemPropertyUInt32 : public ItemProperty, public ItemPropertyNum<uint32_t>
      * \return Latest stored time step
      */
     size_t latestTimeStep() const override;
+
+    /*!
+     * \brief Returns value at given time-step as text
+     * \param _timeStep Time-step
+     * \return Value at given time-step as text
+     */
+    QString textValue(const size_t _timeStep) const override;
 };
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1370,6 +1411,13 @@ class ItemPropertyInt32 : public ItemProperty, public ItemPropertyNum<int32_t>
      * \return Latest stored time step
      */
     size_t latestTimeStep() const override;
+
+    /*!
+     * \brief Returns value at given time-step as text
+     * \param _timeStep Time-step
+     * \return Value at given time-step as text
+     */
+    QString textValue(const size_t _timeStep) const override;
 };
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1418,6 +1466,13 @@ class ItemPropertyUInt64 : public ItemProperty, public ItemPropertyNum<uint64_t>
      * \return Latest stored time step
      */
     size_t latestTimeStep() const override;
+
+    /*!
+     * \brief Returns value at given time-step as text
+     * \param _timeStep Time-step
+     * \return Value at given time-step as text
+     */
+    QString textValue(const size_t _timeStep) const override;
 };
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1466,6 +1521,13 @@ class ItemPropertyInt64 : public ItemProperty, public ItemPropertyNum<int64_t>
      * \return Latest stored time step
      */
     size_t latestTimeStep() const override;
+
+    /*!
+     * \brief Returns value at given time-step as text
+     * \param _timeStep Time-step
+     * \return Value at given time-step as text
+     */
+    QString textValue(const size_t _timeStep) const override;
 };
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1498,6 +1560,13 @@ class ItemPropertyQuality : public ItemProperty, public ItemPropertyNum<size_t>
      * \return Latest stored time step
      */
     size_t latestTimeStep() const override;
+
+    /*!
+     * \brief Returns value at given time-step as text
+     * \param _timeStep Time-step
+     * \return Value at given time-step as text
+     */
+    QString textValue(const size_t _timeStep) const override;
 };
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1546,6 +1615,13 @@ class ItemPropertyFloat : public ItemProperty, public ItemPropertyNum<float>
      * \return Latest stored time step
      */
     size_t latestTimeStep() const override;
+
+    /*!
+     * \brief Returns value at given time-step as text
+     * \param _timeStep Time-step
+     * \return Value at given time-step as text
+     */
+    QString textValue(const size_t _timeStep) const override;
 };
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1594,6 +1670,13 @@ class ItemPropertyDouble : public ItemProperty, public ItemPropertyNum<double>
      * \return Latest stored time step
      */
     size_t latestTimeStep() const override;
+
+    /*!
+     * \brief Returns value at given time-step as text
+     * \param _timeStep Time-step
+     * \return Value at given time-step as text
+     */
+    QString textValue(const size_t _timeStep) const override;
 };
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1642,6 +1725,13 @@ class ItemPropertyLongDouble : public ItemProperty, public ItemPropertyNum<long 
      * \return Latest stored time step
      */
     size_t latestTimeStep() const override;
+
+    /*!
+     * \brief Returns value at given time-step as text
+     * \param _timeStep Time-step
+     * \return Value at given time-step as text
+     */
+    QString textValue(const size_t _timeStep) const override;
 };
 
 }  // namespace Props

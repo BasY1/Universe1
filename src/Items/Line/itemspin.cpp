@@ -204,7 +204,7 @@ void ItemSpin::createDataImpl(std::list<OpenGL::Data3D *> &_data, const size_t _
     const Math::ColorRGB c = textColor.value(_timeStep);
     const Math::AlignType at = textAlign.valueEnum<Math::AlignType>(_timeStep);
 
-    replaceText(txt, aa);
+    replaceText(txt, o, l, aa);
 
     Math::Vec3F pp = {};
     switch (tp)
@@ -267,7 +267,7 @@ void ItemSpin::createDataImpl(std::list<OpenGL::Data3D *> &_data,
     const Math::Vec3F P2 = o1.center + o1.normal1 * l;
     Math::Vec3F PP = {};
 
-    replaceText(txt, aa);
+    replaceText(txt, o1, l, aa);
 
     switch (tp)
     {

@@ -424,27 +424,51 @@ void ItemArc::createDataImpl(std::list<OpenGL::Data3D *> &_data,
 
 void ItemArc::replaceText(QString &txt, const float a)
 {
-    if (!txt.contains("$$$"))
-        return;
+    qsizetype idxStart = 0;
+    while (true)
+    {
+        const qsizetype idxBeg = txt.indexOf("$$$", idxStart);
+        if (idxBeg < 0)
+            return;
 
-    if (!txt.contains("$$$"))
-        return;
-    txt.replace("$$$ANGLE_RAD$$$", QString::number(a));
-    txt.replace("$$$ANGLE_RAD_0$$$", QString::number(a, 'f', 0));
-    txt.replace("$$$ANGLE_RAD_1$$$", QString::number(a, 'f', 1));
-    txt.replace("$$$ANGLE_RAD_2$$$", QString::number(a, 'f', 2));
-    txt.replace("$$$ANGLE_RAD_3$$$", QString::number(a, 'f', 3));
-    txt.replace("$$$ANGLE_RAD_4$$$", QString::number(a, 'f', 4));
-    txt.replace("$$$ANGLE_RAD_5$$$", QString::number(a, 'f', 5));
+        const qsizetype idxEnd = txt.indexOf("$", idxBeg + 3);
+        if (idxEnd < 0)
+        {
+            std::cerr << "Error: ItemArc::replaceText(): Missing key end [$$$]!\n";
+            return;
+        }
 
-    const float d = Math::toDeg(a);
-    txt.replace("$$$ANGLE_DEG$$$", QString::number(d));
-    txt.replace("$$$ANGLE_DEG_0$$$", QString::number(d, 'f', 0));
-    txt.replace("$$$ANGLE_DEG_1$$$", QString::number(d, 'f', 1));
-    txt.replace("$$$ANGLE_DEG_2$$$", QString::number(d, 'f', 2));
-    txt.replace("$$$ANGLE_DEG_3$$$", QString::number(d, 'f', 3));
-    txt.replace("$$$ANGLE_DEG_4$$$", QString::number(d, 'f', 4));
-    txt.replace("$$$ANGLE_DEG_5$$$", QString::number(d, 'f', 5));
+        const QString key = txt.mid(idxBeg + 3, idxEnd - idxBeg - 3);
+        const QString keyEnd = txt.mid(idxEnd, 3);
+        const qsizetype keyLen = idxEnd + 3 - idxBeg;
+
+        if (key == "ANGLE_RAD")
+        {
+            if (!ItemLine::replaceTextValue(txt, idxBeg, keyLen, keyEnd, a))
+            {
+                std::cerr << "Error: ItemArc::replaceText(): Unknown key end $$$" << key.toStdString()
+                          << keyEnd.toStdString() << "!\n";
+                return;
+            }
+        }
+        else if (key == "ANGLE_DEG")
+        {
+            if (!ItemLine::replaceTextValue(txt, idxBeg, keyLen, keyEnd, Math::toDeg(a)))
+            {
+                std::cerr << "Error: ItemArc::replaceText(): Unknown key end $$$" << key.toStdString()
+                          << keyEnd.toStdString() << "!\n";
+                return;
+            }
+        }
+        else
+        {
+            std::cerr << "Error: ItemArc::replaceText(): Unknown key $$$" << key.toStdString() << keyEnd.toStdString()
+                      << "!\n";
+            return;
+        }
+
+        idxStart = idxBeg;
+    }
 }
 
 }  // namespace Items

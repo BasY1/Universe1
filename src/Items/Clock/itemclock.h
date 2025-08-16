@@ -114,8 +114,7 @@ class ItemClock : public Item3DExt
      * \param _txt Text
      * \param _time Time
      * \return
-     * \details Uses tags:
-     * $$$TIME$$$, $$$TIME_0$$$, $$$TIME_1$$$, $$$TIME_2$$$, $$$TIME_3$$$, $$$TIME_4$$$, $$$TIME_5$$$
+     * \details Uses tags: $$$CLOCK$$$, $$$TIME$$$, $$$TIME$0$, $$$TIME$1$, ..., $$$TIME$6$
      */
     static void replaceText(QString &_txt, const float _time);
 

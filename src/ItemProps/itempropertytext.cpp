@@ -46,6 +46,11 @@ QString ItemPropertyText::value(const size_t _timeStep) const
     return (*it).second;
 }
 
+QString ItemPropertyText::textValue(const size_t _timeStep) const
+{
+    return value(_timeStep);
+}
+
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void ItemPropertyText::setValue(const size_t _timeStep, const QString &_value)

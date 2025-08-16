@@ -47,6 +47,13 @@ class ItemPropertyBool : public ItemProperty
     bool value(const size_t _timeStep) const;
 
     /*!
+     * \brief Returns value at given time-step as text
+     * \param _timeStep Time-step
+     * \return Value at given time-step as text
+     */
+    QString textValue(const size_t _timeStep) const override;
+
+    /*!
      * \brief Setup new value at time-step
      * \param _timeStep Time-step
      * \param _value Value at time-step
@@ -133,15 +140,21 @@ class ItemPropertyBool : public ItemProperty
                          const size_t _durationOff = 1000);
 
     /*!
+     * \brief Getter for the initial value
+     * \return Initial value
+     */
+    inline bool getInitValue() const
+    {
+        return m_jobs.empty() ? false : (*m_jobs.cbegin()).second;
+    }
+
+    /*!
      * \brief Last value at last time-step
      * \return Value stored at latest time-step
      */
     inline bool latestValue() const
     {
-        if (m_jobs.empty())
-            return false;
-
-        return (*m_jobs.crbegin()).second;
+        return m_jobs.empty() ? false : (*m_jobs.crbegin()).second;
     }
 
     /*!

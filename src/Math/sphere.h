@@ -872,8 +872,8 @@ void Sphere<T>::fillSphereArcOuter(Vec3<T> *_outVertex,
         for (size_t i = 0UL; i < cntVertex; ++i)
         {
             const Vec3<T> N1 =
-                _orientation.normal2.rotated(_orientation.normal1, _anglesLon[(i / offset)]).normalized();
-            const Vec3<T> N = _orientation.normal1.rotated(N1, _anglesLat[(i % offset)]).normalized();
+                _orientation.normal1.rotated(_orientation.normal3, _anglesLat[(i % offset)]).normalized();
+            const Vec3<T> N = N1.rotated(_orientation.normal1, _anglesLon[(i / offset)]).normalized();
             _outVertex[i] = _orientation.center + N * _radius;
             _outNormal[i] = N;
         }
@@ -890,8 +890,8 @@ void Sphere<T>::fillSphereArcOuter(Vec3<T> *_outVertex,
                     for (size_t i = t.first; i < end; ++i)
                     {
                         const Vec3<T> N1 =
-                            _orientation.normal2.rotated(_orientation.normal1, __anglesLon[(i / offset)]).normalized();
-                        const Vec3<T> N = _orientation.normal1.rotated(N1, __anglesLat[(i % offset)]).normalized();
+                            _orientation.normal1.rotated(_orientation.normal3, __anglesLat[(i % offset)]).normalized();
+                        const Vec3<T> N = N1.rotated(_orientation.normal1, __anglesLon[(i / offset)]).normalized();
                         __outVertex[i] = _orientation.center + N * _radius;
                         __outNormal[i] = N;
                     }
@@ -940,8 +940,8 @@ void Sphere<T>::fillSphereArcInner(Vec3<T> *_outVertex,
         for (size_t i = 0UL; i < cntVertex; ++i)
         {
             const Vec3<T> N1 =
-                _orientation.normal2.rotated(_orientation.normal1, _anglesLon[(i / offset)]).normalized();
-            const Vec3<T> N = _orientation.normal1.rotated(N1, _anglesLat[(i % offset)]).normalized();
+                _orientation.normal1.rotated(_orientation.normal3, _anglesLat[(i % offset)]).normalized();
+            const Vec3<T> N = N1.rotated(_orientation.normal1, _anglesLon[(i / offset)]).normalized();
             _outVertex[i] = _orientation.center + N * _radius;
             _outNormal[i] = -N;
         }
@@ -958,8 +958,8 @@ void Sphere<T>::fillSphereArcInner(Vec3<T> *_outVertex,
                     for (size_t i = t.first; i < end; ++i)
                     {
                         const Vec3<T> N1 =
-                            _orientation.normal2.rotated(_orientation.normal1, __anglesLon[(i / offset)]).normalized();
-                        const Vec3<T> N = _orientation.normal1.rotated(N1, __anglesLat[(i % offset)]).normalized();
+                            _orientation.normal1.rotated(_orientation.normal3, __anglesLat[(i % offset)]).normalized();
+                        const Vec3<T> N = N1.rotated(_orientation.normal1, __anglesLon[(i / offset)]).normalized();
                         __outVertex[i] = _orientation.center + N * _radius;
                         __outNormal[i] = -N;
                     }

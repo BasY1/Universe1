@@ -9,6 +9,8 @@
 #include "type.h"
 
 #include <iostream>
+#include <sstream>
+#include <fstream>
 
 #include <QVector2D>
 
@@ -187,6 +189,9 @@ struct Vec2
 
     inline size_t toHash() const;
     static size_t mixHash(const Vec2<T> *_data, const size_t _count);
+
+    inline std::string toString(const int _decimals = -1) const;
+    inline QString toQString(const int _decimals = -1) const;
 };
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1165,23 +1170,6 @@ Vec2<T> Vec2<T>::betweenByRatio(const Vec2<T> &_v1, const Vec2<T> &_v2, const T 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
- * \brief Fill output text stream
- * \tparam T Template floating point type
- * \param _os Output text stream
- * \param _v Vector
- * \return Output text stream
- */
-template <typename T>
-inline std::ostream &operator<<(std::ostream &_os, const Vec2<T> &_v)
-{
-    return _os << '[' << _v.x << ',' << _v.y << ']';
-}
-
-// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/*!
  * \brief Conversion to \c QVector2D
  * \tparam T Template floating point type
  * \return This 2D vector as \c QVector2D
@@ -1235,6 +1223,82 @@ size_t Vec2<T>::mixHash(const Vec2<T> *_data, const size_t _count)
     for (size_t i = 1UL; i < _count; ++i)
         updateHash(result, offset, _data[i].toHash());
     return result;
+}
+
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief To \c std::string
+ * \tparam T Template floating point type
+ * \param _decimals Decimal count (-1 for default precision)
+ * \return Vector as \c std::string
+ */
+template <typename T>
+inline std::string Vec2<T>::toString(const int _decimals) const
+{
+    std::stringstream ss;
+    if (_decimals >= 0)
+    {
+        ss.precision(_decimals);
+        ss << std::fixed;
+    }
+    ss << *this;
+    return ss.str();
+}
+
+/*!
+ * \brief To \c QString
+ * \tparam T Template floating point type
+ * \param _decimals Decimal count (-1 for default precision)
+ * \return Vector as \c QString
+ */
+template <typename T>
+inline QString Vec2<T>::toQString(const int _decimals) const
+{
+    return QString::fromStdString(toString(_decimals));
+}
+
+/*!
+ * \brief Fill output text stream
+ * \tparam T Template floating point type
+ * \param _os Output text stream
+ * \param _v Vector
+ * \return Output text stream
+ */
+template <typename T>
+inline std::ostream &operator<<(std::ostream &_os, const Vec2<T> &_v)
+{
+    return _os << '[' << _v.x << ',' << _v.y << ']';
+}
+
+/*!
+ * \brief Fill output file stream
+ * \tparam T Template floating point type
+ * \param _ofs Output file stream
+ * \param _v Vector
+ * \return Output file stream
+ */
+template <typename T>
+inline std::ofstream &operator<<(std::ofstream &_ofs, const Vec2<T> &_v)
+{
+    return _ofs << _v.x << _v.y;
+}
+
+/*!
+ * \brief Fill input file stream
+ * \tparam T Template floating point type
+ * \param _ifs Input file stream
+ * \param _v Vector
+ * \return Input file stream
+ */
+template <typename T>
+inline std::ifstream &operator>>(std::ifstream &_ifs, Vec2<T> &_v)
+{
+    _ifs >> _v.x;
+    _ifs >> _v.y;
+    return _ifs;
 }
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

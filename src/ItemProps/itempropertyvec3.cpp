@@ -34,5 +34,18 @@ size_t ItemPropertyVec3L::latestTimeStep() const
     return m_jobs.empty() ? 0UL : (*m_jobs.crbegin()).first;
 }
 
+QString ItemPropertyVec3F::textValue(const size_t _timeStep) const
+{
+    return value(_timeStep).toQString();
+}
+QString ItemPropertyVec3D::textValue(const size_t _timeStep) const
+{
+    return value(_timeStep).toQString();
+}
+QString ItemPropertyVec3L::textValue(const size_t _timeStep) const
+{
+    return value(_timeStep).toQString();
+}
+
 }  // namespace Props
 }  // namespace U1

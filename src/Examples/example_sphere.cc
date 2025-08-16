@@ -3,6 +3,10 @@
 #include "../Items/Sphere/itemsphere.h"
 #include "../Items/Items2D/item2dtext.h"
 
+// #include "../Items/Line/itemline.h"
+#include "../Items/BodyParts/Eye/itemeye.h"
+#include "../Items/BodyParts/Head/itemhead.h"
+
 namespace U1 {
 namespace Examples {
 
@@ -65,9 +69,7 @@ bool exampleSphere(const QString &_workDir, const QString &_img = "")
     static const float rot2 = 2.0 * M_PI;
 
     Footage *footage1 = project.addFootage("Footage 1");
-
     ScenarioAudioTTS *as = footage1->addAudio_espeak("TTS", _workDir + "espeak" + QDir::separator());
-
     as->addSpeechSUBS(500, "A sphere example. ", 1000);
 
     ItemSphere *obj1 = footage1->add3D(new ItemSphere());
@@ -112,6 +114,116 @@ bool exampleSphere(const QString &_workDir, const QString &_img = "")
     footage1->cameraPosition.addFromRotatedAccelerated(dur / 8UL, (7UL * dur) / 8UL, {}, {0, 0, 1}, rot2, 0.1, 0.1);
 
     footage1->minimalFootageDuration = dur;
+
+    return project.createVideo(_workDir + "Video" + QDir::separator(), _workDir + "video.avi");
+}
+
+bool exampleBodyEyeBall(const QString &_workDir)
+{
+    using namespace U1::Audio;
+    using namespace U1::Video;
+    using namespace U1::Items;
+    using namespace U1::Math;
+
+    static const size_t dur = 1000UL;
+    // static const float rot1 = 16.0 * M_PI;
+    static const float rot2 = 0.9 * M_PI_2;  // 2.0 * M_PI;
+
+    Project project("Eye example");
+
+    Footage *footage1 = project.addFootage("Footage 1");
+    // ScenarioAudioTTS *as = footage1->addAudio_espeak("TTS", _workDir + "espeak" + QDir::separator());
+    // as->addSpeechSUBS(500, "An eye ball example. ", 1000);
+
+    // footage1->add3D(new ItemCoordAxis());
+
+    ItemEye *obj1 = footage1->add3D(new ItemEye());
+
+    obj1->eyeBall.quality.initValue(31);
+    obj1->eyeBall.radius.initValue(0.4f);
+
+    obj1->eyeBall.materialPupil.initValue(Qt::magenta);
+
+    obj1->eyeBall.offsetPupil.addFromLinearValue(600, 900, 0.75f);
+
+    obj1->eyeBall.angleLidUp.addLinearValue(dur, M_PI);
+    obj1->eyeBall.angleLidBottom.addLinearValue(dur, M_PI);
+
+    footage1->cameraPosition.initValue({1, -0.3, 0.5});
+    footage1->cameraPosition.addFromRotatedAccelerated(300, 600, {}, {0, 0, 1}, rot2, 0.1, 0.1);
+
+    footage1->minimalFootageDuration = dur;
+
+    return project.createVideo(_workDir + "Video" + QDir::separator(), _workDir + "video.avi");
+}
+
+bool exampleBodyHead(const QString &_workDir)
+{
+    using namespace U1::Audio;
+    using namespace U1::Video;
+    using namespace U1::Items;
+    using namespace U1::Math;
+
+    static const size_t dur = 1000UL;
+    static const float rot1 = 2.0 * M_PI;
+    // static const float rot2 = 0.25 * M_PI_2;
+
+    Project project("Eye example");
+
+    Footage *footage1 = project.addFootage("Footage 1");
+    footage1->minimalFootageDuration = dur;
+
+    // ScenarioAudioTTS *as = footage1->addAudio_espeak("TTS", _workDir + "espeak" + QDir::separator());
+    // as->addSpeechSUBS(500, "An eye ball example. ", 1000);
+
+    // footage1->add3D(new ItemCoordAxis());
+    ItemHead *i1 = footage1->add3D(new ItemHead());
+    // i1->eyeRight.materialIris.initValue(Qt::red);
+    // i1->nose.material.initValue(Qt::magenta);
+    // i1->chin.material.initValue(Qt::blue);
+    // i1->forehead.material.initValue(Qt::darkMagenta);
+    // i1->eyeRight.materialEyeliner.initValue(Qt::yellow);
+    // i1->eyeLeft.materialEyeliner.initValue(Qt::yellow);
+    // i1->eyeRight.materialLid.initValue(Qt::red);
+    // i1->eyeLeft.materialLid.initValue(Qt::cyan);
+    // i1->nose.anglePosUp.addLinearValue(dur / 2, Math::toRad(30.0f));
+    // i1->nose.anglePosUp.addLinearValue(dur, Math::toRad(-30.0f));
+    // i1->nose.angleRotSide.addLinearValue(dur / 2, Math::toRad(30));
+    // i1->nose.angleRotSide.addLinearValue(dur, Math::toRad(-30));
+
+    // i1->eyeRight.angleSide.addLinearValue(dur, Math::toRad(20.0f));
+    // i1->eyeLeft.angleSide.addLinearValue(dur, Math::toRad(20.0f));
+
+    // i1->eyeRight.angleUp.addLinearValue(dur, Math::toRad(10.0f));
+    // i1->eyeLeft.angleUp.addLinearValue(dur, Math::toRad(10.0f));
+
+    i1->eyeRight.angleLid.addLinearValue(dur / 10UL, 0.0f);
+    i1->eyeLeft.angleLid.addLinearValue(dur / 10UL, 0.0f);
+
+    i1->eyeRight.angleLid.addLinearValue(dur / 5UL, i1->eyeRight.angleLid.getInitValue());
+    i1->eyeLeft.angleLid.addLinearValue(dur / 5UL, i1->eyeLeft.angleLid.getInitValue());
+
+    i1->mouth.pointRight.angleUp.addFromLinearValue((3UL * dur) / 10UL, (4UL * dur) / 10UL, Math::toRad(-5.0f));
+    i1->mouth.pointLeft.angleUp.addFromLinearValue((3UL * dur) / 10UL, (4UL * dur) / 10UL, Math::toRad(-5.0f));
+
+    i1->mouth.pointRight.angleUp.addLinearValue((5UL * dur) / 10UL, Math::toRad(3.0f));
+    i1->mouth.pointLeft.angleUp.addLinearValue((5UL * dur) / 10UL, Math::toRad(3.0f));
+
+    i1->mouth.pointRight.angleUp.addFromLinearValue((7UL * dur) / 10UL, (8UL * dur) / 10UL, Math::toRad(-3.0f));
+    i1->mouth.pointLeft.angleUp.addFromLinearValue((7UL * dur) / 10UL, (8UL * dur) / 10UL, Math::toRad(-3.0f));
+
+    i1->mouth.pointRight.angleUp.addFromLinearValue((9UL * dur) / 10UL, dur, Math::toRad(3.0f));
+    i1->mouth.pointLeft.angleUp.addFromLinearValue((9UL * dur) / 10UL, dur, Math::toRad(3.0f));
+
+    i1->mouth.pointDownCenter.angleUp.addFromLinearValue(
+        (7UL * dur) / 10UL, (8UL * dur) / 10UL, i1->mouth.pointDownCenter.angleUp.getInitValue() - Math::toRad(10.0f));
+    i1->mouth.pointDownCenter.angleUp.addFromLinearValue(
+        (9UL * dur) / 10UL, dur, i1->mouth.pointDownCenter.angleUp.getInitValue());
+
+    footage1->cameraPosition.initValue({2, -1, 0.5});
+    // footage1->cameraPosition.addLinearValue(dur, {3, -1, 0});
+    footage1->cameraPosition.addRotatedAccelerated(dur, {}, {0, 0, 1}, rot1, 0.1, 0.1);
+    // footage1->cameraPosition.addRotatedMovedAccelerated(dur, {}, {0, 0, 1}, rot1, -1, 0.1, 0.1);
 
     return project.createVideo(_workDir + "Video" + QDir::separator(), _workDir + "video.avi");
 }
