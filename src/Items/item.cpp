@@ -34,8 +34,8 @@ uint ItemDefaultValues::fontHeight = 24;
 
 Item::Item(const std::string &_name, const uint8_t _alpha, const bool _visible)
     : Props::ItemPropertyGroup(_name)
-    , alpha("alpha", _alpha)
-    , visible("visible", _visible)
+    , alpha(_name + ".alpha", _alpha)
+    , visible(_name + ".visible", _visible)
 {
     setupProperties({&alpha, &visible});
 }

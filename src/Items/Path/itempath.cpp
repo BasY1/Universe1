@@ -24,10 +24,10 @@ ItemPath::ItemPath(const std::vector<Math::OrientF> &_path,
     , path(_path)
     , pathCenter(Math::OrientF::centerPoint(path.data(), path.size(), Math::createPool(path.size())))
     , pathLength(Math::OrientF::pathLength(path.data(), path.size(), Math::createPool(path.size())))
-    , radius("radius", _radius, 0.0f, std::numeric_limits<float>::max())
-    , pattern("pattern", _pattern)
-    , quality("quality", _quality)
-    , material("material", _material)
+    , radius(_name + ".radius", _radius, 0.0f, std::numeric_limits<float>::max())
+    , pattern(_name + ".pattern", _pattern)
+    , quality(_name + ".quality", _quality)
+    , material(_name + ".material", _material)
 {
     addProperty(&radius);
     addProperty(&pattern);
@@ -46,9 +46,9 @@ ItemPathColor::ItemPathColor(const std::vector<std::pair<Math::OrientF, Math::Co
     , path(_path)
     , pathCenter(Math::OrientF::centerPoint(path.data(), path.size(), Math::createPool(path.size())))
     , pathLength(Math::OrientF::pathLength(path.data(), path.size(), Math::createPool(path.size())))
-    , radius("radius", _radius, 0.0f, std::numeric_limits<float>::max())
-    , pattern("pattern", _pattern)
-    , quality("quality", _quality)
+    , radius(_name + ".radius", _radius, 0.0f, std::numeric_limits<float>::max())
+    , pattern(_name + ".pattern", _pattern)
+    , quality(_name + ".quality", _quality)
 {
     addProperty(&radius);
     addProperty(&pattern);
@@ -300,7 +300,7 @@ void ItemPathColor::createPath(std::list<OpenGL::Data3D *> &_data,
 
         if (idxBeg == _path.size())
         {
-            std::cerr << " ItemPathColor::createDataImpl(): Invalid data begin!\n";
+            std::cerr << "Error: ItemPathColor::createDataImpl(): Invalid data begin!\n";
             return;
         }
 
@@ -313,7 +313,7 @@ void ItemPathColor::createPath(std::list<OpenGL::Data3D *> &_data,
         }
         if (idxEnd == _path.size())
         {
-            std::cerr << " ItemPathColor::createDataImpl(): Invalid data end!\n";
+            std::cerr << "Error: ItemPathColor::createDataImpl(): Invalid data end!\n";
             return;
         }
 
@@ -351,7 +351,7 @@ void ItemPathColor::createPath(std::list<OpenGL::Data3D *> &_data,
             Math::copyData<std::pair<Math::OrientF, Math::ColorRGB>, size_t>(
                 path2.data(), &_path.data()[idxBeg], cnt, Math::createPool(cnt));
 
-            path2[cnt].second = Math::ColorRGB::ratio(ratio, _path[ie].second, _path[idxEnd].second);
+            path2[cnt].second = Math::ColorRGB::ratioNice(ratio, _path[ie].second, _path[idxEnd].second);
 
             path2[cnt].first.center =
                 _path[ie].first.center + ratio * (_path[idxEnd].first.center - _path[ie].first.center);
@@ -387,7 +387,7 @@ void ItemPathColor::createPath(std::list<OpenGL::Data3D *> &_data,
             Math::copyData<std::pair<Math::OrientF, Math::ColorRGB>, size_t>(
                 &path2.data()[1UL], &_path.data()[idxBeg], cnt, Math::createPool(cnt));
 
-            path2[0UL].second = Math::ColorRGB::ratio(ratio, _path[ib].second, _path[idxBeg].second);
+            path2[0UL].second = Math::ColorRGB::ratioNice(ratio, _path[ib].second, _path[idxBeg].second);
             path2[0UL].first.center =
                 _path[ib].first.center + ratio * (_path[idxBeg].first.center - _path[ib].first.center);
             path2[0UL].first.normal1 =
@@ -427,7 +427,7 @@ void ItemPathColor::createPath(std::list<OpenGL::Data3D *> &_data,
         Math::copyData<std::pair<Math::OrientF, Math::ColorRGB>, size_t>(
             &path2.data()[1UL], &_path.data()[idxBeg], cnt, Math::createPool(cnt));
 
-        path2[0UL].second = Math::ColorRGB::ratio(ratioBeg, _path[ib].second, _path[idxBeg].second);
+        path2[0UL].second = Math::ColorRGB::ratioNice(ratioBeg, _path[ib].second, _path[idxBeg].second);
         path2[0UL].first.center =
             _path[ib].first.center + ratioBeg * (_path[idxBeg].first.center - _path[ib].first.center);
         path2[0UL].first.normal1 =
@@ -437,7 +437,7 @@ void ItemPathColor::createPath(std::list<OpenGL::Data3D *> &_data,
         Math::Vec3F::makePerpendicularNormals(path2[0UL].first.normal1, path2[0UL].first.normal2);
         path2[0UL].first.normal3 = Math::Vec3F::cross(path2[0UL].first.normal1, path2[0UL].first.normal2).normalized();
 
-        path2[last].second = Math::ColorRGB::ratio(ratioEnd, _path[ie].second, _path[idxEnd].second);
+        path2[last].second = Math::ColorRGB::ratioNice(ratioEnd, _path[ie].second, _path[idxEnd].second);
         path2[last].first.center =
             _path[ie].first.center + ratioEnd * (_path[idxEnd].first.center - _path[ie].first.center);
         path2[last].first.normal1 =

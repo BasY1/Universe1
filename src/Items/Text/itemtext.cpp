@@ -33,14 +33,14 @@ ItemText::ItemText(const std::string &_name,
                    const uint8_t _alpha,
                    const bool _visible)
     : Item3DExt(_name, _center, _normal, _arm, _alpha, _visible)
-    , text("text", _text)
-    , color("color", _color)
-    , fontFamily("fontFamily", _fontFamily)
-    , fontHeight("fontHeight", _fontHeight)
-    , borderOffset("borderOffset", _borderOffset)
-    , pixelSize("pixelSize", _pixelSize, 0, std::numeric_limits<float>::max())
-    , textAlign("textAlign", QMetaEnum::fromType<Math::AlignType>(), _textAlign)
-    , visibleFrom("visibleFrom", QMetaEnum::fromType<Text::TextVisibleType>(), _visibleFrom)
+    , text(_name + ".text", _text)
+    , color(_name + ".color", _color)
+    , fontFamily(_name + ".fontFamily", _fontFamily)
+    , fontHeight(_name + ".fontHeight", _fontHeight)
+    , borderOffset(_name + ".borderOffset", _borderOffset)
+    , pixelSize(_name + ".pixelSize", _pixelSize, 0, std::numeric_limits<float>::max())
+    , textAlign(_name + ".textAlign", QMetaEnum::fromType<Math::AlignType>(), _textAlign)
+    , visibleFrom(_name + ".visibleFrom", QMetaEnum::fromType<Text::TextVisibleType>(), _visibleFrom)
 {
     addProperty(&text);
     addProperty(&color);
@@ -65,15 +65,15 @@ ItemTextCamera::ItemTextCamera(const std::string &_name,
                                const uint8_t _alpha,
                                const bool _visible)
     : Item3D(_name, _alpha, _visible)
-    , center("center", _center)
-    , spin("spin", _spin)
-    , text("text", _text)
-    , color("color", _color)
-    , fontFamily("fontFamily", _fontFamily)
-    , fontHeight("fontHeight", _fontHeight)
-    , borderOffset("borderOffset", _borderOffset)
-    , pixelSize("pixelSize", _pixelSize, 0, std::numeric_limits<float>::max())
-    , textAlign("textAlign", QMetaEnum::fromType<Math::AlignType>(), _textAlign)
+    , center(_name + ".center", _center)
+    , spin(_name + ".spin", _spin)
+    , text(_name + ".text", _text)
+    , color(_name + ".color", _color)
+    , fontFamily(_name + ".fontFamily", _fontFamily)
+    , fontHeight(_name + ".fontHeight", _fontHeight)
+    , borderOffset(_name + ".borderOffset", _borderOffset)
+    , pixelSize(_name + ".pixelSize", _pixelSize, 0, std::numeric_limits<float>::max())
+    , textAlign(_name + ".textAlign", QMetaEnum::fromType<Math::AlignType>(), _textAlign)
 {
     addProperty(&center);
     addProperty(&spin);

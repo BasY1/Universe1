@@ -672,5 +672,263 @@ Data3DMaterialsNormalAlpha *Data3DMaterialsNormalAlpha::cylinderArcInn(const Mat
     return result;
 }
 
+Data3DMaterialsNormalAlpha *
+Data3DMaterialsNormalAlpha::path(const std::vector<std::pair<Math::OrientF, Math::MaterialRGBA>> &_path,
+                                 const float _radius,
+                                 const size_t _quality,
+                                 const bool _inverted)
+{
+    if (_path.size() < 2UL)
+    {
+        std::cerr << "Error Data3DMaterialsNormalAlpha::path(" << _path.size() << ") short path, need 2 points!\n";
+        return nullptr;
+    }
+
+    const std::vector<Math::Vec2F> &cp = Math::Circle2F::unitCircle(_quality).first;
+    const size_t C = cp.size();
+    const size_t CO = C + 1UL;
+    const size_t PO = _path.size() - 1UL;
+    const size_t N = CO * _path.size();
+    const size_t I = C * PO * 4UL;
+    std::vector<std::pair<size_t, size_t>> pool = Math::createPool(N);
+
+    Math::Vec3F min = Math::Vec3F::maximumValue();
+    Math::Vec3F max = Math::Vec3F::lowestValue();
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t3 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t4 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t5 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    float *t6 = reinterpret_cast<float *>(std::malloc(N * sizeof(float)));
+    float *t7 = reinterpret_cast<float *>(std::malloc(N * sizeof(float)));
+
+    if (pool.empty())
+    {
+        for (size_t p = 0UL; p < _path.size(); ++p)
+        {
+            const Math::OrientF &o = _path[p].first;
+            const Math::Vec3F c3 = _path[p].second.ambient.toVec3F();
+            const Math::Vec3F c4 = _path[p].second.diffuse.toVec3F();
+            const Math::Vec3F c5 = _path[p].second.specular.toVec3F();
+            const float c6 = _path[p].second.shine;
+            const float c7 = float(_path[p].second.alpha) / 255.0f;
+            for (size_t c = 0UL; c < CO; ++c)
+            {
+                const Math::Vec2F &p2 = (c == C) ? cp[0] : cp[c];
+                const Math::Vec3F nn = (o.normal2 * p2.x + o.normal3 * p2.y).normalized();
+                const Math::Vec3F pp = o.center + nn * _radius;
+                const uint ji = p * CO + c;
+                t1[ji] = pp;
+                t2[ji] = nn;
+                t3[ji] = c3;
+                t4[ji] = c4;
+                t5[ji] = c5;
+                t6[ji] = c6;
+                t7[ji] = c7;
+                pp.updateRange(min, max);
+            }
+        }
+    }
+    else
+    {
+        uint tt = 0U;
+        std::vector<std::pair<Math::Vec3F, Math::Vec3F>> tData(pool.size(), {min, max});
+        std::vector<std::thread> threads;
+        threads.reserve(pool.size());
+
+        for (const std::pair<size_t, size_t> &t : std::as_const(pool))
+            threads.push_back(std::thread(
+                [t, C, CO, _radius](std::pair<Math::Vec3F, Math::Vec3F> &_outRange,
+                                    Math::Vec3F *_t1,
+                                    Math::Vec3F *_t2,
+                                    Math::Vec3F *_t3,
+                                    Math::Vec3F *_t4,
+                                    Math::Vec3F *_t5,
+                                    float *_t6,
+                                    float *_t7,
+                                    const std::pair<Math::OrientF, Math::MaterialRGBA> *__path,
+                                    const Math::Vec2F *_cp) {
+                    const size_t end = t.first + t.second;
+                    for (size_t i = t.first; i < end; ++i)
+                    {
+                        const size_t p = i / CO;
+                        const size_t c = i % CO;
+                        const Math::OrientF &o = __path[p].first;
+                        const Math::Vec2F &p2 = (c == C) ? _cp[0] : _cp[c];
+                        const Math::Vec3F nn = (o.normal2 * p2.x + o.normal3 * p2.y).normalized();
+                        const Math::Vec3F pp = o.center + nn * _radius;
+                        const uint ji = p * CO + c;
+
+                        _t1[ji] = pp;
+                        _t2[ji] = nn;
+                        _t3[ji] = __path[p].second.ambient.toVec3F();
+                        _t4[ji] = __path[p].second.diffuse.toVec3F();
+                        _t5[ji] = __path[p].second.specular.toVec3F();
+                        _t6[ji] = __path[p].second.shine;
+                        _t7[ji] = float(__path[p].second.alpha) / 255.0f;
+
+                        pp.updateRange(_outRange.first, _outRange.second);
+                    }
+                },
+                std::ref(tData[tt++]),
+                t1,
+                t2,
+                t3,
+                t4,
+                t5,
+                t6,
+                t7,
+                _path.data(),
+                cp.data()));
+
+        for (std::thread &t : threads)
+            t.join();
+
+        for (std::pair<Math::Vec3F, Math::Vec3F> &t : tData)
+            Math::Vec3F::updateRange(min, max, t);
+    }
+
+    const std::vector<uint> &uc = _inverted ? Math::PlaneIndices::getQuadIndexesInverted(_path.size(), CO).first
+                                            : Math::PlaneIndices::getQuadIndexes(_path.size(), CO).first;
+
+    Data3DMaterialsNormalAlpha *result =
+        new Data3DMaterialsNormalAlpha(GL_QUADS, N, I, t1, t2, t3, t4, t5, t6, t7, uc.data());
+
+    result->setCentralPoint((min + max) * 0.5f);
+    std::free(t1);
+    std::free(t2);
+    std::free(t3);
+    std::free(t4);
+    std::free(t5);
+    std::free(t6);
+    std::free(t7);
+
+    return result;
+}
+
+Data3DMaterialsNormalAlpha *
+Data3DMaterialsNormalAlpha::path(const std::vector<std::pair<Math::OrientF, Math::MaterialRGBA>> &_path,
+                                 const Math::Vec3F &_centerPoint,
+                                 const float _radius,
+                                 const size_t _quality,
+                                 const bool _inverted)
+{
+    if (_path.size() < 2UL)
+    {
+        std::cerr << "Error Data3DMaterialsNormalAlpha::path(" << _path.size() << ") short path, need 2 points!\n";
+        return nullptr;
+    }
+
+    const std::vector<Math::Vec2F> &cp = Math::Circle2F::unitCircle(_quality).first;
+    const size_t C = cp.size();
+    const size_t CO = C + 1UL;
+    const size_t PO = _path.size() - 1UL;
+    const size_t N = CO * _path.size();
+    const size_t I = C * PO * 4UL;
+    std::vector<std::pair<size_t, size_t>> pool = Math::createPool(N);
+
+    Math::Vec3F *t1 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t2 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t3 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t4 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    Math::Vec3F *t5 = reinterpret_cast<Math::Vec3F *>(std::malloc(N * sizeof(Math::Vec3F)));
+    float *t6 = reinterpret_cast<float *>(std::malloc(N * sizeof(float)));
+    float *t7 = reinterpret_cast<float *>(std::malloc(N * sizeof(float)));
+
+    if (pool.empty())
+    {
+        for (size_t p = 0UL; p < _path.size(); ++p)
+        {
+            const Math::OrientF &o = _path[p].first;
+            const Math::Vec3F c3 = _path[p].second.ambient.toVec3F();
+            const Math::Vec3F c4 = _path[p].second.diffuse.toVec3F();
+            const Math::Vec3F c5 = _path[p].second.specular.toVec3F();
+            const float c6 = _path[p].second.shine;
+            const float c7 = float(_path[p].second.alpha) / 255.0f;
+            for (size_t c = 0UL; c < CO; ++c)
+            {
+                const Math::Vec2F &p2 = (c == C) ? cp[0] : cp[c];
+                const Math::Vec3F nn = (o.normal2 * p2.x + o.normal3 * p2.y).normalized();
+                const Math::Vec3F pp = o.center + nn * _radius;
+                const uint ji = p * CO + c;
+                t1[ji] = pp;
+                t2[ji] = nn;
+                t3[ji] = c3;
+                t4[ji] = c4;
+                t5[ji] = c5;
+                t6[ji] = c6;
+                t7[ji] = c7;
+            }
+        }
+    }
+    else
+    {
+        std::vector<std::thread> threads;
+        threads.reserve(pool.size());
+
+        for (const std::pair<size_t, size_t> &t : std::as_const(pool))
+            threads.push_back(std::thread(
+                [t, C, CO, _radius](Math::Vec3F *_t1,
+                                    Math::Vec3F *_t2,
+                                    Math::Vec3F *_t3,
+                                    Math::Vec3F *_t4,
+                                    Math::Vec3F *_t5,
+                                    float *_t6,
+                                    float *_t7,
+                                    const std::pair<Math::OrientF, Math::MaterialRGBA> *__path,
+                                    const Math::Vec2F *_cp) {
+                    const size_t end = t.first + t.second;
+                    for (size_t i = t.first; i < end; ++i)
+                    {
+                        const size_t p = i / CO;
+                        const size_t c = i % CO;
+                        const Math::OrientF &o = __path[p].first;
+                        const Math::Vec2F &p2 = (c == C) ? _cp[0] : _cp[c];
+                        const Math::Vec3F nn = (o.normal2 * p2.x + o.normal3 * p2.y).normalized();
+                        const Math::Vec3F pp = o.center + nn * _radius;
+                        const uint ji = p * CO + c;
+
+                        _t1[ji] = pp;
+                        _t2[ji] = nn;
+                        _t3[ji] = __path[p].second.ambient.toVec3F();
+                        _t4[ji] = __path[p].second.diffuse.toVec3F();
+                        _t5[ji] = __path[p].second.specular.toVec3F();
+                        _t6[ji] = __path[p].second.shine;
+                        _t7[ji] = float(__path[p].second.alpha) / 255.0f;
+                    }
+                },
+                t1,
+                t2,
+                t3,
+                t4,
+                t5,
+                t6,
+                t7,
+                _path.data(),
+                cp.data()));
+
+        for (std::thread &t : threads)
+            t.join();
+    }
+
+    const std::vector<uint> &uc = _inverted ? Math::PlaneIndices::getQuadIndexesInverted(_path.size(), CO).first
+                                            : Math::PlaneIndices::getQuadIndexes(_path.size(), CO).first;
+
+    Data3DMaterialsNormalAlpha *result =
+        new Data3DMaterialsNormalAlpha(GL_QUADS, N, I, t1, t2, t3, t4, t5, t6, t7, uc.data());
+
+    result->setCentralPoint(_centerPoint);
+
+    std::free(t1);
+    std::free(t2);
+    std::free(t3);
+    std::free(t4);
+    std::free(t5);
+    std::free(t6);
+    std::free(t7);
+
+    return result;
+}
+
 }  // namespace OpenGL
 }  // namespace U1

@@ -20,9 +20,19 @@ struct Vec3;
 /*! \brief The red-green-blue color structure with 8bit components */
 struct ColorRGB
 {
-    uint8_t red = 0U;    //!< Red component
-    uint8_t green = 0U;  //!< Green component
-    uint8_t blue = 0U;   //!< Blue component
+    /*! \brief The anonymous union, for indexed component access or access by component name */
+    union
+    {
+        uint8_t m_data[3];  //!< Union array representation, access color component by axis index
+
+        /*! \brief The anonymous structure, access color component by name */
+        struct
+        {
+            uint8_t red = 0U;    //!< Red component
+            uint8_t green = 0U;  //!< Green component
+            uint8_t blue = 0U;   //!< Blue component
+        };
+    };
 
     ColorRGB() = default;  //!< Default constructor
 
@@ -172,8 +182,84 @@ struct ColorRGB
         return ColorRGB(tmp, 0U, 255U);
     }
 
+    /*!
+     * \brief Create a ratio color in between given colors - average value using 3D vectors
+     * \tparam T Template floating point type
+     * \param _ratio Ratio factor
+     * \param _colorMin Color 1
+     * \param _colorMax Color 2
+     * \return Ratio color
+     */
     template <typename T>
-    static ColorRGB ratio(const T _ratio, const ColorRGB &_colorMin, const ColorRGB &_colorMax);
+    static ColorRGB ratioAvg(const T _ratio, const ColorRGB &_colorMin, const ColorRGB &_colorMax);
+
+    /*!
+     * \brief Create a ratio color in between given colors - nce
+     * \tparam T Template floating point type
+     * \param _ratio Ratio factor
+     * \param _colorMin Color 1
+     * \param _colorMax Color 2
+     * \return Ratio color
+     */
+    template <typename T>
+    static ColorRGB ratioNice(const T _ratio, const ColorRGB &_colorMin, const ColorRGB &_colorMax)
+    {
+        struct ColorComponent
+        {
+            uint8_t idx;
+            int step;
+            int absStep;
+            inline ColorComponent(const uint8_t _idx, const int _step)
+                : idx(_idx)
+                , step(_step)
+                , absStep(std::abs(_step))
+            {
+            }
+        };
+        std::vector<ColorComponent> colors;
+        colors.reserve(3);
+        colors.push_back({0U, int(_colorMax.red) - int(_colorMin.red)});
+        colors.push_back({1U, int(_colorMax.green) - int(_colorMin.green)});
+        colors.push_back({2U, int(_colorMax.blue) - int(_colorMin.blue)});
+
+        std::sort(colors.begin(), colors.end(), [](const ColorComponent &_1, const ColorComponent &_2) {
+            return _1.absStep > _2.absStep;
+        });
+
+        const int16_t max = colors[0].absStep + colors[1].absStep + colors[2].absStep;
+        if (max == 0)
+            return _colorMin;
+
+        ColorRGB result = _colorMin;
+        int val = int(T(max) * alignedTo0_1<T>(_ratio));
+
+        if (val <= colors[0].absStep)
+        {
+            result.m_data[colors[0].idx] += (colors[0].step < 0 ? -val : val);
+            return result;
+        }
+
+        result.m_data[colors[0].idx] = _colorMax.m_data[colors[0].idx];
+        val -= colors[0].absStep;
+
+        if (val <= colors[1].absStep)
+        {
+            result.m_data[colors[1].idx] += (colors[1].step < 0 ? -val : val);
+            return result;
+        }
+
+        result.m_data[colors[1].idx] = _colorMax.m_data[colors[1].idx];
+        val -= colors[1].absStep;
+
+        if (val <= colors[2].absStep)
+        {
+            result.m_data[colors[2].idx] += (colors[2].step < 0 ? -val : val);
+            return result;
+        }
+
+        result.m_data[colors[2].idx] = _colorMax.m_data[colors[2].idx];
+        return result;
+    }
 };
 
 /*!

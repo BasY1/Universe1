@@ -22,12 +22,12 @@ Item2DText::Item2DText(const std::string &_name,
                        const uint8_t _alpha,
                        const bool _visible)
     : Item2D(_name, _visible, _alpha)
-    , text("text", _text)
-    , fontFamily("fontFamily", _fontFamily)
-    , fontHeight("fontHeight", _fontHeight)
-    , fontColor("fontColor", _fontColor)
-    , screenPosition("screenPosition", QMetaEnum::fromType<Math::AlignType>(), _screenPosition)
-    , screenOffset("screenOffset", _screenOffset)
+    , text(_name + ".text", _text)
+    , fontFamily(_name + ".fontFamily", _fontFamily)
+    , fontHeight(_name + ".fontHeight", _fontHeight)
+    , fontColor(_name + ".fontColor", _fontColor)
+    , screenPosition(_name + ".screenPosition", QMetaEnum::fromType<Math::AlignType>(), _screenPosition)
+    , screenOffset(_name + ".screenOffset", _screenOffset)
 {
     setupProperties({&text, &fontFamily, &fontHeight, &screenPosition, &screenOffset, &fontColor, &alpha, &visible});
 }

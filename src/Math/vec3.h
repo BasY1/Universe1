@@ -1902,11 +1902,11 @@ inline ColorRGB Vec3<T>::toColor() const
  * \return Ratio color
  */
 template <typename T>
-ColorRGB ColorRGB::ratio(const T _ratio, const ColorRGB &_colorMin, const ColorRGB &_colorMax)
+ColorRGB ColorRGB::ratioAvg(const T _ratio, const ColorRGB &_colorMin, const ColorRGB &_colorMax)
 {
     const Vec3<T> min = _colorMin.toVec3<T>();
     const Vec3<T> max = _colorMax.toVec3<T>();
-    return fromVec3<T>(min + _ratio * (max - min));
+    return fromVec3<T>(min + alignedTo0_1<T>(_ratio) * (max - min));
 }
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

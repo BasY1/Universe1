@@ -122,9 +122,9 @@ class Item3DExt : public Item3D
                      const uint8_t _alpha = 255U,
                      const bool _visible = true)
         : Item3D(_name, _alpha, _visible)
-        , center("center", _center)
-        , normal("normal", true, _normal.normalized())
-        , arm("arm", true, _arm.normalized())
+        , center(_name + ".center", _center)
+        , normal(_name + ".normal", true, _normal.normalized())
+        , arm(_name + ".arm", true, _arm.normalized())
     {
         addProperty(&center);
         addProperty(&normal);

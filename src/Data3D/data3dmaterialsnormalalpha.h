@@ -486,6 +486,34 @@ class Data3DMaterialsNormalAlpha : public Data3D
                               {_material2, _alpha2},
                               _offsetAngle);
     }
+
+    /*!
+     * \brief Create path 3D data
+     * \param _path Path points
+     * \param _radius Path radius
+     * \param _quality Path quality
+     * \param _inverted Inverted indexes flag
+     * \return 3D path object
+     */
+    static Data3DMaterialsNormalAlpha *path(const std::vector<std::pair<Math::OrientF, Math::MaterialRGBA>> &_path,
+                                            const float _radius,
+                                            const size_t _quality,
+                                            const bool _inverted = false);
+
+    /*!
+     * \brief Create path 3D data
+     * \param _path Path points
+     * \param _centerPoint Calculated central point
+     * \param _radius Path radius
+     * \param _quality Path quality
+     * \param _inverted Inverted indexes flag
+     * \return 3D path object
+     */
+    static Data3DMaterialsNormalAlpha *path(const std::vector<std::pair<Math::OrientF, Math::MaterialRGBA>> &_path,
+                                            const Math::Vec3F &_centerPoint,
+                                            const float _radius,
+                                            const size_t _quality,
+                                            const bool _inverted = false);
 };
 
 }  // namespace OpenGL

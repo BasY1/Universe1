@@ -60,7 +60,7 @@ ItemHead::ItemHead(const std::string &_name,
                    const uint8_t _alpha,
                    const bool _visible)
     : Item3DExt(_name, _center, _normal, _upDir, _alpha, _visible)
-    , quality("quality", _quality)
+    , quality(_name + ".quality", _quality)
     , shape(_name, _radius, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, _material)
     , eyeRight(true,
                _name + ".eyeRight",

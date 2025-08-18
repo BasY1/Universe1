@@ -2,6 +2,7 @@
 
 #include "../Items/Path/itempath.h"
 #include "../Items/Path/itempathspiral.h"
+#include "../Items/Path/itempathbezier.h"
 #include "../Items/Items2D/item2dtext.h"
 
 namespace U1 {
@@ -186,6 +187,35 @@ bool examplePathSpiral(const QString &_workDir)
 
     footage1->cameraPosition.initValue({-3, -1, 1});
     footage1->cameraPosition.addFromRotatedAccelerated(dur / 8UL, (7UL * dur) / 8UL, {}, {0, 0, 1}, rot2, 0.1, 0.1);
+
+    return project.createVideo(_workDir + "Video" + QDir::separator(), _workDir + "video.avi");
+}
+
+/*!
+ * \brief Spiral path item example
+ * \param _workDir Working directory
+ * \return Success flag
+ */
+bool examplePathBezier(const QString &_workDir)
+{
+    using namespace U1::Audio;
+    using namespace U1::Video;
+    using namespace U1::Items;
+    using namespace U1::Math;
+
+    Project project("Bezier path example");
+
+    static const size_t dur = 1000UL;
+    static const float rot = 2.0 * M_PI;
+
+    Footage *footage1 = project.addFootage("Footage 1");
+    footage1->minimalFootageDuration = dur;
+
+    ItemPathBezier *obj1 = footage1->add3D(new ItemPathBezier());
+    obj1->weight1.addLinearValue(dur, 0.5);
+
+    footage1->cameraPosition.initValue({3, -1, 1});
+    // footage1->cameraPosition.addRotatedAccelerated(dur, {}, {0, 0, 1}, rot, 0.1, 0.1);
 
     return project.createVideo(_workDir + "Video" + QDir::separator(), _workDir + "video.avi");
 }

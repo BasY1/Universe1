@@ -51,16 +51,16 @@ class ItemGroupHand : public ItemPropertyGroup
      */
     inline ItemGroupHand(const std::string &_name, const Data &_data)
         : ItemPropertyGroup(_name)
-        , rightHand("rightHand", _data.rightHand)
-        , size("size", _data.size, 0.0f, std::numeric_limits<float>::max())
-        , openFingerThumb("openFingerThumb", _data.openFingerThumb, 0.0f, 1.0f)
-        , openFingerIndex("openFingerIndex", _data.openFingerIndex, 0.0f, 1.0f)
-        , openFingerMiddle("openFingerMiddle", _data.openFingerMiddle, 0.0f, 1.0f)
-        , openFingerRing("openFingerRing", _data.openFingerRing, 0.0f, 1.0f)
-        , openFingerLittle("openFingerLittle", _data.openFingerLittle, 0.0f, 1.0f)
-        , quality("quality", _data.quality)
-        , materialBody("materialBody", _data.materialBody)
-        , materialKnuckle("materialKnuckle", _data.materialKnuckle)
+        , rightHand(_name + ".rightHand", _data.rightHand)
+        , size(_name + ".size", _data.size, 0.0f, std::numeric_limits<float>::max())
+        , openFingerThumb(_name + ".openFingerThumb", _data.openFingerThumb, 0.0f, 1.0f)
+        , openFingerIndex(_name + ".openFingerIndex", _data.openFingerIndex, 0.0f, 1.0f)
+        , openFingerMiddle(_name + ".openFingerMiddle", _data.openFingerMiddle, 0.0f, 1.0f)
+        , openFingerRing(_name + ".openFingerRing", _data.openFingerRing, 0.0f, 1.0f)
+        , openFingerLittle(_name + ".openFingerLittle", _data.openFingerLittle, 0.0f, 1.0f)
+        , quality(_name + ".quality", _data.quality)
+        , materialBody(_name + ".materialBody", _data.materialBody)
+        , materialKnuckle(_name + ".materialKnuckle", _data.materialKnuckle)
     {
         setupProperties({&rightHand,
                          &size,
@@ -100,16 +100,16 @@ class ItemGroupHand : public ItemPropertyGroup
                          const Math::MaterialRGB &_materialBody = {Qt::white},
                          const Math::MaterialRGB &_materialKnuckle = {Qt::red})
         : ItemPropertyGroup(_name)
-        , rightHand("rightHand", _rightHand)
-        , size("size", _size, 0.0f, std::numeric_limits<float>::max())
-        , openFingerThumb("openFingerThumb", _openFingerThumb, 0.0f, 1.0f)
-        , openFingerIndex("openFingerIndex", _openFingerIndex, 0.0f, 1.0f)
-        , openFingerMiddle("openFingerMiddle", _openFingerMiddle, 0.0f, 1.0f)
-        , openFingerRing("openFingerRing", _openFingerRing, 0.0f, 1.0f)
-        , openFingerLittle("openFingerLittle", _openFingerLittle, 0.0f, 1.0f)
-        , quality("quality", _quality)
-        , materialBody("materialBody", _materialBody)
-        , materialKnuckle("materialKnuckle", _materialKnuckle)
+        , rightHand(_name + ".rightHand", _rightHand)
+        , size(_name + ".size", _size, 0.0f, std::numeric_limits<float>::max())
+        , openFingerThumb(_name + ".openFingerThumb", _openFingerThumb, 0.0f, 1.0f)
+        , openFingerIndex(_name + ".openFingerIndex", _openFingerIndex, 0.0f, 1.0f)
+        , openFingerMiddle(_name + ".openFingerMiddle", _openFingerMiddle, 0.0f, 1.0f)
+        , openFingerRing(_name + ".openFingerRing", _openFingerRing, 0.0f, 1.0f)
+        , openFingerLittle(_name + ".openFingerLittle", _openFingerLittle, 0.0f, 1.0f)
+        , quality(_name + ".quality", _quality)
+        , materialBody(_name + ".materialBody", _materialBody)
+        , materialKnuckle(_name + ".materialKnuckle", _materialKnuckle)
     {
         setupProperties({&rightHand,
                          &size,

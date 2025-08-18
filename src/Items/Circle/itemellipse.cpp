@@ -29,16 +29,16 @@ ItemEllipse::ItemEllipse(const std::string &_name,
                          const uint8_t _alpha,
                          const bool _visible)
     : Item3DExt(_name, _center, _normal, _arm, _alpha, _visible)
-    , radius1("radius1", _radius1, 0.0f, std::numeric_limits<float>::max())
-    , radius2("radius2", _radius2, 0.0f, std::numeric_limits<float>::max())
-    , quality("quality", _quality)
-    , show("show", QMetaEnum::fromType<Ellipse::ShowEllipseType>(), _show)
-    , materialFront("materialFront", _materialFront)
-    , materialBack("materialBack", _materialBack)
-    , materialCenterFront("materialCenterFront", _materialCenterFront)
-    , materialBorderFront("materialBorderFront", _materialBorderFront)
-    , materialCenterBack("materialCenterBack ", _materialCenterBack)
-    , materialBorderBack("materialBorderBack ", _materialBorderBack)
+    , radius1(_name + ".radius1", _radius1, 0.0f, std::numeric_limits<float>::max())
+    , radius2(_name + ".radius2", _radius2, 0.0f, std::numeric_limits<float>::max())
+    , quality(_name + ".quality", _quality)
+    , show(_name + ".show", QMetaEnum::fromType<Ellipse::ShowEllipseType>(), _show)
+    , materialFront(_name + ".materialFront", _materialFront)
+    , materialBack(_name + ".materialBack", _materialBack)
+    , materialCenterFront(_name + ".materialCenterFront", _materialCenterFront)
+    , materialBorderFront(_name + ".materialBorderFront", _materialBorderFront)
+    , materialCenterBack(_name + ".materialCenterBack ", _materialCenterBack)
+    , materialBorderBack(_name + ".materialBorderBack ", _materialBorderBack)
 {
     addProperty(&radius1);
     addProperty(&radius2);
@@ -127,14 +127,14 @@ ItemEllipseCamera::ItemEllipseCamera(const std::string &_name,
                                      const uint8_t _alpha,
                                      const bool _visible)
     : Item3D(_name, _alpha, _visible)
-    , center("center", _center)
-    , radius1("radius1", _radius1, 0.0f, std::numeric_limits<float>::max())
-    , radius2("radius2", _radius2, 0.0f, std::numeric_limits<float>::max())
-    , quality("quality", _quality)
-    , show("show", QMetaEnum::fromType<Ellipse::ShowEllipseCameraType>(), _show)
-    , material("material", _material)
-    , materialCenter("materialCenter", _materialCenter)
-    , materialBorder("materialBorder", _materialBorder)
+    , center(_name + ".center", _center)
+    , radius1(_name + ".radius1", _radius1, 0.0f, std::numeric_limits<float>::max())
+    , radius2(_name + ".radius2", _radius2, 0.0f, std::numeric_limits<float>::max())
+    , quality(_name + ".quality", _quality)
+    , show(_name + ".show", QMetaEnum::fromType<Ellipse::ShowEllipseCameraType>(), _show)
+    , material(_name + ".material", _material)
+    , materialCenter(_name + ".materialCenter", _materialCenter)
+    , materialBorder(_name + ".materialBorder", _materialBorder)
 {
     addProperty(&center);
     addProperty(&radius1);

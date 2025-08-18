@@ -24,7 +24,7 @@
 #include "Examples/example_simulation_newton.cc"
 #endif
 
-#include "Math/physicsuniverse1.h"
+// #include "Math/physicsuniverse1.h"
 
 /*!
  * \brief The \b main procedure
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
     static const QString workDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) +
         QDir::separator() + "U1" + QDir::separator();
 
-    if (U1::Examples::exampleBodyHead(workDir))
+    if (U1::Examples::examplePathBezier(workDir))
     {
         U1::Audio::SettingsAudio::runProcess("/usr/bin/vlc", {"--loop", workDir + "video.avi"});
         return EXIT_SUCCESS;
