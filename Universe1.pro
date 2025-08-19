@@ -218,6 +218,12 @@ SOURCES += src/Items/Path/itempath.cpp
 HEADERS += src/Items/Path/itempathspiral.h
 SOURCES += src/Items/Path/itempathspiral.cpp
 
+HEADERS += src/Items/Path/itempathspiralarc.h
+SOURCES += src/Items/Path/itempathspiralarc.cpp
+
+HEADERS += src/Items/Path/itempathbezier.h
+SOURCES += src/Items/Path/itempathbezier.cpp
+
 HEADERS += src/Items/Clock/itemclock.h
 SOURCES += src/Items/Clock/itemclock.cpp
 
