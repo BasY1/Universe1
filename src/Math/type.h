@@ -430,6 +430,32 @@ inline bool isBetween(const T _value, const T _minimum, const T _maximum)
 }
 
 /*!
+ * \brief Test if floating point value is within the range (0 to PI/2)
+ * \tparam T Template floating point type
+ * \param _value Value to check
+ * \return \c true if \a _value is in range (0 to PI/2)
+ * \note Return \c false when given \a _value equals 0 or PI/2
+ */
+template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
+inline bool isBetween0_PI2(const T _value)
+{
+    return isBetween0_PI2(_value, T(0), T(M_PI_2));
+}
+
+/*!
+ * \brief Test if floating point value is within the range (0 to 1)
+ * \tparam T Template floating point type
+ * \param _value Value to check
+ * \return \c true if \a _value is in range (0 to 1)
+ * \note Return \c false when given \a _value equals 0 or 1
+ */
+template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
+inline bool isBetween0_1(const T _value)
+{
+    return isBetween0_PI2(_value, T(0), T(1));
+}
+
+/*!
  * \brief Test if floating point value is within range
  * \tparam T Template floating point type
  * \param _value Value to check
