@@ -26,8 +26,8 @@
 
 // #include "Math/physicsuniverse1.h"
 
-template <typename T>
-void showFermionWeight();
+// template <typename T>
+// void showFermionWeight();
 
 /*!
  * \brief The \b main procedure
@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
     return RUN_ALL_TESTS();
 #else
 
-    showFermionWeight<long double>();
+    // showFermionWeight<long double>();
 
     // U1::Math::U1SimD sd;
     // sd.build(0, {}, 1, 1);
@@ -69,6 +69,7 @@ int main(int argc, char *argv[])
 #endif
 }
 
+/*
 template <typename T>
 inline T energyPhoton(const T _angleBoson)
 {
@@ -137,9 +138,9 @@ inline void showFermionWeight()
     // const T cd = std::cos(toRad(T(41.237)));
     // const T cd = (std::sqrt(T(3)) * T(0.5));
 
-    // const T xe = (/*(ce * ce * ce) + */ (ce * ce * ce)) * (ce * ce * ce);
-    // const T xu = (/*(cu * cu * cu) + */ (cu * cu * cu)) * (cu * cu);
-    // const T xd = (/*(cd * cd * cd) + */ (cd * cd * cd)) * (cd);
+    // const T xe = (ce * ce * ce) * (ce * ce * ce);
+    // const T xu = (cu * cu * cu) * (cu * cu);
+    // const T xd = (cd * cd * cd) * (cd);
     // const T xue = xu / xe;
     // const T xde = xd / xe;
 
@@ -192,3 +193,4 @@ inline void showFermionWeight()
     //  // << std::setprecision(std::numeric_limits<T>::digits10)
     //  }
 }
+*/

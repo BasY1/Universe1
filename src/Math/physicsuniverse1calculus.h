@@ -9,210 +9,537 @@
 #include "orientation.h"
 #include "spherecrosssection.h"
 
+// xxxclang-format off
+
+/*!
+ * \page PageUniverse1 The Universe 1
+ * \tableofcontents
+ * The <b>Universe 1</b> is an "advanced" dynamic system, a mathematical model for describing the properties,
+ * the mutual interactions and the motion dynamics of two kinds of objects: \b particles and \b waves.
+ *
+ * \section SecParticlesAndWaves1 Introduction - particles and waves
+ *
+ * In this system all \b particles are conceptualized as entities with an identical physical form, characterized
+ * by a perfect spherical shape and constant size. The shape is always the same perfect sphere with a constant
+ * radius \f$\mathbb{R}_1 [\mbox{m}]\f$ (Major system constant <b>particle radius</b>).
+ * The entirety of particle's volume is comprised of a mass-less and charge-less material that is identical
+ * for all particles and exhibits varying inner "oriented" states. All the singular points that form the body
+ * of a particle are oriented, they are all pointing in exactly the same directions.
+ *
+ * The second category of objects are the \b waves, which are spherical objects that do not have volume,
+ * they are planar only, in the sense that they are perfect spherical surfaces. The dynamics of \b waves is simple,
+ * they act as an inflating spherical surfaces. In every singular moment, in every instant in this system a
+ * one wave is created as a singular point in the central points of each particle body. It then "explodes", spreads
+ * into the abs. spacetime in all directions at a constant growing rate equal to
+ * \f$\mathbb{C}_1 [\frac{\mbox{m}}{\mbox{s}}]\f$ (Major system constant <b>universal speed</b>),
+ * whereby the wave's radius raises with the rate of \f$\mathbb{C}_1\f$.
+ * \b Waves are comprised of an "elastic", mass-less and charge-less material that is identical for all waves
+ * and contains the information about "the particle body's inner state" at the moment of creation. This information
+ * is always evenly distributed over the inflating spherical surface. All the singular points that form the surface
+ * of inflated wave are also oriented, the direction can be towards the place of creation or in exactly
+ * the opposite direction. The magnitude of the oriented vector is relative to current area of wave's surface
+ * and to the magnitude of initial information given at the time of creation.
+ *
+ * \section SecAbsSpacetime Absolute spacetime
+ *
+ * This system uses the concept of <b>absolute spacetime</b>, but the <b>Euclidean space</b> and the <b>flow of time</b>
+ * are strictly scaled by two major system constants:
+ * | Name                   | Shortcut, value and unit                         |
+ * | :--------------------- | :----------------------------------------------- |
+ * | <b>Particle radius</b> | \f$\mathbb{R}_1 = 1 [\mbox{m}]\f$                |
+ * | <b>Universal speed</b> | \f$\mathbb{C}_1 = 1 [\mbox{m}\,\mbox{s}^{-1}]\f$ |
+ *
+ * In this system, the <b>particle radius</b> is the quantity for measuring distances, so <b>one meter</b>
+ * \f$1 \mbox{m}\f$ equals to the length of every <b>particle radius</b> \f$\mathbb{R}_1\f$
+ *
+ * In this system the flow of time is ruled by a system constant <b>universal speed</b>
+ * \f$\mathbb{C}_1 = 1 \frac{\mbox{m}}{\mbox{s}}\f$, and the quantity for measuring time duration <b>one second</b>
+ * \f$1 \mbox{s}\f$ is:
+ * - the time duration, during which every particles (its central points) travels the distance of one
+ *   <b>particle radius</b> \f$\mathbb{R}_1\f$ along its own trajectory.
+ * - the time duration, during which every wave grows its radius by a length equal to one
+ *   <b>particle radius</b> \f$\mathbb{R}_1\f$.
+ *
+ * \subsection SubSecPhysMathUnits Standard physical and mathematical units
+ * Standard physical and mathematical units used in this system:
+ * | Shortcut           | Name      | Purpose                               |
+ * | -----------------: | :-------- | :------------------------------------ |
+ * | \f$[\mbox{m}]\f$   | \b meter  | Quantity for measuring distances      |
+ * | \f$[\mbox{s}]\f$   | \b second | Quantity for measuring time durations |
+ * | \f$[\mbox{rad}]\f$ | \b radian | Quantity for measuring angles         |
+ * In this system we still keep tracking the unit radian, this is mainly because we can observe this way
+ * that some angular velocity is active in the system.
+ *
+ * \subsection SubSecVirtualUnits "Virtual" complex mathematical vector units
+ * Complex mathematical units are always bound to 3D vectors:
+ * | Shortcut               | Spectrum | Nature          |
+ * | ---------------------: | :------- | :-------------- |
+ * | \f$[\hat{\mbox{i}}]\f$ | \b red   | <i>scissors</i> |
+ * | \f$[\hat{\mbox{j}}]\f$ | \b green | <i>paper</i>    |
+ * | \f$[\hat{\mbox{k}}]\f$ | \b blue  | <i>rock</i>     |
+ *
+ * \subsection SubSecSystemConstants System constants
+ * Major physical constants used in this system:
+ * | Name                            | Shortcut, value and unit                                                   |
+ * | :------------------------------ | :------------------------------------------------------------------------- |
+ * | <b>Particle radius</b>          | \f$\mathbb{R}_1 = 1 [\mbox{m}]\f$                                          |
+ * | <b>Universal speed</b>          | \f$\mathbb{C}_1 = 1 [\mbox{m}\,\mbox{s}^{-1}]\f$                           |
+ * | <b>Major reaction constant</b>  | \f$\mathbb{G}_1 = (user\,value) [\mbox{1}]\f$                              |
+ * | <b>Color reaction constant</b>  | \f$\mathbb{G}_c = (user\,value) [\mbox{m}^2\,\mbox{rad}\,\mbox{s}^{-1}]\f$ |
+ * | <b>Major collision constant</b> | \f$\mathbb{X}_1 = (user\,value) [\mbox{rad}\,\mbox{s}^{-1}]\f$             |
+ * | <b>Color collision constant</b> | \f$\mathbb{X}_c = (user\,value) [\mbox{rad}\,\mbox{s}^{-1}]\f$             |
+ *
+ * Derived system constants:
+ * | Name                     | Shortcut, value and unit                                                          |
+ * | :----------------------- | :-------------------------------------------------------------------------------- |
+ * | Universal spin           | \f$\mathbb{W}_1=\frac{\mathbb{C}_1}{\mathbb{R}_1}=1[\mbox{rad}\,\mbox{s}^{-1}]\f$ |
+ * | Period duration          | \f$\mathbb{T}_p = 2 \pi \omega_1 = 2 \pi [\mbox{s}]\f$                            |
+ * | Particle circumference   | \f$\mathbb{L}_p = 2 \pi \mathbb{R}_1 = 2 \pi [\mbox{m}]\f$                        |
+ * | Particle null plane area | \f$\mathbb{S}_p = \pi \mathbb{R}_1^2 = \pi [\mbox{m}^2]\f$                        |
+ *
+ * \subsection SubSec3DVecTypes 3D vector properties
+ * 3D vector types and their meanings:
+ * | Shortcut                | Unit                                  | 3D vector type                         |
+ * | ----------------------: | :------------------------------------ | :------------------------------------- |
+ * | \f$\vec{P}\f$           | \f$[\mbox{m}]\f$                      | Positional vector                      |
+ * | \f$\vec{\mathcal{N}}\f$ | \f$[\mbox{1}]\f$                      | Unit vector - particle normal (axis)   |
+ * | \f$\vec{\mathcal{I}}\f$ | \f$[\hat{\mbox{i}}]\f$                | Unit vector - particle red pointer     |
+ * | \f$\vec{\mathcal{J}}\f$ | \f$[\hat{\mbox{j}}]\f$                | Unit vector - particle green pointer   |
+ * | \f$\vec{\mathcal{K}}\f$ | \f$[\hat{\mbox{k}}]\f$                | Unit vector - particle blue pointer    |
+ * | \f$\vec{V}\f$           | \f$[\mbox{m}\,\mbox{s}^{-1}]\f$       | Translational velocity vector          |
+ * | \f$\vec{\Omega}\f$      | \f$[\mbox{rad}\,\mbox{s}^{-1}]\f$     | Angular velocity vector (right-handed) |
+ * | \f$\vec{\Gamma}\f$      | \f$[\mbox{rad}^2\,\mbox{s}^{-2}]\f$   | Wave surface pointer                   |
+ * | \f$\vec{\Gamma}_{i}\f$  | \f$[\hat{\mbox{i}}\,\mbox{m}^{-2}]\f$ | Wave surface red spectrum pointer      |
+ * | \f$\vec{\Gamma}_{j}\f$  | \f$[\hat{\mbox{j}}\,\mbox{m}^{-2}]\f$ | Wave surface green spectrum pointer    |
+ * | \f$\vec{\Gamma}_{k}\f$  | \f$[\hat{\mbox{k}}\,\mbox{m}^{-2}]\f$ | Wave surface blue spectrum pointer     |
+ *
+ * 3D vector indexes and their meanings:
+ * | Shortcut index                                       | Detail                                                |
+ * | :--------------------------------------------------- | :---------------------------------------------------- |
+ * | \f$\vec{P}_{N:t}\f$                                  | Positional vector for particle \b N at time-step \b t |
+ * | \f$\vec{P}_{N:now}\f$ or \f$\vec{\mathcal{P}}_{N}\f$ | Particle \b N at current time-step in the simulation  |
+ *
+ * 3D vectors for II. and III. generation of fermion particles:
+ * | Dots on shortcut     | Detail                            |
+ * | :------------------- | :-------------------------------- |
+ * | \f$\vec{P}\f$        | I. generation positional vector   |
+ * | \f$\vec{\dot{P}}\f$  | II. generation positional vector  |
+ * | \f$\vec{\ddot{P}}\f$ | III. generation positional vector |
+ *
+ * \subsection SubSecEnergyConservLaw Analogy for the energy conservation law
+ * Although this system uses the concept of absolute space-time, it does not have a defined weight,
+ * the \f$[\mbox{kg}]\f$ a physical quantity for measuring weights does not exist here.
+ * This property so as electric charge emerges from how the system behaves.
+ *
+ * So we cannot express energy in standard Joules \b J \f$[\mbox{kg}\,\mbox{m}^2\,\mbox{s}^{-2}]\f$,
+ * but we use an analogy that is named <b>the magnitude of information</b> \f$\mathbb{E}\f$ and it is described using:
+ * \b meters, \b radians and \b seconds from the standard physical units
+ * \f$[\mbox{rad}^2\,\mbox{m}^2\,\mbox{s}^{-2}]\f$
+ * At each singular time instant in the system, each particle creates a wave
+ * (fermions of the second generation create 2 waves and fermions of the third generation create 3 waves).
+ * Each wave originates at a singular point and receives information about the internal rotation in the particle's body.
+ * This information depends on the square of the magnitude of the angular velocity of the internal rotation
+ * and the size of the area of ​​the neutral plane. For the I. generation fermions and bosons:
+ * \f$\mathbb{E}_{n:t} = \mathbb{E}_{1:n:t} = |\Omega_{1:n:t}|^2\,\pi R_{1:n:t}^2\f$.
+ *
+ * - II. generation fermions:
+ * \f$\mathbb{E}_{n:t} = |\Omega_{1:n:t}|^2\,\pi R_{1:n:t}^2 + |\Omega_{2:n:t}|^2\,\pi R_{2:n:t}^2\f$
+ * - III. generation fermions:
+ * \f$\mathbb{E}_{n:t} = |\Omega_{1:n:t}|^2\,\pi R_{1:n:t}^2 + |\Omega_{2:n:t}|^2\,\pi R_{2:n:t}^2
+ *                     + |\Omega_{3:n:t}|^2\,\pi R_{3:n:t}^2\f$
+ *
+ * The resulting value will always be a positive number and the output physical unit of this equation will be
+ * \f$[\mbox{rad}^2\,\mbox{m}^2\,\mbox{s}^{-2}]\f$.
+ *
+ * The law of conservation of energy of the system is understood here in such a way that when we go through
+ * all the places where the waves originated and count all the magnitudes of the waves, we always get the same value
+ * of the total <b>the magnitude of information</b> of the system. The total number of places where waves originate
+ * may change over time (\f$N \Rightarrow M\f$), but the total amount of accumulated <b>magnitude of information</b>
+ * is always the same at any given time instant:
+ * \f[ ‎‎\sum_{n=1}^{N}\mathbb{E}_{n:t} = ‎‎\sum_{n=1}^{M}\mathbb{E}_{n:t+\Delta t}\,
+ * [\mbox{rad}^2\,\mbox{m}^2\,\mbox{s}^{-2}]\f]
+ *
+ * \subsection SubSecChargeConservLaw Analogy for the electric charge conservation law
+ *
+ *
+ * \section SecTranslationalMotion Translational motion - "Exploding waves"
+ *
+ * Every particle's central point in the body, at any given instant of its existence produces a wave,
+ * a singular point object that immediately "explodes at speed" \f$\mathbb{C}_1\f$. This also exerts a kick, a "force"
+ * on the central point of the particle, causing it to move away from its current position at speed \f$\mathbb{C}_1\f$
+ * "in the direction of its preferential choice".
+ * - all <b>I. generation fermions</b> and <b>bosons</b> particles produces <b>one</b> wave at any given instant
+ *   of its existence at <b>the central point</b> and that point is forced to move in the direction
+ *   of its preferential choice at velocity \f$\vec{V_1}, |\vec{V_1}| = \mathbb{C}_1\f$
+ *
+ * - all <b>II. generation fermions</b> produces <b>two</b> waves at any given instant of its existence:
+ *   + <i>I. generation wave</i> is produced at <b>the central point</b> of the particle and it is kicking away this
+ *     point in the direction of its preferential choice at velocity \f$\vec{V_1}, |\vec{V_1}| < \mathbb{C}_1\f$
+ *   + <i>II. generation wave</i> is produced at different point in the body of the particle then the central point
+ *     (at <b>II. generation central point</b>) and is kicking away that point at velocity
+ *     \f$\vec{V_2}, |\vec{V_2}| < \mathbb{C}_1, \sqrt{|\vec{V_1}|^2 + |\vec{V_2}|^2} = \mathbb{C}_1\f$ in the direction
+ *     that is perpendicular to \f$\vec{V_1}\f$
+ *
+ *   + <b>II. generation central point</b> is moving through absolute spacetime at velocity \f$\vec{V_2}\f$
+ *     and it is dragging the major I. generation <b>central point</b> of the particle
+ *     and force it to move with this velocity too.
+ *   + <b>The central point</b> of the particle is performing 2 translational motions that are perpendicular each other:
+ *     - kicked away by just created wave at velocity \f$\vec{V_1}\f$
+ *     - dragged with the II. generation central point and its wave at velocity \f$\vec{V_2}\f$
+ *     - <b>the central point</b> is keeping the total magnitude of the velocity constant at \f$\mathbb{C}_1\f$
+ *       (\f$\sqrt{|\vec{V_1}|^2 + |\vec{V_2}|^2} = \mathbb{C}_1\f$).
+ *
+ * - all <b>III. generation fermions</b> produces <b>three</b> waves at any given instant of its existence:
+ *   + <i>I. generation wave</i> is produced at <b>the central point</b> of the particle and it is kicking away this
+ *     point in the direction of its preferential choice at velocity \f$\vec{V_1}, |\vec{V_1}| < \mathbb{C}_1\f$
+ *   + <i>II. generation wave</i> is produced at different point in the body of the particle then the central point
+ *     (at <b>II. generation central point</b>) and is kicking away that point in the direction that is
+ *     perpendicular to \f$\vec{V_1}\f$ at velocity \f$\vec{V_2}, |\vec{V_2}| < \mathbb{C}_1\f$
+ *   + <i>III. generation wave</i> is produced at different point in the II. generation body
+ *     (at <b>III. generation central point</b>) and is kicking away that point in the direction that is
+ *     perpendicular to both \f$\vec{V_1}\f$ and \f$\vec{V_2}\f$ at velocity
+ *     \f$\vec{V_3}, |\vec{V_3}| < \mathbb{C}_1 , \sqrt{|\vec{V_1}|^2 + |\vec{V_2}|^2 + |\vec{V_3}|^2} = \mathbb{C}_1\f$
+ *   + <b>III. generation central point</b> is moving through absolute spacetime at velocity \f$\vec{V_3}\f$
+ *     and it is dragging the II. generation <b>central point</b> and force it to move with this velocity too.
+ *   + <b>II. generation central point</b> is performing 2 translational motions that are perpendicular each other:
+ *     - kicked away by just created wave at velocity \f$\vec{V_2}\f$
+ *     - dragged with the II. generation central point and its wave at velocity \f$\vec{V_3}\f$
+ *   + <b>The central point</b> of the particle is performing 3 translational motions that are perpendicular each other:
+ *     - kicked away by just created wave at velocity \f$\vec{V_1}\f$
+ *     - dragged with the II. generation central point and its wave at velocity \f$\vec{V_2}\f$
+ *     - dragged with the III. generation central point and its wave at velocity \f$\vec{V_3}\f$
+ *     - <b>the central point</b> is keeping the total magnitude of the velocity constant at \f$\mathbb{C}_1\f$
+ *       (\f$\sqrt{|\vec{V_1}|^2 + |\vec{V_2}|^2 + |\vec{V_3}|^2} = \mathbb{C}_1\f$).
+ *
+ * All particle central points are always at the same speed \f$\mathbb{C}_1\f$, they never accelerate or decelerate.
+ * The "direction preferential choice" in which the central point is kicked away may change, but only the orientation,
+ * never the magnitude. This represents the only known philosophy for translational motion of a particle body.
+ *
+ * \section SecRotationalMotion Rotational motion - Particle reaction to penetrating objects
+ *
+ * The second kind of motion that particle bodies are performing is the <b>rotation</b>:
+ * - In every instant of particle's existence an infinity waves are penetrating the body of the particle.
+ *   The material from which all particles are composed can react to the material from which the waves are composed,
+ *   and this reaction is in the form of rotation. It is as if the whole body of the particle wanted to rotate
+ *   into more optimal orientation with respect to currently penetrating waves.
+ *
+ * - Two or more particles can collide, their bodies can penetrate each other, or they can occur
+ *   at exactly the same positions. The material from witch the particles are created is the same,
+ *   but the orientation of their inner states can differ. Those inner state orientations
+ *   wants to align each other causing both particle bodies to rotate into more optimal orientations.
+ *
+ * \section SecAdvancedDynamicSystem "Advanced" dynamic system
+ *
+ * If a dynamical system uses absolute spacetime, then the "system state" is the synonymous for
+ * "system at some global time-step".
+ *
+ * In general, a standard dynamical system is a system that can be described in various states and it provides
+ * a way to calculate how to change the system from one state to another, always respecting
+ * the law of conservation of energy.
+ * The advantage of standard dynamic system is that once we calculate the new system state,
+ * we can remove the data that covers the old "previous" state.
+ * The memory requirements to run the simulation increase only if the number of objects in the simulation
+ * increases and the simulation can theoretically run forever.
+ *
+ * "Advanced" dynamical system is understood here in the sense that we cannot delete previous system states,
+ * because they still enter the calculation of all next states in the simulation.
+ * Every position at which a particle once occurs is also the place where a wave was created and later,
+ * at the currently calculated time-step in simulation this wave has its current size and can intersect particles.
+ * The "advanced" dynamical system simulation <b>CAN NOT</b> run forever because it will run out of memory,
+ * we always have to allocate new memory for every new system state.
+ *
+ *
+ *
+ * \subsection SubSecParticleDB Simulation memory management - Particle state database
+ *
+ */
+
+// xxxclang-format on
+
 namespace U1 {
 namespace Math {
 
 /*!
  * \namespace U1::Math::Universe1
- * \brief The Universe1 physics tools
+ * \brief The Universe 1 physics tools
+ * \details <b>Universe 1</b> is an advanced dynamic system, a set of definitions, descriptions, mathematical rules
+ * and equations, a mathematical model for describing the properties and dynamics of two kinds of objects:
+ * \b particles and \b waves.
+ *
+ * \b Particles are understood as objects, all in a perfect constant spherical shape, with the same radius
+ * (universal system constant <b>particle radius</b> \f$\mathbb{R}_1\f$).
+ *
+ * \b Waves are understood as objects with dynamic (inflating) spherical shape. They are created as singular point
+ * objects at central position in the body of every particle at every instant in the system and they carry
+ * the information about "the particle body's inner state". At the moment of creation they also "explode"
+ * and begin to act as inflating spherical surfaces, with the radius of the inflating sphere growing linearly
+ * at <b>universal constant speed</b> \f$c_1\f$. II. and III. generation fermions produces two (or three) waves
+ * at every instant in the system, I. generation wave is always created at central position in the body,
+ * II. and III. generation fermion waves are always created at different position in the body (at the center of
+ * translational-rotational motion of the particle's body)
+ *
+ * The waves that are generated as singular points at central position of particle instantaneously "explode"
+ * at a velocity designated as \f$c_1\f$ and this "explosion" also propels that central point away at speed
+ * with the magnitude equal to \f$c_1\f$. For the II. and III. generation fermion waves that are generated
+ * as singular points at the center of translational-rotational motion inside the body, and not at central position
+ * of particle, the "explosion" occurs in smaller inner part of a body and propels that specific point
+ * in the body away at speed with the magnitude that is lower that \f$c_1\f$
+ *
+ *
+ *
  */
+
 namespace Universe1 {
 Q_NAMESPACE
 
+template <typename T>
+struct Particle;
+
 // clang-format off
 
-/*! \brief The particle type names */
+/*! 
+ * \brief The particle type names supported in this system
+ * \details The value of every literal holds additional informations about the major normal helicity,
+ * color normals helicity and generation (in the case of fermions)
+ * | Bits                                | Additional property   | Additional property enumerations            |
+ * | :---------------------------------- | :-------------------- | :------------------------------------------ |
+ * | \c 000000000000000000000000000000XX | Major normal helicity | \sa U1::Math::Universe1::ParticleHelicity   |
+ * | \c 0000000000000000000000000000XX00 | Red normal helicity   | \sa U1::Math::Universe1::ParticleChargeR    |
+ * | \c 00000000000000000000000000XX0000 | Green normal helicity | \sa U1::Math::Universe1::ParticleChargeG    |
+ * | \c 000000000000000000000000XX000000 | Blue normal helicity  | \sa U1::Math::Universe1::ParticleChargeB    |
+ * | \c 0000000000000000000000XX00000000 | Generation            | \sa U1::Math::Universe1::ParticleGeneration |
+ * | \c 00000000000000000XXXXX0000000000 | Particle class name   | \sa U1::Math::Universe1::ParticleClass      |
+ */
 enum ParticleType : int
 {
     _ParticleInvalid   = 0,                                     //!< Invalid particle
     
-    _NeutrinoG1Right   = (0b00000000000000000000010100000001),  //!< Anti-neutrino - 1. gen. - right handed (spin +½)
-    _NeutrinoG1Left    = (0b00000000000000000000010100000010),  //!< Neutrino      - 1. gen. - left handed (spin -½)
-    _NeutrinoG2Right   = (0b00000000000000000000011000000001),  //!< Anti-neutrino - 2. gen. - right handed (spin +½)
-    _NeutrinoG2Left    = (0b00000000000000000000011000000010),  //!< Neutrino      - 2. gen. - left handed (spin -½)
-    _NeutrinoG3Right   = (0b00000000000000000000011100000001),  //!< Anti-neutrino - 3. gen. - right handed (spin +½)
-    _NeutrinoG3Left    = (0b00000000000000000000011100000010),  //!< Neutrino      - 3. gen. - left handed (spin -½)
+    _NeutrinoG1Right   = (0b00000000000000000000010100000001),  //!<   I. generation <b>anti-neutrino</b> (spin +½)
+    _NeutrinoG1Left    = (0b00000000000000000000010100000010),  //!<   I. generation <b>neutrino</b>      (spin -½)
+    _NeutrinoG2Right   = (0b00000000000000000000011000000001),  //!<  II. generation <b>anti-neutrino</b> (spin +½)
+    _NeutrinoG2Left    = (0b00000000000000000000011000000010),  //!<  II. generation <b>neutrino</b>      (spin -½)
+    _NeutrinoG3Right   = (0b00000000000000000000011100000001),  //!< III. generation <b>anti-neutrino</b> (spin +½)
+    _NeutrinoG3Left    = (0b00000000000000000000011100000010),  //!< III. generation <b>neutrino</b>      (spin -½)
     
-    _PositronG1Right   = (0b00000000000000000000100101010101),  //!< Positron - red+green+blue - 1. gen. - right handed (spin +½)
-    _PositronG1Left    = (0b00000000000000000000100101010110),  //!< Positron - red+green+blue - 1. gen. - left handed (spin -½)
-    _ElectronG1Right   = (0b00000000000000000000100110101001),  //!< Electron - red+green+blue - 1. gen. - right handed (spin +½)
-    _ElectronG1Left    = (0b00000000000000000000100110101010),  //!< Electron - red+green+blue - 1. gen. - left handed (spin -½)
-    _PositronG2Right   = (0b00000000000000000000101001010101),  //!< Positron - red+green+blue - 2. gen. - right handed (spin +½)
-    _PositronG2Left    = (0b00000000000000000000101001010110),  //!< Positron - red+green+blue - 2. gen. - left handed (spin -½)
-    _ElectronG2Right   = (0b00000000000000000000101010101001),  //!< Electron - red+green+blue - 2. gen. - right handed (spin +½)
-    _ElectronG2Left    = (0b00000000000000000000101010101010),  //!< Electron - red+green+blue - 2. gen. - left handed (spin -½)
-    _PositronG3Right   = (0b00000000000000000000101101010101),  //!< Positron - red+green+blue - 3. gen. - right handed (spin +½)
-    _PositronG3Left    = (0b00000000000000000000101101010110),  //!< Positron - red+green+blue - 3. gen. - left handed (spin -½)
-    _ElectronG3Right   = (0b00000000000000000000101110101001),  //!< Electron - red+green+blue - 3. gen. - right handed (spin +½)
-    _ElectronG3Left    = (0b00000000000000000000101110101010),  //!< Electron - red+green+blue - 3. gen. - left handed (spin -½)
+    _PositronG1Right   = (0b00000000000000000000100101010101),  //!<   I. generation <b>positron</b> (spin +½, \f$[+\mbox{i}, +\mbox{j}, +\mbox{k}]\f$)
+    _PositronG1Left    = (0b00000000000000000000100101010110),  //!<   I. generation <b>positron</b> (spin -½, \f$[+\mbox{i}, +\mbox{j}, +\mbox{k}]\f$)
+    _ElectronG1Right   = (0b00000000000000000000100110101001),  //!<   I. generation <b>electron</b> (spin +½, \f$[-\mbox{i}, -\mbox{j}, -\mbox{k}]\f$)
+    _ElectronG1Left    = (0b00000000000000000000100110101010),  //!<   I. generation <b>electron</b> (spin -½, \f$[-\mbox{i}, -\mbox{j}, -\mbox{k}]\f$)
+    _PositronG2Right   = (0b00000000000000000000101001010101),  //!<  II. generation <b>positron</b> (spin +½, \f$[+\mbox{i}, +\mbox{j}, +\mbox{k}]\f$)
+    _PositronG2Left    = (0b00000000000000000000101001010110),  //!<  II. generation <b>positron</b> (spin -½, \f$[+\mbox{i}, +\mbox{j}, +\mbox{k}]\f$)
+    _ElectronG2Right   = (0b00000000000000000000101010101001),  //!<  II. generation <b>electron</b> (spin +½, \f$[-\mbox{i}, -\mbox{j}, -\mbox{k}]\f$)
+    _ElectronG2Left    = (0b00000000000000000000101010101010),  //!<  II. generation <b>electron</b> (spin -½, \f$[-\mbox{i}, -\mbox{j}, -\mbox{k}]\f$)
+    _PositronG3Right   = (0b00000000000000000000101101010101),  //!< III. generation <b>positron</b> (spin +½, \f$[+\mbox{i}, +\mbox{j}, +\mbox{k}]\f$)
+    _PositronG3Left    = (0b00000000000000000000101101010110),  //!< III. generation <b>positron</b> (spin -½, \f$[+\mbox{i}, +\mbox{j}, +\mbox{k}]\f$)
+    _ElectronG3Right   = (0b00000000000000000000101110101001),  //!< III. generation <b>electron</b> (spin +½, \f$[-\mbox{i}, -\mbox{j}, -\mbox{k}]\f$)
+    _ElectronG3Left    = (0b00000000000000000000101110101010),  //!< III. generation <b>electron</b> (spin -½, \f$[-\mbox{i}, -\mbox{j}, -\mbox{k}]\f$)
     
-    _QuarkUpG1RGRight  = (0b00000000000000000000110100010101),  //!< Up-quark      - red+green - 1. gen. - right handed (spin +½)
-    _QuarkUpG1RGLeft   = (0b00000000000000000000110100010110),  //!< Up-quark      - red+green - 1. gen. - left handed (spin -½)
-    _AntiQUpG1RGRight  = (0b00000000000000000000110100101001),  //!< Anti-up-quark - red+green - 1. gen. - right handed (spin +½)
-    _AntiQUpG1RGLeft   = (0b00000000000000000000110100101010),  //!< Anti-up-quark - red+green - 1. gen. - left handed (spin -½)
-    _QuarkUpG2RGRight  = (0b00000000000000000000111000010101),  //!< Up-quark      - red+green - 2. gen. - right handed (spin +½)
-    _QuarkUpG2RGLeft   = (0b00000000000000000000111000010110),  //!< Up-quark      - red+green - 2. gen. - left handed (spin -½)
-    _AntiQUpG2RGRight  = (0b00000000000000000000111000101001),  //!< Anti-up-quark - red+green - 2. gen. - right handed (spin +½)
-    _AntiQUpG2RGLeft   = (0b00000000000000000000111000101010),  //!< Anti-up-quark - red+green - 2. gen. - left handed (spin -½)
-    _QuarkUpG3RGRight  = (0b00000000000000000000111100010101),  //!< Up-quark      - red+green - 3. gen. - right handed (spin +½)
-    _QuarkUpG3RGLeft   = (0b00000000000000000000111100010110),  //!< Up-quark      - red+green - 3. gen. - left handed (spin -½)
-    _AntiQUpG3RGRight  = (0b00000000000000000000111100101001),  //!< Anti-up-quark - red+green - 3. gen. - right handed (spin +½)
-    _AntiQUpG3RGLeft   = (0b00000000000000000000111100101010),  //!< Anti-up-quark - red+green - 3. gen. - left handed (spin -½)
+    _QuarkUpG1RGRight  = (0b00000000000000000000110100010101),  //!<   I. generation <b>red-green up-quark</b>      (spin +½, \f$[+\mbox{i}, +\mbox{j}]\f$)
+    _QuarkUpG1RGLeft   = (0b00000000000000000000110100010110),  //!<   I. generation <b>red-green up-quark</b>      (spin -½, \f$[+\mbox{i}, +\mbox{j}]\f$)
+    _AntiQUpG1RGRight  = (0b00000000000000000000110100101001),  //!<   I. generation <b>red-green anti-up-quark</b> (spin +½, \f$[-\mbox{i}, -\mbox{j}]\f$)
+    _AntiQUpG1RGLeft   = (0b00000000000000000000110100101010),  //!<   I. generation <b>red-green anti-up-quark</b> (spin -½, \f$[-\mbox{i}, -\mbox{j}]\f$)
+    _QuarkUpG2RGRight  = (0b00000000000000000000111000010101),  //!<  II. generation <b>red-green up-quark</b>      (spin +½, \f$[+\mbox{i}, +\mbox{j}]\f$)
+    _QuarkUpG2RGLeft   = (0b00000000000000000000111000010110),  //!<  II. generation <b>red-green up-quark</b>      (spin -½, \f$[+\mbox{i}, +\mbox{j}]\f$)
+    _AntiQUpG2RGRight  = (0b00000000000000000000111000101001),  //!<  II. generation <b>red-green anti-up-quark</b> (spin +½, \f$[-\mbox{i}, -\mbox{j}]\f$)
+    _AntiQUpG2RGLeft   = (0b00000000000000000000111000101010),  //!<  II. generation <b>red-green anti-up-quark</b> (spin -½, \f$[-\mbox{i}, -\mbox{j}]\f$)
+    _QuarkUpG3RGRight  = (0b00000000000000000000111100010101),  //!< III. generation <b>red-green up-quark</b>      (spin +½, \f$[+\mbox{i}, +\mbox{j}]\f$)
+    _QuarkUpG3RGLeft   = (0b00000000000000000000111100010110),  //!< III. generation <b>red-green up-quark</b>      (spin -½, \f$[+\mbox{i}, +\mbox{j}]\f$)
+    _AntiQUpG3RGRight  = (0b00000000000000000000111100101001),  //!< III. generation <b>red-green anti-up-quark</b> (spin +½, \f$[-\mbox{i}, -\mbox{j}]\f$)
+    _AntiQUpG3RGLeft   = (0b00000000000000000000111100101010),  //!< III. generation <b>red-green anti-up-quark</b> (spin -½, \f$[-\mbox{i}, -\mbox{j}]\f$)
     
-    _QuarkUpG1GBRight  = (0b00000000000000000001000101010001),  //!< Up-quark      - green+blue - 1. gen. - right handed (spin +½)
-    _QuarkUpG1GBLeft   = (0b00000000000000000001000101010010),  //!< Up-quark      - green+blue - 1. gen. - left handed (spin -½)
-    _AntiQUpG1GBRight  = (0b00000000000000000001000110100001),  //!< Anti-up-quark - green+blue - 1. gen. - right handed (spin +½)
-    _AntiQUpG1GBLeft   = (0b00000000000000000001000110100010),  //!< Anti-up-quark - green+blue - 1. gen. - left handed (spin -½)
-    _QuarkUpG2GBRight  = (0b00000000000000000001001001010001),  //!< Up-quark      - green+blue - 2. gen. - right handed (spin +½)
-    _QuarkUpG2GBLeft   = (0b00000000000000000001001001010010),  //!< Up-quark      - green+blue - 2. gen. - left handed (spin -½)
-    _AntiQUpG2GBRight  = (0b00000000000000000001001010100001),  //!< Anti-up-quark - green+blue - 2. gen. - right handed (spin +½)
-    _AntiQUpG2GBLeft   = (0b00000000000000000001001010100010),  //!< Anti-up-quark - green+blue - 2. gen. - left handed (spin -½)
-    _QuarkUpG3GBRight  = (0b00000000000000000001001101010001),  //!< Up-quark      - green+blue - 3. gen. - right handed (spin +½)
-    _QuarkUpG3GBLeft   = (0b00000000000000000001001101010010),  //!< Up-quark      - green+blue - 3. gen. - left handed (spin -½)
-    _AntiQUpG3GBRight  = (0b00000000000000000001001110100001),  //!< Anti-up-quark - green+blue - 3. gen. - right handed (spin +½)
-    _AntiQUpG3GBLeft   = (0b00000000000000000001001110100010),  //!< Anti-up-quark - green+blue - 3. gen. - left handed (spin -½)
+    _QuarkUpG1GBRight  = (0b00000000000000000001000101010001),  //!<   I. generation <b>green-blue up-quark</b>      (spin +½, \f$[+\mbox{j}, +\mbox{k}]\f$)
+    _QuarkUpG1GBLeft   = (0b00000000000000000001000101010010),  //!<   I. generation <b>green-blue up-quark</b>      (spin -½, \f$[+\mbox{j}, +\mbox{k}]\f$)
+    _AntiQUpG1GBRight  = (0b00000000000000000001000110100001),  //!<   I. generation <b>green-blue anti-up-quark</b> (spin +½, \f$[-\mbox{j}, -\mbox{k}]\f$)
+    _AntiQUpG1GBLeft   = (0b00000000000000000001000110100010),  //!<   I. generation <b>green-blue anti-up-quark</b> (spin -½, \f$[-\mbox{j}, -\mbox{k}]\f$)
+    _QuarkUpG2GBRight  = (0b00000000000000000001001001010001),  //!<  II. generation <b>green-blue up-quark</b>      (spin +½, \f$[+\mbox{j}, +\mbox{k}]\f$)
+    _QuarkUpG2GBLeft   = (0b00000000000000000001001001010010),  //!<  II. generation <b>green-blue up-quark</b>      (spin -½, \f$[+\mbox{j}, +\mbox{k}]\f$)
+    _AntiQUpG2GBRight  = (0b00000000000000000001001010100001),  //!<  II. generation <b>green-blue anti-up-quark</b> (spin +½, \f$[-\mbox{j}, -\mbox{k}]\f$)
+    _AntiQUpG2GBLeft   = (0b00000000000000000001001010100010),  //!<  II. generation <b>green-blue anti-up-quark</b> (spin -½, \f$[-\mbox{j}, -\mbox{k}]\f$)
+    _QuarkUpG3GBRight  = (0b00000000000000000001001101010001),  //!< III. generation <b>green-blue up-quark</b>      (spin +½, \f$[+\mbox{j}, +\mbox{k}]\f$)
+    _QuarkUpG3GBLeft   = (0b00000000000000000001001101010010),  //!< III. generation <b>green-blue up-quark</b>      (spin -½, \f$[+\mbox{j}, +\mbox{k}]\f$)
+    _AntiQUpG3GBRight  = (0b00000000000000000001001110100001),  //!< III. generation <b>green-blue anti-up-quark</b> (spin +½, \f$[-\mbox{j}, -\mbox{k}]\f$)
+    _AntiQUpG3GBLeft   = (0b00000000000000000001001110100010),  //!< III. generation <b>green-blue anti-up-quark</b> (spin -½, \f$[-\mbox{j}, -\mbox{k}]\f$)
     
-    _QuarkUpG1BRRight  = (0b00000000000000000001010101000101),  //!< Up-quark      - blue+red - 1. gen. - right handed (spin +½)
-    _QuarkUpG1BRLeft   = (0b00000000000000000001010101000110),  //!< Up-quark      - blue+red - 1. gen. - left handed (spin -½)
-    _AntiQUpG1BRRight  = (0b00000000000000000001010110001001),  //!< Anti-up-quark - blue+red - 1. gen. - right handed (spin +½)
-    _AntiQUpG1BRLeft   = (0b00000000000000000001010110001010),  //!< Anti-up-quark - blue+red - 1. gen. - left handed (spin -½)
-    _QuarkUpG2BRRight  = (0b00000000000000000001011001000101),  //!< Up-quark      - blue+red - 2. gen. - right handed (spin +½)
-    _QuarkUpG2BRLeft   = (0b00000000000000000001011001000110),  //!< Up-quark      - blue+red - 2. gen. - left handed (spin -½)
-    _AntiQUpG2BRRight  = (0b00000000000000000001011010001001),  //!< Anti-up-quark - blue+red - 2. gen. - right handed (spin +½)
-    _AntiQUpG2BRLeft   = (0b00000000000000000001011010001010),  //!< Anti-up-quark - blue+red - 2. gen. - left handed (spin -½)
-    _QuarkUpG3BRRight  = (0b00000000000000000001011101000101),  //!< Up-quark      - blue+red - 3. gen. - right handed (spin +½)
-    _QuarkUpG3BRLeft   = (0b00000000000000000001011101000110),  //!< Up-quark      - blue+red - 3. gen. - left handed (spin -½)
-    _AntiQUpG3BRRight  = (0b00000000000000000001011110001001),  //!< Anti-up-quark - blue+red - 3. gen. - right handed (spin +½)
-    _AntiQUpG3BRLeft   = (0b00000000000000000001011110001010),  //!< Anti-up-quark - blue+red - 3. gen. - left handed (spin -½)
+    _QuarkUpG1BRRight  = (0b00000000000000000001010101000101),  //!<   I. generation <b>Blue-red up-quark</b>      (spin +½, \f$[+\mbox{k}, +\mbox{i}]\f$)
+    _QuarkUpG1BRLeft   = (0b00000000000000000001010101000110),  //!<   I. generation <b>Blue-red up-quark</b>      (spin -½, \f$[+\mbox{k}, +\mbox{i}]\f$)
+    _AntiQUpG1BRRight  = (0b00000000000000000001010110001001),  //!<   I. generation <b>Blue-red anti-up-quark</b> (spin +½, \f$[-\mbox{k}, -\mbox{i}]\f$)
+    _AntiQUpG1BRLeft   = (0b00000000000000000001010110001010),  //!<   I. generation <b>Blue-red anti-up-quark</b> (spin -½, \f$[-\mbox{k}, -\mbox{i}]\f$)
+    _QuarkUpG2BRRight  = (0b00000000000000000001011001000101),  //!<  II. generation <b>Blue-red up-quark</b>      (spin +½, \f$[+\mbox{k}, +\mbox{i}]\f$)
+    _QuarkUpG2BRLeft   = (0b00000000000000000001011001000110),  //!<  II. generation <b>Blue-red up-quark</b>      (spin -½, \f$[+\mbox{k}, +\mbox{i}]\f$)
+    _AntiQUpG2BRRight  = (0b00000000000000000001011010001001),  //!<  II. generation <b>Blue-red anti-up-quark</b> (spin +½, \f$[-\mbox{k}, -\mbox{i}]\f$)
+    _AntiQUpG2BRLeft   = (0b00000000000000000001011010001010),  //!<  II. generation <b>Blue-red anti-up-quark</b> (spin -½, \f$[-\mbox{k}, -\mbox{i}]\f$)
+    _QuarkUpG3BRRight  = (0b00000000000000000001011101000101),  //!< III. generation <b>Blue-red up-quark</b>      (spin +½, \f$[+\mbox{k}, +\mbox{i}]\f$)
+    _QuarkUpG3BRLeft   = (0b00000000000000000001011101000110),  //!< III. generation <b>Blue-red up-quark</b>      (spin -½, \f$[+\mbox{k}, +\mbox{i}]\f$)
+    _AntiQUpG3BRRight  = (0b00000000000000000001011110001001),  //!< III. generation <b>Blue-red anti-up-quark</b> (spin +½, \f$[-\mbox{k}, -\mbox{i}]\f$)
+    _AntiQUpG3BRLeft   = (0b00000000000000000001011110001010),  //!< III. generation <b>Blue-red anti-up-quark</b> (spin -½, \f$[-\mbox{k}, -\mbox{i}]\f$)
     
-    _AntiQDownG1RRight = (0b00000000000000000001100100000101),  //!< Down-anti-quark - red - 1. gen. - right handed (spin +½)
-    _AntiQDownG1RLeft  = (0b00000000000000000001100100000110),  //!< Down-anti-quark - red - 1. gen. - left handed (spin -½)
-    _QuarkDownG1RRight = (0b00000000000000000001100100001001),  //!< Down-quark      - red - 1. gen. - right handed (spin +½)
-    _QuarkDownG1RLeft  = (0b00000000000000000001100100001010),  //!< Down-quark      - red - 1. gen. - left handed (spin -½)
-    _AntiQDownG2RRight = (0b00000000000000000001101000000101),  //!< Down-anti-quark - red - 2. gen. - right handed (spin +½)
-    _AntiQDownG2RLeft  = (0b00000000000000000001101000000110),  //!< Down-anti-quark - red - 2. gen. - left handed (spin -½)
-    _QuarkDownG2RRight = (0b00000000000000000001101000001001),  //!< Down-quark      - red - 2. gen. - right handed (spin +½)
-    _QuarkDownG2RLeft  = (0b00000000000000000001101000001010),  //!< Down-quark      - red - 2. gen. - left handed (spin -½)
-    _AntiQDownG3RRight = (0b00000000000000000001101100000101),  //!< Down-anti-quark - red - 3. gen. - right handed (spin +½)
-    _AntiQDownG3RLeft  = (0b00000000000000000001101100000110),  //!< Down-anti-quark - red - 3. gen. - left handed (spin -½)
-    _QuarkDownG3RRight = (0b00000000000000000001101100001001),  //!< Down-quark      - red - 3. gen. - right handed (spin +½)
-    _QuarkDownG3RLeft  = (0b00000000000000000001101100001010),  //!< Down-quark      - red - 3. gen. - left handed (spin -½)
+    _AntiQDownG1RRight = (0b00000000000000000001100100000101),  //!<   I. generation <b>red anti-down-quark</b> (spin +½, \f$[+\mbox{i}]\f$)
+    _AntiQDownG1RLeft  = (0b00000000000000000001100100000110),  //!<   I. generation <b>red anti-down-quark</b> (spin -½, \f$[+\mbox{i}]\f$)
+    _QuarkDownG1RRight = (0b00000000000000000001100100001001),  //!<   I. generation <b>red down-quark</b>      (spin +½, \f$[-\mbox{i}]\f$)
+    _QuarkDownG1RLeft  = (0b00000000000000000001100100001010),  //!<   I. generation <b>red down-quark</b>      (spin -½, \f$[-\mbox{i}]\f$)
+    _AntiQDownG2RRight = (0b00000000000000000001101000000101),  //!<  II. generation <b>red anti-down-quark</b> (spin +½, \f$[+\mbox{i}]\f$)
+    _AntiQDownG2RLeft  = (0b00000000000000000001101000000110),  //!<  II. generation <b>red anti-down-quark</b> (spin -½, \f$[+\mbox{i}]\f$)
+    _QuarkDownG2RRight = (0b00000000000000000001101000001001),  //!<  II. generation <b>red down-quark</b>      (spin +½, \f$[-\mbox{i}]\f$)
+    _QuarkDownG2RLeft  = (0b00000000000000000001101000001010),  //!<  II. generation <b>red down-quark</b>      (spin -½, \f$[-\mbox{i}]\f$)
+    _AntiQDownG3RRight = (0b00000000000000000001101100000101),  //!< III. generation <b>red anti-down-quark</b> (spin +½, \f$[+\mbox{i}]\f$)
+    _AntiQDownG3RLeft  = (0b00000000000000000001101100000110),  //!< III. generation <b>red anti-down-quark</b> (spin -½, \f$[+\mbox{i}]\f$)
+    _QuarkDownG3RRight = (0b00000000000000000001101100001001),  //!< III. generation <b>red down-quark</b>      (spin +½, \f$[-\mbox{i}]\f$)
+    _QuarkDownG3RLeft  = (0b00000000000000000001101100001010),  //!< III. generation <b>red down-quark</b>      (spin -½, \f$[-\mbox{i}]\f$)
     
-    _AntiQDownG1GRight = (0b00000000000000000001110100010001),  //!< Down-anti-quark - green - 1. gen. - right handed (spin +½)
-    _AntiQDownG1GLeft  = (0b00000000000000000001110100010010),  //!< Down-anti-quark - green - 1. gen. - left handed (spin -½)
-    _QuarkDownG1GRight = (0b00000000000000000001110100100001),  //!< Down-quark      - green - 1. gen. - right handed (spin +½)
-    _QuarkDownG1GLeft  = (0b00000000000000000001110100100010),  //!< Down-quark      - green - 1. gen. - left handed (spin -½)
-    _AntiQDownG2GRight = (0b00000000000000000001111000010001),  //!< Down-anti-quark - green - 2. gen. - right handed (spin +½)
-    _AntiQDownG2GLeft  = (0b00000000000000000001111000010010),  //!< Down-anti-quark - green - 2. gen. - left handed (spin -½)
-    _QuarkDownG2GRight = (0b00000000000000000001111000100001),  //!< Down-quark      - green - 2. gen. - right handed (spin +½)
-    _QuarkDownG2GLeft  = (0b00000000000000000001111000100010),  //!< Down-quark      - green - 2. gen. - left handed (spin -½)
-    _AntiQDownG3GRight = (0b00000000000000000001111100010001),  //!< Down-anti-quark - green - 3. gen. - right handed (spin +½)
-    _AntiQDownG3GLeft  = (0b00000000000000000001111100010010),  //!< Down-anti-quark - green - 3. gen. - left handed (spin -½)
-    _QuarkDownG3GRight = (0b00000000000000000001111100100001),  //!< Down-quark      - green - 3. gen. - right handed (spin +½)
-    _QuarkDownG3GLeft  = (0b00000000000000000001111100100010),  //!< Down-quark      - green - 3. gen. - left handed (spin -½)
+    _AntiQDownG1GRight = (0b00000000000000000001110100010001),  //!<   I. generation <b>green anti-down-quark</b> (spin +½, \f$[+\mbox{j}]\f$)
+    _AntiQDownG1GLeft  = (0b00000000000000000001110100010010),  //!<   I. generation <b>green anti-down-quark</b> (spin -½, \f$[+\mbox{j}]\f$)
+    _QuarkDownG1GRight = (0b00000000000000000001110100100001),  //!<   I. generation <b>green down-quark</b>      (spin +½, \f$[-\mbox{j}]\f$)
+    _QuarkDownG1GLeft  = (0b00000000000000000001110100100010),  //!<   I. generation <b>green down-quark</b>      (spin -½, \f$[-\mbox{j}]\f$)
+    _AntiQDownG2GRight = (0b00000000000000000001111000010001),  //!<  II. generation <b>green anti-down-quark</b> (spin +½, \f$[+\mbox{j}]\f$)
+    _AntiQDownG2GLeft  = (0b00000000000000000001111000010010),  //!<  II. generation <b>green anti-down-quark</b> (spin -½, \f$[+\mbox{j}]\f$)
+    _QuarkDownG2GRight = (0b00000000000000000001111000100001),  //!<  II. generation <b>green down-quark</b>      (spin +½, \f$[-\mbox{j}]\f$)
+    _QuarkDownG2GLeft  = (0b00000000000000000001111000100010),  //!<  II. generation <b>green down-quark</b>      (spin -½, \f$[-\mbox{j}]\f$)
+    _AntiQDownG3GRight = (0b00000000000000000001111100010001),  //!< III. generation <b>green anti-down-quark</b> (spin +½, \f$[+\mbox{j}]\f$)
+    _AntiQDownG3GLeft  = (0b00000000000000000001111100010010),  //!< III. generation <b>green anti-down-quark</b> (spin -½, \f$[+\mbox{j}]\f$)
+    _QuarkDownG3GRight = (0b00000000000000000001111100100001),  //!< III. generation <b>green down-quark</b>      (spin +½, \f$[-\mbox{j}]\f$)
+    _QuarkDownG3GLeft  = (0b00000000000000000001111100100010),  //!< III. generation <b>green down-quark</b>      (spin -½, \f$[-\mbox{j}]\f$)
     
-    _AntiQDownG1BRight = (0b00000000000000000010000101000001),  //!< Down-anti-quark - blue - 1. gen. - right handed (spin +½)
-    _AntiQDownG1BLeft  = (0b00000000000000000010000101000010),  //!< Down-anti-quark - blue - 1. gen. - left handed (spin -½)
-    _QuarkDownG1BRight = (0b00000000000000000010000110000001),  //!< Down-quark      - blue - 1. gen. - right handed (spin +½)
-    _QuarkDownG1BLeft  = (0b00000000000000000010000110000010),  //!< Down-quark      - blue - 1. gen. - left handed (spin -½)
-    _AntiQDownG2BRight = (0b00000000000000000010001001000001),  //!< Down-anti-quark - blue - 2. gen. - right handed (spin +½)
-    _AntiQDownG2BLeft  = (0b00000000000000000010001001000010),  //!< Down-anti-quark - blue - 2. gen. - left handed (spin -½)
-    _QuarkDownG2BRight = (0b00000000000000000010001010000001),  //!< Down-quark      - blue - 2. gen. - right handed (spin +½)
-    _QuarkDownG2BLeft  = (0b00000000000000000010001010000010),  //!< Down-quark      - blue - 2. gen. - left handed (spin -½)
-    _AntiQDownG3BRight = (0b00000000000000000010001101000001),  //!< Down-anti-quark - blue - 3. gen. - right handed (spin +½)
-    _AntiQDownG3BLeft  = (0b00000000000000000010001101000010),  //!< Down-anti-quark - blue - 3. gen. - left handed (spin -½)
-    _QuarkDownG3BRight = (0b00000000000000000010001110000001),  //!< Down-quark      - blue - 3. gen. - right handed (spin +½)
-    _QuarkDownG3BLeft  = (0b00000000000000000010001110000010),  //!< Down-quark      - blue - 3. gen. - left handed (spin -½)
+    _AntiQDownG1BRight = (0b00000000000000000010000101000001),  //!<   I. generation <b>blue anti-down-quark</b> (spin +½, \f$[+\mbox{k}]\f$)
+    _AntiQDownG1BLeft  = (0b00000000000000000010000101000010),  //!<   I. generation <b>blue anti-down-quark</b> (spin -½, \f$[+\mbox{k}]\f$)
+    _QuarkDownG1BRight = (0b00000000000000000010000110000001),  //!<   I. generation <b>blue down-quark</b>      (spin +½, \f$[-\mbox{k}]\f$)
+    _QuarkDownG1BLeft  = (0b00000000000000000010000110000010),  //!<   I. generation <b>blue down-quark</b>      (spin -½, \f$[-\mbox{k}]\f$)
+    _AntiQDownG2BRight = (0b00000000000000000010001001000001),  //!<  II. generation <b>blue anti-down-quark</b> (spin +½, \f$[+\mbox{k}]\f$)
+    _AntiQDownG2BLeft  = (0b00000000000000000010001001000010),  //!<  II. generation <b>blue anti-down-quark</b> (spin -½, \f$[+\mbox{k}]\f$)
+    _QuarkDownG2BRight = (0b00000000000000000010001010000001),  //!<  II. generation <b>blue down-quark</b>      (spin +½, \f$[-\mbox{k}]\f$)
+    _QuarkDownG2BLeft  = (0b00000000000000000010001010000010),  //!<  II. generation <b>blue down-quark</b>      (spin -½, \f$[-\mbox{k}]\f$)
+    _AntiQDownG3BRight = (0b00000000000000000010001101000001),  //!< III. generation <b>blue anti-down-quark</b> (spin +½, \f$[+\mbox{k}]\f$)
+    _AntiQDownG3BLeft  = (0b00000000000000000010001101000010),  //!< III. generation <b>blue anti-down-quark</b> (spin -½, \f$[+\mbox{k}]\f$)
+    _QuarkDownG3BRight = (0b00000000000000000010001110000001),  //!< III. generation <b>blue down-quark</b>      (spin +½, \f$[-\mbox{k}]\f$)
+    _QuarkDownG3BLeft  = (0b00000000000000000010001110000010),  //!< III. generation <b>blue down-quark</b>      (spin -½, \f$[-\mbox{k}]\f$)
     
-    _PhotonRight       = (0b00000000000000000010010000000001),  //!< Photon - right handed (spin +1)
-    _PhotonLeft        = (0b00000000000000000010010000000010),  //!< Photon - left handed (spin -1)
+    _PhotonRight       = (0b00000000000000000010010000000001),  //!< <b>Photon</b> (spin +1)
+    _PhotonLeft        = (0b00000000000000000010010000000010),  //!< <b>Photon</b> (spin -1)
     
-    _GluonRGRight      = (0b00000000000000000010110000100101),  //!< Gluon - red anti-green - right handed (spin +1)
-    _GluonRGLeft       = (0b00000000000000000010110000100110),  //!< Gluon - red anti-green - left handed (spin -1)
+    _GluonRGRight      = (0b00000000000000000010110000100101),  //!< <b>Gluon - red anti-green</b> (spin +1)
+    _GluonRGLeft       = (0b00000000000000000010110000100110),  //!< <b>Gluon - red anti-green</b> (spin -1)
     
-    _GluonRBRight      = (0b00000000000000000011000010000101),  //!< Gluon - red anti-blue - right handed (spin +1)
-    _GluonRBLeft       = (0b00000000000000000011000010000110),  //!< Gluon - red anti-blue - left handed (spin -1)
+    _GluonRBRight      = (0b00000000000000000011000010000101),  //!< <b>Gluon - red anti-blue</b> (spin +1)
+    _GluonRBLeft       = (0b00000000000000000011000010000110),  //!< <b>Gluon - red anti-blue</b> (spin -1)
     
-    _GluonGRRight      = (0b00000000000000000011100000011001),  //!< Gluon - green anti-red - right handed (spin +1)
-    _GluonGRLeft       = (0b00000000000000000011100000011010),  //!< Gluon - green anti-red - left handed (spin -1)
+    _GluonGRRight      = (0b00000000000000000011100000011001),  //!< <b>Gluon - green anti-red</b> (spin +1)
+    _GluonGRLeft       = (0b00000000000000000011100000011010),  //!< <b>Gluon - green anti-red</b> (spin -1)
     
-    _GluonGBRight      = (0b00000000000000000011110010010001),  //!< Gluon - green anti-blue - right handed (spin +1)
-    _GluonGBLeft       = (0b00000000000000000011110010010010),  //!< Gluon - green anti-blue - left handed (spin -1)
+    _GluonGBRight      = (0b00000000000000000011110010010001),  //!< <b>Gluon - green anti-blue</b> (spin +1)
+    _GluonGBLeft       = (0b00000000000000000011110010010010),  //!< <b>Gluon - green anti-blue</b> (spin -1)
     
-    _GluonBRRight      = (0b00000000000000000100000001001001),  //!< Gluon - blue anti-red - right handed (spin +1)
-    _GluonBRLeft       = (0b00000000000000000100000001001010),  //!< Gluon - blue anti-red - left handed (spin -1)
+    _GluonBRRight      = (0b00000000000000000100000001001001),  //!< <b>Gluon - blue anti-red</b> (spin +1)
+    _GluonBRLeft       = (0b00000000000000000100000001001010),  //!< <b>Gluon - blue anti-red</b> (spin -1)
     
-    _GluonBGRight      = (0b00000000000000000100010001100001),  //!< Gluon - blue anti-green - right handed (spin +1)
-    _GluonBGLeft       = (0b00000000000000000100010001100010),  //!< Gluon - blue anti-green - left handed (spin -1)
+    _GluonBGRight      = (0b00000000000000000100010001100001),  //!< <b>Gluon - blue anti-green</b> (spin +1)
+    _GluonBGLeft       = (0b00000000000000000100010001100010),  //!< <b>Gluon - blue anti-green</b> (spin -1)
     
-    _WbosonPositive    = (0b00000000000000000100100001010111),  //!< W+ boson - positive
+    _WbosonPositive    = (0b00000000000000000100100001010111),  //!< <b>W+ boson</b> - positive
     
-    _WbosonNegative    = (0b00000000000000000100110010101011),  //!< W- boson - negative
+    _WbosonNegative    = (0b00000000000000000100100010101011),  //!< <b>W- boson</b> - negative
     
-    _Zboson            = (0b00000000000000000101000011111111),  //!< Z boson
+    _Zboson            = (0b00000000000000000100110011111111),  //!< <b>Z boson</b>
 };
 Q_ENUM_NS(ParticleType)
 
-/*! \brief Major particle normal helicity names */
+/*! 
+ * \brief Major normal helicity names
+ * \details The helicity is established by an angle between major normal \f$\vec{N_1}\f$ and 
+ * major (first) translational motion vector \f$\vec{v_1}\f$
+ */
 enum ParticleHelicity : int
 {
     _HelicityInvalid   = 0,                                     //!< Invalid helicity
-    _HelicityRight     = (0b00000000000000000000000000000001),  //!< Positive right-handed helicity
-    _HelicityLeft      = (0b00000000000000000000000000000010),  //!< Negative left-handed helicity
-    _HelicityBoth      = (0b00000000000000000000000000000011),  //!< Dual, positive and negative helicity (W and Z bosons)
+    _HelicityPositive  = (0b00000000000000000000000000000001),  //!< Positive helicity \f$\angle (\vec{N_1}, \vec{v_1}) < \frac{\pi}{2}\f$
+    _HelicityNegative  = (0b00000000000000000000000000000010),  //!< Negative helicity \f$\angle (\vec{N_1}, \vec{v_1}) > \frac{\pi}{2}\f$
+    _HelicityBoth      = (0b00000000000000000000000000000011),  //!< Dual, positive and negative helicity (only W and Z bosons)
 };
 Q_ENUM_NS(ParticleHelicity)
 
-/*! \brief Red particle normal helicity names */
+/*!
+ * \brief Red normal helicity names = Red wave charges (red wave magnitudes)
+ * \details The helicity is established by an angle between red normal \f$\vec{N_R}\f$ and 
+ * major (first) translational motion vector \f$\vec{v_1}\f$
+ */
 enum ParticleChargeR : int
 {
-    _ChargeRNull      = 0,                                     //!< Null red charge - Red normal perpendicular to the major normal
-    _ChargeRRight     = (0b00000000000000000000000000000100),  //!< Positive red charge - right-handed helicity
-    _ChargeRLeft      = (0b00000000000000000000000000001000),  //!< Negative red charge - left-handed helicity
-    _ChargeRBosonZ    = (0b00000000000000000000000000001100),  //!< Null red charge - Two red normals active
+    _ChargeRNull      = 0,                                     //!< Null red charge - \f$\vec{N_R} \bot \vec{v_1}\f$
+    _ChargeRPositive  = (0b00000000000000000000000000000100),  //!< Positive red charge - positive helicity \f$\angle (\vec{N_R}, \vec{v_1}) < \frac{\pi}{2}\f$
+    _ChargeRNegative  = (0b00000000000000000000000000001000),  //!< Negative red charge - negative helicity \f$\angle (\vec{N_R}, \vec{v_1}) > \frac{\pi}{2}\f$
+    _ChargeRBosonZ    = (0b00000000000000000000000000001100),  //!< Null red charge - Two red normals active (only Z bosons)
 };
 Q_ENUM_NS(ParticleChargeR)
 
-/*! \brief Green particle normal helicity names */
+/*!
+ * \brief Green normal helicity names = Green wave charges (green wave magnitudes)
+ * \details The helicity is established by an angle between green normal \f$\vec{N_G}\f$ and 
+ * major (first) translational motion vector \f$\vec{v_1}\f$
+ */
 enum ParticleChargeG : int
 {
-    _ChargeGNull      = 0,                                     //!< Null green charge - Green normal perpendicular to the major normal
-    _ChargeGRight     = (0b00000000000000000000000000010000),  //!< Positive green charge - right-handed helicity
-    _ChargeGLeft      = (0b00000000000000000000000000100000),  //!< Negative green charge - left-handed helicity
-    _ChargeGBosonZ    = (0b00000000000000000000000000110000),  //!< Null green charge - Two green normals active
+    _ChargeGNull      = 0,                                     //!< Null green charge - \f$\vec{N_G} \bot \vec{v_1}\f$
+    _ChargeGPositive  = (0b00000000000000000000000000010000),  //!< Positive green charge - positive helicity \f$\angle (\vec{N_G}, \vec{v_1}) < \frac{\pi}{2}\f$
+    _ChargeGNegative  = (0b00000000000000000000000000100000),  //!< Negative green charge - negative helicity \f$\angle (\vec{N_G}, \vec{v_1}) > \frac{\pi}{2}\f$
+    _ChargeGBosonZ    = (0b00000000000000000000000000110000),  //!< Null green charge - Two green normals active (only Z bosons)
 };
 Q_ENUM_NS(ParticleChargeG)
 
-/*! \brief Blue particle normal helicity names */
+/*!
+ * \brief Blue normal helicity names = Blue wave charges (blue wave magnitudes)
+ * \details The helicity is established by an angle between blue normal \f$\vec{N_B}\f$ and 
+ * major (first) translational motion vector \f$\vec{v_1}\f$
+ */
 enum ParticleChargeB : int
 {
-    _ChargeBNull      = 0,                                     //!< Null blue charge - Blue normal perpendicular to the major normal
-    _ChargeBRight     = (0b00000000000000000000000001000000),  //!< Positive blue charge - right-handed helicity
-    _ChargeBLeft      = (0b00000000000000000000000010000000),  //!< Negative blue charge - left-handed helicity
-    _ChargeBBosonZ    = (0b00000000000000000000000011000000),  //!< Null blue charge - Two blue normals active
+    _ChargeBNull      = 0,                                     //!< Null blue charge - \f$\vec{N_B} \bot \vec{v_1}\f$
+    _ChargeBPositive  = (0b00000000000000000000000001000000),  //!< Positive blue charge - positive helicity \f$\angle (\vec{N_B}, \vec{v_1}) < \frac{\pi}{2}\f$
+    _ChargeBNegative  = (0b00000000000000000000000010000000),  //!< Negative blue charge - negative helicity \f$\angle (\vec{N_B}, \vec{v_1}) > \frac{\pi}{2}\f$
+    _ChargeBBosonZ    = (0b00000000000000000000000011000000),  //!< Null blue charge - Two blue normals active (only Z bosons)
 };
 Q_ENUM_NS(ParticleChargeB)
 
-/*! \brief Particle generation names */
+/*! \brief Fermion particle generation names */
 enum ParticleGeneration : int
 {
-    _GenerationBoson   = 0,                                     //!< Boson or invalid particle
+    _GenerationBoson   = 0,                                     //!< Boson
     _Generation1       = (0b00000000000000000000000100000000),  //!< 1. generation fermion
     _Generation2       = (0b00000000000000000000001000000000),  //!< 2. generation fermion
     _Generation3       = (0b00000000000000000000001100000000),  //!< 3. generation fermion
 };
 Q_ENUM_NS(ParticleGeneration)
 
+/*! \brief Supported particle classes */
+enum ParticleClass : int
+{
+    _ClassInvalid      = 0,                                     //!< Invalid particle class
+    _ClassNeutrino     = (0b00000000000000000000010000000000),  //!< Neutrino and Anti-neutrino 
+    _ClassElectron     = (0b00000000000000000000100000000000),  //!< Electron and Positron
+    _ClassQuarkUpRG    = (0b00000000000000000000110000000000),  //!< Up quark and Up anti-quark - red+green
+    _ClassQuarkUpGB    = (0b00000000000000000001000000000000),  //!< Up quark and Up anti-quark - green+blue
+    _ClassQuarkUpBR    = (0b00000000000000000001010000000000),  //!< Up quark and Up anti-quark - blue+red
+    _ClassQuarkDownR   = (0b00000000000000000001100000000000),  //!< Down quark and Down anti-quark - red
+    _ClassQuarkDownG   = (0b00000000000000000001110000000000),  //!< Down quark and Down anti-quark - green
+    _ClassQuarkDownB   = (0b00000000000000000010000000000000),  //!< Down quark and Down anti-quark - blue
+    _ClassPhoton       = (0b00000000000000000010010000000000),  //!< Photon
+    _ClassGluonRG      = (0b00000000000000000010110000000000),  //!< Gluon - red+anti-green
+    _ClassGluonRB      = (0b00000000000000000011000000000000),  //!< Gluon - red+anti-blue
+    _ClassGluonGR      = (0b00000000000000000011100000000000),  //!< Gluon - green+anti-red 
+    _ClassGluonGB      = (0b00000000000000000011110000000000),  //!< Gluon - green+anti-blue 
+    _ClassGluonBR      = (0b00000000000000000100000000000000),  //!< Gluon - blue+anti-red 
+    _ClassGluonBG      = (0b00000000000000000100010000000000),  //!< Gluon - blue+anti-green 
+    _ClassWBoson       = (0b00000000000000000100100000000000),  //!< W+ and W- Boson 
+    _ClassZBoson       = (0b00000000000000000100110000000000),  //!< Z Boson
+};
+
 // clang-format on
 
-/*! \brief The particle type names */
+/*! \brief Particle calculation states */
 enum ParticleState : int
 {
-    _ParticleStateInvalid = 0,     //!< Invalid particle state
-    _ParticleHistoryIntitial = 1,  //!< Initial historical state of a particle (Initial conditions of a simulation)
-    _ParticleHistory = 2,          //!< Calculated historical state of a particle
-    _ParticleCurrentInit = 3,      //!< Current state of a particle - without calculated interactions
-    _ParticleCurrentReady = 4      //!< Current state of a particle - with calculated interactions, ready to move
+    _StateInvalid = 0,          //!< Invalid particle state
+    _StateHistoryIntitial = 1,  //!< Initial historical state of a particle (Initial conditions of a simulation)
+    _StateHistory = 2,          //!< Calculated historical state of a particle
+    _StateCurrentInit = 3,      //!< Current state of a particle - without calculated interactions
+    _StateCurrentReady = 4      //!< Current state of a particle - with calculated interactions, ready to move
 };
 Q_ENUM_NS(ParticleState)
 
@@ -220,18 +547,38 @@ Q_ENUM_NS(ParticleState)
 //
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-template <typename T>
-struct Particle;
-
 /*!
- * \brief Particles collision
+ * \brief Particle transformation or collision structure
  * \tparam T Template floating point type
+ * \details Singular moment in absolute time when a particle (or more particles) transforms into another particle
+ * (or particles). The structure is composed from two collections of particle states (\a parents and \a children)
+ * that are recorded at exactly the same time-step.
+ *
+ * In this system we use special transformation that is used only for the initialization of particles and holds
+ * the very first state of particles that are defined by an user within the initial conditions.
+ *
+ * For all other types of particle transformation, there must be at least one particle state in both \a parents
+ * and \a children collections and the waves generated by a \a parents particle states must be exactly the same
+ * as the waves generated by \a children particle states.
+ *
+ * Transformation types:
+ * | Type                      | Example                                          | parents | children |
+ * | :------------------------ | :----------------------------------------------- | :------ | :------- |
+ * | Particle initialization   | First particle state (initial conditions)        | 0       | 1        |
+ * | Generation transformation | Neutrino swap to next (or previous) generation   | 1       | 1        |
+ * | Single particle decay     | Electron loses energy in the form of photon      | 1       | 2        |
+ * | Two particles fusion      | Electron absorbs a photon                        | 2       | 1        |
+ * | Two particles collision   | Two photons transforms to electron-positron pair | 2       | 2        |
+ * | Many particles collision  | Collisions in the nucleus                        | N >= 2  | M >= 2   |
  */
 template <typename T>
-struct ParticleCollision
+struct ParticleTransformation
 {
-    std::vector<const Particle<T> *> parents = {};   //!< Particles that hit each other in a collision
-    std::vector<const Particle<T> *> children = {};  //!< Particles that are created in a collision
+    /*! \brief Collection of particle states that represents the last moment of existence of transforming particles */
+    std::vector<const Particle<T> *> parents = {};
+
+    /*! \brief Collection of particle states that represents the first moment of existence of new particles */
+    std::vector<const Particle<T> *> children = {};
 };
 
 /*!
@@ -241,31 +588,116 @@ struct ParticleCollision
 template <typename T>
 struct Particle
 {
-    const Particle<T> *prev = nullptr;  //!< Previous position in time, previous stored state of this particle
-    const Particle<T> *next = nullptr;  //!< Next position in time, next stored state of this particle
-
-    const ParticleCollision<T> *born = nullptr;  //!< Collision where this particle was created (children)
-    const ParticleCollision<T> *dead = nullptr;  //!< Collision where this particle end its lifetime decay (parents)
-
-    size_t ID = 0UL;  //!< Particle index
-
-    ParticleType type = _ParticleInvalid;         //!< Particle type name
-    ParticleState state = _ParticleStateInvalid;  //!< Particle state
-
-    T time = T(0);  //!< Exact time-step in abs. spacetime for this particle state (in seconds)
-
-    // 1. Generation properties
+    /*!
+     * \brief Particle index
+     * \details All the following particle states that represents a single particle shares the same unique index value
+     */
+    size_t ParticleID = 0UL;
 
     /*!
-     * \brief The central position of a spherical particle in the abs. spacetime (in meters)
-     * \note 1. generation wave source position
+     * \brief Particle type
+     * \note Particle type caries information about particle type name, generation, major and color helicity
+     * \sa U1::Math::Universe1::ParticleType
+     */
+    ParticleType type = _ParticleInvalid;
+
+    /*!
+     * \brief Calculation state
+     * \sa U1::Math::Universe1::ParticleState
+     */
+    ParticleState state = _StateInvalid;
+
+    /*!
+     * \brief Previous position of this particle in abs. spacetime
+     * \details Pointer to previous stored state of this particle.
+     * If the value of this pointer is \b NULL, then it means that this particle was created at this time-step
+     * (so the pointer to this particle state is stored in \a born -> \a children).
+     */
+    const Particle<T> *prev = nullptr;
+
+    /*!
+     * \brief Next position of this particle in abs. spacetime
+     * \details Pointer to next stored state of this particle.
+     * If the value of this pointer is \b NULL, then it means that this particle state is the currently calculating
+     * time-step of a simulation OR this state is the last stored state of particle (so the pointer to this particle
+     * state is stored in \a born -> \a children).
+     */
+    const Particle<T> *next = nullptr;
+
+    /*!
+     * \brief The transformation (or collision) where this particle was created
+     * \note This pointer should never by \b NULL
+     */
+    const ParticleTransformation<T> *born = nullptr;
+
+    /*!
+     * \brief The transformation (or collision) where this particle will disappear
+     * \details This pointer has \b NULL value through whole lifetime of the particle and when there is a moment
+     * in the simulation when the particle will cease to exist, then all the states on the trajectory of a particle
+     * take the value of actual terminating transformation
+     */
+    const ParticleTransformation<T> *dead = nullptr;
+
+    /*!
+     * \brief Exact time-step in abs. spacetime for this particle state
+     * \note <i>Physical unit</i>: quantity for measuring the duration of time \f$[\mbox{s}]\f$ (<b>second</b>)
+     * \details In this system, the <b>absolute spacetime</b> (Euclidean space and the flow of time) is scaled
+     * by two main system constants:
+     * - <b>particle radius</b> \f$\hat{r}_1 = 1 \mbox{m}\f$
+     * - <b>universal speed</b> \f$c_1 = 1 \frac{\mbox{m}}{\mbox{s}}\f$
+     *
+     * In this system <b>one second</b> \f$1 \mbox{s}\f$ is:
+     * - the time duration, that every particles (its central point only) travels the distance of one
+     *   <b>particle radius</b> \f$\hat{r}_1\f$ along its trajectory
+     * - the time duration, during which every wave grows its radius by a length equal to one
+     *   <b>particle radius</b> \f$\hat{r}_1\f$
+     */
+    T time = T(0);
+
+    /*!
+     * \brief The central position of a particle in the abs. spacetime
+     * \note <i>Physical unit</i>: quantity for measuring the distance \f$[\mbox{m}]\f$ (<b>meter</b>).
+     * In this system <b>one meter</b> \f$1 \mbox{m}\f$ is equal to the length of every <b>particle radius</b>
+     * \f$\hat{r}_1\f$ \details Positional vector of a singular point at the center of spherical body of a particle. All
+     * particles defined in the system always have exactly the same perfect spherical body with constant radius,
+     * universal system constant, the <b>particle radius</b> \f$\hat{r}_1\f$.
+     *
+     * - The central position of a particle is a singular point where at this time-step (at this particle state)
+     *   particle produces a wave with some "amplitude". The "amplitude" is derived from information about the current
+     *   state and other objects penetrating the body of this particle at this state). Every wave always appears
+     *   as a singular point and then it spreads into the abs. spacetime evenly in every direction as
+     *   an inflating balloon (perfect spherical \b surface shape) with the velocity of inflation equal to
+     *   the <b>universal speed</b> \f$c_1\f$ (the wave radius is growing at \f$c_1\f$). The wave produced at central
+     *   position of a particle is called the <b>1. generation wave</b>
+     *
+     * - The central position of a particle is the only singular point that always propose through abs. spacetime
+     *   at universal constant magnitude of velocity \f$c_1\f$. It is as if currently created wave explodes in this
+     *   singular point "at the speed \f$c_1\f$" and kicked away "at the speed \f$c_1\f$"
+     *
+     * <b>the wave source position</b> for all particles defined
+     * - For all particles, its central points must always propose through abs. spacetime at universal constant
+     *   magnitude of velocity while the direction of translational motion is changing as reaction to penetrating waves
+     *   and cross-section
      */
     Vec3<T> center1 = {};
 
-    /*! \brief Translation motion vector of a 1. generation central position (in meters per second) */
+    /*!
+     * \brief The major translation motion vector of a particle \f$\vec{V_1}\f$ (in meters per second)
+     * \note Applies to the central position of a particle
+     * \note The orientation of this vector can only be within the major axis (\f$\vec{N_1}\f$ or \f$-\vec{N_1}\f$)
+     * \note For all boson and 1. generation fermion particles the magnitude is equal to the constant \f$c_1\f$
+     * \note For all 2. and 3. generation fermion particles the magnitude is always lower then \f$c_1\f$
+     * \note 2. generation fermion particles: \f$|\vec{V_1}|^2 + |\vec{V_2}|^2 = c_1^2\f$
+     * \note 3. generation fermion particles: \f$|\vec{V_1}|^2 + |\vec{V_2}|^2 + |\vec{V_3}|^2 = c_1^2\f$
+     */
     Vec3<T> velocity1 = {};
 
-    Vec3<T> normal1 = {};  //   !< The orientated axis for color vectors of a particle (unit vector)
+    /*!
+     * \brief The major orientated axis of a particle \f$\vec{N_1}\f$ (unit vector)
+     */
+    Vec3<T> normal1 = {};
+
+    //!< The orientated axis for color vectors of a particle (unit vector)
     // Vec3<T> arm1 = {};     //!< The secondary direction perpendicular to a major normal (unit vector)
 
     Vec3<T> boson1R = {};  //!< Primary boson red matter orientation (unit vector)
@@ -404,25 +836,24 @@ namespace Calculus {
  * \brief Tool function for failing build method
  * \tparam T Template floating point type
  * \param _dbSize Particle database size
- * \param _particles Initial particles and their histories
+ * \param _particles Number of initial particles
  * \param _timeEnd Final time in calculation
  * \param _timeDelta General time-step duration
  * \param _msg Error message
  * \return Always \c false
  */
 template <typename T>
-inline static bool failBuild(
-    const size_t _dbSize, const size_t _particlesSize, const T _timeEnd, const T _timeDelta, const std::string &_msg)
+inline static bool
+failBuild(const size_t _dbSize, const size_t _particles, const T _timeEnd, const T _timeDelta, const std::string &_msg)
 {
-    std::cerr << "Error: PhysicsUniverse1::build(" << _dbSize << ", " << _particlesSize << ", " << _timeEnd << ", "
+    std::cerr << "Error: PhysicsUniverse1::build(" << _dbSize << ", " << _particles << ", " << _timeEnd << ", "
               << _timeDelta << "): " << _msg;
     return false;
 }
 
 /*!
  * \brief Test if initial particle is valid
- * \param _p1 Particle 1
- * \param _p2 Particle 2
+ * \param _particle Particle to test
  * \return \c true if major particle parameters are valid
  */
 template <typename T>
@@ -541,6 +972,7 @@ inline static T energyGluon(const T _angleBoson)
  * \tparam T Template floating point type
  * \param _angleBoson Boson color vector normals angle (in radians)
  * \param _angleFermion Fermion color vector normals angle (in radians)
+ * \param _cntActive No of active spins
  * \return Energy of a fermion
  */
 template <typename T>
