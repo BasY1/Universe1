@@ -36,7 +36,7 @@
  * \b Waves are comprised of an "elastic", mass-less and charge-less material that is identical for all waves
  * and contains the information about "the particle body's inner state" at the moment of creation. This information
  * is always evenly distributed over the inflating spherical surface. All the singular points that form the surface
- * of inflated wave are also oriented, the direction can be towards the place of creation or in exactly
+ * of inflated wave are also oriented, the direction can only be towards the point of wave's creation or in exactly
  * the opposite direction. The magnitude of the oriented vector is relative to current area of wave's surface
  * and to the magnitude of initial information given at the time of creation.
  *
@@ -92,75 +92,201 @@
  * Derived system constants:
  * | Name                     | Shortcut, value and unit                                                          |
  * | :----------------------- | :-------------------------------------------------------------------------------- |
+ * | Particle circumference   | \f$\mathbb{L}_1 = 2 \pi \mathbb{R}_1 = 2 \pi [\mbox{m}]\f$                        |
+ * | Particle null plane area | \f$\mathbb{S}_1 = \pi \mathbb{R}_1^2 = \pi [\mbox{m}^2]\f$                        |
  * | Universal spin           | \f$\mathbb{W}_1=\frac{\mathbb{C}_1}{\mathbb{R}_1}=1[\mbox{rad}\,\mbox{s}^{-1}]\f$ |
- * | Period duration          | \f$\mathbb{T}_p = 2 \pi \omega_1 = 2 \pi [\mbox{s}]\f$                            |
- * | Particle circumference   | \f$\mathbb{L}_p = 2 \pi \mathbb{R}_1 = 2 \pi [\mbox{m}]\f$                        |
- * | Particle null plane area | \f$\mathbb{S}_p = \pi \mathbb{R}_1^2 = \pi [\mbox{m}^2]\f$                        |
+ * | Period duration          | \f$\mathbb{T}_1 = \frac{2 \pi}{\mathbb{W}_1} = 2 \pi [\mbox{s}]\f$                |
  *
  * \subsection SubSec3DVecTypes 3D vector properties
  * 3D vector types and their meanings:
  * | Shortcut                | Unit                                  | 3D vector type                         |
  * | ----------------------: | :------------------------------------ | :------------------------------------- |
- * | \f$\vec{P}\f$           | \f$[\mbox{m}]\f$                      | Positional vector                      |
+ * | \f$\vec{p}\f$           | \f$[\mbox{m}]\f$                      | Positional vector                      |
  * | \f$\vec{\mathcal{N}}\f$ | \f$[\mbox{1}]\f$                      | Unit vector - particle normal (axis)   |
  * | \f$\vec{\mathcal{I}}\f$ | \f$[\hat{\mbox{i}}]\f$                | Unit vector - particle red pointer     |
  * | \f$\vec{\mathcal{J}}\f$ | \f$[\hat{\mbox{j}}]\f$                | Unit vector - particle green pointer   |
  * | \f$\vec{\mathcal{K}}\f$ | \f$[\hat{\mbox{k}}]\f$                | Unit vector - particle blue pointer    |
- * | \f$\vec{V}\f$           | \f$[\mbox{m}\,\mbox{s}^{-1}]\f$       | Translational velocity vector          |
- * | \f$\vec{\Omega}\f$      | \f$[\mbox{rad}\,\mbox{s}^{-1}]\f$     | Angular velocity vector (right-handed) |
- * | \f$\vec{\Gamma}\f$      | \f$[\mbox{rad}^2\,\mbox{s}^{-2}]\f$   | Wave surface pointer                   |
- * | \f$\vec{\Gamma}_{i}\f$  | \f$[\hat{\mbox{i}}\,\mbox{m}^{-2}]\f$ | Wave surface red spectrum pointer      |
- * | \f$\vec{\Gamma}_{j}\f$  | \f$[\hat{\mbox{j}}\,\mbox{m}^{-2}]\f$ | Wave surface green spectrum pointer    |
- * | \f$\vec{\Gamma}_{k}\f$  | \f$[\hat{\mbox{k}}\,\mbox{m}^{-2}]\f$ | Wave surface blue spectrum pointer     |
+ * | \f$\vec{v}\f$           | \f$[\mbox{m}\,\mbox{s}^{-1}]\f$       | Translational velocity vector          |
+ * | \f$\vec{\omega}\f$      | \f$[\mbox{rad}\,\mbox{s}^{-1}]\f$     | Angular velocity vector (right-handed) |
+ * | \f$\vec{\zeta}\f$       | \f$[\mbox{rad}^2\,\mbox{s}^{-2}]\f$   | Wave surface pointer                   |
+ * | \f$\vec{\zeta}_{i}\f$   | \f$[\hat{\mbox{i}}\,\mbox{m}^{-2}]\f$ | Wave surface red spectrum pointer      |
+ * | \f$\vec{\zeta}_{j}\f$   | \f$[\hat{\mbox{j}}\,\mbox{m}^{-2}]\f$ | Wave surface green spectrum pointer    |
+ * | \f$\vec{\zeta}_{k}\f$   | \f$[\hat{\mbox{k}}\,\mbox{m}^{-2}]\f$ | Wave surface blue spectrum pointer     |
  *
  * 3D vector indexes and their meanings:
- * | Shortcut index                                       | Detail                                                |
- * | :--------------------------------------------------- | :---------------------------------------------------- |
- * | \f$\vec{P}_{N:t}\f$                                  | Positional vector for particle \b N at time-step \b t |
- * | \f$\vec{P}_{N:now}\f$ or \f$\vec{\mathcal{P}}_{N}\f$ | Particle \b N at current time-step in the simulation  |
+ * | Shortcut index                           | Detail                                                |
+ * | :--------------------------------------- | :---------------------------------------------------- |
+ * | \f$\vec{p}_{n:t}\f$                      | Positional vector for particle \b N at time-step \b t |
+ * | \f$\vec{p}_{n:now}\f$ or \f$\vec{p}_n\f$ | Particle \b N at current time-step in the simulation  |
  *
  * 3D vectors for II. and III. generation of fermion particles:
  * | Dots on shortcut     | Detail                            |
  * | :------------------- | :-------------------------------- |
- * | \f$\vec{P}\f$        | I. generation positional vector   |
- * | \f$\vec{\dot{P}}\f$  | II. generation positional vector  |
- * | \f$\vec{\ddot{P}}\f$ | III. generation positional vector |
+ * | \f$\vec{p}\f$        | I. generation positional vector   |
+ * | \f$\vec{\dot{p}}\f$  | II. generation positional vector  |
+ * | \f$\vec{\ddot{p}}\f$ | III. generation positional vector |
  *
- * \subsection SubSecEnergyConservLaw Analogy for the energy conservation law
- * Although this system uses the concept of absolute space-time, it does not have a defined weight,
- * the \f$[\mbox{kg}]\f$ a physical quantity for measuring weights does not exist here.
- * This property so as electric charge emerges from how the system behaves.
  *
- * So we cannot express energy in standard Joules \b J \f$[\mbox{kg}\,\mbox{m}^2\,\mbox{s}^{-2}]\f$,
+ * \section SecParticleBlock The particle block - a basic building block of particles
+ *
+ * The very most basic unit, the most basic building block, of which all particles are composed,
+ * can be imagined as a perfect sphere with radius \f$\mathbb{R}_1\f$ filled with three different substances,
+ * each substance oriented in its own unique direction in space.
+ * It is as if our perfect sphere were filled with red substance, with each red singular point in the particle body
+ * oriented in the same direction as the other red points and with the same constant unit magnitude
+ * (\f$\vec{\mathcal{I}}\,[\hat{\mbox{i}}]\f$).
+ * At the same time, however, this sphere is also filled with green and blue substances,
+ * and each color has its own unique directions.
+ * In other words, each green singular point in the particle body is oriented in the same direction
+ * as the other green points(\f$\vec{\mathcal{J}}\,[\hat{\mbox{j}}]\f$),
+ * and each blue singular point in the particle body is oriented in the same direction as the other blue points
+ * (\f$\vec{\mathcal{K}}\,[\hat{\mbox{k}}]\f$).
+ *
+ * Particles always consist of at least 2 building blocks (photons and different colored gluons),
+ * but we will also work with particles that consist of 3 blocks (fermions) and 4 blocks (Z and W+/- bosons)
+ *
+ * Here we call such color directions with unit color magnitudes the <b>color pointers</b>
+ * (Red color pointer \f$\vec{\mathcal{I}}\,[\hat{\mbox{i}}]\f$,
+ * green color pointer \f$\vec{\mathcal{J}}\,[\hat{\mbox{j}}]\f$
+ * and blue color pointer \f$\vec{\mathcal{K}}\,[\hat{\mbox{k}}]\f$).
+ *
+ * \subsection SecParticleBlock1 Rules for color pointer directions within the particle block
+ *
+ * \section SecEnergyConservLaw Analogy for the energy conservation law
+ * Although this system uses the concept of absolute space-time, it does not have a defined weight.
+ * The \f$[\mbox{kg}]\f$ a physical quantity for measuring weights does not exist here.
+ * This property emerges from how this system behaves.
+ *
+ * Thus we cannot express energy in standard Joules \b J \f$[\mbox{kg}\,\mbox{m}^2\,\mbox{s}^{-2}]\f$,
  * but we use an analogy that is named <b>the magnitude of information</b> \f$\mathbb{E}\f$ and it is described using:
- * \b meters, \b radians and \b seconds from the standard physical units
- * \f$[\mbox{rad}^2\,\mbox{m}^2\,\mbox{s}^{-2}]\f$
+ * \b meters, \b radians and \b seconds \f$[\mbox{rad}^2\,\mbox{m}^2\,\mbox{s}^{-2}]\f$.
+ *
  * At each singular time instant in the system, each particle creates a wave
- * (fermions of the second generation create 2 waves and fermions of the third generation create 3 waves).
- * Each wave originates at a singular point and receives information about the internal rotation in the particle's body.
- * This information depends on the square of the magnitude of the angular velocity of the internal rotation
- * and the size of the area of ​​the neutral plane. For the I. generation fermions and bosons:
- * \f$\mathbb{E}_{n:t} = \mathbb{E}_{1:n:t} = |\Omega_{1:n:t}|^2\,\pi R_{1:n:t}^2\f$.
+ * (fermions of II. generation create 2 waves and fermions of the III. generation create 3 waves).
  *
- * - II. generation fermions:
- * \f$\mathbb{E}_{n:t} = |\Omega_{1:n:t}|^2\,\pi R_{1:n:t}^2 + |\Omega_{2:n:t}|^2\,\pi R_{2:n:t}^2\f$
- * - III. generation fermions:
- * \f$\mathbb{E}_{n:t} = |\Omega_{1:n:t}|^2\,\pi R_{1:n:t}^2 + |\Omega_{2:n:t}|^2\,\pi R_{2:n:t}^2
- *                     + |\Omega_{3:n:t}|^2\,\pi R_{3:n:t}^2\f$
+ * Each wave originates at a singular point and receives information about the internal "rotational" state
+ * in the particle's body. This information depends on the square of the magnitude of the angular velocity
+ * of the internal rotation and the size of the area of ​​the neutral plane.
  *
- * The resulting value will always be a positive number and the output physical unit of this equation will be
- * \f$[\mbox{rad}^2\,\mbox{m}^2\,\mbox{s}^{-2}]\f$.
+ * \subsection SecEnergyConservLaw1 I. generation fermions and bosons
+ * \f$\mathbb{E}_{n:t} = \pi R_{n:t}^2\,|\vec{\omega}_{n:t}|^2 = \mathbb{S}_1\,|\vec{\omega}_{n:t}|^2\f$
+ * - The total magnitude of information for particle \b n at time \b t is concentrated within a single wave
+ * - \f$\vec{\omega}_{n:t}\f$ is an angular velocity vector describing a I. generation inner body rotation
+ * - \f$R_{n:t} = \mathbb{R}_1\f$ is a radius of a I. generation null plane area (always constant)
+ * - \f$\pi R_{n:t}^2 = \pi \mathbb{R}_1^2 = \mathbb{S}_1\f$ always constant area of a null plane
  *
+ * \subsection SecEnergyConservLaw2 II. generation fermions
+ * \f$\mathbb{E}_{n:t} = \mathbb{E}_{1:n:t} + \dot{\mathbb{E}}_{2:n:t} =
+ * \mathbb{S}_1\,|\vec{\omega}_{n:t}|^2 + \pi \dot{R}_{n:t}^2\,|\vec{\dot{\omega}}_{n:t}|^2\f$
+ * - The total magnitude of information for particle \b n at time \b t is concentrated in two waves
+ *   \f$\mathbb{E}_{n:t} = \mathbb{E}_{1:n:t} + \dot{\mathbb{E}}_{2:n:t}\f$
+ * - \f$\vec{\omega}_{n:t}\f$ is an angular velocity vector describing a I. generation inner body rotation
+ * - \f$\vec{\dot{\omega}}_{n:t}\f$ is an angular velocity vector describing a II. generation inner body rotation
+ *   + \f$|\vec{\dot{\omega}}_{n:t}| = \mathbb{W}_1\f$ Always constant magnitude equal to the <b>Universal spin</b>
+ *   + \f$\vec{\dot{\omega}}_{n:t} \perp \vec{\omega}_{n:t}\f$ Always perpendicular to \f$\vec{\omega}_{n:t}\f$
+ * - \f$\dot{R}_{n:t}\f$ is a radius of a II. generation null plane area (\f$\dot{R}_{n:t} < \mathbb{R}_1\f$)
+ *
+ * \subsection SecEnergyConservLaw3 III. generation fermions
+ * \f$\mathbb{E}_{n:t} = \mathbb{E}_{1:n:t} + \dot{\mathbb{E}}_{2:n:t} + \ddot{\mathbb{E}}_{3:n:t} =
+ *                       \mathbb{S}_1\,|\vec{\omega}_{n:t}|^2
+ *                     + \pi \dot{R}_{n:t}^2\,|\vec{\dot{\omega}}_{n:t}|^2
+ *                     + \pi \ddot{R}_{n:t}^2\,|\vec{\ddot{\omega}}_{n:t}|^2\f$
+ * - The total magnitude of information for particle \b n at time \b t is concentrated in three waves
+ *   \f$\mathbb{E}_{n:t} = \mathbb{E}_{1:n:t} + \dot{\mathbb{E}}_{2:n:t} + \ddot{\mathbb{E}}_{3:n:t}\f$
+ * - \f$\vec{\omega}_{n:t}\f$ is an angular velocity vector describing a I. generation inner body rotation
+ * - \f$\vec{\dot{\omega}}_{n:t}\f$ is an angular velocity vector describing a II. generation inner body rotation
+ * - \f$\vec{\ddot{\omega}}_{n:t}\f$ is an angular velocity vector describing a III. generation inner body rotation
+ *   + \f$\sqrt{|\vec{\dot{\omega}}_{n:t}|^2 + |\vec{\ddot{\omega}}_{n:t}|^2 } = \mathbb{W}_1\f$
+ *   + \f$\vec{\dot{\omega}}_{n:t} \perp \vec{\omega}_{n:t}\f$ ;
+ *     \f$\vec{\ddot{\omega}}_{n:t} \perp \vec{\omega}_{n:t}\f$ ;
+ *     \f$\vec{\ddot{\omega}}_{n:t} \perp \vec{\dot{\omega}}_{n:t}\f$
+ * - \f$\dot{R}_{n:t}\f$ is a radius of a II. generation null plane area (\f$\dot{R}_{n:t} < \mathbb{R}_1\f$)
+ * - \f$\ddot{R}_{n:t}\f$ is a radius of a III. generation null plane area (\f$\ddot{R}_{n:t} < \dot{R}_{n:t}\f$)
+ *
+ * \subsection SecEnergyConservLaw4 Total magnitude of information in the system
  * The law of conservation of energy of the system is understood here in such a way that when we go through
  * all the places where the waves originated and count all the magnitudes of the waves, we always get the same value
  * of the total <b>the magnitude of information</b> of the system. The total number of places where waves originate
  * may change over time (\f$N \Rightarrow M\f$), but the total amount of accumulated <b>magnitude of information</b>
- * is always the same at any given time instant:
- * \f[ ‎‎\sum_{n=1}^{N}\mathbb{E}_{n:t} = ‎‎\sum_{n=1}^{M}\mathbb{E}_{n:t+\Delta t}\,
+ * in the system is always the same value at any given time instant:
+ * \f[ ‎‎\sum_{n=1}^{N}\mathbb{E}_{n:t} = ‎‎\sum_{n=1}^{M}\mathbb{E}_{n:(t+\Delta t)} = constant\,
  * [\mbox{rad}^2\,\mbox{m}^2\,\mbox{s}^{-2}]\f]
  *
- * \subsection SubSecChargeConservLaw Analogy for the electric charge conservation law
+ * \subsection SecEnergyConservLaw5 Particle's magnitude of information and waves.
+ * At the moment when a wave is created as a singular point, it also receives information with some magnitude
+ * (always a positive number expressed in units \f$[\mbox{rad}^2\,\mbox{m}^2\,\mbox{s}^{-2}]\f$).
+ * This singular point from the moment of creation begins to expand in all directions like an inflating balloon
+ * with a speed \f$\mathbb{C}_1\f$.
+ * In other words, the wave exists as a singular point only at one singular moment in our absolute space-time.
+ * From this moment of birth, it always has the body of a perfect surface of an inflating sphere.
+ * The information that the wave received at birth is always evenly distributed on the surface of the inflating sphere.
+ * It is as if every singular point on the surface of the inflating sphere
+ * had the same portion of the original magnitude of information.
+ * If we take any point on the surface of the inflating sphere, we will be able to determine the vector
+ * \f$\vec{\zeta}\f$, which will always point towards the point of creation of the wave
+ * and will have a magnitude inversely proportional to the actual area of ​​the wave's sphere.
  *
+ * \subsection SecEnergyConservLaw6 The wave's surface point - wave surface pointer
+ * - Let \b t be the time of waves creation and \b s to be the time when we want to observe the wave
+ *   (the current time in the simulation), so the wave has its age: \f$\Delta t = s - t\,[\mbox{s}]\,;\,\Delta t > 0\f$
+ * - Wave radius \f$r_{w:n:t \rightarrow s} = \Delta t\,\mathbb{C}_1\,[\mbox{m}]\f$
+ * - Wave surface area \f$s_{w:n:t \rightarrow s} = 4 \pi r_{w:n:t \rightarrow s}^2\,[\mbox{m}^2]\f$
+ * - Let \f$\vec{p}_{n:t}\f$ is the point where the wave was created, and
+ *   \f$\vec{p}_{w:n:s}\f$ is randomly chosen point on the wave surface at the "current" time \b s
+ *   (Wave radius \f$r_{w:n:t \rightarrow s} = |\vec{p}_{n:t} - \vec{p}_{w:n:s}|\f$).
+ * - The direction normal of the wave surface point
+ *
+ *   \f$\vec{\mathcal{N}}_{w:n:t \rightarrow s} =
+ *   \frac{\vec{p}_{n:t} - \vec{p}_{w:n:s}}{|\vec{p}_{n:t} - \vec{p}_{w:n:s}|} =
+ *   \frac{\vec{p}_{n:t} - \vec{p}_{w:n:s}}{r_{w:n:t \rightarrow s}}\,[\mbox{1}]\f$
+ * - Wave surface pointer (I. generation wave)
+ *
+ *   \f$\vec{\zeta}_{n:t \rightarrow s} =
+ *   \vec{\mathcal{N}}_{w:n:t \rightarrow s} \frac{\mathbb{E}_{n:t}}{s_{w:n:t \rightarrow s}} =
+ *   \frac{\vec{p}_{n:t} - \vec{p}_{w:n:s}}{r_{w:n:t \rightarrow s}}\,\frac{\mathbb{E}_{n:t}}
+ *   {4 \pi r_{w:n:t \rightarrow s}^2} =
+ *   (\vec{p}_{n:t} - \vec{p}_{w:n:s})\,\frac{\mathbb{E}_{n:t}}{4 \pi r_{w:n:t \rightarrow s}^3} =
+ *   (\vec{p}_{n:t} - \vec{p}_{w:n:s})\,\frac{\pi R_{n:t}^2\,|\vec{\omega}_{n:t}|^2}{4 \pi r_{w:n:t \rightarrow s}^3} =
+ *   (\vec{p}_{n:t} - \vec{p}_{w:n:s})\,\frac{\mathbb{R}_1^2\,|\vec{\omega}_{n:t}|^2}{4 r_{w:n:t \rightarrow s}^3}
+ *   \,[\mbox{rad}^2\,\mbox{s}^{-2}]\f$
+ *
+ * \section SecChargeConservLaw Analogy for the charge conservation law
+ * As with kilograms and energy, this system does not have a defined physical unit of electric current - the ampere.
+ * Electromagnetism and electric charges are not directly described, but are secondary properties that emerge
+ * from how the system behaves.
+ *
+ * However, there is an analogy here to color charges, which are used in quantum chronodynamics.
+ * Each particle defined in this system has several color pointers
+ * (unit vectors that have one of the colors red, green, or blue, resp. one of Hamiltonian indices
+ * \f$\hat{\mbox{i}},\,\hat{\mbox{j}},\,\hat{\mbox{k}}\f$).
+ *
+ *
+ *
+ *
+ * Such a color pointer also has one of these three attributes:
+ * - An \b inactive pointer:
+ *   + Lies in a neutral plane, i.e. perpendicular to the particle axis (and direction of motion)
+ *   + Is neutralized by one opposite pointer of a different color, or by two pointers (all in different colors),
+ *     which do not have to lie exactly in the axis of the inactive pointer,
+ *     but their projection onto this axis creates a pointer in the opposite direction
+ *   + Does not produce a color charged waves, resp. produces a color charged waves with the zero magnitude
+ * - An \b active pointer:
+ *   + It never lies in a neutral plane
+ *   + The direction of this pointer can lie in:
+ *     - front hemisphere according to translational motion and create positive color charged waves
+ *     - back hemisphere according to translational motion and create negative color charged waves
+ *   + All the active pointers in the single particle must form the same angle with particle axis
+ * - A \b mixing pointer:
+ *   + It is always neutralized by a same color pointer in exactly the opposite direction
+ *   + It never lies in a neutral plane
+ *   + All the mixing pointers in the single particle must form the same angle with particle axis
+ *   + This angle directly affects the magnitude of the internal rotation \f$\vec{\omega}_{n:t}\f$
+ *     (which is determining the energy of the particle and major magnitude of informations given to the waves
+ *     \f$\mathbb{E}_{n:t}\f$).
+ *   + Does not produce a color charged waves, resp. produces a color charged waves with the zero magnitude
+ *
+ * \f$\alpha_{n}\f$ is angle between all active pointers and particle axis
+
  *
  * \section SecTranslationalMotion Translational motion - "Exploding waves"
  *
@@ -168,48 +294,51 @@
  * a singular point object that immediately "explodes at speed" \f$\mathbb{C}_1\f$. This also exerts a kick, a "force"
  * on the central point of the particle, causing it to move away from its current position at speed \f$\mathbb{C}_1\f$
  * "in the direction of its preferential choice".
- * - all <b>I. generation fermions</b> and <b>bosons</b> particles produces <b>one</b> wave at any given instant
- *   of its existence at <b>the central point</b> and that point is forced to move in the direction
- *   of its preferential choice at velocity \f$\vec{V_1}, |\vec{V_1}| = \mathbb{C}_1\f$
  *
- * - all <b>II. generation fermions</b> produces <b>two</b> waves at any given instant of its existence:
- *   + <i>I. generation wave</i> is produced at <b>the central point</b> of the particle and it is kicking away this
- *     point in the direction of its preferential choice at velocity \f$\vec{V_1}, |\vec{V_1}| < \mathbb{C}_1\f$
- *   + <i>II. generation wave</i> is produced at different point in the body of the particle then the central point
- *     (at <b>II. generation central point</b>) and is kicking away that point at velocity
- *     \f$\vec{V_2}, |\vec{V_2}| < \mathbb{C}_1, \sqrt{|\vec{V_1}|^2 + |\vec{V_2}|^2} = \mathbb{C}_1\f$ in the direction
- *     that is perpendicular to \f$\vec{V_1}\f$
+ * \subsection SecTranslationalMotion1 I. generation fermions and bosons
+ * All <b>I. generation fermions</b> and <b>boson</b> particles produces <b>one</b> wave at any given instant
+ * of its existence at <b>the central point</b> and that point is forced to move in the direction
+ * of its preferential choice at velocity \f$\vec{v_1}, |\vec{v_1}| = \mathbb{C}_1\f$
  *
- *   + <b>II. generation central point</b> is moving through absolute spacetime at velocity \f$\vec{V_2}\f$
- *     and it is dragging the major I. generation <b>central point</b> of the particle
- *     and force it to move with this velocity too.
- *   + <b>The central point</b> of the particle is performing 2 translational motions that are perpendicular each other:
- *     - kicked away by just created wave at velocity \f$\vec{V_1}\f$
- *     - dragged with the II. generation central point and its wave at velocity \f$\vec{V_2}\f$
- *     - <b>the central point</b> is keeping the total magnitude of the velocity constant at \f$\mathbb{C}_1\f$
- *       (\f$\sqrt{|\vec{V_1}|^2 + |\vec{V_2}|^2} = \mathbb{C}_1\f$).
+ * \subsection SecTranslationalMotion2 II. generation fermions particles
+ * All <b>II. generation fermions</b> produces <b>two</b> waves at any given instant of its existence:
+ * - <i>I. generation wave</i> is produced at <b>the central point</b> of the particle and it is kicking away this
+ *   point in the direction of its preferential choice at velocity \f$\vec{v_1}, |\vec{v_1}| < \mathbb{C}_1\f$
+ * - <i>II. generation wave</i> is produced at different point in the body of the particle then the central point
+ *   (at <b>II. generation central point</b>) and is kicking away that point at velocity
+ *   \f$\vec{v_2}, |\vec{v_2}| < \mathbb{C}_1, \sqrt{|\vec{v_1}|^2 + |\vec{v_2}|^2} = \mathbb{C}_1\f$ in the direction
+ *   that is perpendicular to \f$\vec{v_1}\f$
+ * - <b>II. generation central point</b> is moving through absolute spacetime at velocity \f$\vec{v_2}\f$
+ *   and it is dragging the major I. generation <b>central point</b> of the particle
+ *   and force it to move with this velocity too.
+ * - <b>The central point</b> of the particle is performing 2 translational motions that are perpendicular each other:
+ *   + kicked away by just created wave at velocity \f$\vec{v_1}\f$
+ *   + dragged with the II. generation central point and its wave at velocity \f$\vec{v_2}\f$
+ *   + <b>the central point</b> is keeping the total magnitude of the velocity constant at \f$\mathbb{C}_1\f$
+ *     (\f$\sqrt{|\vec{v_1}|^2 + |\vec{v_2}|^2} = \mathbb{C}_1\f$).
  *
- * - all <b>III. generation fermions</b> produces <b>three</b> waves at any given instant of its existence:
- *   + <i>I. generation wave</i> is produced at <b>the central point</b> of the particle and it is kicking away this
- *     point in the direction of its preferential choice at velocity \f$\vec{V_1}, |\vec{V_1}| < \mathbb{C}_1\f$
- *   + <i>II. generation wave</i> is produced at different point in the body of the particle then the central point
- *     (at <b>II. generation central point</b>) and is kicking away that point in the direction that is
- *     perpendicular to \f$\vec{V_1}\f$ at velocity \f$\vec{V_2}, |\vec{V_2}| < \mathbb{C}_1\f$
- *   + <i>III. generation wave</i> is produced at different point in the II. generation body
- *     (at <b>III. generation central point</b>) and is kicking away that point in the direction that is
- *     perpendicular to both \f$\vec{V_1}\f$ and \f$\vec{V_2}\f$ at velocity
- *     \f$\vec{V_3}, |\vec{V_3}| < \mathbb{C}_1 , \sqrt{|\vec{V_1}|^2 + |\vec{V_2}|^2 + |\vec{V_3}|^2} = \mathbb{C}_1\f$
- *   + <b>III. generation central point</b> is moving through absolute spacetime at velocity \f$\vec{V_3}\f$
- *     and it is dragging the II. generation <b>central point</b> and force it to move with this velocity too.
- *   + <b>II. generation central point</b> is performing 2 translational motions that are perpendicular each other:
- *     - kicked away by just created wave at velocity \f$\vec{V_2}\f$
- *     - dragged with the II. generation central point and its wave at velocity \f$\vec{V_3}\f$
- *   + <b>The central point</b> of the particle is performing 3 translational motions that are perpendicular each other:
- *     - kicked away by just created wave at velocity \f$\vec{V_1}\f$
- *     - dragged with the II. generation central point and its wave at velocity \f$\vec{V_2}\f$
- *     - dragged with the III. generation central point and its wave at velocity \f$\vec{V_3}\f$
- *     - <b>the central point</b> is keeping the total magnitude of the velocity constant at \f$\mathbb{C}_1\f$
- *       (\f$\sqrt{|\vec{V_1}|^2 + |\vec{V_2}|^2 + |\vec{V_3}|^2} = \mathbb{C}_1\f$).
+ * \subsection SecTranslationalMotion3 III. generation fermions particles
+ * All <b>III. generation fermions</b> produces <b>three</b> waves at any given instant of its existence:
+ * - <i>I. generation wave</i> is produced at <b>the central point</b> of the particle and it is kicking away this
+ *   point in the direction of its preferential choice at velocity \f$\vec{v_1}, |\vec{v_1}| < \mathbb{C}_1\f$
+ * - <i>II. generation wave</i> is produced at different point in the body of the particle then the central point
+ *   (at <b>II. generation central point</b>) and is kicking away that point in the direction that is
+ *   perpendicular to \f$\vec{v_1}\f$ at velocity \f$\vec{v_2}, |\vec{v_2}| < \mathbb{C}_1\f$
+ * - <i>III. generation wave</i> is produced at different point in the II. generation body
+ *   (at <b>III. generation central point</b>) and is kicking away that point in the direction that is
+ *   perpendicular to both \f$\vec{v_1}\f$ and \f$\vec{v_2}\f$ at velocity
+ *   \f$\vec{v_3}, |\vec{v_3}| < \mathbb{C}_1 , \sqrt{|\vec{v_1}|^2 + |\vec{v_2}|^2 + |\vec{v_3}|^2} = \mathbb{C}_1\f$
+ * - <b>III. generation central point</b> is moving through absolute spacetime at velocity \f$\vec{v_3}\f$
+ *   and it is dragging the II. generation <b>central point</b> and force it to move with this velocity too.
+ * - <b>II. generation central point</b> is performing 2 translational motions that are perpendicular each other:
+ *   + kicked away by just created wave at velocity \f$\vec{v_2}\f$
+ *   + dragged with the II. generation central point and its wave at velocity \f$\vec{v_3}\f$
+ * - <b>The central point</b> of the particle is performing 3 translational motions that are perpendicular each other:
+ *   + kicked away by just created wave at velocity \f$\vec{v_1}\f$
+ *   + dragged with the II. generation central point and its wave at velocity \f$\vec{v_2}\f$
+ *   + dragged with the III. generation central point and its wave at velocity \f$\vec{v_3}\f$
+ *   + <b>the central point</b> is keeping the total magnitude of the velocity constant at \f$\mathbb{C}_1\f$
+ *     (\f$\sqrt{|\vec{v_1}|^2 + |\vec{v_2}|^2 + |\vec{v_3}|^2} = \mathbb{C}_1\f$).
  *
  * All particle central points are always at the same speed \f$\mathbb{C}_1\f$, they never accelerate or decelerate.
  * The "direction preferential choice" in which the central point is kicked away may change, but only the orientation,
@@ -217,16 +346,19 @@
  *
  * \section SecRotationalMotion Rotational motion - Particle reaction to penetrating objects
  *
- * The second kind of motion that particle bodies are performing is the <b>rotation</b>:
- * - In every instant of particle's existence an infinity waves are penetrating the body of the particle.
- *   The material from which all particles are composed can react to the material from which the waves are composed,
- *   and this reaction is in the form of rotation. It is as if the whole body of the particle wanted to rotate
- *   into more optimal orientation with respect to currently penetrating waves.
+ * The second kind of motion that particle bodies are performing is the <b>rotation</b>
  *
- * - Two or more particles can collide, their bodies can penetrate each other, or they can occur
- *   at exactly the same positions. The material from witch the particles are created is the same,
- *   but the orientation of their inner states can differ. Those inner state orientations
- *   wants to align each other causing both particle bodies to rotate into more optimal orientations.
+ * \subsection SecRotationalMotion1 Particle reaction to penetrating waves
+ * In every instant of particle's existence an infinity waves are penetrating the body of the particle.
+ * The material from which all particles are composed can react to the material from which the waves are composed,
+ * and this reaction is in the form of rotation. It is as if the whole body of the particle wanted to rotate
+ * into more optimal orientation with respect to currently penetrating waves.
+ *
+ * \subsection SecRotationalMotion2 Particle collisions - Particle reaction to penetrating particles
+ * Two or more particles can collide, their bodies can penetrate each other, or they can occur
+ * at exactly the same positions. The material from witch the particles are created is the same,
+ * but the orientation of their inner states can differ. Those inner state orientations
+ * wants to align each other causing both particle bodies to rotate into more optimal orientations.
  *
  * \section SecAdvancedDynamicSystem "Advanced" dynamic system
  *
@@ -682,13 +814,13 @@ struct Particle
     Vec3<T> center1 = {};
 
     /*!
-     * \brief The major translation motion vector of a particle \f$\vec{V_1}\f$ (in meters per second)
+     * \brief The major translation motion vector of a particle \f$\vec{v_1}\f$ (in meters per second)
      * \note Applies to the central position of a particle
      * \note The orientation of this vector can only be within the major axis (\f$\vec{N_1}\f$ or \f$-\vec{N_1}\f$)
      * \note For all boson and 1. generation fermion particles the magnitude is equal to the constant \f$c_1\f$
      * \note For all 2. and 3. generation fermion particles the magnitude is always lower then \f$c_1\f$
-     * \note 2. generation fermion particles: \f$|\vec{V_1}|^2 + |\vec{V_2}|^2 = c_1^2\f$
-     * \note 3. generation fermion particles: \f$|\vec{V_1}|^2 + |\vec{V_2}|^2 + |\vec{V_3}|^2 = c_1^2\f$
+     * \note 2. generation fermion particles: \f$|\vec{v_1}|^2 + |\vec{v_2}|^2 = c_1^2\f$
+     * \note 3. generation fermion particles: \f$|\vec{v_1}|^2 + |\vec{v_2}|^2 + |\vec{v_3}|^2 = c_1^2\f$
      */
     Vec3<T> velocity1 = {};
 
