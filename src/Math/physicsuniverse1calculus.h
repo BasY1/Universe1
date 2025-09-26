@@ -98,59 +98,268 @@
  * | Period duration          | \f$\mathbb{T}_1 = \frac{2 \pi}{\mathbb{W}_1} = 2 \pi [\mbox{s}]\f$                |
  *
  * \subsection SubSec3DVecTypes 3D vector properties
- * 3D vector types and their meanings:
- * | Shortcut                | Unit                                  | 3D vector type                         |
- * | ----------------------: | :------------------------------------ | :------------------------------------- |
- * | \f$\vec{p}\f$           | \f$[\mbox{m}]\f$                      | Positional vector                      |
- * | \f$\vec{\mathcal{N}}\f$ | \f$[\mbox{1}]\f$                      | Unit vector - particle normal (axis)   |
- * | \f$\vec{\mathcal{I}}\f$ | \f$[\hat{\mbox{i}}]\f$                | Unit vector - particle red pointer     |
- * | \f$\vec{\mathcal{J}}\f$ | \f$[\hat{\mbox{j}}]\f$                | Unit vector - particle green pointer   |
- * | \f$\vec{\mathcal{K}}\f$ | \f$[\hat{\mbox{k}}]\f$                | Unit vector - particle blue pointer    |
- * | \f$\vec{v}\f$           | \f$[\mbox{m}\,\mbox{s}^{-1}]\f$       | Translational velocity vector          |
- * | \f$\vec{\omega}\f$      | \f$[\mbox{rad}\,\mbox{s}^{-1}]\f$     | Angular velocity vector (right-handed) |
- * | \f$\vec{\zeta}\f$       | \f$[\mbox{rad}^2\,\mbox{s}^{-2}]\f$   | Wave surface pointer                   |
- * | \f$\vec{\zeta}_{i}\f$   | \f$[\hat{\mbox{i}}\,\mbox{m}^{-2}]\f$ | Wave surface red spectrum pointer      |
- * | \f$\vec{\zeta}_{j}\f$   | \f$[\hat{\mbox{j}}\,\mbox{m}^{-2}]\f$ | Wave surface green spectrum pointer    |
- * | \f$\vec{\zeta}_{k}\f$   | \f$[\hat{\mbox{k}}\,\mbox{m}^{-2}]\f$ | Wave surface blue spectrum pointer     |
+ * 3D vector types used in this system and their meanings:
+ * | Shortcut                | Unit                                        | 3D vector type                         |
+ * | ----------------------: | :------------------------------------------ | :------------------------------------- |
+ * | \f$\vec{p}\f$           | \f$[\mbox{m}]\f$                            | Positional vector                      |
+ * | \f$\vec{\mathcal{N}}\f$ | \f$[\mbox{1}]\f$                            | Unit vector - particle normal (axis)   |
+ * | \f$\vec{\mathcal{I}}\f$ | \f$[\hat{\mbox{i}}]\f$                      | Unit vector - particle red pointer     |
+ * | \f$\vec{\mathcal{J}}\f$ | \f$[\hat{\mbox{j}}]\f$                      | Unit vector - particle green pointer   |
+ * | \f$\vec{\mathcal{K}}\f$ | \f$[\hat{\mbox{k}}]\f$                      | Unit vector - particle blue pointer    |
+ * | \f$\vec{v}\f$           | \f$[\mbox{m}\,\mbox{s}^{-1}]\f$             | Translational velocity vector          |
+ * | \f$\vec{\omega}\f$      | \f$[\mbox{rad}\,\mbox{s}^{-1}]\f$           | Angular velocity vector (right-handed) |
+ * | \f$\vec{\zeta}\f$       | \f$[\mbox{rad}\,\mbox{m}\,\mbox{s}^{-2}]\f$ | Wave surface pointer                   |
+ * | \f$\vec{\xi}_{i}\f$     | \f$[\hat{\mbox{i}}\,\mbox{m}^{-2}]\f$       | Wave surface red spectrum pointer      |
+ * | \f$\vec{\xi}_{j}\f$     | \f$[\hat{\mbox{j}}\,\mbox{m}^{-2}]\f$       | Wave surface green spectrum pointer    |
+ * | \f$\vec{\xi}_{k}\f$     | \f$[\hat{\mbox{k}}\,\mbox{m}^{-2}]\f$       | Wave surface blue spectrum pointer     |
  *
- * 3D vector indexes and their meanings:
+ * Indexes of 3D vectors and their meanings:
  * | Shortcut index                           | Detail                                                |
  * | :--------------------------------------- | :---------------------------------------------------- |
- * | \f$\vec{p}_{n:t}\f$                      | Positional vector for particle \b N at time-step \b t |
- * | \f$\vec{p}_{n:now}\f$ or \f$\vec{p}_n\f$ | Particle \b N at current time-step in the simulation  |
+ * | \f$\vec{p}_{n:t}\f$                      | Positional vector for particle \b n at time-step \b t |
+ * | \f$\vec{p}_{n:now}\f$ or \f$\vec{p}_n\f$ | Particle \b n at current time-step in the simulation  |
  *
- * 3D vectors for II. and III. generation of fermion particles:
- * | Dots on shortcut     | Detail                            |
- * | :------------------- | :-------------------------------- |
- * | \f$\vec{p}\f$        | I. generation positional vector   |
- * | \f$\vec{\dot{p}}\f$  | II. generation positional vector  |
- * | \f$\vec{\ddot{p}}\f$ | III. generation positional vector |
- *
+ * II. and III. generation 3D vectors for fermion particles:
+ * | Dots on shortcut     | Dots | Generation | Detail                            |
+ * | :------------------- | :--: | :--------: | :-------------------------------- |
+ * | \f$\vec{p}\f$        | 0    | I          | I. generation positional vector   |
+ * | \f$\vec{\dot{p}}\f$  | 1    | II         | II. generation positional vector  |
+ * | \f$\vec{\ddot{p}}\f$ | 2    | III        | III. generation positional vector |
  *
  * \section SecParticleBlock The particle block - a basic building block of particles
  *
- * The very most basic unit, the most basic building block, of which all particles are composed,
+ * The very most basic unit, the fundamental building block, of which all particles are composed,
  * can be imagined as a perfect sphere with radius \f$\mathbb{R}_1\f$ filled with three different substances,
  * each substance oriented in its own unique direction in space.
  * It is as if our perfect sphere were filled with red substance, with each red singular point in the particle body
  * oriented in the same direction as the other red points and with the same constant unit magnitude
- * (\f$\vec{\mathcal{I}}\,[\hat{\mbox{i}}]\f$).
+ * (\f$\vec{\mathcal{I}}\f$).
  * At the same time, however, this sphere is also filled with green and blue substances,
  * and each color has its own unique directions.
  * In other words, each green singular point in the particle body is oriented in the same direction
- * as the other green points(\f$\vec{\mathcal{J}}\,[\hat{\mbox{j}}]\f$),
+ * as the other green points (\f$\vec{\mathcal{J}}\f$),
  * and each blue singular point in the particle body is oriented in the same direction as the other blue points
- * (\f$\vec{\mathcal{K}}\,[\hat{\mbox{k}}]\f$).
+ * (\f$\vec{\mathcal{K}}\f$).
  *
  * Particles always consist of at least 2 building blocks (photons and different colored gluons),
  * but we will also work with particles that consist of 3 blocks (fermions) and 4 blocks (Z and W+/- bosons)
  *
- * Here we call such color directions with unit color magnitudes the <b>color pointers</b>
+ * The position of each particle at a singular time instant in the system is described by the positional vector
+ * \f$\vec{p}_{n:t}\f$, and this singular point is a shared central point of each particle block that form the particle.
+ * The second vector parameter, that is shared through all particle blocks, is the unit normal vector
+ * \f$\vec{\mathcal{N}}_{n:t}\f$, which is:
+ * - <b>The direction of preferential choice</b>, the direction in which a central point is "kicked away"
+ *   by a just exploded wave. All bosons and I. generation fermions are kicked away at a velocity magnitude
+ *   equal to the universal speed constant \f$\mathbb{C}_1\f$ and the II. and III. generation fermions
+ *   are kicked away at a velocity that is lower than \f$\mathbb{C}_1\f$.
+ * - This normal is also <b>the axis of internal rotation</b> \f$\vec{\omega}_{n:t}\f$. So this angular velocity vector
+ *   which describes right-handed rotation can only be oriented in the direction of \f$\vec{\mathcal{N}}_{n:t}\f$ or
+ *   in exactly the opposite direction.
+ *
+ * Here we call the normals with unit color magnitudes that form a single particle block the <b>color pointers</b>
  * (Red color pointer \f$\vec{\mathcal{I}}\,[\hat{\mbox{i}}]\f$,
  * green color pointer \f$\vec{\mathcal{J}}\,[\hat{\mbox{j}}]\f$
  * and blue color pointer \f$\vec{\mathcal{K}}\,[\hat{\mbox{k}}]\f$).
+ * Since each particle consists of at least two blocks, the colored pointers will also be labeled with the index of
+ * their block.
+ * | Shortcut                        | Unit                   | Block ID  | Color pointer name | Used                  |
+ * | ------------------------------: | :--------------------- | :-------- | :----------------- | :-------------------- |
+ * | \f$\vec{\mathcal{I}}_{1:n:t}\f$ | \f$[\hat{\mbox{i}}]\f$ | 1 Boson   | 1. red pointer     | All particles         |
+ * | \f$\vec{\mathcal{J}}_{1:n:t}\f$ | \f$[\hat{\mbox{j}}]\f$ | 1 Boson   | 1. green pointer   | All particles         |
+ * | \f$\vec{\mathcal{K}}_{1:n:t}\f$ | \f$[\hat{\mbox{k}}]\f$ | 1 Boson   | 1. blue pointer    | All particles         |
+ * | \f$\vec{\mathcal{I}}_{2:n:t}\f$ | \f$[\hat{\mbox{i}}]\f$ | 2 Boson   | 2. red pointer     | All particles         |
+ * | \f$\vec{\mathcal{J}}_{2:n:t}\f$ | \f$[\hat{\mbox{j}}]\f$ | 2 Boson   | 2. green pointer   | All particles         |
+ * | \f$\vec{\mathcal{K}}_{2:n:t}\f$ | \f$[\hat{\mbox{k}}]\f$ | 2 Boson   | 2. blue pointer    | All particles         |
+ * | \f$\vec{\mathcal{I}}_{3:n:t}\f$ | \f$[\hat{\mbox{i}}]\f$ | 3 Fermion | 3. red pointer     | Fermions, W, Z bosons |
+ * | \f$\vec{\mathcal{J}}_{3:n:t}\f$ | \f$[\hat{\mbox{j}}]\f$ | 3 Fermion | 3. green pointer   | Fermions, W, Z bosons |
+ * | \f$\vec{\mathcal{K}}_{3:n:t}\f$ | \f$[\hat{\mbox{k}}]\f$ | 3 Fermion | 3. blue pointer    | Fermions, W, Z bosons |
+ * | \f$\vec{\mathcal{I}}_{4:n:t}\f$ | \f$[\hat{\mbox{i}}]\f$ | 4 Fermion | 4. red pointer     | W, Z bosons           |
+ * | \f$\vec{\mathcal{J}}_{4:n:t}\f$ | \f$[\hat{\mbox{j}}]\f$ | 4 Fermion | 4. green pointer   | W, Z bosons           |
+ * | \f$\vec{\mathcal{K}}_{4:n:t}\f$ | \f$[\hat{\mbox{k}}]\f$ | 4 Fermion | 4. blue pointer    | W, Z bosons           |
  *
- * \subsection SecParticleBlock1 Rules for color pointer directions within the particle block
+ * The mutual angles between colored pointers within one block are denoted here by the alpha character (\f$\alpha\f$).
+ * | Angle alpha              | Angle                                                              |
+ * | :----------------------- | ------------------------------------------------------------------ |
+ * | \f$\alpha_{1:I-J:n:t}\f$ | \f$\vec{\mathcal{I}}_{1:n:t}\,\angle\,\vec{\mathcal{J}}_{1:n:t}\f$ |
+ * | \f$\alpha_{1:J-K:n:t}\f$ | \f$\vec{\mathcal{J}}_{1:n:t}\,\angle\,\vec{\mathcal{K}}_{1:n:t}\f$ |
+ * | \f$\alpha_{1:K-I:n:t}\f$ | \f$\vec{\mathcal{K}}_{1:n:t}\,\angle\,\vec{\mathcal{I}}_{1:n:t}\f$ |
+ * | \f$\alpha_{2:I-J:n:t}\f$ | \f$\vec{\mathcal{I}}_{2:n:t}\,\angle\,\vec{\mathcal{J}}_{2:n:t}\f$ |
+ * | \f$\alpha_{2:J-K:n:t}\f$ | \f$\vec{\mathcal{J}}_{2:n:t}\,\angle\,\vec{\mathcal{K}}_{2:n:t}\f$ |
+ * | \f$\alpha_{2:K-I:n:t}\f$ | \f$\vec{\mathcal{K}}_{2:n:t}\,\angle\,\vec{\mathcal{I}}_{2:n:t}\f$ |
+ * | \f$\alpha_{3:I-J:n:t}\f$ | \f$\vec{\mathcal{I}}_{3:n:t}\,\angle\,\vec{\mathcal{J}}_{3:n:t}\f$ |
+ * | \f$\alpha_{3:J-K:n:t}\f$ | \f$\vec{\mathcal{J}}_{3:n:t}\,\angle\,\vec{\mathcal{K}}_{3:n:t}\f$ |
+ * | \f$\alpha_{3:K-I:n:t}\f$ | \f$\vec{\mathcal{K}}_{3:n:t}\,\angle\,\vec{\mathcal{I}}_{3:n:t}\f$ |
+ * | \f$\alpha_{4:I-J:n:t}\f$ | \f$\vec{\mathcal{I}}_{4:n:t}\,\angle\,\vec{\mathcal{J}}_{4:n:t}\f$ |
+ * | \f$\alpha_{4:J-K:n:t}\f$ | \f$\vec{\mathcal{J}}_{4:n:t}\,\angle\,\vec{\mathcal{K}}_{4:n:t}\f$ |
+ * | \f$\alpha_{4:K-I:n:t}\f$ | \f$\vec{\mathcal{K}}_{4:n:t}\,\angle\,\vec{\mathcal{I}}_{4:n:t}\f$ |
+ *
+ * The angles that the colored pointers make with the normal, resp. the direction of preferential choice
+ * \f$\vec{\mathcal{N}}_{n:t}\f$ are marked with the symbol beta (\f$\beta\f$).
+ * | Angle beta            | Angle                                                            |
+ * | :-------------------- | ---------------------------------------------------------------- |
+ * | \f$\beta_{1:I:n:t}\f$ | \f$\vec{\mathcal{I}}_{1:n:t}\,\angle\,\vec{\mathcal{N}}_{n:t}\f$ |
+ * | \f$\beta_{1:J:n:t}\f$ | \f$\vec{\mathcal{J}}_{1:n:t}\,\angle\,\vec{\mathcal{N}}_{n:t}\f$ |
+ * | \f$\beta_{1:K:n:t}\f$ | \f$\vec{\mathcal{K}}_{1:n:t}\,\angle\,\vec{\mathcal{N}}_{n:t}\f$ |
+ * | \f$\beta_{2:I:n:t}\f$ | \f$\vec{\mathcal{I}}_{2:n:t}\,\angle\,\vec{\mathcal{N}}_{n:t}\f$ |
+ * | \f$\beta_{2:J:n:t}\f$ | \f$\vec{\mathcal{J}}_{2:n:t}\,\angle\,\vec{\mathcal{N}}_{n:t}\f$ |
+ * | \f$\beta_{2:K:n:t}\f$ | \f$\vec{\mathcal{K}}_{2:n:t}\,\angle\,\vec{\mathcal{N}}_{n:t}\f$ |
+ * | \f$\beta_{3:I:n:t}\f$ | \f$\vec{\mathcal{I}}_{3:n:t}\,\angle\,\vec{\mathcal{N}}_{n:t}\f$ |
+ * | \f$\beta_{3:J:n:t}\f$ | \f$\vec{\mathcal{J}}_{3:n:t}\,\angle\,\vec{\mathcal{N}}_{n:t}\f$ |
+ * | \f$\beta_{3:K:n:t}\f$ | \f$\vec{\mathcal{K}}_{3:n:t}\,\angle\,\vec{\mathcal{N}}_{n:t}\f$ |
+ * | \f$\beta_{4:I:n:t}\f$ | \f$\vec{\mathcal{I}}_{4:n:t}\,\angle\,\vec{\mathcal{N}}_{n:t}\f$ |
+ * | \f$\beta_{4:J:n:t}\f$ | \f$\vec{\mathcal{J}}_{4:n:t}\,\angle\,\vec{\mathcal{N}}_{n:t}\f$ |
+ * | \f$\beta_{4:K:n:t}\f$ | \f$\vec{\mathcal{K}}_{4:n:t}\,\angle\,\vec{\mathcal{N}}_{n:t}\f$ |
+ * If a color pointer is perpendicular to the major direction normal \f$\vec{\mathcal{N}}_{n:t}\f$
+ * (\f$\beta = \frac{\pi}{2}\f$), then we also call it "lying in the neutral plane".
+ *
+ * Additionally, we will use gamma angles(\f$\gamma\f$), which represent the angles of the same colored vectors
+ * between different blocks.
+ * | Angle gamma              | Angle                                                              |
+ * | :----------------------- | ------------------------------------------------------------------ |
+ * | \f$\gamma_{1-2:I:n:t}\f$ | \f$\vec{\mathcal{I}}_{1:n:t}\,\angle\,\vec{\mathcal{I}}_{2:n:t}\f$ |
+ * | \f$\gamma_{1-2:J:n:t}\f$ | \f$\vec{\mathcal{J}}_{1:n:t}\,\angle\,\vec{\mathcal{J}}_{2:n:t}\f$ |
+ * | \f$\gamma_{1-2:K:n:t}\f$ | \f$\vec{\mathcal{K}}_{1:n:t}\,\angle\,\vec{\mathcal{K}}_{2:n:t}\f$ |
+ * | \f$\gamma_{1-3:I:n:t}\f$ | \f$\vec{\mathcal{I}}_{1:n:t}\,\angle\,\vec{\mathcal{I}}_{3:n:t}\f$ |
+ * | \f$\gamma_{1-3:J:n:t}\f$ | \f$\vec{\mathcal{J}}_{1:n:t}\,\angle\,\vec{\mathcal{J}}_{3:n:t}\f$ |
+ * | \f$\gamma_{1-3:K:n:t}\f$ | \f$\vec{\mathcal{K}}_{1:n:t}\,\angle\,\vec{\mathcal{K}}_{3:n:t}\f$ |
+ * | \f$\gamma_{1-4:I:n:t}\f$ | \f$\vec{\mathcal{I}}_{1:n:t}\,\angle\,\vec{\mathcal{I}}_{4:n:t}\f$ |
+ * | \f$\gamma_{1-4:J:n:t}\f$ | \f$\vec{\mathcal{J}}_{1:n:t}\,\angle\,\vec{\mathcal{J}}_{4:n:t}\f$ |
+ * | \f$\gamma_{1-4:K:n:t}\f$ | \f$\vec{\mathcal{K}}_{1:n:t}\,\angle\,\vec{\mathcal{K}}_{4:n:t}\f$ |
+ * | \f$\gamma_{2-3:I:n:t}\f$ | \f$\vec{\mathcal{I}}_{2:n:t}\,\angle\,\vec{\mathcal{I}}_{3:n:t}\f$ |
+ * | \f$\gamma_{2-3:J:n:t}\f$ | \f$\vec{\mathcal{J}}_{2:n:t}\,\angle\,\vec{\mathcal{J}}_{3:n:t}\f$ |
+ * | \f$\gamma_{2-3:K:n:t}\f$ | \f$\vec{\mathcal{K}}_{2:n:t}\,\angle\,\vec{\mathcal{K}}_{3:n:t}\f$ |
+ * | \f$\gamma_{2-4:I:n:t}\f$ | \f$\vec{\mathcal{I}}_{2:n:t}\,\angle\,\vec{\mathcal{I}}_{4:n:t}\f$ |
+ * | \f$\gamma_{2-4:J:n:t}\f$ | \f$\vec{\mathcal{J}}_{2:n:t}\,\angle\,\vec{\mathcal{J}}_{4:n:t}\f$ |
+ * | \f$\gamma_{2-4:K:n:t}\f$ | \f$\vec{\mathcal{K}}_{2:n:t}\,\angle\,\vec{\mathcal{K}}_{4:n:t}\f$ |
+ * | \f$\gamma_{3-4:I:n:t}\f$ | \f$\vec{\mathcal{I}}_{3:n:t}\,\angle\,\vec{\mathcal{I}}_{4:n:t}\f$ |
+ * | \f$\gamma_{3-4:J:n:t}\f$ | \f$\vec{\mathcal{J}}_{3:n:t}\,\angle\,\vec{\mathcal{J}}_{4:n:t}\f$ |
+ * | \f$\gamma_{3-4:K:n:t}\f$ | \f$\vec{\mathcal{K}}_{3:n:t}\,\angle\,\vec{\mathcal{K}}_{4:n:t}\f$ |
+ *
+ * For each particle and each block that forms it, the rule applies that these angles \f$\alpha\f$, \f$\beta\f$
+ * and \f$\gamma\f$ remain constant throughout the entire lifetime or existence of this particle.
+ *
+ * There are defined rules for how colored pointers can be oriented within a single block
+ * and also within an entire particle.
+ * Every color pointer also gain an additional name based on the fact how all the other colored pointers are oriented
+ * with respect to itself, where this colored pointer can fall into one of three groups, It can be \b mixing
+ * or \b active or \b inactive.
+ *
+ * \subsection SecParticleBlock1 A mixing colored pointer
+ * For all photons, fermions, and W and Z bosons (or for all particles except gluons),
+ * the first two blocks are formed only by mixing pointers.
+ * It is as if each colored pointer from the first block is neutralized by the same colored pointer
+ * from the second block, which is always in the exact opposite direction.
+ * In other words, the \f$\gamma_{1-2}\f$ angles between these blocks are always equal to \f$\pi\f$.
+ * - \f$\gamma_{1-2:I:n:t}\,=\,\gamma_{1-2:J:n:t}\,=\,\gamma_{1-2:K:n:t}\,=\,\pi\f$
+ *
+ * Here all colored pointers from the first block are oriented in the front hemisphere
+ * with respect to the main normal \f$\vec{\mathcal{N}}_{n:t}\f$ (direction of translational motion)
+ * and all colored pointers from the second block are oriented in the back hemisphere with respect to the motion.
+ * However, these directions must never lie in the axis of motion and must also not be perpendicular
+ * to the main particle normal \f$\vec{\mathcal{N}}_{n:t}\f$.
+ *
+ * Another condition for these first two blocks is that the angles \f$\alpha\f$ must be the same
+ * - \f$\alpha_{B:n:t}\,=\,\alpha_{1:I-J:n:t}\,=\,\alpha_{1:J-K:n:t}\,=\,\alpha_{1:K-I:n:t}\,=\,
+ *      \alpha_{2:I-J:n:t}\,=\,\alpha_{2:J-K:n:t}\,=\,\alpha_{2:K-I:n:t}\f$)
+ * - <b>The boson alpha angle</b> (\f$\alpha_{B:n:t}\f$) can have a value in the range \f$(0,\,\frac{2 \pi}{3})\f$
+ *   and remain constant throughout the entire lifetime of this particle.
+ *
+ * Also, all the angles \f$\beta\f$ must form the same angle with the particle axis
+ * - \f$\beta_{B:n:t}\,=\,\beta_{1:I:n:t}\,=\,\beta_{1:J:n:t}\,=\,\beta_{1:K:n:t}\,=\,
+ *      (\pi - \beta_{2:I:n:t})\,=\,(\pi - \beta_{2:J:n:t})\,=\,(\pi - \beta_{2:K:n:t})\f$
+ * - <b>The boson beta angle</b> (\f$\beta_{B:n:t}\f$) remain constant throughout the entire lifetime of this particle.
+ *   Depending on the type of particle, the boson beta angle can take on values ​​in the range:
+ *   + \f$(0,\,\frac{\pi}{2})\f$ for photons and neutrinos
+ *   + \f$(0,\,acos[\frac{1}{\sqrt{3}}])\f$ for electrons
+ *   + \f$(0,\,\frac{\pi}{4})\f$ for quarks
+ *
+ * For \b gluon particles that are made up of two blocks, only one colored pointer is neutralized
+ * by the opposing pointer of another block in the same color.
+ * So in this type of particle we always have only one pair of mixing pointers, which are either red, or green, or blue,
+ * and the boson beta angle (\f$\beta_{B:n:t}\f$) is made only by two mixing colored pointers and can take on values
+ * ​​in the range \f$(0,\,\frac{\pi}{2})\f$.
+ *
+ * \subsection SecParticleBlock2 An inactive colored pointer
+ * - Always lies in a neutral plane, i.e. perpendicular to the particle normal \f$\vec{\mathcal{N}}_{n:t}\f$
+ *   (\f$\beta_3 = \frac{\pi}{2}\f$)
+ * - Is neutralized by:
+ *   + one opposite pointer of a different color
+ *   + or by two pointers (all in different colors), which do not have to lie exactly in the axis
+ *     of the inactive pointer, but the sum of their projections onto this axis creates a pointer
+ *     in the opposite direction (with the same unit size magnitude).
+ * - \b Gluons have two inactive colored pointer, that are in opposite directions and always in different color.
+ *   The first inactive pointer belongs to the first particle block and the second pointer is a part of a second block.
+ * - All \b neutrinos have a third block made up of only inactive pointers,
+ *   which are neutralizing each other through projections.
+ *   \f$\alpha_{3:I-J:n:t}\,=\,\alpha_{3:J-K:n:t}\,=\,\alpha_{3:K-I:n:t}\,=\,\frac{2 \pi}{3}\f$
+ * - All <b>down quarks</b> have two inactive opposing pointers within the third block
+ * - All <b>up quarks</b> have a single inactive pointer within the third block,
+ *   which is neutralized through projections of other two pointers from the third block.
+ *
+ * \subsection SecParticleBlock3 An active colored pointer
+ * - It never lies in a neutral plane and it never lies within the major particle axis
+ * - All the active pointers in the single particle block must form the same angle \f$\beta_3\f$ with particle axis
+ * - The direction of this pointer can lie in:
+ *   + (\f$0 < \beta_3 < \frac{\pi}{2}\f$) front hemisphere according to translational motion (positive helicity)
+ *     and create positive color charged waves
+ *   + (\f$\frac{\pi}{2} < \beta_3 < \pi\f$) back hemisphere according to translational motion (negative helicity)
+ *     and create negative color charged waves
+ * - \b Gluons have two active colored pointer, that are perpendicular each other and always in different color.
+ *   + The first active pointer belongs to the first particle block and make an angle with the major axis of
+ *     \f$\beta_1 = \frac{\pi}{4}\f$.
+ *   + The second active pointer is a part of a second block and make an angle with the major axis of
+ *     \f$\beta_2 = \frac{3 \pi}{4}\f$.
+ *   + Within the gluons all inactive pointers are perpendicular to the active pointers.
+ * - All \b positrons and \b electrons always have all three colored pointers of the third block active.
+ *   All three active pointers are also always perpendicular to each other.
+ *   \f$\alpha_{3:I-J:n:t}\,=\,\alpha_{3:J-K:n:t}\,=\,\alpha_{3:K-I:n:t}\,=\,\frac{\pi}{2}\f$
+ *   The angle beta \f$\beta_3\f$ that these pointers make with the direction of the particle normal
+ *   \f$\vec{\mathcal{N}}_{n:t}\f$ is equal to:
+ *   + \f$\beta_{3:I:n:t}\,=\,\beta_{3:J:n:t}\,=\,\beta_{3:K:n:t}\,=\,acos[\frac{1}{\sqrt{3}}]\f$
+ *     for positrons all colored pointers are in the front hemisphere
+ *   + \f$\beta_{3:I:n:t}\,=\,\beta_{3:J:n:t}\,=\,\beta_{3:K:n:t}\,=\,(\pi - acos[\frac{1}{\sqrt{3}}])\f$
+ *     for electrons all colored pointers are in the back hemisphere
+ * - All <b>up quarks</b> have two active pointer within the third block,
+ *   which form an angle of \f$\alpha_{3:active \leftrightarrow active} = \frac{\pi}{3}\f$.
+ *   Then these two active pointers make the same angle with the third inactive pointer in the third block
+ *   of the particle, which has the value \f$\alpha_{3:active \leftrightarrow inactive} = \frac{2 \pi}{3}\f$.
+ *   Furthermore, these two active pointers have the same angle beta \f$\beta_3\f$ with the particle normal equal to:
+ *   + \f$\beta_{3:active:n:t}\,=\,\frac{\pi}{4}\f$ for up quarks both active colored pointers
+ *     are in the front hemisphere
+ *   + \f$\beta_{3:active:n:t}\,=\,\frac{3 \pi}{4}\f$ for anti-up quarks both active colored pointers
+ *     are in the back hemisphere
+ * - All <b>down quarks</b> have a single active pointer within the third block, which is always perpendicular
+ *   to the other two inactive pointers. Then this single active spin makes an angle with the principal normal
+ *   of the particle \f$\vec{\mathcal{N}}_{n:t}\f$:
+ *   + \f$\beta_{3:active:n:t}\,=\,\frac{3 \pi}{4}\f$ for down quarks an active colored pointer
+ *     lies in the back hemisphere
+ *   + \f$\beta_{3:active:n:t}\,=\,\frac{\pi}{4}\f$ for anti-down quarks an active colored pointer
+ *     lies in the front hemisphere
+ *
+ * \subsection SecParticleBlock4 W and Z bosons
+ * All of these bosons have their first two blocks composed of mixing pointers.
+ * The next two blocks are made up of either active or inactive pointers depending on the type of boson involved:
+ * - The W+ and W- bosons are as if composed of a neutrino and electron or positron block
+ * - The Z bosons are as if composed of electron and positron block
+ *
+ * \subsection SecParticleBlock5 The red-green-blue spin order rule (scissor-paper-rock)
+ * For every block that makes up the particles, it must be true that when looking at the particle
+ * from the direction of the main normal \f$\vec{\mathcal{N}}_{n:t}\f$, we can always determine
+ * the color pointer order red-green-blue with respect to the rotation of the clock.
+ *
+ * There is also another rule that each block tends to rotate in only one possible direction,
+ * such that the red (scissors) always rotates in the green direction (paper),
+ * and that always rotates in the blue direction (rock).
+ * The blue direction rotates in the red direction again, and so on.
+ *
+ * So if we look back at the particle from the direction of the main normal \f$\vec{\mathcal{N}}_{n:t}\f$
+ * and recognize the directions of the red-green-blue pointers in a counterclockwise direction,
+ * then the angular velocity vector of the internal rotation will be in the same direction as the main normal
+ * \f$\vec{\mathcal{N}}_{n:t}\f$ (positive helicity).
+ * And if these directions are stored in a clockwise direction, then the angular velocity vector
+ * of the internal rotation will be the opposite to the main normal \f$\vec{\mathcal{N}}_{n:t}\f$
+ * (negative helicity).
+ *
  *
  * \section SecEnergyConservLaw Analogy for the energy conservation law
  * Although this system uses the concept of absolute space-time, it does not have a defined weight.
