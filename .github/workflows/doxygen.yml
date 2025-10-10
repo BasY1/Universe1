@@ -17,7 +17,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
 
@@ -26,7 +26,6 @@ jobs:
 
       - name: Generate Doxygen Documentation
         run: |
-          cd source
           doxygen Doxyfile
 
       - name: Setup Pages
@@ -35,7 +34,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './source/html'
+          path: './doc/html'
 
       - name: Deploy to GitHub Pages
         id: deployment
