@@ -28,14 +28,22 @@ jobs:
         run: |
           doxygen Doxyfile
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Upload doxygen artefact
+        uses: actions/upload-artifact@v4
         with:
           name: doxygen_html_docs.zip
           path: './doc/html'
+          overwrite: true
+          include-hidden-files: true
+
+#      - name: Setup Pages
+#        uses: actions/configure-pages@v4
+
+#      - name: Upload artifact
+#        uses: actions/upload-pages-artifact@v3
+#        with:
+#          name: doxygen_html_docs.zip
+#          path: './doc/html'
 
 #      - name: Deploy to GitHub Pages
 #        id: deployment
