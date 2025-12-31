@@ -22,6 +22,7 @@
 #include "Examples/example_clock.cc"
 #include "Examples/example_hand.cc"
 #include "Examples/example_simulation_newton.cc"
+#include "Examples/video_universe1.cc"
 #endif
 
 // #include "Math/physicsuniverse1.h"
@@ -58,7 +59,7 @@ int main(int argc, char *argv[])
     static const QString workDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) +
         QDir::separator() + "U1" + QDir::separator();
 
-    if (examplePathSpiralArc(workDir))
+    if (videoUniverse1(workDir))
     {
         SettingsAudio::runProcess("/usr/bin/vlc", {"--loop", workDir + "video.avi"});
         return EXIT_SUCCESS;
