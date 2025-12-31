@@ -38,7 +38,7 @@ enum FloatingPointType : int
 {
     _FloatingPoint_float,        //!< 32bit \c float
     _FloatingPoint_double,       //!< 64bit \c double
-    _FloatingPoint_long_double,  //!< 128bit \c long \c double
+    _FloatingPoint_long_double,  //!< platform-dependent long double
 };
 
 /*! \brief The Alignment type name */
@@ -273,11 +273,11 @@ equals(const T _value1, const T _value2, const T _value3)
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
- * \brief Test if floating point values equals or value1 is lower then value2
+ * \brief Test if floating point values equals or value1 is lower or equal to value2
  * \tparam T Template floating point type
  * \param _value1 First value to check
  * \param _value2 Second value to check
- * \return \c true if values equals or \c value1 is lower then \c value2
+ * \return \c true if values equals or \c value1 is lower or equal to \c value2
  */
 template <typename T>
 inline typename std::enable_if<std::is_floating_point<T>::value, bool>::type isLessOrEqual(const T _value1,
@@ -287,11 +287,11 @@ inline typename std::enable_if<std::is_floating_point<T>::value, bool>::type isL
 }
 
 /*!
- * \brief Test if integral values equals or value1 is lower then value2
+ * \brief Test if integral values equals or value1 is lower or equal to value2
  * \tparam T Template integral type
  * \param _value1 First value to check
  * \param _value2 Second value to check
- * \return \c true if values equals or \c value1 is lower then \c value2
+ * \return \c true if values equals or \c value1 is lower or equal to \c value2
  */
 template <typename T>
 inline typename std::enable_if<std::is_integral<T>::value, bool>::type isLessOrEqual(const T _value1, const T _value2)
@@ -331,11 +331,11 @@ inline typename std::enable_if<std::is_integral<T>::value, bool>::type isLessNot
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
- * \brief Test if floating point values equals or value1 is greater then value2
+ * \brief Test if floating point values equals or value1 is greater or equal to value2
  * \tparam T Template floating point type
  * \param _value1 First value to check
  * \param _value2 Second value to check
- * \return \c true if values equals or \c value1 is greater then \c value2
+ * \return \c true if values equals or \c value1 is greater or equal to \c value2
  */
 template <typename T>
 inline typename std::enable_if<std::is_floating_point<T>::value, bool>::type isMoreOrEqual(const T _value1,
@@ -345,11 +345,11 @@ inline typename std::enable_if<std::is_floating_point<T>::value, bool>::type isM
 }
 
 /*!
- * \brief Test if integral values equals or value1 is greater then value2
+ * \brief Test if integral values equals or value1 is greater or equal to value2
  * \tparam T Template integral type
  * \param _value1 First value to check
  * \param _value2 Second value to check
- * \return \c true if values equals or \c value1 is greater then \c value2
+ * \return \c true if values equals or \c value1 is greater or equal to \c value2
  */
 template <typename T>
 inline typename std::enable_if<std::is_integral<T>::value, bool>::type isMoreOrEqual(const T _value1, const T _value2)
@@ -439,7 +439,7 @@ inline bool isBetween(const T _value, const T _minimum, const T _maximum)
 template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
 inline bool isBetween0_PI2(const T _value)
 {
-    return isBetween0_PI2(_value, T(0), T(M_PI_2));
+    return isBetween(_value, T(0), T(M_PI_2));
 }
 
 /*!
@@ -452,7 +452,7 @@ inline bool isBetween0_PI2(const T _value)
 template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
 inline bool isBetween0_1(const T _value)
 {
-    return isBetween0_PI2(_value, T(0), T(1));
+    return isBetween(_value, T(0), T(1));
 }
 
 /*!
