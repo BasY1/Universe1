@@ -20,14 +20,15 @@ namespace Math {
  * \param _itemCount Item count
  * \param _minThreadItems Minimal count of items for a single thread
  * \param _maxPoolSize Maximum multi-thread pool size, default \sa std::thread::hardware_concurrency()
- * \return Evenly distributed indices up to given \a _itemCount
+ * \return Collection of pairs {startIndex, itemCount}
  */
 template <typename IT, typename = std::enable_if<std::is_unsigned<IT>::value>>
 std::vector<std::pair<IT, IT>> createPool(const IT _itemCount,
                                           const IT _minThreadItems = 1UL,
                                           const IT _maxPoolSize = std::thread::hardware_concurrency())
 {
-    if (_itemCount <= IT(1) || _maxPoolSize < IT(2))
+    const IT maxPool = std::max<IT>(IT(1), _maxPoolSize);
+    if (_itemCount <= IT(1) || maxPool < IT(2))
         return {};
 
     const IT minCnt = std::max(IT(1), _minThreadItems);
@@ -38,7 +39,7 @@ std::vector<std::pair<IT, IT>> createPool(const IT _itemCount,
     if (poolSizeNeed <= IT(1))
         return {};
 
-    const IT poolSizeUsed = std::min(_maxPoolSize, poolSizeNeed);
+    const IT poolSizeUsed = std::min(maxPool, poolSizeNeed);
 
     std::vector<std::pair<IT, IT>> result;
     result.resize(poolSizeUsed);
@@ -62,7 +63,7 @@ std::vector<std::pair<IT, IT>> createPool(const IT _itemCount,
 
 /*!
  * \brief Copy data between two arrays
- * \tparam T Any type with defined \c operator==
+ * \tparam T Any type with copy assignment operator
  * \tparam IT Unsigned integer type
  * \param _to Output data array pointer
  * \param _from Input data array pointer
@@ -97,7 +98,7 @@ void copyData(T *_to, const T *_from, const IT _count, const std::vector<std::pa
 
 /*!
  * \brief Copy data between two arrays
- * \tparam T Any type with defined \c operator==
+ * \tparam T Any type with copy assignment (and unary '-' for inverted copy)
  * \tparam IT Unsigned integer type
  * \param _to Output data array pointer
  * \param _from Input data array pointer
