@@ -270,8 +270,9 @@ SOURCES += src/Examples/example_line.cc
 SOURCES += src/Examples/example_path.cc
 SOURCES += src/Examples/example_clock.cc
 SOURCES += src/Examples/example_hand.cc
-
 SOURCES += src/Examples/example_simulation_newton.cc
+
+SOURCES += src/Examples/video_universe1.cc
 
 contains ( DEFINES, U1_UNIT_TESTS) {
     SOURCES += src/UnitTests/test_math.cc
