@@ -4,6 +4,8 @@ CONFIG += c++17
 
 #DEFINES += U1_UNIT_TESTS
 
+LIBS += -lcuda -lcudart
+
 contains ( DEFINES, U1_UNIT_TESTS) {
     LIBS += -lgtest
 }

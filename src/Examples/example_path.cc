@@ -210,8 +210,8 @@ bool examplePathSpiralArc(const QString &_workDir)
     Footage *footage1 = project.addFootage("Footage 1");
     footage1->minimalFootageDuration = dur;
 
-    // ScenarioAudioTTS *as = footage1->addAudio_espeak("TTS", _workDir + "espeak" + QDir::separator());
-    // as->addSpeechSUBS(500, "A spiral arc path example. ", 1000);
+    ScenarioAudioTTS *as = footage1->addAudio_pico2wave("TTS", _workDir + "pico2wave" + QDir::separator());
+    as->addSpeechSUBS(500, "A spiral arc path example. ", 1000);
 
     static const float arm = 5;
     static const float a1 = 0;
