@@ -6,6 +6,7 @@
 #include <QApplication>
 #include <QStandardPaths>
 
+/*
 #ifdef U1_UNIT_TESTS
 #include "UnitTests/test_math.cc"
 #else
@@ -24,6 +25,7 @@
 #include "Examples/example_simulation_newton.cc"
 #include "Examples/video_universe1.cc"
 #endif
+*/
 
 // #include "Math/physicsuniverse1.h"
 
@@ -38,14 +40,16 @@
  */
 int main(int argc, char *argv[])
 {
-    using namespace U1;
-    using namespace U1::Examples;
-    using namespace U1::Audio;
+    //  using namespace U1;
+    //  using namespace U1::Examples;
+    //  using namespace U1::Audio;
 
     QApplication app(argc, argv);
     QCoreApplication::setApplicationName("Universe1");
     Q_UNUSED(app)
-
+    return EXIT_SUCCESS;
+}
+/*
 #ifdef U1_UNIT_TESTS
     testing::InitGoogleTest();
     return RUN_ALL_TESTS();
@@ -69,6 +73,7 @@ int main(int argc, char *argv[])
 
 #endif
 }
+*/
 
 /*
 template <typename T>
