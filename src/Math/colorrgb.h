@@ -8,6 +8,8 @@
 
 #include "type.h"
 
+#include <ostream>
+
 #include <QColor>
 #include <QVector3D>
 

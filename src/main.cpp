@@ -55,14 +55,14 @@ int main(int argc, char *argv[])
     // U1::Math::U1SimD sd;
     // sd.build(0, {}, 1, 1);
 
-    // static const QString workDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) +
-    //     QDir::separator() + "U1" + QDir::separator();
+    static const QString workDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) +
+        QDir::separator() + "U1" + QDir::separator();
 
-    // if (examplePathSpiralArc(workDir))
-    // {
-    //     SettingsAudio::runProcess("/usr/bin/vlc", {"--loop", workDir + "video.avi"});
-    //     return EXIT_SUCCESS;
-    // }
+    if (examplePathSpiralArc(workDir))
+    {
+        SettingsAudio::runProcess("/usr/bin/vlc", {"--loop", workDir + "video.avi"});
+        return EXIT_SUCCESS;
+    }
 
     return EXIT_FAILURE;
 
