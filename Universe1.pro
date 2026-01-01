@@ -12,6 +12,7 @@ contains ( DEFINES, U1_UNIT_TESTS) {
 
 RESOURCES = img/images.qrc
 
+HEADERS += src/Math/hash.h
 HEADERS += src/Math/type.h
 HEADERS += src/Math/multithread.h
 HEADERS += src/Math/vec2.h

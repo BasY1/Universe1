@@ -7,6 +7,7 @@
 #define MATH_VEC2_H
 
 #include "type.h"
+#include "hash.h"
 
 #include <iostream>
 #include <sstream>
