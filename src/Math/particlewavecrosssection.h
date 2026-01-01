@@ -1,13 +1,12 @@
 /*!
- * \file src/Math/spherecrosssection.h
+ * \file src/Math/particlewavecrosssection.h
  * \brief 3D Sphere cross-section tools
  */
 
-#ifndef MATH_SPHERECROSSSECTION_H
-#define MATH_SPHERECROSSSECTION_H
+#ifndef MATH_PARTICLEWAVECROSSSECTION_H
+#define MATH_PARTICLEWAVECROSSSECTION_H
 
-#include "circle.h"
-#include "sphere.h"
+#include "vec3.h"
 
 namespace U1 {
 namespace Math {
@@ -16,7 +15,7 @@ namespace Math {
  * \brief Cross-section type
  * \details Information about wave's sphere against particle's sphere
  */
-enum SphereCrossSectionType : int
+enum ParticleWaveCrossSectionType : int
 {
     CROSS_INVALID = 0,        //!< Invalid cross-section
     CROSS_WAVE_MISS_BEFORE,   //!< Wave is before particle (Wave needs to grow to hit particle)
@@ -27,38 +26,29 @@ enum SphereCrossSectionType : int
 };
 
 /*!
- * \brief Sphere cross-section
+ * \brief Two spheres cross-section representation
  * \tparam T Template floating point type
  */
 template <typename T>
-struct SphereCrossSection
+struct ParticleWaveCrossSection
 {
-    const Sphere<T> particle;  //!< Particle sphere pointer
-    const Sphere<T> wave;      //!< Wave sphere pointer
+    const Vec3<T> particlePosition;  //!< Particle sphere center position
+    const Vec3<T> wavePosition;      //!< Wave sphere center position
 
-    SphereCrossSectionType crossSectionType;  //!< Cross-section type
+    const T waveRadius;      //!< Wave sphere radius
+    const T particleRadius;  //!< Particle sphere radius
+
+    ParticleWaveCrossSectionType crossSectionType;  //!< Cross-section type
 
     bool waveInsideParticle;  //!< Wave central position status flag
 
     T positionDistance;  //!< Distance between wave's and particle's sphere center position
     T cosAngle;          //!< Co-sine of cross-section angle
 
-    SphereCrossSection(const Sphere<T> &_particle, const Sphere<T> &_wave);
-
-    /*!
-     * \brief Constructor
-     * \param _particlePosition Particle center position
-     * \param _wavePosition Wave center position
-     * \param _waveRadius Wave radius
-     * \param _particleRadius Particle radius
-     */
-    inline SphereCrossSection(const Vec3<T> &_particlePosition,
-                              const Vec3<T> &_wavePosition,
-                              const T _waveRadius,
-                              const T _particleRadius = T(1))
-        : SphereCrossSection(Sphere<T>(_particlePosition, _particleRadius), Sphere<T>(_wavePosition, _waveRadius))
-    {
-    }
+    ParticleWaveCrossSection(const Vec3<T> &_particlePosition,
+                             const Vec3<T> &_wavePosition,
+                             const T _waveRadius,
+                             const T _particleRadius = T(1));
 
     inline Vec3<T> directionToWave() const;
 
@@ -79,8 +69,6 @@ struct SphereCrossSection
     T circleRadius() const;
     Vec3<T> circleArm() const;
     Vec3<T> circleNormal() const;
-
-    Circle3<T> circle() const;
 };
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -88,61 +76,68 @@ struct SphereCrossSection
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
- * \brief Constructor from other sphere
+ * \brief Constructor
  * \tparam T Template floating point type
- * \param _particle Particle sphere pointer
- * \param _wave Wave sphere pointer
+ * \param _particlePosition Particle center position
+ * \param _wavePosition Wave center position
+ * \param _waveRadius Wave radius
+ * \param _particleRadius Particle radius
  */
 template <typename T>
-SphereCrossSection<T>::SphereCrossSection(const Sphere<T> &_particle, const Sphere<T> &_wave)
-    : particle(_particle)
-    , wave(_wave)
+ParticleWaveCrossSection<T>::ParticleWaveCrossSection(const Vec3<T> &_particlePosition,
+                                                      const Vec3<T> &_wavePosition,
+                                                      const T _waveRadius,
+                                                      const T _particleRadius)
+    : particlePosition(_particlePosition)
+    , wavePosition(_wavePosition)
+    , waveRadius(_waveRadius)
+    , particleRadius(_particleRadius)
     , crossSectionType(CROSS_INVALID)
     , waveInsideParticle(false)
     , positionDistance(T(0))
     , cosAngle(T(0))
 {
-    if (!particle.isValid() || !wave.isValid())
+    if (!isPositive(waveRadius) || !isPositive(particleRadius))
         return;
 
-    positionDistance = particle.center.distanceToPoint(wave.center);
+    positionDistance = particlePosition.distanceToPoint(wavePosition);
 
     if (Math::isNull<T>(positionDistance))
     {
         waveInsideParticle = true;
 
-        if (Math::equals<T>(particle.radius, wave.radius))
+        if (Math::equals<T>(particleRadius, waveRadius))
             crossSectionType = CROSS_WAVE_TOUCH_AFTER;
-        else if (particle.radius > wave.radius)
+        else if (particleRadius > waveRadius)
             crossSectionType = CROSS_WAVE_MISS_BEFORE;
         else
             crossSectionType = CROSS_WAVE_MISS_AFTER;
     }
 
-    else if (Math::equals<T>(positionDistance, particle.radius))
+    else if (Math::equals<T>(positionDistance, particleRadius))
     {
         waveInsideParticle = true;
-        const T diameter = T(2) * particle.radius;
-        if (Math::equals<T>(wave.radius, diameter))
+        const T diameter = T(2) * particleRadius;
+        if (Math::equals<T>(waveRadius, diameter))
             crossSectionType = CROSS_WAVE_TOUCH_AFTER;
-        else if (wave.radius < diameter)
+        else if (waveRadius < diameter)
             crossSectionType = CROSS_WAVE_CROSSES;
         else
             crossSectionType = CROSS_WAVE_MISS_AFTER;
     }
 
-    else if (positionDistance < particle.radius)
+    else if (positionDistance < particleRadius)
     {
 
         waveInsideParticle = true;
 
-        if (Math::equals<T>(positionDistance + wave.radius, particle.radius))
+        if (Math::equals<T>(positionDistance + waveRadius, particleRadius))
             crossSectionType = CROSS_WAVE_TOUCH_BEFORE;
-        else if (Math::equals<T>(positionDistance + particle.radius, wave.radius))
+        else if (Math::equals<T>(positionDistance + particleRadius, waveRadius))
             crossSectionType = CROSS_WAVE_TOUCH_AFTER;
-        else if (positionDistance + wave.radius < particle.radius)
+        else if (positionDistance + waveRadius < particleRadius)
             crossSectionType = CROSS_WAVE_MISS_BEFORE;
-        else if (positionDistance + particle.radius < wave.radius)
+        else if (positionDistance + particleRadius < waveRadius)
             crossSectionType = CROSS_WAVE_MISS_AFTER;
         else
             crossSectionType = CROSS_WAVE_CROSSES;
@@ -152,13 +147,13 @@ SphereCrossSection<T>::SphereCrossSection(const Sphere<T> &_particle, const Sphe
     {
         // waveInsideParticle = false;
 
-        if (Math::equals<T>(positionDistance, particle.radius + wave.radius))
+        if (Math::equals<T>(positionDistance, particleRadius + waveRadius))
             crossSectionType = CROSS_WAVE_TOUCH_BEFORE;
-        else if (Math::equals<T>(positionDistance + particle.radius, wave.radius))
+        else if (Math::equals<T>(positionDistance + particleRadius, waveRadius))
             crossSectionType = CROSS_WAVE_TOUCH_AFTER;
-        else if (positionDistance > particle.radius + wave.radius)
+        else if (positionDistance > particleRadius + waveRadius)
             crossSectionType = CROSS_WAVE_MISS_BEFORE;
-        else if (positionDistance + particle.radius < wave.radius)
+        else if (positionDistance + particleRadius < waveRadius)
             crossSectionType = CROSS_WAVE_MISS_AFTER;
         else
             crossSectionType = CROSS_WAVE_CROSSES;
@@ -166,8 +161,8 @@ SphereCrossSection<T>::SphereCrossSection(const Sphere<T> &_particle, const Sphe
 
     if (crossSectionType == CROSS_WAVE_CROSSES)
         cosAngle = Math::alignedToPM1<T>(
-            (wave.radius * wave.radius + positionDistance * positionDistance - particle.radius * particle.radius) /
-            (T(2) * wave.radius * positionDistance));
+            (waveRadius * waveRadius + positionDistance * positionDistance - particleRadius * particleRadius) /
+            (T(2) * waveRadius * positionDistance));
 }
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -180,9 +175,9 @@ SphereCrossSection<T>::SphereCrossSection(const Sphere<T> &_particle, const Sphe
  * \return Direction to from particle to wave
  */
 template <typename T>
-inline Vec3<T> SphereCrossSection<T>::directionToWave() const
+inline Vec3<T> ParticleWaveCrossSection<T>::directionToWave() const
 {
-    return (wave.center - particle.center).normalized();
+    return (wavePosition - particlePosition).normalized();
 }
 
 /*!
@@ -191,7 +186,7 @@ inline Vec3<T> SphereCrossSection<T>::directionToWave() const
  * \return \c true if sphere cross-section is valid
  */
 template <typename T>
-inline bool SphereCrossSection<T>::isValid() const
+inline bool ParticleWaveCrossSection<T>::isValid() const
 {
     return crossSectionType != CROSS_INVALID;
 }
@@ -202,7 +197,7 @@ inline bool SphereCrossSection<T>::isValid() const
  * \return \c true if wave sphere is touching particle sphere
  */
 template <typename T>
-inline bool SphereCrossSection<T>::isTouch() const
+inline bool ParticleWaveCrossSection<T>::isTouch() const
 {
     switch (crossSectionType)
     {
@@ -224,7 +219,7 @@ inline bool SphereCrossSection<T>::isTouch() const
  * \return Angle of cross-section in radians
  */
 template <typename T>
-inline T SphereCrossSection<T>::angleRad() const
+inline T ParticleWaveCrossSection<T>::angleRad() const
 {
     return crossSectionType != CROSS_WAVE_CROSSES ? T(0) : std::acos(cosAngle);
 }
@@ -235,7 +230,7 @@ inline T SphereCrossSection<T>::angleRad() const
  * \return Angle of cross-section in degrees
  */
 template <typename T>
-inline T SphereCrossSection<T>::angleDeg() const
+inline T ParticleWaveCrossSection<T>::angleDeg() const
 {
     return toDeg<T>(angleRad());
 }
@@ -248,21 +243,21 @@ inline T SphereCrossSection<T>::angleDeg() const
  * \return Cross-section penetration volume
  */
 template <typename T>
-T SphereCrossSection<T>::crossSectionVolume() const
+T ParticleWaveCrossSection<T>::crossSectionVolume() const
 {
     switch (crossSectionType)
     {
     case CROSS_INVALID: return T(0);
 
     case CROSS_WAVE_MISS_BEFORE:
-    case CROSS_WAVE_TOUCH_BEFORE: return (waveInsideParticle ? wave.volume() : T(0));
+    case CROSS_WAVE_TOUCH_BEFORE: return (waveInsideParticle ? volumeSphere(waveRadius) : T(0));
 
     case CROSS_WAVE_TOUCH_AFTER:
-    case CROSS_WAVE_MISS_AFTER: return particle.volume();
+    case CROSS_WAVE_MISS_AFTER: return volumeSphere(particleRadius);
 
     case CROSS_WAVE_CROSSES:
-        return wave.volumeCup(wave.radius * (T(1) - cosAngle)) +
-            particle.volumeCup(particle.radius - positionDistance + wave.radius * cosAngle);
+        return volumeSphereCup(waveRadius, waveRadius * (T(1) - cosAngle)) +
+            volumeSphereCup(particleRadius, particleRadius - positionDistance + waveRadius * cosAngle);
     }
     return T(0);
 }
@@ -273,7 +268,7 @@ T SphereCrossSection<T>::crossSectionVolume() const
  * \return Cross-section penetration volume ratio
  */
 template <typename T>
-T SphereCrossSection<T>::crossSectionVolumeRatio() const
+T ParticleWaveCrossSection<T>::crossSectionVolumeRatio() const
 {
     switch (crossSectionType)
     {
@@ -282,16 +277,16 @@ T SphereCrossSection<T>::crossSectionVolumeRatio() const
     case CROSS_WAVE_MISS_BEFORE:
     case CROSS_WAVE_TOUCH_BEFORE:
         return (waveInsideParticle
-                    ? (wave.radius * wave.radius * wave.radius) / (particle.radius * particle.radius * particle.radius)
+                    ? (waveRadius * waveRadius * waveRadius) / (particleRadius * particleRadius * particleRadius)
                     : T(0));
 
     case CROSS_WAVE_TOUCH_AFTER:
     case CROSS_WAVE_MISS_AFTER: return T(1);
 
     case CROSS_WAVE_CROSSES:
-        return (wave.volumeCup(wave.radius * (T(1) - cosAngle)) +
-                particle.volumeCup(particle.radius - positionDistance + wave.radius * cosAngle)) /
-            particle.volume();
+        return (volumeSphereCup(waveRadius, waveRadius * (T(1) - cosAngle)) +
+                volumeSphereCup(particleRadius, particleRadius - positionDistance + waveRadius * cosAngle)) /
+            volumeSphere(particleRadius);
     }
     return T(0);
 }
@@ -302,7 +297,7 @@ T SphereCrossSection<T>::crossSectionVolumeRatio() const
  * \return Cross-section penetration wave surface area
  */
 template <typename T>
-T SphereCrossSection<T>::crossSectionArea() const
+T ParticleWaveCrossSection<T>::crossSectionArea() const
 {
     switch (crossSectionType)
     {
@@ -311,7 +306,7 @@ T SphereCrossSection<T>::crossSectionArea() const
     case CROSS_WAVE_TOUCH_BEFORE:
     case CROSS_WAVE_TOUCH_AFTER:
     case CROSS_WAVE_MISS_AFTER: break;
-    case CROSS_WAVE_CROSSES: return T(2) * T(M_PIl) * wave.radius * wave.radius * (T(1) - cosAngle);
+    case CROSS_WAVE_CROSSES: return T(2) * T(M_PIl) * waveRadius * waveRadius * (T(1) - cosAngle);
     }
     return T(0);
 }
@@ -323,7 +318,7 @@ T SphereCrossSection<T>::crossSectionArea() const
  * \return Cross-section penetration wave surface area ratio
  */
 template <typename T>
-T SphereCrossSection<T>::crossSectionAreaRatio() const
+T ParticleWaveCrossSection<T>::crossSectionAreaRatio() const
 {
     switch (crossSectionType)
     {
@@ -343,7 +338,7 @@ T SphereCrossSection<T>::crossSectionAreaRatio() const
  * \return Cross-section ratio
  */
 template <typename T>
-T SphereCrossSection<T>::ratio() const
+T ParticleWaveCrossSection<T>::ratio() const
 {
     switch (crossSectionType)
     {
@@ -362,7 +357,7 @@ T SphereCrossSection<T>::ratio() const
  * \return Offset distance
  */
 template <typename T>
-T SphereCrossSection<T>::distanceOffset() const
+T ParticleWaveCrossSection<T>::distanceOffset() const
 {
     switch (crossSectionType)
     {
@@ -372,17 +367,17 @@ T SphereCrossSection<T>::distanceOffset() const
 
     case CROSS_WAVE_MISS_BEFORE:
         if (waveInsideParticle)
-            return particle.radius - (wave.radius + positionDistance);
+            return particleRadius - (waveRadius + positionDistance);
         else
-            return positionDistance - (wave.radius + particle.radius);
+            return positionDistance - (waveRadius + particleRadius);
 
-    case CROSS_WAVE_MISS_AFTER: return wave.radius - (particle.radius + positionDistance);
+    case CROSS_WAVE_MISS_AFTER: return waveRadius - (particleRadius + positionDistance);
 
     case CROSS_WAVE_CROSSES:
         if (waveInsideParticle)
-            return (wave.radius + positionDistance) - particle.radius;
+            return (waveRadius + positionDistance) - particleRadius;
         else
-            return (wave.radius + particle.radius) - positionDistance;
+            return (waveRadius + particleRadius) - positionDistance;
     }
     return T(0);
 }
@@ -393,7 +388,7 @@ T SphereCrossSection<T>::distanceOffset() const
  * \return Cross-section circle center
  */
 template <typename T>
-Vec3<T> SphereCrossSection<T>::circleCenter() const
+Vec3<T> ParticleWaveCrossSection<T>::circleCenter() const
 {
     switch (crossSectionType)
     {
@@ -403,7 +398,7 @@ Vec3<T> SphereCrossSection<T>::circleCenter() const
     case CROSS_WAVE_TOUCH_AFTER:
     case CROSS_WAVE_MISS_AFTER: return Vec3<T>();
     case CROSS_WAVE_CROSSES:
-        return wave.center + (particle.center - wave.center).normalized() * (wave.radius * cosAngle);
+        return wavePosition + (particlePosition - wavePosition).normalized() * (waveRadius * cosAngle);
     }
     return Vec3<T>();
 }
@@ -414,7 +409,7 @@ Vec3<T> SphereCrossSection<T>::circleCenter() const
  * \return Cross-section circle arm
  */
 template <typename T>
-T SphereCrossSection<T>::circleRadius() const
+T ParticleWaveCrossSection<T>::circleRadius() const
 {
     switch (crossSectionType)
     {
@@ -423,7 +418,7 @@ T SphereCrossSection<T>::circleRadius() const
     case CROSS_WAVE_TOUCH_BEFORE:
     case CROSS_WAVE_TOUCH_AFTER:
     case CROSS_WAVE_MISS_AFTER: return T(0);
-    case CROSS_WAVE_CROSSES: return wave.radius * std::sqrt(T(1) - cosAngle * cosAngle);
+    case CROSS_WAVE_CROSSES: return waveRadius * std::sqrt(T(1) - cosAngle * cosAngle);
     }
     return T(0);
 }
@@ -434,7 +429,7 @@ T SphereCrossSection<T>::circleRadius() const
  * \return Cross-section circle arm
  */
 template <typename T>
-Vec3<T> SphereCrossSection<T>::circleArm() const
+Vec3<T> ParticleWaveCrossSection<T>::circleArm() const
 {
     switch (crossSectionType)
     {
@@ -444,8 +439,8 @@ Vec3<T> SphereCrossSection<T>::circleArm() const
     case CROSS_WAVE_TOUCH_AFTER:
     case CROSS_WAVE_MISS_AFTER: return Vec3<T>();
     case CROSS_WAVE_CROSSES: {
-        const Vec3<T> n = (particle.center - wave.center).normalized();
-        const T r = wave.radius * std::sqrt(T(1) - cosAngle * cosAngle);
+        const Vec3<T> n = (particlePosition - wavePosition).normalized();
+        const T r = waveRadius * std::sqrt(T(1) - cosAngle * cosAngle);
         return n.perpendicularNormal() * r;
     }
     }
@@ -458,7 +453,7 @@ Vec3<T> SphereCrossSection<T>::circleArm() const
  * \return Cross-section circle normal
  */
 template <typename T>
-Vec3<T> SphereCrossSection<T>::circleNormal() const
+Vec3<T> ParticleWaveCrossSection<T>::circleNormal() const
 {
     switch (crossSectionType)
     {
@@ -467,35 +462,9 @@ Vec3<T> SphereCrossSection<T>::circleNormal() const
     case CROSS_WAVE_TOUCH_BEFORE:
     case CROSS_WAVE_TOUCH_AFTER:
     case CROSS_WAVE_MISS_AFTER: return Vec3<T>();
-    case CROSS_WAVE_CROSSES: return (particle.center - wave.center).normalized();
+    case CROSS_WAVE_CROSSES: return (particlePosition - wavePosition).normalized();
     }
     return Vec3<T>();
-}
-
-/*!
- * \brief Returns cross-section penetration circle
- * \tparam T Template floating point type
- * \return Cross-section circle
- */
-template <typename T>
-Circle3<T> SphereCrossSection<T>::circle() const
-{
-    Circle3<T> result;
-    switch (crossSectionType)
-    {
-    case CROSS_INVALID:
-    case CROSS_WAVE_MISS_BEFORE:
-    case CROSS_WAVE_TOUCH_BEFORE:
-    case CROSS_WAVE_TOUCH_AFTER:
-    case CROSS_WAVE_MISS_AFTER: break;
-    case CROSS_WAVE_CROSSES: {
-        result.normal = (particle.center - wave.center).normalized();
-        result.center = wave.center + result.normal * (wave.radius * cosAngle);
-        result.radius = wave.radius * std::sqrt(T(1) - cosAngle * cosAngle);
-    }
-    break;
-    }
-    return result;
 }
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -510,7 +479,7 @@ Circle3<T> SphereCrossSection<T>::circle() const
  * \return Output text stream
  */
 template <typename T>
-inline std::ostream &operator<<(std::ostream &_os, const SphereCrossSection<T> &_scs)
+inline std::ostream &operator<<(std::ostream &_os, const ParticleWaveCrossSection<T> &_scs)
 {
     std::string tName;
     switch (_scs.crossSectionType)
@@ -524,8 +493,8 @@ inline std::ostream &operator<<(std::ostream &_os, const SphereCrossSection<T> &
     }
 
     _os << "[[" << (_scs.waveInsideParticle ? "In" : "Out") << '-' << tName << ']';
-    _os << "Particle" << _scs.particle;
-    _os << "Wave" << _scs.wave;
+    _os << "Particle[" << _scs.particlePosition << ',' << _scs.particleRadius << ']';
+    _os << "Wave[" << _scs.wavePosition << ',' << _scs.waveRadius << ']';
     _os << "Distance[" << _scs.positionDistance << ",Offset(" << _scs.distanceOffset() << ")]";
     if (_scs.crossSectionType == CROSS_WAVE_CROSSES)
     {
@@ -539,11 +508,18 @@ inline std::ostream &operator<<(std::ostream &_os, const SphereCrossSection<T> &
     return _os;
 }
 
-typedef SphereCrossSection<float> SphereCrossSectionF;        //!< 32 bit floating point precision sphere cross-section
-typedef SphereCrossSection<double> SphereCrossSectionD;       //!< 64 bit floating point precision sphere cross-section
-typedef SphereCrossSection<long double> SphereCrossSectionL;  //!< 128 bit floating point precision sphere cross-section
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+typedef ParticleWaveCrossSection<float>
+    ParticleWaveCrossSectionF;  //!< 32 bit floating point precision sphere cross-section
+typedef ParticleWaveCrossSection<double>
+    ParticleWaveCrossSectionD;  //!< 64 bit floating point precision sphere cross-section
+typedef ParticleWaveCrossSection<long double>
+    ParticleWaveCrossSectionL;  //!< 128 bit floating point precision sphere cross-section
 
 }  // namespace Math
 }  // namespace U1
 
-#endif  // MATH_SPHERECROSSSECTION_H
+#endif  // MATH_PARTICLEWAVECROSSSECTION_H

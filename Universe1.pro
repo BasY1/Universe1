@@ -1,4 +1,4 @@
-QT     += core gui widgets opengl openglwidgets multimedia
+ QT     += core gui widgets opengl openglwidgets multimedia
 
 CONFIG += c++17
 
@@ -16,6 +16,8 @@ HEADERS += src/Math/type.h
 HEADERS += src/Math/multithread.h
 HEADERS += src/Math/vec2.h
 HEADERS += src/Math/vec3.h
+
+HEADERS += src/Math/particlewavecrosssection.h
 
 # HEADERS += src/Math/colorrgb.h
 # HEADERS += src/Math/material.h
@@ -40,7 +42,6 @@ HEADERS += src/Math/vec3.h
 # HEADERS += src/Math/cylinder.h
 # HEADERS += src/Math/cylinderarc.h
 #
-# HEADERS += src/Math/spherecrosssection.h
 #
 # HEADERS += src/Math/physicsnewton.h
 #

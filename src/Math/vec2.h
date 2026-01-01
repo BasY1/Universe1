@@ -10,7 +10,6 @@
 
 #include <iostream>
 #include <sstream>
-#include <fstream>
 
 #include <QVector2D>
 
@@ -1284,34 +1283,6 @@ template <typename T>
 inline std::ostream &operator<<(std::ostream &_os, const Vec2<T> &_v)
 {
     return _os << '[' << _v.x << ',' << _v.y << ']';
-}
-
-/*!
- * \brief Fill output file stream
- * \tparam T Template floating point type
- * \param _ofs Output file stream
- * \param _v Vector
- * \return Output file stream
- */
-template <typename T>
-inline std::ofstream &operator<<(std::ofstream &_ofs, const Vec2<T> &_v)
-{
-    return _ofs << _v.x << _v.y;
-}
-
-/*!
- * \brief Fill input file stream
- * \tparam T Template floating point type
- * \param _ifs Input file stream
- * \param _v Vector
- * \return Input file stream
- */
-template <typename T>
-inline std::ifstream &operator>>(std::ifstream &_ifs, Vec2<T> &_v)
-{
-    _ifs >> _v.x;
-    _ifs >> _v.y;
-    return _ifs;
 }
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

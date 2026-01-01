@@ -964,6 +964,32 @@ inline size_t mixHash(const size_t _1,
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
+ * \brief Calculate sphere volume \f$\frac{4}{3} \pi r^3\f$
+ * \tparam T Template floating point type
+ * \param _radius Sphere radius
+ * \return Sphere volume
+ */
+template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
+T volumeSphere(const T _radius)
+{
+    return T(M_PIl * 4.0l / 3.0l) * _radius * _radius * _radius;
+}
+
+/*!
+ * \brief Calculate sphere cup volume \f$\pi h^2 \frac{3r - h}{3}\f$
+ * \tparam T Template floating point type
+ * \param _radius Sphere radius
+ * \param _height Cup height
+ * \return Sphere cup volume
+ */
+template <typename T, typename = std::enable_if<std::is_floating_point<T>::value>>
+T volumeSphereCup(const T _radius, const T _height)
+{
+    return T(M_PIl) * _height * _height * (T(3) * _radius - _height) / T(3);
+}
+
+
+/*!
  * \brief Solve cubic equation \f$x^3 + Ax^2 + Bx + C = 0\f$
  * \param _out1 Output result 1
  * \param _out2 Output result 2
