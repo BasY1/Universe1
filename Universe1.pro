@@ -22,9 +22,10 @@ HEADERS += src/Math/orientation.h
 HEADERS += src/Math/colorrgb.h
 HEADERS += src/Math/material.h
 
+HEADERS += src/Math/physicsnewton.h
+
 HEADERS += src/Math/particlewavecrosssection.h
 
-# HEADERS += src/Math/physicsnewton.h
 
 #
 # HEADERS += src/Math/circle.h

@@ -7,6 +7,7 @@
 #define MATH_PHYSICSNEWTON_H
 
 #include "orientation.h"
+#include "material.h"
 
 #include <fstream>
 #include <random>
