@@ -12,18 +12,20 @@ contains ( DEFINES, U1_UNIT_TESTS) {
 
 RESOURCES = img/images.qrc
 
-HEADERS += src/Math/hash.h
 HEADERS += src/Math/type.h
+HEADERS += src/Math/hash.h
 HEADERS += src/Math/multithread.h
 HEADERS += src/Math/vec2.h
 HEADERS += src/Math/vec3.h
+HEADERS += src/Math/camera.h
+HEADERS += src/Math/orientation.h
+HEADERS += src/Math/colorrgb.h
+HEADERS += src/Math/material.h
 
 HEADERS += src/Math/particlewavecrosssection.h
 
-# HEADERS += src/Math/colorrgb.h
-# HEADERS += src/Math/material.h
-# HEADERS += src/Math/camera.h
-# HEADERS += src/Math/orientation.h
+# HEADERS += src/Math/physicsnewton.h
+
 #
 # HEADERS += src/Math/circle.h
 # SOURCES += src/Math/circle.cpp
@@ -44,7 +46,6 @@ HEADERS += src/Math/particlewavecrosssection.h
 # HEADERS += src/Math/cylinderarc.h
 #
 #
-# HEADERS += src/Math/physicsnewton.h
 #
 # HEADERS += src/Math/physicsuniverse1calculus.h
 # HEADERS += src/Math/physicsuniverse1.h
