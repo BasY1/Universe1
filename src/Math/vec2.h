@@ -63,7 +63,7 @@ struct Vec2
      */
     template <typename = std::enable_if<std::is_floating_point<T>::value>>
     inline Vec2(const T _x,  //!< X component
-                const T _y)  //!< Z component
+                const T _y)  //!< Y component
         : x(_x)
         , y(_y)
     {
@@ -123,6 +123,7 @@ struct Vec2
     inline void invert();
     inline void maybeInvert(const Vec2<T> &_normal);
 
+    inline bool isUnit() const;
     inline bool isNormalized() const;
     inline Vec2<T> normalized() const;
     inline void normalize();
@@ -729,6 +730,17 @@ inline void Vec2<T>::maybeInvert(const Vec2<T> &_normal)
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
+ * \brief Test if vector is an unit vector (length equals 1)
+ * \tparam T Template floating point type
+ * \return \c true if vector is normalized
+ */
+template <typename T>
+inline bool Vec2<T>::isUnit() const
+{
+    return isNormalized();
+}
+
+/*!
  * \brief Test if vector is normalized (length equals 1)
  * \tparam T Template floating point type
  * \return \c true if vector is normalized
@@ -736,7 +748,8 @@ inline void Vec2<T>::maybeInvert(const Vec2<T> &_normal)
 template <typename T>
 inline bool Vec2<T>::isNormalized() const
 {
-    return isUnit(lengthSquared());
+    return Math::isUnit<T>(lengthSquared());
+    // return Math::isUnit<T>(length());
 }
 
 /*!
@@ -800,10 +813,10 @@ inline Vec2<T> Vec2<T>::perpendicularNormal() const
 }
 
 /*!
- * \brief Test if other vector is parallel to this vector
+ * \brief Test if other vector have the same direction as this vector
  * \tparam T Template floating point type
  * \param _other Other vector
- * \return \c true if vectors are parallel
+ * \return Returns \c true only if vectors have the same direction (not opposite)
  */
 template <typename T>
 inline bool Vec2<T>::equalsDir(const Vec2<T> &_other) const
@@ -1036,7 +1049,7 @@ inline T Vec2<T>::sinAngle(const Vec2<T> &_other) const
 template <typename T>
 inline T Vec2<T>::sinAnglePow2(const Vec2<T> &_other) const
 {
-    return T(1) - cosAnglePow2(_other);
+    return Math::alignedTo0_1(T(1) - cosAnglePow2(_other));
 }
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

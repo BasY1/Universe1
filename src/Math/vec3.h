@@ -995,14 +995,14 @@ inline void Vec3<T>::invert()
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
- * \brief Test if vector is normalized (length equals 1)
+ * \brief Test if vector is an unit vector (length equals 1)
  * \tparam T Template floating point type
  * \return \c true if vector is normalized
  */
 template <typename T>
 inline bool Vec3<T>::isUnit() const
 {
-    return Math::isUnit<T>(lengthSquared());
+    return isNormalized();
 }
 
 /*!
@@ -1014,6 +1014,7 @@ template <typename T>
 inline bool Vec3<T>::isNormalized() const
 {
     return Math::isUnit<T>(lengthSquared());
+    // return Math::isUnit<T>(length());
 }
 
 /*!
@@ -1127,7 +1128,7 @@ void Vec3<T>::makePerpendicularNormals(Vec3<T> &_normal1, Vec3<T> &_normal2)
 template <typename T>
 inline bool Vec3<T>::isSameDir(const Vec3<T> &other) const
 {
-    return !isNull() && normalized() == other.normalized();
+    return !isNull() && Math::equals(dot(normalized(), other.normalized()), T(1));
 }
 
 /*!
@@ -1257,7 +1258,7 @@ Vec3<T> Vec3<T>::crossLeftHand(const Vec3<T> &v1, const Vec3<T> &v2)
 template <typename T>
 Vec3<T> Vec3<T>::crossByHand(const Vec3<T> &v1, const Vec3<T> &v2, const bool rightHanded)
 {
-    return rightHanded ? cross(v1, v2) : crossLH(v1, v2);
+    return rightHanded ? cross(v1, v2) : crossLeftHand(v1, v2);
 }
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1401,10 +1402,9 @@ template <typename T>
 inline T Vec3<T>::distanceToLine(const Vec3<T> &linePoint, const Vec3<T> &lineNormal) const
 {
     const T lenSq = lineNormal.lengthSquared();
-    if (Math::isNull<T>(lenSq))
-        return T(0);  // distanceToPoint(linePoint);
-    const T tmp = cross(*this - linePoint, *this - linePoint - lineNormal).length();
-    return Math::isUnit<T>(lenSq) ? tmp : (tmp / std::sqrt(lenSq));
+    if (Math::isNull(lenSq))
+        return T(0);
+    return cross(*this - linePoint, lineNormal).length() / std::sqrt(lenSq);
 }
 
 /*!
@@ -1455,8 +1455,6 @@ inline Vec3<T> Vec3<T>::projected(const Vec3<T> &projDirection) const
     const T lenSq = projDirection.lengthSquared();
     if (Math::isNull<T>(lenSq))
         return Vec3<T>();
-    if (Math::isUnit<T>(lenSq))
-        return projDirection * dot(*this, projDirection);
     return projDirection * (dot(*this, projDirection) / lenSq);
 }
 
@@ -1534,7 +1532,7 @@ inline T Vec3<T>::sinAngle(const Vec3<T> &other) const
 template <typename T>
 inline T Vec3<T>::sinAnglePow2(const Vec3<T> &other) const
 {
-    return T(1) - cosAnglePow2(other);
+    return Math::alignedTo0_1(T(1) - cosAnglePow2(other));
 }
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
