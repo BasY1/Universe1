@@ -18,6 +18,9 @@ namespace Math {
 /*!
  * \brief Newtonian physics simulation processor
  * \tparam T Template floating point type
+ * \details
+ * - Point particles without collision handling
+ * - Runge-Kutta uses fixed positions of other bodies during sub-steps
  */
 template <typename T>
 class PhysicsNewton
