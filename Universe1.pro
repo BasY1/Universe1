@@ -22,9 +22,12 @@ HEADERS += src/Math/orientation.h
 HEADERS += src/Math/colorrgb.h
 HEADERS += src/Math/material.h
 
-HEADERS += src/Math/physicsnewton.h
+HEADERS += src/Math/Physics/physicsnewton.h
 
-HEADERS += src/Math/particlewavecrosssection.h
+HEADERS += src/Math/Physics/particlewavecrosssection.h
+HEADERS += src/Math/Physics/physicsuniverse1docmathmodel.h
+HEADERS += src/Math/Physics/physicsuniverse1calculus.h
+HEADERS += src/Math/Physics/physicsuniverse1.h
 
 
 #
@@ -48,8 +51,6 @@ HEADERS += src/Math/particlewavecrosssection.h
 #
 #
 #
-# HEADERS += src/Math/physicsuniverse1calculus.h
-# HEADERS += src/Math/physicsuniverse1.h
 #
 # ######################################################
 #

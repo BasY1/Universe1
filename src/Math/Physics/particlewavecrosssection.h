@@ -1,12 +1,12 @@
 /*!
- * \file src/Math/particlewavecrosssection.h
+ * \file src/Math/Physics/particlewavecrosssection.h
  * \brief 3D Sphere cross-section tools
  */
 
-#ifndef MATH_PARTICLEWAVECROSSSECTION_H
-#define MATH_PARTICLEWAVECROSSSECTION_H
+#ifndef PHYSICS_PARTICLEWAVECROSSSECTION_H
+#define PHYSICS_PARTICLEWAVECROSSSECTION_H
 
-#include "vec3.h"
+#include "../vec3.h"
 
 namespace U1 {
 namespace Math {
@@ -333,9 +333,12 @@ T ParticleWaveCrossSection<T>::crossSectionAreaRatio() const
 }
 
 /*!
- * \brief Returns cross-section ratio \f$\frac{1 - cos(\alpha)^2}{4}\f$
+ * \brief Axis-projected contribution factor
  * \tparam T Template floating point type
  * \return Cross-section ratio
+ * \details
+ * Axis-projected contribution factor
+ * Returns cross-section ratio \f$\frac{1 - cos(\alpha)^2}{4}\f$
  */
 template <typename T>
 T ParticleWaveCrossSection<T>::ratio() const
@@ -351,6 +354,11 @@ T ParticleWaveCrossSection<T>::ratio() const
     }
     return T(0);
 }
+
+// cosAngle = Math::alignedToPM1<T>(
+//     (waveRadius * waveRadius + positionDistance * positionDistance - particleRadius * particleRadius) /
+//     (T(2) * waveRadius * positionDistance));
+
 /*!
  * \brief Returns offset distance
  * \tparam T Template floating point type
@@ -522,4 +530,4 @@ typedef ParticleWaveCrossSection<long double>
 }  // namespace Math
 }  // namespace U1
 
-#endif  // MATH_PARTICLEWAVECROSSSECTION_H
+#endif  // PHYSICS_PARTICLEWAVECROSSSECTION_H

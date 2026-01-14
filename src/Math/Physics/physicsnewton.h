@@ -1,13 +1,13 @@
 /*!
- * \file src/Math/physicsnewton.h
+ * \file src/Math/Physics/physicsnewton.h
  * \brief Newtonian physics simulation processor
  */
 
-#ifndef MATH_PHYSICSNEWTON_H
-#define MATH_PHYSICSNEWTON_H
+#ifndef PHYSICS_PHYSICSNEWTON_H
+#define PHYSICS_PHYSICSNEWTON_H
 
-#include "orientation.h"
-#include "material.h"
+#include "../orientation.h"
+// #include "../material.h"
 
 #include <fstream>
 #include <random>
@@ -2930,4 +2930,4 @@ typedef PhysicsNewton<long double> NewtonSimL;  //!< 128 bit floating point prec
 }  // namespace Math
 }  // namespace U1
 
-#endif  // MATH_PHYSICSNEWTON_H
+#endif  // PHYSICS_PHYSICSNEWTON_H

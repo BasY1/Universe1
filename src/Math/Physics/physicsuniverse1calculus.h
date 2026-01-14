@@ -17,6 +17,630 @@
  * The <b>Universe 1</b> is an "advanced" dynamic system, a mathematical model for describing the properties,
  * the mutual interactions and the motion dynamics of two kinds of objects: \b particles and \b waves.
  *
+ * \section SecTableFermions 3-blocks objects, dynamical canonical representation of the third block - fermions
+ * - Reference direction of motion \f$\vec{V} = \left[1,0,0\right]\f$
+ * - \f$A_i = \vec{I} \cdot \vec{I} + \vec{I} \cdot \vec{J} + \vec{I} \cdot \vec{K}\f$
+ * - \f$A_j = \vec{J} \cdot \vec{I} + \vec{J} \cdot \vec{J} + \vec{J} \cdot \vec{K}\f$
+ * - \f$A_k = \vec{K} \cdot \vec{I} + \vec{K} \cdot \vec{J} + \vec{K} \cdot \vec{K}\f$
+ * - Function for sign of color pointer projection on reference direction of motion \f$\vec{V}\f$:
+ *   - \f$S_i =  0\f$ if \f$\beta_{\vec{I}\vec{V}} = \frac{\pi}{2}\f$
+ *   - \f$S_i = +1\f$ if \f$\beta_{\vec{I}\vec{V}} \lt \frac{\pi}{2}\f$
+ *   - \f$S_i = -1\f$ if \f$\beta_{\vec{I}\vec{V}} \gt \frac{\pi}{2}\f$
+ *   - \f$S_j =  0\f$ if \f$\beta_{\vec{J}\vec{V}} = \frac{\pi}{2}\f$
+ *   - \f$S_j = +1\f$ if \f$\beta_{\vec{J}\vec{V}} \lt \frac{\pi}{2}\f$
+ *   - \f$S_j = -1\f$ if \f$\beta_{\vec{J}\vec{V}} \gt \frac{\pi}{2}\f$
+ *   - \f$S_k =  0\f$ if \f$\beta_{\vec{K}\vec{V}} = \frac{\pi}{2}\f$
+ *   - \f$S_k = +1\f$ if \f$\beta_{\vec{K}\vec{V}} \lt \frac{\pi}{2}\f$
+ *   - \f$S_k = -1\f$ if \f$\beta_{\vec{K}\vec{V}} \gt \frac{\pi}{2}\f$
+ * - \f$H_i = S_i A_i\f$
+ * - \f$H_j = S_j A_j\f$
+ * - \f$H_k = S_k A_k\f$
+ * 
+ * <table>
+ * <tr>
+ * <th align="center">Name</th>
+ * <th align="center">\f$\vec{N}\f$</th>
+ * <th align="center">\f$\vec{I}\f$</th>
+ * <th align="center">\f$\vec{J}\f$</th>
+ * <th align="center">\f$\vec{K}\f$</th>
+ * <th align="center">\f$\alpha_{\vec{I}\vec{J}}\f$</th>
+ * <th align="center">\f$\alpha_{\vec{J}\vec{K}}\f$</th>
+ * <th align="center">\f$\alpha_{\vec{K}\vec{I}}\f$</th>
+ * <th align="center">\f$\beta_{\vec{I}\vec{V}}\f$</th>
+ * <th align="center">\f$\beta_{\vec{J}\vec{V}}\f$</th>
+ * <th align="center">\f$\beta_{\vec{K}\vec{V}}\f$</th>
+ * <th align="center">\f$A_i\f$</th>
+ * <th align="center">\f$A_j\f$</th>
+ * <th align="center">\f$A_k\f$</th>
+ * <th align="center">\f$H_i\f$</th>
+ * <th align="center">\f$H_j\f$</th>
+ * <th align="center">\f$H_k\f$</th>
+ * </tr>
+ * 
+ * <tr><td align="center" colspan="17"><b>NEUTRINOS</b></td></tr>
+ * <tr>
+ * <td align="left">Neutrino right</td>
+ * <td align="center">\f$\left[+1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[0,1,0\right]\f$</td>
+ * <td align="center">\f$\left[0,-\frac{1}{2},+\frac{\sqrt{3}}{2}\right]\f$</td>
+ * <td align="center">\f$\left[0,-\frac{1}{2},-\frac{\sqrt{3}}{2}\right]\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * </tr>
+ * <tr>
+ * <td align="left">Neutrino left</td>
+ * <td align="center">\f$\left[-1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[0,1,0\right]\f$</td>
+ * <td align="center">\f$\left[0,-\frac{1}{2},-\frac{\sqrt{3}}{2}\right]\f$</td>
+ * <td align="center">\f$\left[0,-\frac{1}{2},+\frac{\sqrt{3}}{2}\right]\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * </tr>
+ * 
+ * <tr><td align="center" colspan="17"><b>LEPTONS</b></td></tr>
+ * <tr>
+ * <td align="left">Positron right</td>
+ * <td align="center">\f$\left[+1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[\frac{1}{\sqrt{3}},\frac{1}{\sqrt{3}},0\right]\f$</td>
+ * <td align="center">\f$\left[\frac{1}{\sqrt{3}},-\frac{1}{2\sqrt{3}},+\sqrt{\frac{2}{3}}\right]\f$</td>
+ * <td align="center">\f$\left[\frac{1}{\sqrt{3}},-\frac{1}{2\sqrt{3}},-\sqrt{\frac{2}{3}}\right]\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$acos(\frac{1}{\sqrt{3}})\f$</td>
+ * <td align="center">\f$acos(\frac{1}{\sqrt{3}})\f$</td>
+ * <td align="center">\f$acos(\frac{1}{\sqrt{3}})\f$</td>
+ * <td align="center">1</td>
+ * <td align="center">1</td>
+ * <td align="center">1</td>
+ * <td align="center">+1</td>
+ * <td align="center">+1</td>
+ * <td align="center">+1</td>
+ * </tr>
+ * <tr>
+ * <td align="left">Positron left</td>
+ * <td align="center">\f$\left[-1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[\frac{1}{\sqrt{3}},\frac{1}{\sqrt{3}},0\right]\f$</td>
+ * <td align="center">\f$\left[\frac{1}{\sqrt{3}},-\frac{1}{2\sqrt{3}},-\sqrt{\frac{2}{3}}\right]\f$</td>
+ * <td align="center">\f$\left[\frac{1}{\sqrt{3}},-\frac{1}{2\sqrt{3}},+\sqrt{\frac{2}{3}}\right]\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$acos(\frac{1}{\sqrt{3}})\f$</td>
+ * <td align="center">\f$acos(\frac{1}{\sqrt{3}})\f$</td>
+ * <td align="center">\f$acos(\frac{1}{\sqrt{3}})\f$</td>
+ * <td align="center">1</td>
+ * <td align="center">1</td>
+ * <td align="center">1</td>
+ * <td align="center">+1</td>
+ * <td align="center">+1</td>
+ * <td align="center">+1</td>
+ * </tr>
+ * <tr>
+ * <td align="left">Electron right</td>
+ * <td align="center">\f$\left[+1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[-\frac{1}{\sqrt{3}},\frac{1}{\sqrt{3}},0\right]\f$</td>
+ * <td align="center">\f$\left[-\frac{1}{\sqrt{3}},-\frac{1}{2\sqrt{3}},+\sqrt{\frac{2}{3}}\right]\f$</td>
+ * <td align="center">\f$\left[-\frac{1}{\sqrt{3}},-\frac{1}{2\sqrt{3}},-\sqrt{\frac{2}{3}}\right]\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\pi-acos(\frac{1}{\sqrt{3}})\f$</td>
+ * <td align="center">\f$\pi-acos(\frac{1}{\sqrt{3}})\f$</td>
+ * <td align="center">\f$\pi-acos(\frac{1}{\sqrt{3}})\f$</td>
+ * <td align="center">1</td>
+ * <td align="center">1</td>
+ * <td align="center">1</td>
+ * <td align="center">-1</td>
+ * <td align="center">-1</td>
+ * <td align="center">-1</td>
+ * </tr>
+ * <tr>
+ * <td align="left">Electron left</td>
+ * <td align="center">\f$\left[-1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[-\frac{1}{\sqrt{3}},\frac{1}{\sqrt{3}},0\right]\f$</td>
+ * <td align="center">\f$\left[-\frac{1}{\sqrt{3}},-\frac{1}{2\sqrt{3}},-\sqrt{\frac{2}{3}}\right]\f$</td>
+ * <td align="center">\f$\left[-\frac{1}{\sqrt{3}},-\frac{1}{2\sqrt{3}},+\sqrt{\frac{2}{3}}\right]\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\pi-acos(\frac{1}{\sqrt{3}})\f$</td>
+ * <td align="center">\f$\pi-acos(\frac{1}{\sqrt{3}})\f$</td>
+ * <td align="center">\f$\pi-acos(\frac{1}{\sqrt{3}})\f$</td>
+ * <td align="center">1</td>
+ * <td align="center">1</td>
+ * <td align="center">1</td>
+ * <td align="center">-1</td>
+ * <td align="center">-1</td>
+ * <td align="center">-1</td>
+ * </tr>
+ * 
+ * <tr><td align="center" colspan="17"><b>UP QUARKS</b></td></tr>
+ * <tr>
+ * <td align="left">Up quark IJ right</td>
+ * <td align="center">\f$\left[+1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[\frac{\sqrt{2}}{2},-\frac{1}{2},+\frac{1}{2}\right]\f$</td>
+ * <td align="center">\f$\left[\frac{\sqrt{2}}{2},-\frac{1}{2},-\frac{1}{2}\right]\f$</td>
+ * <td align="center">\f$\left[0,1,0\right]\f$</td>
+ * <td align="center">\f$\frac{\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{\pi}{4}\f$</td>
+ * <td align="center">\f$\frac{\pi}{4}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">1</td>
+ * <td align="center">1</td>
+ * <td align="center">0</td>
+ * <td align="center">+1</td>
+ * <td align="center">+1</td>
+ * <td align="center">0</td>
+ * </tr>
+ * <tr>
+ * <td align="left">Up quark IJ left</td>
+ * <td align="center">\f$\left[-1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[\frac{\sqrt{2}}{2},-\frac{1}{2},-\frac{1}{2}\right]\f$</td>
+ * <td align="center">\f$\left[\frac{\sqrt{2}}{2},-\frac{1}{2},+\frac{1}{2}\right]\f$</td>
+ * <td align="center">\f$\left[0,1,0\right]\f$</td>
+ * <td align="center">\f$\frac{\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{\pi}{4}\f$</td>
+ * <td align="center">\f$\frac{\pi}{4}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">1</td>
+ * <td align="center">1</td>
+ * <td align="center">0</td>
+ * <td align="center">+1</td>
+ * <td align="center">+1</td>
+ * <td align="center">0</td>
+ * </tr>
+ * <tr>
+ * <td align="left">Anti-up quark IJ right</td>
+ * <td align="center">\f$\left[+1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[-\frac{\sqrt{2}}{2},-\frac{1}{2},+\frac{1}{2}\right]\f$</td>
+ * <td align="center">\f$\left[-\frac{\sqrt{2}}{2},-\frac{1}{2},-\frac{1}{2}\right]\f$</td>
+ * <td align="center">\f$\left[0,1,0\right]\f$</td>
+ * <td align="center">\f$\frac{\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{3\pi}{4}\f$</td>
+ * <td align="center">\f$\frac{3\pi}{4}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">1</td>
+ * <td align="center">1</td>
+ * <td align="center">0</td>
+ * <td align="center">-1</td>
+ * <td align="center">-1</td>
+ * <td align="center">0</td>
+ * </tr>
+ * <tr>
+ * <td align="left">Anti-up quark IJ left</td>
+ * <td align="center">\f$\left[-1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[-\frac{\sqrt{2}}{2},-\frac{1}{2},-\frac{1}{2}\right]\f$</td>
+ * <td align="center">\f$\left[-\frac{\sqrt{2}}{2},-\frac{1}{2},+\frac{1}{2}\right]\f$</td>
+ * <td align="center">\f$\left[0,1,0\right]\f$</td>
+ * <td align="center">\f$\frac{\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{3\pi}{4}\f$</td>
+ * <td align="center">\f$\frac{3\pi}{4}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">1</td>
+ * <td align="center">1</td>
+ * <td align="center">0</td>
+ * <td align="center">-1</td>
+ * <td align="center">-1</td>
+ * <td align="center">0</td>
+ * </tr>
+ * 
+ * <tr>
+ * <td align="left">Up quark JK right</td>
+ * <td align="center">\f$\left[+1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[0,1,0\right]\f$</td>
+ * <td align="center">\f$\left[\frac{\sqrt{2}}{2},-\frac{1}{2},+\frac{1}{2}\right]\f$</td>
+ * <td align="center">\f$\left[\frac{\sqrt{2}}{2},-\frac{1}{2},-\frac{1}{2}\right]\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{4}\f$</td>
+ * <td align="center">\f$\frac{\pi}{4}\f$</td>
+ * <td align="center">0</td>
+ * <td align="center">1</td>
+ * <td align="center">1</td>
+ * <td align="center">0</td>
+ * <td align="center">+1</td>
+ * <td align="center">+1</td>
+ * </tr>
+ * <tr>
+ * <td align="left">Up quark JK left</td>
+ * <td align="center">\f$\left[-1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[0,1,0\right]\f$</td>
+ * <td align="center">\f$\left[\frac{\sqrt{2}}{2},-\frac{1}{2},-\frac{1}{2}\right]\f$</td>
+ * <td align="center">\f$\left[\frac{\sqrt{2}}{2},-\frac{1}{2},+\frac{1}{2}\right]\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{4}\f$</td>
+ * <td align="center">\f$\frac{\pi}{4}\f$</td>
+ * <td align="center">0</td>
+ * <td align="center">1</td>
+ * <td align="center">1</td>
+ * <td align="center">0</td>
+ * <td align="center">+1</td>
+ * <td align="center">+1</td>
+ * </tr>
+ * <tr>
+ * <td align="left">Anti-up quark JK right</td>
+ * <td align="center">\f$\left[+1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[0,1,0\right]\f$</td>
+ * <td align="center">\f$\left[-\frac{\sqrt{2}}{2},-\frac{1}{2},+\frac{1}{2}\right]\f$</td>
+ * <td align="center">\f$\left[-\frac{\sqrt{2}}{2},-\frac{1}{2},-\frac{1}{2}\right]\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{3\pi}{4}\f$</td>
+ * <td align="center">\f$\frac{3\pi}{4}\f$</td>
+ * <td align="center">0</td>
+ * <td align="center">1</td>
+ * <td align="center">1</td>
+ * <td align="center">0</td>
+ * <td align="center">-1</td>
+ * <td align="center">-1</td>
+ * </tr>
+ * <tr>
+ * <td align="left">Anti-up quark JK left</td>
+ * <td align="center">\f$\left[-1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[0,1,0\right]\f$</td>
+ * <td align="center">\f$\left[-\frac{\sqrt{2}}{2},-\frac{1}{2},-\frac{1}{2}\right]\f$</td>
+ * <td align="center">\f$\left[-\frac{\sqrt{2}}{2},-\frac{1}{2},+\frac{1}{2}\right]\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{3\pi}{4}\f$</td>
+ * <td align="center">\f$\frac{3\pi}{4}\f$</td>
+ * <td align="center">0</td>
+ * <td align="center">1</td>
+ * <td align="center">1</td>
+ * <td align="center">0</td>
+ * <td align="center">-1</td>
+ * <td align="center">-1</td>
+ * </tr>
+ * 
+ * <tr>
+ * <td align="left">Up quark KI right</td>
+ * <td align="center">\f$\left[+1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[\frac{\sqrt{2}}{2},-\frac{1}{2},-\frac{1}{2}\right]\f$</td>
+ * <td align="center">\f$\left[0,1,0\right]\f$</td>
+ * <td align="center">\f$\left[\frac{\sqrt{2}}{2},-\frac{1}{2},+\frac{1}{2}\right]\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{\pi}{4}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{4}\f$</td>
+ * <td align="center">1</td>
+ * <td align="center">0</td>
+ * <td align="center">1</td>
+ * <td align="center">+1</td>
+ * <td align="center">0</td>
+ * <td align="center">+1</td>
+ * </tr>
+ * <tr>
+ * <td align="left">Up quark KI left</td>
+ * <td align="center">\f$\left[-1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[\frac{\sqrt{2}}{2},-\frac{1}{2},+\frac{1}{2}\right]\f$</td>
+ * <td align="center">\f$\left[0,1,0\right]\f$</td>
+ * <td align="center">\f$\left[\frac{\sqrt{2}}{2},-\frac{1}{2},-\frac{1}{2}\right]\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{\pi}{4}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{4}\f$</td>
+ * <td align="center">1</td>
+ * <td align="center">0</td>
+ * <td align="center">1</td>
+ * <td align="center">+1</td>
+ * <td align="center">0</td>
+ * <td align="center">+1</td>
+ * </tr>
+ * <tr>
+ * <td align="left">Anti-up quark KI right</td>
+ * <td align="center">\f$\left[+1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[-\frac{\sqrt{2}}{2},-\frac{1}{2},-\frac{1}{2}\right]\f$</td>
+ * <td align="center">\f$\left[0,1,0\right]\f$</td>
+ * <td align="center">\f$\left[-\frac{\sqrt{2}}{2},-\frac{1}{2},+\frac{1}{2}\right]\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{3\pi}{4}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{3\pi}{4}\f$</td>
+ * <td align="center">1</td>
+ * <td align="center">0</td>
+ * <td align="center">1</td>
+ * <td align="center">-1</td>
+ * <td align="center">0</td>
+ * <td align="center">-1</td>
+ * </tr>
+ * <tr>
+ * <td align="left">Anti-up quark KI left</td>
+ * <td align="center">\f$\left[-1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[-\frac{\sqrt{2}}{2},-\frac{1}{2},+\frac{1}{2}\right]\f$</td>
+ * <td align="center">\f$\left[0,1,0\right]\f$</td>
+ * <td align="center">\f$\left[-\frac{\sqrt{2}}{2},-\frac{1}{2},-\frac{1}{2}\right]\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{2\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{\pi}{3}\f$</td>
+ * <td align="center">\f$\frac{3\pi}{4}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{3\pi}{4}\f$</td>
+ * <td align="center">1</td>
+ * <td align="center">0</td>
+ * <td align="center">1</td>
+ * <td align="center">-1</td>
+ * <td align="center">0</td>
+ * <td align="center">-1</td>
+ * </tr>
+ * 
+ * <tr><td align="center" colspan="17"><b>Down QUARKS</b></td></tr>
+ * <tr>
+ * <td align="left">Down quark I right</td>
+ * <td align="center">\f$\left[+1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[-\frac{\sqrt{2}}{2},\frac{\sqrt{2}}{2},0\right]\f$</td>
+ * <td align="center">\f$\left[0,0,+1\right]\f$</td>
+ * <td align="center">\f$\left[0,0,-1\right]\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\pi\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{3\pi}{4}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">1</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * <td align="center">-1</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * </tr>
+ * <tr>
+ * <td align="left">Down quark I left</td>
+ * <td align="center">\f$\left[-1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[-\frac{\sqrt{2}}{2},\frac{\sqrt{2}}{2},0\right]\f$</td>
+ * <td align="center">\f$\left[0,0,-1\right]\f$</td>
+ * <td align="center">\f$\left[0,0,+1\right]\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\pi\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{3\pi}{4}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">1</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * <td align="center">-1</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * </tr>
+ * <tr>
+ * <td align="left">Anti-down quark I right</td>
+ * <td align="center">\f$\left[+1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[\frac{\sqrt{2}}{2},\frac{\sqrt{2}}{2},0\right]\f$</td>
+ * <td align="center">\f$\left[0,0,+1\right]\f$</td>
+ * <td align="center">\f$\left[0,0,-1\right]\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\pi\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{4}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">1</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * <td align="center">+1</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * </tr>
+ * <tr>
+ * <td align="left">Anti-down quark I left</td>
+ * <td align="center">\f$\left[-1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[\frac{\sqrt{2}}{2},\frac{\sqrt{2}}{2},0\right]\f$</td>
+ * <td align="center">\f$\left[0,0,-1\right]\f$</td>
+ * <td align="center">\f$\left[0,0,+1\right]\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\pi\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{4}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">1</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * <td align="center">+1</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * </tr>
+ * 
+ * <tr>
+ * <td align="left">Down quark J right</td>
+ * <td align="center">\f$\left[+1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[0,0,-1\right]\f$</td>
+ * <td align="center">\f$\left[-\frac{\sqrt{2}}{2},\frac{\sqrt{2}}{2},0\right]\f$</td>
+ * <td align="center">\f$\left[0,0,+1\right]\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\pi\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{3\pi}{4}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">0</td>
+ * <td align="center">1</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * <td align="center">-1</td>
+ * <td align="center">0</td>
+ * </tr>
+ * <tr>
+ * <td align="left">Down quark J left</td>
+ * <td align="center">\f$\left[-1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[0,0,+1\right]\f$</td>
+ * <td align="center">\f$\left[-\frac{\sqrt{2}}{2},\frac{\sqrt{2}}{2},0\right]\f$</td>
+ * <td align="center">\f$\left[0,0,-1\right]\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\pi\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{3\pi}{4}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">0</td>
+ * <td align="center">1</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * <td align="center">-1</td>
+ * <td align="center">0</td>
+ * </tr>
+ * <tr>
+ * <td align="left">Anti-down quark J right</td>
+ * <td align="center">\f$\left[+1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[0,0,-1\right]\f$</td>
+ * <td align="center">\f$\left[\frac{\sqrt{2}}{2},\frac{\sqrt{2}}{2},0\right]\f$</td>
+ * <td align="center">\f$\left[0,0,+1\right]\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\pi\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{4}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">0</td>
+ * <td align="center">1</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * <td align="center">+1</td>
+ * <td align="center">0</td>
+ * </tr>
+ * <tr>
+ * <td align="left">Anti-down quark J left</td>
+ * <td align="center">\f$\left[-1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[0,0,+1\right]\f$</td>
+ * <td align="center">\f$\left[\frac{\sqrt{2}}{2},\frac{\sqrt{2}}{2},0\right]\f$</td>
+ * <td align="center">\f$\left[0,0,-1\right]\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\pi\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{4}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">0</td>
+ * <td align="center">1</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * <td align="center">+1</td>
+ * <td align="center">0</td>
+ * </tr>
+ * 
+ * <tr>
+ * <td align="left">Down quark K right</td>
+ * <td align="center">\f$\left[+1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[0,0,+1\right]\f$</td>
+ * <td align="center">\f$\left[0,0,-1\right]\f$</td>
+ * <td align="center">\f$\left[-\frac{\sqrt{2}}{2},\frac{\sqrt{2}}{2},0\right]\f$</td>
+ * <td align="center">\f$\pi\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{3\pi}{4}\f$</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * <td align="center">1</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * <td align="center">-1</td>
+ * </tr>
+ * <tr>
+ * <td align="left">Down quark K left</td>
+ * <td align="center">\f$\left[-1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[0,0,-1\right]\f$</td>
+ * <td align="center">\f$\left[0,0,+1\right]\f$</td>
+ * <td align="center">\f$\left[-\frac{\sqrt{2}}{2},\frac{\sqrt{2}}{2},0\right]\f$</td>
+ * <td align="center">\f$\pi\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{3\pi}{4}\f$</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * <td align="center">1</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * <td align="center">-1</td>
+ * </tr>
+ * <tr>
+ * <td align="left">Anti-down quark K right</td>
+ * <td align="center">\f$\left[+1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[0,0,+1\right]\f$</td>
+ * <td align="center">\f$\left[0,0,-1\right]\f$</td>
+ * <td align="center">\f$\left[\frac{\sqrt{2}}{2},\frac{\sqrt{2}}{2},0\right]\f$</td>
+ * <td align="center">\f$\pi\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{4}\f$</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * <td align="center">1</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * <td align="center">+1</td>
+ * </tr>
+ * <tr>
+ * <td align="left">Anti-down quark K left</td>
+ * <td align="center">\f$\left[-1,0,0\right]\f$</td>
+ * <td align="center">\f$\left[0,0,-1\right]\f$</td>
+ * <td align="center">\f$\left[0,0,+1\right]\f$</td>
+ * <td align="center">\f$\left[\frac{\sqrt{2}}{2},\frac{\sqrt{2}}{2},0\right]\f$</td>
+ * <td align="center">\f$\pi\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{2}\f$</td>
+ * <td align="center">\f$\frac{\pi}{4}\f$</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * <td align="center">1</td>
+ * <td align="center">0</td>
+ * <td align="center">0</td>
+ * <td align="center">+1</td>
+ * </tr>
+ * 
+ * </table>
+ *
  * \section SecParticlesAndWaves1 Introduction - particles and waves
  *
  * In this system all \b particles are conceptualized as entities with an identical physical form, characterized
